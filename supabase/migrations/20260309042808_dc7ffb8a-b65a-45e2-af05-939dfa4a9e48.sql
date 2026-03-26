@@ -1,0 +1,1 @@
+ALTER TABLE public.students ADD COLUMN IF NOT EXISTS sports_activities text[] DEFAULT '{}'::text[];

@@ -1,0 +1,341 @@
+// @ts-nocheck
+import { useState, useEffect, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { Search, Printer, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+
+const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+export default function IncomeExpenditureReport() {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); // 0-indexed
+
+  const [payments, setPayments] = useState<any[]>([]);
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [supplierPayments, setSupplierPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedYear, setSelectedYear] = useState(String(currentYear));
+  const [selectedMonth, setSelectedMonth] = useState(String(currentMonth));
+  const [search, setSearch] = useState("");
+
+  useEffect(() => { fetchData(); }, []);
+
+  async function fetchData() {
+    setLoading(true);
+    const [payRes, expRes, spRes] = await Promise.all([
+      supabase.from("payments").select("*, students(full_name)").order("payment_date", { ascending: false }),
+      supabase.from("expenses").select("*").order("expense_date", { ascending: false }),
+      supabase.from("supplier_payments").select("*, supplier_invoices(supplier_name)").order("payment_date", { ascending: false }),
+    ]);
+    if (payRes.data) setPayments(payRes.data);
+    if (expRes.data) setExpenses(expRes.data);
+    if (spRes.data) setSupplierPayments(spRes.data);
+    setLoading(false);
+  }
+
+  const yearOptions = useMemo(() => {
+    const years = new Set<string>();
+    payments.forEach(p => years.add(new Date(p.payment_date).getFullYear().toString()));
+    expenses.forEach(e => years.add(new Date(e.expense_date).getFullYear().toString()));
+    years.add(String(currentYear));
+    return Array.from(years).sort().reverse();
+  }, [payments, expenses]);
+
+  // Filter by selected month/year
+  const filterByMonth = (date: string) => {
+    const d = new Date(date);
+    return d.getFullYear() === Number(selectedYear) && d.getMonth() === Number(selectedMonth);
+  };
+
+  const monthPayments = payments.filter(p => filterByMonth(p.payment_date));
+  const monthExpenses = expenses.filter(e => filterByMonth(e.expense_date));
+  const monthSupplierPayments = supplierPayments.filter(sp => filterByMonth(sp.payment_date));
+
+  // Apply search
+  const searchedPayments = monthPayments.filter(p => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return p.students?.full_name?.toLowerCase().includes(s) || p.receipt_number?.toLowerCase().includes(s) || p.payment_method?.toLowerCase().includes(s);
+  });
+
+  const searchedExpenses = monthExpenses.filter(e => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return e.description?.toLowerCase().includes(s) || e.category?.toLowerCase().includes(s);
+  });
+
+  const searchedSupplierPayments = monthSupplierPayments.filter(sp => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return sp.supplier_invoices?.supplier_name?.toLowerCase().includes(s) || sp.reference_number?.toLowerCase().includes(s);
+  });
+
+  // Totals
+  const totalIncomeUsd = searchedPayments.reduce((s, p) => s + Number(p.amount_usd || 0), 0);
+  const totalIncomeZig = searchedPayments.reduce((s, p) => s + Number(p.amount_zig || 0), 0);
+  const totalExpensesUsd = searchedExpenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
+  const totalExpensesZig = searchedExpenses.reduce((s, e) => s + Number(e.amount_zig || 0), 0);
+  const totalSupplierUsd = searchedSupplierPayments.reduce((s, sp) => s + Number(sp.amount_usd || 0), 0);
+  const totalSupplierZig = searchedSupplierPayments.reduce((s, sp) => s + Number(sp.amount_zig || 0), 0);
+  const totalOutUsd = totalExpensesUsd + totalSupplierUsd;
+  const totalOutZig = totalExpensesZig + totalSupplierZig;
+  const netUsd = totalIncomeUsd - totalOutUsd;
+  const netZig = totalIncomeZig - totalOutZig;
+
+  // Expense breakdown by category
+  const expenseByCategory = useMemo(() => {
+    const map: Record<string, { usd: number; zig: number }> = {};
+    searchedExpenses.forEach(e => {
+      const cat = e.category || "General";
+      if (!map[cat]) map[cat] = { usd: 0, zig: 0 };
+      map[cat].usd += Number(e.amount_usd || 0);
+      map[cat].zig += Number(e.amount_zig || 0);
+    });
+    return Object.entries(map).sort((a, b) => b[1].usd - a[1].usd);
+  }, [searchedExpenses]);
+
+  function printReport() {
+    const printWin = window.open("", "_blank");
+    if (!printWin) return;
+    const title = `Income & Expenditure Report — ${months[Number(selectedMonth)]} ${selectedYear}`;
+    printWin.document.write(`<html><head><title>${title}</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;font-size:12px}th{background:#f5f5f5}.right{text-align:right}.green{color:green}.red{color:red}h3{margin-top:20px}</style></head><body>`);
+    printWin.document.write(`<h2>${title}</h2><p>Generated: ${new Date().toLocaleString()}</p>`);
+    printWin.document.write(`<h3>Summary</h3><table><tr><th>Item</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
+    printWin.document.write(`<tr><td>Total Income</td><td class="right green">${fmt(totalIncomeUsd)}</td><td class="right">${fmt(totalIncomeZig)}</td></tr>`);
+    printWin.document.write(`<tr><td>Total Expenses</td><td class="right red">${fmt(totalExpensesUsd)}</td><td class="right">${fmt(totalExpensesZig)}</td></tr>`);
+    printWin.document.write(`<tr><td>Supplier Payments</td><td class="right red">${fmt(totalSupplierUsd)}</td><td class="right">${fmt(totalSupplierZig)}</td></tr>`);
+    printWin.document.write(`<tr style="font-weight:bold"><td>Net</td><td class="right ${netUsd >= 0 ? "green" : "red"}">${fmt(netUsd)}</td><td class="right">${fmt(netZig)}</td></tr></table>`);
+
+    if (searchedPayments.length > 0) {
+      printWin.document.write(`<h3>Income (${searchedPayments.length} transactions)</h3><table><tr><th>Date</th><th>Receipt</th><th>Student</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
+      searchedPayments.forEach(p => printWin.document.write(`<tr><td>${p.payment_date}</td><td>${p.receipt_number}</td><td>${p.students?.full_name || "—"}</td><td>${p.payment_method}</td><td class="right">${fmt(p.amount_usd)}</td><td class="right">${fmt(p.amount_zig)}</td></tr>`));
+      printWin.document.write(`</table>`);
+    }
+
+    if (searchedExpenses.length > 0) {
+      printWin.document.write(`<h3>Expenses (${searchedExpenses.length} transactions)</h3><table><tr><th>Date</th><th>Category</th><th>Description</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
+      searchedExpenses.forEach(e => printWin.document.write(`<tr><td>${e.expense_date}</td><td>${e.category}</td><td>${e.description}</td><td class="right">${fmt(e.amount_usd)}</td><td class="right">${fmt(e.amount_zig)}</td></tr>`));
+      printWin.document.write(`</table>`);
+    }
+
+    printWin.document.write(`</body></html>`);
+    printWin.document.close();
+    printWin.print();
+  }
+
+  if (loading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-accent" /></div>;
+
+  return (
+    <div className="space-y-4">
+      {/* Filters Row */}
+      <div className="flex gap-3 flex-wrap items-end">
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Year</label>
+          <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {yearOptions.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Month</label>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {months.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Button variant="outline" onClick={printReport}><Printer className="mr-1 h-4 w-4" /> Print Report</Button>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid gap-4 sm:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="h-4 w-4 text-green-700" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Income</p>
+            </div>
+            <p className="text-xl font-bold font-mono text-green-700">USD {fmt(totalIncomeUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(totalIncomeZig)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingDown className="h-4 w-4 text-destructive" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Expenses</p>
+            </div>
+            <p className="text-xl font-bold font-mono text-destructive">USD {fmt(totalOutUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(totalOutZig)}</p>
+          </CardContent>
+        </Card>
+        <Card className={netUsd >= 0 ? "bg-green-50/50 border-green-200" : "bg-destructive/5 border-destructive/30"}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <BarChart3 className="h-4 w-4" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Net</p>
+            </div>
+            <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700" : "text-destructive"}`}>USD {fmt(netUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(netZig)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Transactions</p>
+            <p className="text-xl font-bold">{searchedPayments.length + searchedExpenses.length + searchedSupplierPayments.length}</p>
+            <p className="text-xs text-muted-foreground">{searchedPayments.length} income · {searchedExpenses.length + searchedSupplierPayments.length} expense</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Expense Breakdown by Category */}
+      {expenseByCategory.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-heading">Expense Breakdown by Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {expenseByCategory.map(([cat, totals]) => (
+                <div key={cat} className="flex items-center justify-between text-sm border-b pb-1">
+                  <span><Badge variant="outline">{cat}</Badge></span>
+                  <span className="font-mono">USD {fmt(totals.usd)} / ZiG {fmt(totals.zig)}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Income Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-heading text-green-700">Income — {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
+          <CardDescription>{searchedPayments.length} payment(s) totalling USD {fmt(totalIncomeUsd)}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {searchedPayments.length === 0 ? (
+            <p className="text-center py-6 text-muted-foreground">No income recorded for this period.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Receipt #</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead className="text-right">USD</TableHead>
+                    <TableHead className="text-right">ZiG</TableHead>
+                    <TableHead>Reference</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {searchedPayments.map(p => (
+                    <TableRow key={p.id}>
+                      <TableCell className="text-xs">{p.payment_date}</TableCell>
+                      <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
+                      <TableCell>{p.students?.full_name || "—"}</TableCell>
+                      <TableCell>{p.payment_method}</TableCell>
+                      <TableCell className="text-right font-mono text-green-700">{fmt(p.amount_usd)}</TableCell>
+                      <TableCell className="text-right font-mono">{fmt(p.amount_zig)}</TableCell>
+                      <TableCell className="text-xs">{p.reference_number || "—"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Expenses Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-heading text-destructive">Expenditure — {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
+          <CardDescription>{searchedExpenses.length} expense(s) + {searchedSupplierPayments.length} supplier payment(s) totalling USD {fmt(totalOutUsd)}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {searchedExpenses.length === 0 && searchedSupplierPayments.length === 0 ? (
+            <p className="text-center py-6 text-muted-foreground">No expenditure recorded for this period.</p>
+          ) : (
+            <>
+              {searchedExpenses.length > 0 && (
+                <div className="overflow-x-auto">
+                  <h4 className="text-sm font-semibold mb-2">General Expenses</h4>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Method</TableHead>
+                        <TableHead className="text-right">USD</TableHead>
+                        <TableHead className="text-right">ZiG</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {searchedExpenses.map(e => (
+                        <TableRow key={e.id}>
+                          <TableCell className="text-xs">{e.expense_date}</TableCell>
+                          <TableCell><Badge variant="outline">{e.category}</Badge></TableCell>
+                          <TableCell className="max-w-[250px] truncate">{e.description}</TableCell>
+                          <TableCell>{e.payment_method}</TableCell>
+                          <TableCell className="text-right font-mono text-destructive">{fmt(e.amount_usd)}</TableCell>
+                          <TableCell className="text-right font-mono">{fmt(e.amount_zig)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              {searchedSupplierPayments.length > 0 && (
+                <div className="overflow-x-auto">
+                  <h4 className="text-sm font-semibold mb-2">Supplier Payments</h4>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Supplier</TableHead>
+                        <TableHead>Method</TableHead>
+                        <TableHead className="text-right">USD</TableHead>
+                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead>Reference</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {searchedSupplierPayments.map(sp => (
+                        <TableRow key={sp.id}>
+                          <TableCell className="text-xs">{sp.payment_date}</TableCell>
+                          <TableCell>{sp.supplier_invoices?.supplier_name || "—"}</TableCell>
+                          <TableCell>{sp.payment_method}</TableCell>
+                          <TableCell className="text-right font-mono text-destructive">{fmt(sp.amount_usd)}</TableCell>
+                          <TableCell className="text-right font-mono">{fmt(sp.amount_zig)}</TableCell>
+                          <TableCell className="text-xs">{sp.reference_number || "—"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

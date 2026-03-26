@@ -1,0 +1,1 @@
+ALTER TABLE public.marks ADD COLUMN description TEXT;

@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can read online payments" ON public.online_payments;

@@ -1,0 +1,45 @@
+import { motion } from "framer-motion";
+import Layout from "@/components/layout/Layout";
+import { Card, CardContent } from "@/components/ui/card";
+
+const alumni = [
+  { name: "Dr. Tendai Moyo", role: "Surgeon, Parirenyatwa Hospital", year: "Class of 1998" },
+  { name: "Nothando Dube", role: "Software Engineer, Google", year: "Class of 2005" },
+  { name: "Kudzai Chirwa", role: "Diplomat, United Nations", year: "Class of 2001" },
+];
+
+export default function Alumni() {
+  return (
+    <Layout>
+      <section className="bg-secondary py-16">
+        <div className="container">
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+            Notable Alumni
+          </motion.h1>
+          <p className="mt-2 text-secondary-foreground/70">Gifford High graduates making an impact across the world.</p>
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="container">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {alumni.map((a, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                <Card className="transition-shadow hover:shadow-maroon">
+                  <CardContent className="p-6">
+                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-heading text-xl font-bold text-primary">
+                      {a.name[0]}
+                    </div>
+                    <h3 className="font-heading text-lg font-semibold">{a.name}</h3>
+                    <p className="text-sm text-muted-foreground">{a.role}</p>
+                    <p className="mt-1 text-xs font-medium text-accent">{a.year}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}

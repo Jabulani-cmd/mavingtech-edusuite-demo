@@ -1,0 +1,48 @@
+-- Allow principal full admin-like access to key tables
+CREATE POLICY "Principal manage students" ON public.students FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage staff" ON public.staff FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage announcements" ON public.announcements FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role)) WITH CHECK (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage classes" ON public.classes FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage exams" ON public.exams FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage exam_results" ON public.exam_results FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage attendance" ON public.attendance FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage enrollments" ON public.enrollments FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage fee_structures" ON public.fee_structures FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role)) WITH CHECK (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage invoices" ON public.invoices FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage expenses" ON public.expenses FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage payments" ON public.payments FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage hostels" ON public.hostels FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage inventory_items" ON public.inventory_items FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage communication_logs" ON public.communication_logs FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage user_roles" ON public.user_roles FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage contracts" ON public.contracts FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage leave_requests" ON public.leave_requests FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage audit_logs" ON public.audit_logs FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage marks" ON public.marks FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage homework" ON public.homework FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage meetings" ON public.meetings FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role)) WITH CHECK (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage downloads" ON public.downloads FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role)) WITH CHECK (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage events" ON public.events FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage bed_allocations" ON public.bed_allocations FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage rooms" ON public.rooms FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage guardians" ON public.guardians FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage class_subjects" ON public.class_subjects FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage subjects" ON public.subjects FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage assessments" ON public.assessments FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+CREATE POLICY "Principal manage invoice_items" ON public.invoice_items FOR ALL TO authenticated USING (has_role(auth.uid(), 'principal'::app_role));
+
+-- Deputy Principal and HOD: read-only on key tables
+CREATE POLICY "Management read students" ON public.students FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read staff" ON public.staff FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read classes" ON public.classes FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read exams" ON public.exams FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read exam_results" ON public.exam_results FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read attendance" ON public.attendance FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read enrollments" ON public.enrollments FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read marks" ON public.marks FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read announcements" ON public.announcements FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management insert announcements" ON public.announcements FOR INSERT TO authenticated WITH CHECK (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read communication_logs" ON public.communication_logs FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read subjects" ON public.subjects FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read class_subjects" ON public.class_subjects FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));
+CREATE POLICY "Management read guardians" ON public.guardians FOR SELECT TO authenticated USING (has_role(auth.uid(), 'deputy_principal'::app_role) OR has_role(auth.uid(), 'hod'::app_role));

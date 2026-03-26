@@ -1,0 +1,7 @@
+project_id = "fdzjjoaaqnozpiblilvt"
+
+[functions.manage-users]
+verify_jwt = false
+
+[functions.link-child]
+verify_jwt = false

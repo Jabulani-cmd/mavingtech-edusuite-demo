@@ -1,0 +1,1 @@
+UPDATE public.meetings SET meeting_type = 'sdc' WHERE meeting_type = 'sgb';

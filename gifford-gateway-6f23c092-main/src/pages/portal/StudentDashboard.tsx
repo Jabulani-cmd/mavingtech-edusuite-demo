@@ -1,0 +1,442 @@
+// @ts-nocheck
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign } from "lucide-react";
+import schoolLogo from "@/assets/school-logo.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import NotificationBell from "@/components/NotificationBell";
+import PersonalTimetableEditor from "@/components/PersonalTimetableEditor";
+import StudentBottomNav from "@/components/student/StudentBottomNav";
+import StudentMetricsCards from "@/components/student/StudentMetricsCards";
+import StudentMaterialsTab from "@/components/student/StudentMaterialsTab";
+import StudentAssessmentsTab from "@/components/student/StudentAssessmentsTab";
+import StudentAttendanceTab from "@/components/student/StudentAttendanceTab";
+import StudentProfileTab from "@/components/student/StudentProfileTab";
+import StudentAnnouncementsSection from "@/components/student/StudentAnnouncementsSection";
+import StudentTimetableTab from "@/components/student/StudentTimetableTab";
+import StudentFeeTab from "@/components/student/StudentFeeTab";
+import StudentExamResultsTab from "@/components/student/StudentExamResultsTab";
+import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
+import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
+import StudentMarksTab from "@/components/student/StudentMarksTab";
+
+type TabId = "home" | "materials" | "assessments" | "attendance" | "profile";
+
+export default function StudentDashboard() {
+  const { signOut, user } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabId>("home");
+
+  const [profile, setProfile] = useState<any>(null);
+  const [student, setStudent] = useState<any>(null);
+  const [studentClassId, setStudentClassId] = useState<string | null>(null);
+  const [studentClassName, setStudentClassName] = useState<string | null>(null);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Metrics
+  const [attendancePercent, setAttendancePercent] = useState(0);
+  const [upcomingAssessments, setUpcomingAssessments] = useState(0);
+  const [newMaterials, setNewMaterials] = useState(0);
+  const [feeBalance, setFeeBalance] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchData();
+  }, [user]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const uid = user!.id;
+
+    // Fetch profile & student record in parallel
+    const [{ data: prof }, { data: studentRec }] = await Promise.all([
+      supabase.from("profiles").select("*").eq("user_id", uid).single(),
+      supabase.from("students").select("*").eq("user_id", uid).maybeSingle(),
+    ]);
+
+    setProfile(prof);
+    setStudent(studentRec);
+
+    // Get class ID from student_classes or profile
+    let classId: string | null = null;
+    if (studentRec) {
+      // Try student table ID first, then auth user ID
+      const { data: sc } = await supabase
+        .from("student_classes")
+        .select("class_id")
+        .eq("student_id", studentRec.id)
+        .limit(1)
+        .maybeSingle();
+      if (sc) {
+        classId = sc.class_id;
+      } else {
+        // student_classes may reference auth.users ID
+        const { data: sc2 } = await supabase
+          .from("student_classes")
+          .select("class_id")
+          .eq("student_id", uid)
+          .limit(1)
+          .maybeSingle();
+        if (sc2) classId = sc2.class_id;
+      }
+    }
+    if (!classId && prof?.class_name) {
+      const { data: c } = await supabase
+        .from("classes")
+        .select("id")
+        .eq("name", prof.class_name)
+        .maybeSingle();
+      if (c) classId = c.id;
+    }
+    setStudentClassId(classId);
+
+    // Fetch class name
+    if (classId) {
+      const { data: classData } = await supabase.from("classes").select("name").eq("id", classId).single();
+      setStudentClassName(classData?.name || null);
+    } else {
+      setStudentClassName(null);
+    }
+
+    // Fetch metrics in parallel
+    const studentTableId = studentRec?.id;
+    const now = new Date().toISOString();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const promises: Array<PromiseLike<any>> = [
+      // Announcements
+      supabase
+        .from("announcements")
+        .select("*")
+        .eq("is_public", true)
+        .order("created_at", { ascending: false })
+        .limit(20)
+        .then(r => r),
+    ];
+
+    if (studentTableId) {
+      promises.push(
+        supabase.from("attendance").select("status").eq("student_id", studentTableId).then(r => r)
+      );
+      promises.push(
+        supabase.from("invoices").select("total_usd, paid_usd").eq("student_id", studentTableId).then(r => r)
+      );
+    }
+
+    if (classId) {
+      promises.push(
+        supabase
+          .from("assessments")
+          .select("id")
+          .eq("class_id", classId)
+          .eq("is_published", true)
+          .gte("due_date", new Date().toISOString().split("T")[0])
+          .then(r => r)
+      );
+      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      promises.push(
+        supabase
+          .from("study_materials")
+          .select("id")
+          .eq("class_id", classId)
+          .eq("is_published", true)
+          .gte("created_at", weekAgo)
+          .then(r => r)
+      );
+    }
+
+    const results = await Promise.all(promises);
+
+    // Process announcements
+    setAnnouncements(results[0]?.data || []);
+
+    let idx = 1;
+    if (studentTableId) {
+      // Attendance
+      const attData = results[idx]?.data || [];
+      if (attData.length > 0) {
+        const present = attData.filter((a: any) => a.status === "present" || a.status === "late").length;
+        setAttendancePercent(Math.round((present / attData.length) * 100));
+      }
+      idx++;
+      // Fees
+      const invData = results[idx]?.data || [];
+      if (invData.length > 0) {
+        const balance = invData.reduce((sum: number, i: any) => sum + (i.total_usd - i.paid_usd), 0);
+        setFeeBalance(balance);
+      }
+      idx++;
+    }
+
+    if (classId) {
+      setUpcomingAssessments(results[idx]?.data?.length || 0);
+      idx++;
+      setNewMaterials(results[idx]?.data?.length || 0);
+    }
+
+    setLoading(false);
+  };
+
+  const displayName = student?.full_name || profile?.full_name || user?.user_metadata?.full_name || "Student";
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-secondary border-t-transparent" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background pb-20 md:pb-6">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
+        <div className="container flex h-14 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <img src={schoolLogo} alt="Gifford High School" className="h-8 w-8 object-contain" />
+            <span className="font-heading text-base font-bold text-foreground hidden sm:inline">Student Portal</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <span className="text-xs text-muted-foreground hidden sm:inline max-w-[120px] truncate">{displayName}</span>
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden md:flex">
+              <LogOut className="mr-1 h-4 w-4" /> Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Desktop Side Nav */}
+      <div className="hidden md:flex">
+        <aside className="sticky top-14 h-[calc(100vh-56px)] w-56 border-r bg-card p-4 space-y-1">
+          {[
+            { id: "home" as TabId, label: "Dashboard", icon: User },
+            { id: "materials" as TabId, label: "Study Materials", icon: BookOpen },
+            { id: "assessments" as TabId, label: "Assessments", icon: ClipboardCheck },
+            { id: "attendance" as TabId, label: "Attendance", icon: Calendar },
+            { id: "profile" as TabId, label: "Profile", icon: User },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  activeTab === item.id
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
+        </aside>
+
+        <main className="flex-1 p-6 max-w-4xl">
+          <TabContent
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            displayName={displayName}
+            profile={profile}
+            student={student}
+            studentClassId={studentClassId}
+            studentClassName={studentClassName}
+            announcements={announcements}
+            attendancePercent={attendancePercent}
+            upcomingAssessments={upcomingAssessments}
+            newMaterials={newMaterials}
+            feeBalance={feeBalance}
+            userId={user!.id}
+            onRefresh={fetchData}
+          />
+        </main>
+      </div>
+
+      {/* Mobile Content */}
+      <div className="md:hidden">
+        <main className="container px-4 py-4">
+          <TabContent
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            displayName={displayName}
+            profile={profile}
+            student={student}
+            studentClassId={studentClassId}
+            studentClassName={studentClassName}
+            announcements={announcements}
+            attendancePercent={attendancePercent}
+            upcomingAssessments={upcomingAssessments}
+            newMaterials={newMaterials}
+            feeBalance={feeBalance}
+            userId={user!.id}
+            onRefresh={fetchData}
+          />
+        </main>
+        <StudentBottomNav activeTab={activeTab} onTabChange={(t) => setActiveTab(t as TabId)} />
+      </div>
+    </div>
+  );
+}
+
+interface TabContentProps {
+  activeTab: TabId;
+  setActiveTab: (tab: TabId) => void;
+  displayName: string;
+  profile: any;
+  student: any;
+  studentClassId: string | null;
+  studentClassName: string | null;
+  announcements: any[];
+  attendancePercent: number;
+  upcomingAssessments: number;
+  newMaterials: number;
+  feeBalance: number | null;
+  userId: string;
+  onRefresh: () => void;
+}
+
+function TabContent({
+  activeTab, setActiveTab, displayName, profile, student, studentClassId, studentClassName,
+  announcements, attendancePercent, upcomingAssessments, newMaterials, feeBalance,
+  userId, onRefresh,
+}: TabContentProps) {
+  const [homeSubTab, setHomeSubTab] = useState<"overview" | "timetable" | "planner" | "fees" | "announcements" | "marks" | "results" | "exam-timetable" | "reports">("overview");
+
+  if (activeTab === "home") {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+        {/* Welcome */}
+        <div>
+          <h1 className="text-xl font-bold">Welcome, {displayName.split(" ")[0]}!</h1>
+          <p className="text-sm text-muted-foreground">
+            {student?.form} {student?.stream} · {student?.admission_number}
+          </p>
+        </div>
+
+        {/* Metrics */}
+        <StudentMetricsCards
+          attendancePercent={attendancePercent}
+          upcomingAssessments={upcomingAssessments}
+          newMaterials={newMaterials}
+          feeBalance={feeBalance}
+        />
+
+        {/* Quick Nav Sections */}
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {[
+            { id: "overview" as const, label: "Overview" },
+            { id: "timetable" as const, label: "Timetable" },
+            { id: "planner" as const, label: "My Planner" },
+            { id: "announcements" as const, label: "Announcements" },
+            { id: "marks" as const, label: "Marks" },
+            { id: "results" as const, label: "Exam Results" },
+            { id: "exam-timetable" as const, label: "Exam Timetable" },
+            { id: "reports" as const, label: "Term Reports" },
+            { id: "fees" as const, label: "Fees" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setHomeSubTab(t.id)}
+              className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                homeSubTab === t.id
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {homeSubTab === "overview" && (
+          <div className="space-y-4">
+            {/* Quick Actions */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" className="h-auto py-3 flex-col gap-1" onClick={() => setActiveTab("materials")}>
+                <BookOpen className="h-5 w-5 text-secondary" />
+                <span className="text-xs">Materials</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-3 flex-col gap-1" onClick={() => setActiveTab("assessments")}>
+                <ClipboardCheck className="h-5 w-5 text-secondary" />
+                <span className="text-xs">Assessments</span>
+              </Button>
+            </div>
+
+            {/* Recent Announcements */}
+            <div>
+              <h3 className="text-sm font-medium mb-2">Recent Announcements</h3>
+              <StudentAnnouncementsSection announcements={announcements} limit={3} />
+            </div>
+          </div>
+        )}
+
+        {homeSubTab === "timetable" && <StudentTimetableTab studentClassId={studentClassId} studentId={student?.id} />}
+        {homeSubTab === "planner" && <PersonalTimetableEditor title="My Personal Planner" />}
+        {homeSubTab === "announcements" && <StudentAnnouncementsSection announcements={announcements} />}
+        {homeSubTab === "marks" && <StudentMarksTab studentId={student?.id} />}
+        {homeSubTab === "results" && (
+          <StudentExamResultsTab
+            studentId={student?.id}
+            studentName={student?.full_name || displayName}
+            admissionNumber={student?.admission_number}
+            form={student?.form}
+            stream={student?.stream}
+          />
+        )}
+        {homeSubTab === "fees" && <StudentFeeTab studentId={student?.id} />}
+        {homeSubTab === "exam-timetable" && <StudentExamTimetableTab />}
+        {homeSubTab === "reports" && <StudentTermReportsTab />}
+      </motion.div>
+    );
+  }
+
+  if (activeTab === "materials") {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+        <h2 className="text-lg font-bold">Study Materials</h2>
+        <StudentMaterialsTab studentClassId={studentClassId} />
+      </motion.div>
+    );
+  }
+
+  if (activeTab === "assessments") {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+        <h2 className="text-lg font-bold">Assessments</h2>
+        <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />
+      </motion.div>
+    );
+  }
+
+  if (activeTab === "attendance") {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+        <h2 className="text-lg font-bold">Attendance</h2>
+        <StudentAttendanceTab studentId={student?.id} />
+      </motion.div>
+    );
+  }
+
+  if (activeTab === "profile") {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+        <h2 className="text-lg font-bold">My Profile</h2>
+        <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />
+      </motion.div>
+    );
+  }
+
+  return null;
+}
