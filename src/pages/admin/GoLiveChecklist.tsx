@@ -40,7 +40,7 @@ const CHECKLIST: ChecklistItem[] = [
   { id: "notifications", category: "Functionality", label: "Notification system working", description: "In-app notifications deliver to correct users on events." },
 
   // Deployment
-  { id: "domain", category: "Deployment", label: "Custom domain configured", description: "portal.giffordhigh.co.zw is pointing to the application." },
+  { id: "domain", category: "Deployment", label: "Custom domain configured", description: "portal.mavingtech.com is pointing to the application." },
   { id: "ssl", category: "Deployment", label: "SSL certificate active", description: "HTTPS is working on the custom domain." },
   { id: "backup", category: "Deployment", label: "Backup plan in place", description: "Database backup schedule configured and tested." },
   { id: "published", category: "Deployment", label: "Application published", description: "Latest version has been published via Lovable." },
@@ -68,7 +68,7 @@ export default function GoLiveChecklist() {
 
   // Load saved state
   useEffect(() => {
-    const saved = localStorage.getItem("gifford-golive-checklist");
+    const saved = localStorage.getItem("mavingtech-golive-checklist");
     if (saved) {
       try { setChecked(JSON.parse(saved)); } catch { /* ignore */ }
     }
@@ -76,7 +76,7 @@ export default function GoLiveChecklist() {
 
   // Save on change
   useEffect(() => {
-    localStorage.setItem("gifford-golive-checklist", JSON.stringify(checked));
+    localStorage.setItem("mavingtech-golive-checklist", JSON.stringify(checked));
   }, [checked]);
 
   const toggle = (id: string) => {

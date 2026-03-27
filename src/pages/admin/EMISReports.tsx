@@ -235,7 +235,7 @@ export default function EMISReports() {
     if (reportType === "Student Enrollment") {
       const wsData = [
         ["EMIS Student Enrollment Report", "", "", ""],
-        ["Gifford High School", "", "", ""],
+        ["MavingTech Business Solutions", "", "", ""],
         [`Academic Year: ${academicYear}`, "", "", ""],
         [],
         ["Form Level", "Male", "Female", "Total"],
@@ -248,7 +248,7 @@ export default function EMISReports() {
     } else if (reportType === "Staff Returns") {
       const wsData = [
         ["EMIS Staff Returns Report", "", "", ""],
-        ["Gifford High School", "", "", ""],
+        ["MavingTech Business Solutions", "", "", ""],
         [`Academic Year: ${academicYear}`, "", "", ""],
         [],
         ["Category", "Count", "Qualified", "% Qualified"],
@@ -262,7 +262,7 @@ export default function EMISReports() {
     } else if (reportType === "Infrastructure") {
       const wsData = [
         ["EMIS Infrastructure Report", ""],
-        ["Gifford High School", ""],
+        ["MavingTech Business Solutions", ""],
         [`Academic Year: ${academicYear}`, ""],
         [],
         ["Facility", "Count/Quantity"],

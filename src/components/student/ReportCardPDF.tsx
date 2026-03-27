@@ -131,7 +131,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
 <button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
 <div class="container">
   <div class="header">
-    <div class="school-name">Gifford High School</div>
+    <div class="school-name">MavingTech Business Solutions</div>
     <div class="school-motto">"Excellence Through Discipline and Hard Work"</div>
     <div class="report-title">Termly Report Card</div>
   </div>
@@ -218,7 +218,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
   </div>
 
   <div class="footer">
-    <p>Gifford High School · P.O. Box 123, Mazowe, Zimbabwe · Tel: +263 XXX XXXX</p>
+    <p>MavingTech Business Solutions · P.O. Box 123, Mazowe, Zimbabwe · Tel: +263 XXX XXXX</p>
     <p>Generated on ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
   </div>
 </div>

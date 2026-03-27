@@ -148,7 +148,7 @@ export default function VerificationCodesManager() {
   const printCodes = () => {
     const activeCodes = filtered.filter((c) => getStatus(c) === "active");
     const printContent = `
-      <html><head><title>Verification Codes - Gifford High School</title>
+      <html><head><title>Verification Codes - MavingTech Business Solutions</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         h1 { font-size: 18px; margin-bottom: 4px; }
@@ -159,7 +159,7 @@ export default function VerificationCodesManager() {
         .code { font-family: monospace; font-weight: bold; font-size: 14px; letter-spacing: 2px; }
         @media print { body { padding: 0; } }
       </style></head><body>
-      <h1>Gifford High School — Parent Verification Codes</h1>
+      <h1>MavingTech Business Solutions — Parent Verification Codes</h1>
       <p>Generated: ${format(new Date(), "dd MMM yyyy")}</p>
       <table>
         <thead><tr><th>Admission #</th><th>Student Name</th><th>Form</th><th>Verification Code</th></tr></thead>

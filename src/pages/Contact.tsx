@@ -129,9 +129,9 @@ export default function Contact() {
       <section className="bg-section-warm py-12">
         <div className="container grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: MapPin, title: "Address", text: "Gifford High School, Bulawayo, Zimbabwe" },
+            { icon: MapPin, title: "Address", text: "MavingTech Business Solutions, Bulawayo, Zimbabwe" },
             { icon: Phone, title: "Phone", text: "+263 29 2XXXXXX" },
-            { icon: Mail, title: "Email", text: "info@giffordhigh.ac.zw" },
+            { icon: Mail, title: "Email", text: "info@mavingtech.com" },
             { icon: Clock, title: "Office Hours", text: "Mon – Fri: 07:30 – 15:30" },
           ].map((item, i) => (
             <motion.div key={item.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>

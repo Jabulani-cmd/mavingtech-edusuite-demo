@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import moeLogo from "@/assets/ministry-of-education-logo.png";
 import cambridgeLogo from "@/assets/cambridge-logo.png";
 import zimsecLogo from "@/assets/zimsec-logo.png";
@@ -12,10 +12,10 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="Gifford High School crest" className="h-32 w-32 object-contain" />
-              <span className="font-heading text-xl font-bold">Gifford High School</span>
+              <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-32 w-32 object-contain" />
+              <span className="font-heading text-xl font-bold">MavingTech Business Solutions</span>
             </div>
-            <p className="text-xs italic text-primary-foreground/70">Hinc Orior — From Here I Arise</p>
+            <p className="text-xs italic text-primary-foreground/70">Empowering Your Business Through Technology</p>
             <p className="mt-1 text-sm text-primary-foreground/80">
               Nurturing excellence in education, sports, and character since 1927.
             </p>
@@ -48,7 +48,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li className="flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0" /> Bulawayo, Zimbabwe</li>
               <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> +263 29 XXXXXXX</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> info@giffordhigh.ac.zw</li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> info@mavingtech.com</li>
             </ul>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-6 border-t border-primary-foreground/10 pt-4 text-center text-xs text-primary-foreground/50">
-          <p>© {new Date().getFullYear()} Gifford High School. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MavingTech Business Solutions. All rights reserved.</p>
           <p className="mt-1">
             Designed &amp; maintained by{" "}
             <a href="https://mavingtech.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">

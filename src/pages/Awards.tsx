@@ -4,7 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 
 export default function Awards() {
   const [awards, setAwards] = useState<any[]>([]);
@@ -26,9 +26,9 @@ export default function Awards() {
     <Layout>
       <section className="bg-gradient-to-br from-primary to-secondary py-16 text-primary-foreground">
         <div className="container text-center">
-          <img src={schoolLogo} alt="Gifford High School crest" className="mx-auto mb-4 h-24 w-24 object-contain" />
+          <img src={schoolLogo} alt="MavingTech Business Solutions" className="mx-auto mb-4 h-24 w-24 object-contain" />
           <h1 className="font-heading text-4xl font-bold">Awards & Prize-Giving</h1>
-          <p className="mt-2 text-lg opacity-90">Celebrating excellence and achievement at Gifford High School</p>
+          <p className="mt-2 text-lg opacity-90">Celebrating excellence and achievement at MavingTech Business Solutions</p>
         </div>
       </section>
 

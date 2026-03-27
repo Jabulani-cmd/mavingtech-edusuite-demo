@@ -16,7 +16,7 @@ export default function Alumni() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
             Notable Alumni
           </motion.h1>
-          <p className="mt-2 text-secondary-foreground/70">Gifford High graduates making an impact across the world.</p>
+          <p className="mt-2 text-secondary-foreground/70">MavingTech graduates making an impact across the world.</p>
         </div>
       </section>
 

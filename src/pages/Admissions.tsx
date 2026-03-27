@@ -36,7 +36,7 @@ export default function Admissions() {
             Admissions
           </motion.h1>
           <p className="mt-3 max-w-xl text-primary-foreground/80">
-            Join the Gifford High family. We welcome students who are eager to learn, grow, and contribute to our vibrant community.
+            Join the MavingTech family. We welcome students who are eager to learn, grow, and contribute to our vibrant community.
           </p>
         </div>
       </section>
@@ -76,7 +76,7 @@ export default function Admissions() {
                 <div className="py-12 text-center">
                   <CheckCircle className="mx-auto mb-4 h-16 w-16 text-primary" />
                   <h3 className="font-heading text-xl font-bold">Application Received!</h3>
-                  <p className="mt-2 text-muted-foreground">Thank you for applying to Gifford High School. We will contact you within 5 business days.</p>
+                  <p className="mt-2 text-muted-foreground">Thank you for applying to MavingTech Business Solutions. We will contact you within 5 business days.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">

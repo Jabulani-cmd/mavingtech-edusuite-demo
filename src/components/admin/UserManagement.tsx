@@ -289,7 +289,7 @@ export default function UserManagement() {
 
       const staffUsersFromTable: ManagedUser[] = (staffData || []).map((s: any) => ({
         id: s.user_id,
-        email: s.email || `${s.staff_number}@giffordhigh.ac.zw`,
+        email: s.email || `${s.staff_number}@mavingtech.com`,
         full_name: s.full_name,
         portal_role: portalRoleMap[s.user_id] || "teacher",
         staff_role: s.role,
@@ -309,7 +309,7 @@ export default function UserManagement() {
 
       const studentUsers: ManagedUser[] = (studentsData || []).map((s: any) => ({
         id: s.user_id,
-        email: `ghs${s.admission_number.toLowerCase().replace(/^ghs/, "")}@giffordhigh.ac.zw`,
+        email: `ghs${s.admission_number.toLowerCase().replace(/^ghs/, "")}@mavingtech.com`,
         full_name: s.full_name,
         portal_role: "student",
         staff_role: undefined,
@@ -749,7 +749,7 @@ export default function UserManagement() {
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="user@giffordhigh.ac.zw"
+                  placeholder="user@mavingtech.com"
                 />
               </div>
             </div>

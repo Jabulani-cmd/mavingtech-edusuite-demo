@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import zimbabweFlag from "@/assets/zimbabwe-flag.jpg";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -192,15 +192,15 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2 md:gap-3 min-w-0 flex-shrink-0">
           <img
             src={schoolLogo}
-            alt="Gifford High School crest"
+            alt="MavingTech Business Solutions"
             className="h-16 w-16 flex-shrink-0 object-contain md:h-20 md:w-20 lg:h-28 lg:w-28"
           />
           <div className="flex flex-col justify-center leading-tight">
             <span className="block font-heading text-lg font-bold tracking-tight text-white md:text-xl lg:text-2xl whitespace-nowrap">
-              Gifford High School
+              MavingTech Business Solutions
             </span>
             <span className="block text-[10px] italic text-white/60 md:text-xs lg:text-sm">
-              Hinc Orior — From Here I Arise
+              Empowering Your Business Through Technology
             </span>
           </div>
         </Link>

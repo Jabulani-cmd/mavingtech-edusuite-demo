@@ -10,9 +10,9 @@ type CarouselImage = {
 };
 
 const heroSlides = [
-  { small: "Hinc Orior", large: "From Here I Arise" },
-  { small: "Academic", large: "Excellence" },
-  { small: "A Legacy of", large: "Achievement" },
+  { small: "MavingTech", large: "Business Solutions" },
+  { small: "Empowering Your", large: "Business" },
+  { small: "Through", large: "Technology" },
 ];
 
 const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) {
@@ -58,7 +58,7 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
         <img
           key={img.id}
           src={img.image_url}
-          alt="Gifford High School"
+          alt="MavingTech Business Solutions"
           className="absolute inset-0 h-full w-full object-contain md:object-cover object-center transition-opacity duration-1000"
           style={{ 
             opacity: i === current ? 1 : 0,

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, BarChart3, BookOpen, Bell, LogOut, Calendar, ClipboardList } from "lucide-react";
 import PersonalTimetableEditor from "@/components/PersonalTimetableEditor";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -261,7 +261,7 @@ export default function ParentTeacherDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-20 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="Gifford High School crest" className="h-16 w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-16 w-16 object-contain" />
             <span className="font-heading text-lg font-bold text-primary">
               {isTeacher ? "Teacher Portal" : "Parent Portal"}
             </span>

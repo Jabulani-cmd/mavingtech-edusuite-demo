@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 
 type StaffMember = {
   id: string;
@@ -68,8 +68,8 @@ export default function Staff() {
         <section className="py-12">
           <div className="container max-w-4xl">
             <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-              <img src={groupPhoto} alt="Gifford High School Staff" className="w-full rounded-xl shadow-maroon object-cover" style={{ aspectRatio: "16/9" }} />
-              <p className="mt-3 text-center text-sm text-muted-foreground italic">Gifford High School Staff</p>
+              <img src={groupPhoto} alt="MavingTech Business Solutions Staff" className="w-full rounded-xl shadow-maroon object-cover" style={{ aspectRatio: "16/9" }} />
+              <p className="mt-3 text-center text-sm text-muted-foreground italic">MavingTech Business Solutions Staff</p>
             </motion.div>
           </div>
         </section>

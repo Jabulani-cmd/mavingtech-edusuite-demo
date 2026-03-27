@@ -28,7 +28,7 @@ import {
   Printer,
   ClipboardList,
 } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
@@ -288,7 +288,7 @@ export default function ParentDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
         <div className="container flex h-20 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="Gifford High School" className="h-16 w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-16 w-16 object-contain" />
             <div className="hidden sm:block">
               <span className="font-heading text-base font-bold text-foreground">Parent Portal</span>
               <p className="text-xs text-muted-foreground leading-none">{displayName}</p>

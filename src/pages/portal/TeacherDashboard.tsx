@@ -15,7 +15,7 @@ import {
   FileText, Users, CheckCircle2, Clock, GraduationCap, AlertCircle, CalendarOff,
   TrendingUp, FolderOpen, MessageSquare
 } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -295,7 +295,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
         <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
           <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
             <div className="flex items-center gap-2">
-              <img src={schoolLogo} alt="Gifford High" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
+              <img src={schoolLogo} alt="MavingTech" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
               <span className="font-heading text-sm sm:text-lg font-bold text-primary">Teacher Portal</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">

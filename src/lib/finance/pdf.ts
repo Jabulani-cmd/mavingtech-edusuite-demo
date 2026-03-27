@@ -2,11 +2,11 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 // School branding constants
-export const SCHOOL_NAME = "Gifford High School";
-export const SCHOOL_MOTTO = "Hinc Orior – From Here I Arise";
+export const SCHOOL_NAME = "MavingTech Business Solutions";
+export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
 export const SCHOOL_ADDRESS = "P.O. Box 1965, Bulawayo, Zimbabwe";
 export const SCHOOL_PHONE = "+263 29 288 3621";
-export const SCHOOL_EMAIL = "info@giffordhigh.ac.zw";
+export const SCHOOL_EMAIL = "info@mavingtech.com";
 export const SCHOOL_LOGO_URL = "/images/school-logo-print.png";
 
 export type Money = { usd: number; zig: number };

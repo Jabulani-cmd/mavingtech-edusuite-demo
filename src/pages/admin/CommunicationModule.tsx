@@ -53,11 +53,11 @@ const channelOptions = [
 const formLevels = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
 
 const defaultTemplates = [
-  { name: "Fee Reminder", category: "fee_reminder", template_text: "Dear Parent/Guardian of {{student_name}}, this is a reminder that fees of ${{balance}} for {{term}} are due by {{due_date}}. Please make payment at your earliest convenience. Gifford High School.", variables: ["student_name", "balance", "term", "due_date"] },
-  { name: "Attendance Alert", category: "attendance", template_text: "Dear Parent/Guardian, {{student_name}} was marked {{status}} on {{date}}. Please contact the school if you have any concerns. Gifford High School.", variables: ["student_name", "status", "date"] },
-  { name: "Exam Results Released", category: "exam_results", template_text: "Dear Parent/Guardian, {{exam_name}} results for {{student_name}} are now available on the student portal. Please log in to view. Gifford High School.", variables: ["exam_name", "student_name"] },
-  { name: "Meeting Notice", category: "meeting", template_text: "Dear {{recipient_name}}, you are invited to {{meeting_title}} on {{date}} at {{time}}, {{venue}}. Your attendance is important. Gifford High School.", variables: ["recipient_name", "meeting_title", "date", "time", "venue"] },
-  { name: "Emergency Closure", category: "emergency", template_text: "URGENT: Gifford High School will be closed on {{date}} due to {{reason}}. Students should remain at home. Normal operations resume on {{resume_date}}.", variables: ["date", "reason", "resume_date"] },
+  { name: "Fee Reminder", category: "fee_reminder", template_text: "Dear Parent/Guardian of {{student_name}}, this is a reminder that fees of ${{balance}} for {{term}} are due by {{due_date}}. Please make payment at your earliest convenience. MavingTech Business Solutions.", variables: ["student_name", "balance", "term", "due_date"] },
+  { name: "Attendance Alert", category: "attendance", template_text: "Dear Parent/Guardian, {{student_name}} was marked {{status}} on {{date}}. Please contact the school if you have any concerns. MavingTech Business Solutions.", variables: ["student_name", "status", "date"] },
+  { name: "Exam Results Released", category: "exam_results", template_text: "Dear Parent/Guardian, {{exam_name}} results for {{student_name}} are now available on the student portal. Please log in to view. MavingTech Business Solutions.", variables: ["exam_name", "student_name"] },
+  { name: "Meeting Notice", category: "meeting", template_text: "Dear {{recipient_name}}, you are invited to {{meeting_title}} on {{date}} at {{time}}, {{venue}}. Your attendance is important. MavingTech Business Solutions.", variables: ["recipient_name", "meeting_title", "date", "time", "venue"] },
+  { name: "Emergency Closure", category: "emergency", template_text: "URGENT: MavingTech Business Solutions will be closed on {{date}} due to {{reason}}. Students should remain at home. Normal operations resume on {{resume_date}}.", variables: ["date", "reason", "resume_date"] },
 ];
 
 export default function CommunicationModule() {

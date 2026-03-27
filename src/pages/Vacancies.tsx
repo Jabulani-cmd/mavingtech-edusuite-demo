@@ -37,7 +37,7 @@ export default function Vacancies() {
             viewport={{ once: true }}
             className="mb-8 text-center text-lg text-muted-foreground"
           >
-            View current job openings and career opportunities at Gifford High School.
+            View current job openings and career opportunities at MavingTech Business Solutions.
           </motion.p>
 
           {docs.length > 0 ? (

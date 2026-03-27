@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import NotificationBell from "@/components/NotificationBell";
@@ -203,7 +203,7 @@ export default function StudentDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
         <div className="container flex h-20 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="Gifford High School" className="h-16 w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-16 w-16 object-contain" />
             <span className="font-heading text-base font-bold text-foreground hidden sm:inline">Student Portal</span>
           </div>
           <div className="flex items-center gap-2">
