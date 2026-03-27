@@ -10,9 +10,9 @@ type CarouselImage = {
 };
 
 const heroSlides = [
-  { small: "Empowering Your Business Through Technology", large: "Empowering Your Business Through Technology" },
-  { small: "Academic", large: "Excellence" },
-  { small: "A Legacy of", large: "Achievement" },
+  { small: "MavingTech", large: "Business Solutions" },
+  { small: "Empowering Your", large: "Business" },
+  { small: "Through", large: "Technology" },
 ];
 
 const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) {
