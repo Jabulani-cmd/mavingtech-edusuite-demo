@@ -9,7 +9,7 @@ import Layout from "@/components/layout/Layout";
 import HeroCarousel from "@/components/HeroCarousel";
 import classroomImg from "@/assets/classroom.png";
 import achievementsImg from "@/assets/achievements.png";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -166,7 +166,7 @@ export default function Home() {
               <motion.div key={ql.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <Link to={ql.path} className="group block">
                   <div className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 py-8 transition-all hover:border-secondary/50 hover:bg-white/10">
-                    <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="h-10 w-10 object-contain" />
+                    <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-10 w-10 object-contain" />
                     <span className="font-heading text-sm font-bold uppercase tracking-wider text-white">{ql.label}</span>
                     <span className="text-xs text-white/50">{ql.desc}</span>
                   </div>

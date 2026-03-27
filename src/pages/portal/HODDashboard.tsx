@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, Users, GraduationCap, BookOpen, Briefcase, ClipboardList, Bell, CheckCircle2, UserCheck, Layers, CalendarOff } from "lucide-react";
-import schoolLogo from "@/assets/school-logo.png";
+import schoolLogo from "@/assets/mavingtech-logo.jpeg";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -43,7 +43,7 @@ export default function HODDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
             <span className="font-heading text-sm sm:text-lg font-bold text-primary">HOD Portal</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
