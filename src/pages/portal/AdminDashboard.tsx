@@ -656,7 +656,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="Gifford High School crest" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
             <span className="font-heading text-sm sm:text-lg font-bold text-primary">{displayTitle}</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -1131,7 +1131,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
               <Card>
                 <CardHeader><CardTitle className="font-heading">CTA Section Image</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">This image appears on the homepage next to the "Ready to Join the Gifford Family?" section.</p>
+                  <p className="text-sm text-muted-foreground">This image appears on the homepage next to the "Ready to Join the MavingTech Family?" section.</p>
                   <input type="file" accept="image/*" ref={ctaFileRef} onChange={handleCtaFileSelect} className="hidden" />
                   <Button onClick={() => ctaFileRef.current?.click()} disabled={uploading}>
                     <Upload className="mr-1 h-4 w-4" /> {uploading ? "Uploading…" : "Upload Image"}

@@ -99,7 +99,7 @@ export default function ResetPassword() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
-              <img src={schoolLogo} alt="Gifford High School crest" className="mx-auto mb-2 h-20 w-20 object-contain" />
+              <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="mx-auto mb-2 h-20 w-20 object-contain" />
               <CardTitle className="font-heading text-2xl text-primary">Set New Password</CardTitle>
               <p className="text-sm text-muted-foreground">Enter your new password below</p>
             </CardHeader>

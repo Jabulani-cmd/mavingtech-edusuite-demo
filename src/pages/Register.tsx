@@ -121,9 +121,9 @@ export default function Register() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
-              <img src={schoolLogo} alt="Gifford High School crest" className="mx-auto mb-2 h-16 w-16 object-contain" />
+              <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="mx-auto mb-2 h-16 w-16 object-contain" />
               <CardTitle className="font-heading text-2xl text-primary">Parent Registration</CardTitle>
-              <p className="text-xs italic text-muted-foreground">Hinc Orior — From Here I Arise</p>
+              <p className="text-xs italic text-muted-foreground">Empowering Your Business Through Technology</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">

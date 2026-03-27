@@ -842,7 +842,7 @@ export default function FinanceManagement() {
       table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f5f5f5;font-weight:600}
       .right{text-align:right}.mono{font-family:monospace}.summary{margin-top:16px;padding:12px;border:2px solid #333;display:inline-block}
       .red{color:#c00}.green{color:#060}@media print{body{padding:15px}}</style></head><body>
-      <h1>Gifford High School</h1>
+      <h1>MavingTech Business Solutions</h1>
       <p><strong>Student Financial Statement</strong></p>
       <p>Student: <strong>${safeHtml(stmtStudent.full_name)}</strong> | Adm #: <strong>${safeHtml(stmtStudent.admission_number)}</strong> | Form: <strong>${safeHtml(stmtStudent.form)}</strong></p>
       <p>Date: ${new Date().toLocaleDateString()}</p>
@@ -878,7 +878,7 @@ export default function FinanceManagement() {
       table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f5f5f5;font-weight:600}
       .right{text-align:right}.mono{font-family:monospace}.red{color:#c00}.total{font-weight:bold;background:#fef2f2}
       @media print{body{padding:15px}}</style></head><body>
-      <h1>Gifford High School — Debtors List</h1>
+      <h1>MavingTech Business Solutions — Debtors List</h1>
       <p>Date: ${new Date().toLocaleDateString()} | Filter: ${debtorsFormFilter === "all" ? "All Forms" : debtorsFormFilter} | Total: ${filtered.length} student(s)</p>
        table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Form</th><th>Invoice</th><th>Term</th><th class="right">Owed USD</th><th class="right">Owed ZiG</th><th>Status</th></tr> </thead>
       <tbody>

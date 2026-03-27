@@ -51,7 +51,7 @@ const PrincipalPhoto = forwardRef<HTMLDivElement>(function PrincipalPhoto(_props
         />
       ) : (
         <div className="flex h-[420px] w-full items-center justify-center rounded-xl bg-muted shadow-2xl">
-          <img src={schoolLogo} alt="Gifford High School" className="h-32 w-32 object-contain opacity-40" />
+          <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-32 w-32 object-contain opacity-40" />
         </div>
       )}
       <div className="absolute -bottom-4 left-6 rounded-lg bg-secondary px-5 py-2.5 shadow-lg">
@@ -139,7 +139,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="font-heading text-3xl font-bold text-white md:text-5xl"
           >
-            Welcome to Gifford High School
+            Welcome to MavingTech Business Solutions
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -157,7 +157,7 @@ export default function Home() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="mt-3 font-heading text-sm italic text-secondary"
           >
-            Hinc Orior — From Here I Arise
+            Empowering Your Business Through Technology
           </motion.p>
 
           {/* Quick link cards — Woodberry-style icon cards */}
@@ -166,7 +166,7 @@ export default function Home() {
               <motion.div key={ql.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <Link to={ql.path} className="group block">
                   <div className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 py-8 transition-all hover:border-secondary/50 hover:bg-white/10">
-                    <img src={schoolLogo} alt="Gifford High School crest" className="h-10 w-10 object-contain" />
+                    <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="h-10 w-10 object-contain" />
                     <span className="font-heading text-sm font-bold uppercase tracking-wider text-white">{ql.label}</span>
                     <span className="text-xs text-white/50">{ql.desc}</span>
                   </div>
@@ -208,13 +208,13 @@ export default function Home() {
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">From the Principal's Desk</h2>
             <div className="mt-1 h-1 w-16 bg-secondary" />
             <p className="mt-6 leading-relaxed text-muted-foreground">
-              It is with great pride and pleasure that I welcome you to Gifford High School. Our institution has been a beacon of excellence in education since 1927, nurturing young minds to become leaders, innovators, and responsible citizens.
+              It is with great pride and pleasure that I welcome you to MavingTech Business Solutions. Our institution has been a beacon of excellence in education since 1927, nurturing young minds to become leaders, innovators, and responsible citizens.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              At Gifford, we believe in holistic education — combining rigorous academics with vibrant sporting and cultural programmes. Our dedicated staff work tirelessly to ensure every student reaches their full potential.
+              At MavingTech, we believe in holistic education — combining rigorous academics with vibrant sporting and cultural programmes. Our dedicated staff work tirelessly to ensure every student reaches their full potential.
             </p>
             <p className="mt-4 font-heading text-sm font-semibold italic text-foreground">
-              — The Principal, Gifford High School
+              — The Principal, MavingTech Business Solutions
             </p>
             <Link to="/about" className="mt-8 inline-block">
               <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 uppercase tracking-wider text-xs font-semibold px-8">
@@ -271,7 +271,7 @@ export default function Home() {
             className="mb-14 text-center"
           >
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">Discover</span>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">Why Gifford High?</h2>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">Why MavingTech?</h2>
             <div className="mx-auto mt-3 h-1 w-16 bg-secondary" />
           </motion.div>
 
@@ -280,7 +280,7 @@ export default function Home() {
               <motion.div key={h.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <div className="group flex flex-col items-center text-center">
                   <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full border-2 border-secondary/20 transition-colors group-hover:border-secondary/60">
-                    <img src={schoolLogo} alt="Gifford High School" className="h-14 w-14 object-contain" />
+                    <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-14 w-14 object-contain" />
                   </div>
                   <h3 className="mb-2 font-heading text-lg font-bold text-foreground">{h.title}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">{h.desc}</p>
@@ -307,7 +307,7 @@ export default function Home() {
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">A Tradition of Excellence</h2>
             <div className="mt-3 h-1 w-16 bg-secondary" />
             <p className="mt-6 leading-relaxed text-muted-foreground">
-              Founded in 1927, Gifford High School has been a cornerstone of education in Bulawayo. Our students consistently achieve top results in both ZIMSEC and Cambridge examinations, and our alumni hold distinguished positions across the globe.
+              Founded in 1927, MavingTech Business Solutions has been a cornerstone of education in Bulawayo. Our students consistently achieve top results in both ZIMSEC and Cambridge examinations, and our alumni hold distinguished positions across the globe.
             </p>
             <Link to="/about" className="mt-8 inline-block">
               <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 uppercase tracking-wider text-xs font-semibold px-8">
@@ -435,7 +435,7 @@ export default function Home() {
           <div>
             <h2 className="font-heading text-3xl font-bold text-white md:text-5xl">
               Ready to Join the{" "}
-              <span className="text-secondary">Gifford Family?</span>
+              <span className="text-secondary">MavingTech Family?</span>
             </h2>
             <p className="mt-5 max-w-lg text-white/70">
               Applications for the next academic year are now open. Take the first step towards a world-class education.
@@ -456,10 +456,10 @@ export default function Home() {
 
           <div className="hidden lg:flex items-center justify-center">
             {ctaImage ? (
-              <img src={ctaImage} alt="Join Gifford High School" className="h-80 w-80 rounded-xl object-cover shadow-lg" />
+              <img src={ctaImage} alt="Join MavingTech Business Solutions" className="h-80 w-80 rounded-xl object-cover shadow-lg" />
             ) : (
               <div className="flex h-80 w-80 items-center justify-center rounded-xl border-2 border-dashed border-white/30 bg-white/10">
-                <img src={schoolLogo} alt="Gifford High School" className="h-32 w-32 object-contain opacity-40" />
+                <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-32 w-32 object-contain opacity-40" />
               </div>
             )}
           </div>

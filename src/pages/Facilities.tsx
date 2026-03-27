@@ -65,7 +65,7 @@ export default function Facilities() {
             viewport={{ once: true }}
             className="text-lg leading-relaxed text-muted-foreground"
           >
-            Gifford High School is a boys-only boarding school providing excellent facilities to support
+            MavingTech Business Solutions is a boys-only boarding school providing excellent facilities to support
             academic excellence, sporting achievement, and holistic development. Our campus features modern
             classrooms, well-equipped laboratories, expansive sports grounds, a comprehensive library,
             ICT facilities, and comfortable boarding accommodation.
@@ -103,7 +103,7 @@ export default function Facilities() {
       {/* Boarding Info */}
       <section className="py-16">
         <div className="container max-w-4xl">
-          <h2 className="mb-8 text-center font-heading text-3xl font-bold text-primary">Life at Gifford</h2>
+          <h2 className="mb-8 text-center font-heading text-3xl font-bold text-primary">Life at MavingTech</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               { title: "Boys' Hostel", desc: "Well-maintained dormitories with supervised study sessions, recreational areas, and 24-hour security." },

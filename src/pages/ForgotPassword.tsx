@@ -65,7 +65,7 @@ export default function ForgotPassword() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
-              <img src={schoolLogo} alt="Gifford High School crest" className="mx-auto mb-2 h-20 w-20 object-contain" />
+              <img src={schoolLogo} alt="MavingTech Business Solutions crest" className="mx-auto mb-2 h-20 w-20 object-contain" />
               <CardTitle className="font-heading text-2xl text-primary">Forgot Password</CardTitle>
               <p className="text-sm text-muted-foreground">Enter your email to receive a reset link</p>
             </CardHeader>
@@ -74,7 +74,7 @@ export default function ForgotPassword() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <div className="relative">
-                    <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@giffordhigh.ac.zw" required />
+                    <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mavingtech.com" required />
                     <Mail className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   </div>
                 </div>

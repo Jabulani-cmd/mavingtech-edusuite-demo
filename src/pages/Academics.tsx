@@ -46,7 +46,7 @@ export default function Academics() {
               <div className="mb-8 max-w-2xl">
                 <h2 className="font-heading text-2xl font-bold text-primary">Our Curriculum</h2>
                 <p className="mt-3 text-muted-foreground">
-                  Gifford High offers both the ZIMSEC and Cambridge (CIE) examination streams, giving students the flexibility to pursue local or international qualifications at Ordinary and Advanced Level.
+                  MavingTech offers both the ZIMSEC and Cambridge (CIE) examination streams, giving students the flexibility to pursue local or international qualifications at Ordinary and Advanced Level.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

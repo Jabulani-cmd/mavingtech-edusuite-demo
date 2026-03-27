@@ -190,12 +190,12 @@ export default function BulkUserImport({ onImportComplete }: { onImportComplete?
     let csv = "";
     if (importType === "student") {
       csv = "full_name,email,password,portal_role,grade,class_name,phone\n";
-      csv += "John Doe,jdoe@giffordhigh.ac.zw,Student2026!,student,Form 1,A,+263 77 123 4567\n";
-      csv += "Jane Smith,jsmith@giffordhigh.ac.zw,Student2026!,student,Form 2,B,\n";
+      csv += "John Doe,jdoe@mavingtech.com,Student2026!,student,Form 1,A,+263 77 123 4567\n";
+      csv += "Jane Smith,jsmith@mavingtech.com,Student2026!,student,Form 2,B,\n";
     } else {
       csv = "full_name,email,password,portal_role,staff_role,department,phone\n";
-      csv += "Mr. T. Banda,tbanda@giffordhigh.ac.zw,Teacher2026!,teacher,teacher,Sciences,+263 77 234 5678\n";
-      csv += "Mrs. S. Ncube,sncube@giffordhigh.ac.zw,Teacher2026!,teacher,hod,Mathematics,\n";
+      csv += "Mr. T. Banda,tbanda@mavingtech.com,Teacher2026!,teacher,teacher,Sciences,+263 77 234 5678\n";
+      csv += "Mrs. S. Ncube,sncube@mavingtech.com,Teacher2026!,teacher,hod,Mathematics,\n";
     }
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

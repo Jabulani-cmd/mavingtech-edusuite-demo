@@ -227,7 +227,7 @@ export default function RegistrationDashboard() {
             <img src={schoolLogo} alt="GHS" className="h-10 w-10 sm:h-14 sm:w-14 object-contain" />
             <div>
               <h1 className="font-heading text-sm sm:text-lg font-bold text-primary">Registration Portal</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Gifford High School</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">MavingTech Business Solutions</p>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs sm:text-sm">
