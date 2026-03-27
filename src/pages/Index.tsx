@@ -208,10 +208,10 @@ export default function Home() {
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">From the Director's Desk</h2>
             <div className="mt-1 h-1 w-16 bg-secondary" />
             <p className="mt-6 leading-relaxed text-muted-foreground">
-              It is with great pride and pleasure that I welcome you to MavingTech Business Solutions. Our institution has been a beacon of excellence in education since 1927, nurturing young minds to become leaders, innovators, and responsible citizens.
+              Welcome to MavingTech Business Solutions. We are a technology-driven company dedicated to empowering businesses with innovative software solutions. Our flagship school management system streamlines administration, enhances communication, and drives operational efficiency for educational institutions.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              At MavingTech, we believe in holistic education — combining rigorous academics with vibrant sporting and cultural programmes. Our dedicated staff work tirelessly to ensure every student reaches their full potential.
+              At MavingTech, we believe technology should simplify — not complicate. Our team of skilled developers and consultants work closely with clients to deliver tailored solutions that transform how organisations operate, from student enrolment to financial reporting and beyond.
             </p>
             <p className="mt-4 font-heading text-sm font-semibold italic text-foreground">
               — The Director, MavingTech Business Solutions
