@@ -15,7 +15,7 @@ import {
   FileText, Users, CheckCircle2, Clock, GraduationCap, AlertCircle, CalendarOff,
   TrendingUp, FolderOpen, MessageSquare
 } from "lucide-react";
-import schoolLogo from "@/assets/mavingtech-logo.jpeg";
+import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";

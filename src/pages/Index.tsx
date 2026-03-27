@@ -9,7 +9,7 @@ import Layout from "@/components/layout/Layout";
 import HeroCarousel from "@/components/HeroCarousel";
 import classroomImg from "@/assets/classroom.png";
 import achievementsImg from "@/assets/achievements.png";
-import schoolLogo from "@/assets/mavingtech-logo.jpeg";
+import schoolLogo from "@/assets/mavingtech-logo.png";
 
 import { supabase } from "@/integrations/supabase/client";
 

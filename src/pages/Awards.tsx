@@ -4,7 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import schoolLogo from "@/assets/mavingtech-logo.jpeg";
+import schoolLogo from "@/assets/mavingtech-logo.png";
 
 export default function Awards() {
   const [awards, setAwards] = useState<any[]>([]);

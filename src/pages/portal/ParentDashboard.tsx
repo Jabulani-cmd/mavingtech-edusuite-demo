@@ -28,7 +28,7 @@ import {
   Printer,
   ClipboardList,
 } from "lucide-react";
-import schoolLogo from "@/assets/mavingtech-logo.jpeg";
+import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
