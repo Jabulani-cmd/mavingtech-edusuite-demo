@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, BarChart3, BookOpen, Bell, LogOut, Calendar, ClipboardList } from "lucide-react";
 import PersonalTimetableEditor from "@/components/PersonalTimetableEditor";
-import schoolLogo from "@/assets/mavingtech-logo.jpeg";
+import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
