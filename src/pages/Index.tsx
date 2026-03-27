@@ -46,7 +46,7 @@ const PrincipalPhoto = forwardRef<HTMLDivElement>(function PrincipalPhoto(_props
       {photoUrl ? (
         <img
           src={photoUrl}
-          alt="The Principal"
+          alt="The Director"
           className="aspect-[3/4] w-full rounded-xl object-cover object-top shadow-2xl lg:aspect-[4/5]"
         />
       ) : (
@@ -55,7 +55,7 @@ const PrincipalPhoto = forwardRef<HTMLDivElement>(function PrincipalPhoto(_props
         </div>
       )}
       <div className="absolute -bottom-4 left-6 rounded-lg bg-secondary px-5 py-2.5 shadow-lg">
-        <span className="text-sm font-bold text-secondary-foreground">Mrs. B. Dewa</span>
+        <span className="text-sm font-bold text-secondary-foreground">Mr. F.J. Moyo</span>
       </div>
     </div>
   );
@@ -204,8 +204,8 @@ export default function Home() {
             <PrincipalPhoto />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">Message from the Principal</span>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">From the Principal's Desk</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">Message from the Director</span>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">From the Director's Desk</h2>
             <div className="mt-1 h-1 w-16 bg-secondary" />
             <p className="mt-6 leading-relaxed text-muted-foreground">
               It is with great pride and pleasure that I welcome you to MavingTech Business Solutions. Our institution has been a beacon of excellence in education since 1927, nurturing young minds to become leaders, innovators, and responsible citizens.
@@ -214,7 +214,7 @@ export default function Home() {
               At MavingTech, we believe in holistic education — combining rigorous academics with vibrant sporting and cultural programmes. Our dedicated staff work tirelessly to ensure every student reaches their full potential.
             </p>
             <p className="mt-4 font-heading text-sm font-semibold italic text-foreground">
-              — The Principal, MavingTech Business Solutions
+              — The Director, MavingTech Business Solutions
             </p>
             <Link to="/about" className="mt-8 inline-block">
               <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 uppercase tracking-wider text-xs font-semibold px-8">
