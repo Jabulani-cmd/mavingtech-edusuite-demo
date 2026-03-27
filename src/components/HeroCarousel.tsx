@@ -81,12 +81,12 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.7 }}
             >
-              <p className="font-heading text-lg font-medium uppercase tracking-[0.35em] text-white/90 sm:text-xl md:text-2xl">
-                {slide.small}
-              </p>
               <h1 className="font-heading text-5xl font-bold leading-[0.95] text-secondary sm:text-7xl md:text-8xl lg:text-9xl">
                 {slide.large}
               </h1>
+              <p className="font-heading text-lg font-medium uppercase tracking-[0.35em] text-white/90 sm:text-xl md:text-2xl mt-2">
+                {slide.small}
+              </p>
             </motion.div>
           </AnimatePresence>
         </div>
