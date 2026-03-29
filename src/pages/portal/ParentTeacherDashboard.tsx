@@ -261,7 +261,7 @@ export default function ParentTeacherDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-20 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-16 w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-14 w-14 sm:h-20 sm:w-20 object-contain" />
             <span className="font-heading text-lg font-bold text-primary">
               {isTeacher ? "Teacher Portal" : "Parent Portal"}
             </span>

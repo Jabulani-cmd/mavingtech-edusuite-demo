@@ -203,7 +203,7 @@ export default function StudentDashboard() {
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
         <div className="container flex h-20 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-16 w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-14 w-14 sm:h-20 sm:w-20 object-contain" />
             <span className="font-heading text-base font-bold text-foreground hidden sm:inline">Student Portal</span>
           </div>
           <div className="flex items-center gap-2">
