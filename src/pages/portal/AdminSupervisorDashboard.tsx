@@ -169,7 +169,7 @@ export default function AdminSupervisorDashboard() {
       <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
         <div className="container mx-auto flex items-center justify-between px-3 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
-            <img src={schoolLogo} alt="Logo" className="h-10 w-10 sm:h-16 sm:w-16 object-contain" />
+            <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-14 w-14 sm:h-20 sm:w-20 object-contain" />
             <div>
               <h1 className="font-heading text-sm sm:text-lg font-bold text-primary">Admin Supervisor</h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">{user?.email}</p>
