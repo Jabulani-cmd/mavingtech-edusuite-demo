@@ -92,7 +92,7 @@ export default function Login() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
-              <img src={schoolLogo} alt="MavingTech Business Solutions" className="mx-auto mb-2 h-32 w-32 object-contain" />
+              <img src={schoolLogo} alt="MavingTech Business Solutions" className="mx-auto mb-2 h-48 w-48 object-contain" />
               <CardTitle className="font-heading text-2xl text-primary">Portal Login</CardTitle>
               <p className="text-xs italic text-muted-foreground">Empowering Your Business Through Technology</p>
               <p className="text-sm text-muted-foreground">Access your MavingTech portal</p>

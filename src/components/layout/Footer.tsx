@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-32 w-32 object-contain" />
+              <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-48 w-48 object-contain" />
               <span className="font-heading text-xl font-bold">MavingTech Business Solutions</span>
             </div>
             <p className="text-xs italic text-primary-foreground/70">Empowering Your Business Through Technology</p>

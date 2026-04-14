@@ -26,7 +26,7 @@ export default function Awards() {
     <Layout>
       <section className="bg-gradient-to-br from-primary to-secondary py-16 text-primary-foreground">
         <div className="container text-center">
-          <img src={schoolLogo} alt="MavingTech Business Solutions" className="mx-auto mb-4 h-24 w-24 object-contain" />
+          <img src={schoolLogo} alt="MavingTech Business Solutions" className="mx-auto mb-4 h-36 w-36 object-contain" />
           <h1 className="font-heading text-4xl font-bold">Awards & Prize-Giving</h1>
           <p className="mt-2 text-lg opacity-90">Celebrating excellence and achievement at MavingTech Business Solutions</p>
         </div>
