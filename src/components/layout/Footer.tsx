@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Twitter, Facebook, Instagram } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import moeLogo from "@/assets/ministry-of-education-logo.png";
 import cambridgeLogo from "@/assets/cambridge-logo.png";
@@ -7,81 +7,98 @@ import zimsecLogo from "@/assets/zimsec-logo.png";
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="container py-12">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="MavingTech Business Solutions" className="h-48 w-48 object-contain" />
-              <span className="font-heading text-xl font-bold">MavingTech Business Solutions</span>
-            </div>
-            <p className="text-xs italic text-primary-foreground/70">Empowering Your Business Through Technology</p>
-            <p className="mt-1 text-sm text-primary-foreground/80">
-              Nurturing excellence in education, sports, and character since 1927.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="mb-3 font-heading text-sm font-semibold uppercase tracking-wider text-secondary">Quick Links</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/about" className="hover:text-secondary transition-colors">About Us</Link></li>
-              <li><Link to="/academics" className="hover:text-secondary transition-colors">Academics</Link></li>
-              <li><Link to="/admissions" className="hover:text-secondary transition-colors">Admissions</Link></li>
-              <li><Link to="/school-life" className="hover:text-secondary transition-colors">School Life</Link></li>
-              <li><Link to="/fees" className="hover:text-secondary transition-colors">Fees</Link></li>
-              <li><Link to="/school-projects" className="hover:text-secondary transition-colors">School Projects</Link></li>
-              <li><Link to="/vacancies" className="hover:text-secondary transition-colors">Vacancies</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-3 font-heading text-sm font-semibold uppercase tracking-wider text-secondary">Portals</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/login" className="hover:text-secondary transition-colors">Student Portal</Link></li>
-              <li><Link to="/login" className="hover:text-secondary transition-colors">Parent/Teacher Portal</Link></li>
-              <li><Link to="/login" className="hover:text-secondary transition-colors">Admin Portal</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-3 font-heading text-sm font-semibold uppercase tracking-wider text-secondary">Contact</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0" /> Bulawayo, Zimbabwe</li>
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> +263 29 XXXXXXX</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> info@mavingtech.com</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Affiliations strip */}
-        <div className="mt-10 border-t border-primary-foreground/20 pt-8">
-          <p className="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-primary-foreground/50">
+    <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
+      {/* Affiliations strip on white */}
+      <div className="bg-background py-10 border-t border-border">
+        <div className="container">
+          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Affiliated With
           </p>
-          <div className="flex items-end justify-between">
+          <div className="flex flex-wrap items-center justify-center gap-10 opacity-80">
             <div className="flex flex-col items-center gap-1">
-              <img src={cambridgeLogo} alt="University of Cambridge" className="h-24 w-24 object-contain sm:h-[7.5rem] sm:w-[7.5rem] lg:h-36 lg:w-36" />
-              <span className="text-[10px] text-primary-foreground/50 sm:text-xs">Cambridge</span>
+              <img src={cambridgeLogo} alt="Cambridge" className="h-16 w-16 object-contain" />
+              <span className="text-[10px] text-muted-foreground">Cambridge</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <img src={moeLogo} alt="Ministry of Primary and Secondary Education" className="h-16 w-16 object-contain sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
-              <span className="max-w-[120px] text-center text-[10px] leading-tight text-primary-foreground/50 sm:max-w-none sm:text-xs">Ministry of Primary and Secondary Education</span>
+              <img src={moeLogo} alt="Ministry of Education" className="h-14 w-14 object-contain" />
+              <span className="max-w-[140px] text-center text-[10px] leading-tight text-muted-foreground">
+                Ministry of Primary &amp; Secondary Education
+              </span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <img src={zimsecLogo} alt="ZIMSEC" className="h-24 w-24 object-contain sm:h-[7.5rem] sm:w-[7.5rem] lg:h-36 lg:w-36" />
-              <span className="text-[10px] text-primary-foreground/50 sm:text-xs">ZIMSEC</span>
+              <img src={zimsecLogo} alt="ZIMSEC" className="h-16 w-16 object-contain" />
+              <span className="text-[10px] text-muted-foreground">ZIMSEC</span>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="mt-6 border-t border-primary-foreground/10 pt-4 text-center text-xs text-primary-foreground/50">
+      <div className="container py-16">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <div className="mb-4 flex items-center gap-3">
+              <img src={schoolLogo} alt="MavingTech" className="h-12 w-12 object-contain" />
+              <span className="font-heading text-xl font-bold">MavingTech</span>
+            </div>
+            <p className="text-sm leading-relaxed text-white/70">
+              We are an early learning academy focused on social-emotional development and early literacy and numeracy. Our students walk out with the character and confidence to make their mark.
+            </p>
+            <div className="mt-5 flex items-center gap-3">
+              <a href="#" aria-label="Twitter" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a href="#" aria-label="Facebook" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a href="#" aria-label="Instagram" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
+                <Instagram className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="mb-4 font-heading text-base font-semibold">Quick Links</h4>
+            <ul className="space-y-2.5 text-sm text-white/70">
+              <li><Link to="/about" className="transition-colors hover:text-primary">About Us</Link></li>
+              <li><Link to="/academics" className="transition-colors hover:text-primary">Academics</Link></li>
+              <li><Link to="/admissions" className="transition-colors hover:text-primary">Admissions</Link></li>
+              <li><Link to="/school-life" className="transition-colors hover:text-primary">School Life</Link></li>
+              <li><Link to="/news" className="transition-colors hover:text-primary">News</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-4 font-heading text-base font-semibold">Programs</h4>
+            <ul className="space-y-2.5 text-sm text-white/70">
+              <li><Link to="/sports-culture" className="transition-colors hover:text-primary">Sports &amp; Culture</Link></li>
+              <li><Link to="/awards" className="transition-colors hover:text-primary">Awards</Link></li>
+              <li><Link to="/facilities" className="transition-colors hover:text-primary">Facilities</Link></li>
+              <li><Link to="/boarding" className="transition-colors hover:text-primary">Boarding</Link></li>
+              <li><Link to="/fees" className="transition-colors hover:text-primary">Fees</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-4 font-heading text-base font-semibold">Contact</h4>
+            <ul className="space-y-3 text-sm text-white/70">
+              <li className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                <span>Bulawayo, Zimbabwe</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="h-4 w-4 shrink-0 text-primary" />
+                <span>+263 29 XXXXXXX</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="h-4 w-4 shrink-0 text-primary" />
+                <span>info@mavingtech.com</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/50">
           <p>© {new Date().getFullYear()} MavingTech Business Solutions. All rights reserved.</p>
-          <p className="mt-1">
-            Designed &amp; maintained by{" "}
-            <a href="https://mavingtech.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">
-              MavingTech Business Solutions
-            </a>
-          </p>
         </div>
       </div>
     </footer>
