@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Twitter, Facebook, Instagram } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
-import zimbabweFlag from "@/assets/zimbabwe-flag.jpg";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,19 +26,15 @@ const navLinks: NavItem[] = [
   {
     label: "Academics",
     path: "/academics",
-    children: [
-      { label: "Downloads", path: "/downloads" },
-    ],
+    children: [{ label: "Downloads", path: "/downloads" }],
   },
   {
     label: "Admissions",
     path: "/admissions",
-    children: [
-      { label: "Fees", path: "/fees" },
-    ],
+    children: [{ label: "Fees", path: "/fees" }],
   },
   {
-    label: "Sports & Culture",
+    label: "Activities",
     path: "/sports-culture",
     children: [
       { label: "School Life", path: "/school-life" },
@@ -49,39 +44,36 @@ const navLinks: NavItem[] = [
   {
     label: "Staff",
     path: "/staff",
-    children: [
-      { label: "Vacancies", path: "/vacancies" },
-    ],
+    children: [{ label: "Vacancies", path: "/vacancies" }],
   },
   { label: "Alumni", path: "/alumni" },
-  { label: "Contact Us", path: "/contact" },
+  { label: "Contact", path: "/contact" },
 ];
 
 function DesktopDropdown({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
-  const isActive = location.pathname === item.path ||
+  const isActive =
+    location.pathname === item.path ||
     item.children?.some((c) => location.pathname === c.path);
 
-  const handleEnter = () => {
-    clearTimeout(timeout.current);
-    setOpen(true);
-  };
-  const handleLeave = () => {
-    timeout.current = setTimeout(() => setOpen(false), 150);
-  };
-
-  useEffect(() => () => clearTimeout(timeout.current), []);
-
   return (
-    <div ref={ref} className="relative" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+    <div
+      className="relative"
+      onMouseEnter={() => {
+        clearTimeout(timeout.current);
+        setOpen(true);
+      }}
+      onMouseLeave={() => {
+        timeout.current = setTimeout(() => setOpen(false), 150);
+      }}
+    >
       <Link
         to={item.path}
-        className={`flex items-center gap-1 px-3 py-2 text-xs font-semibold uppercase tracking-widest transition-colors hover:text-secondary ${
-          isActive ? "text-white" : "text-white/80"
+        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+          isActive ? "text-primary" : "text-foreground/80"
         }`}
       >
         {item.label}
@@ -94,15 +86,15 @@ function DesktopDropdown({ item }: { item: NavItem }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-md border border-border bg-popover p-1 shadow-lg"
+            className="absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-md border border-border bg-popover p-1 shadow-lg"
           >
             {item.children!.map((child) => (
               <Link
                 key={child.path}
                 to={child.path}
                 onClick={() => setOpen(false)}
-                className={`block rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
-                  location.pathname === child.path ? "font-semibold text-foreground" : "text-muted-foreground"
+                className={`block rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-primary ${
+                  location.pathname === child.path ? "font-semibold text-primary" : "text-foreground/80"
                 }`}
               >
                 {child.label}
@@ -120,20 +112,20 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
   const location = useLocation();
 
   return (
-    <div>
+    <div className="border-b border-border/60">
       <div className="flex items-center">
         <Link
           to={item.path}
           onClick={onClose}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-primary-foreground/10 ${
-            location.pathname === item.path ? "text-primary-foreground font-semibold" : "text-primary-foreground/70"
+          className={`flex-1 px-3 py-3 text-sm font-medium ${
+            location.pathname === item.path ? "text-primary" : "text-foreground"
           }`}
         >
           {item.label}
         </Link>
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-md p-2 text-primary-foreground/70 hover:bg-primary-foreground/10"
+          className="p-3 text-foreground/60 hover:text-primary"
           aria-label={`Expand ${item.label}`}
         >
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -145,15 +137,15 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden pl-4"
+            className="overflow-hidden bg-muted/40 pl-4"
           >
             {item.children!.map((child) => (
               <Link
                 key={child.path}
                 to={child.path}
                 onClick={onClose}
-                className={`block rounded-md px-3 py-2 text-sm transition-colors hover:bg-primary-foreground/10 ${
-                  location.pathname === child.path ? "text-primary-foreground font-semibold" : "text-primary-foreground/70"
+                className={`block px-3 py-2.5 text-sm ${
+                  location.pathname === child.path ? "font-semibold text-primary" : "text-foreground/70"
                 }`}
               >
                 {child.label}
@@ -168,45 +160,30 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const isHome = location.pathname === "/";
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
-
-  // On homepage: transparent overlay navbar that becomes solid on scroll
-  // On other pages: always solid black
-  const navBg = !isHome || scrolled
-    ? "bg-primary shadow-lg"
-    : "bg-gradient-to-b from-black/70 to-transparent";
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
-      {/* Top utility bar — only visible on non-home or scrolled */}
-
-      <div className="container flex items-center justify-between py-2 pr-2 md:py-4">
-        <Link to="/" className="flex items-center gap-2 md:gap-3 min-w-0 flex-shrink-0">
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container flex items-center justify-between py-3">
+        {/* Logo left */}
+        <Link to="/" className="flex items-center gap-3 min-w-0 flex-shrink-0">
           <img
             src={schoolLogo}
             alt="MavingTech Business Solutions"
-            className="h-24 w-24 flex-shrink-0 object-contain md:h-28 md:w-28 lg:h-40 lg:w-40"
+            className="h-12 w-12 flex-shrink-0 object-contain md:h-14 md:w-14"
           />
-          <div className="flex flex-col justify-center leading-tight">
-            <span className="block font-heading text-lg font-bold tracking-tight text-white md:text-xl lg:text-2xl whitespace-nowrap">
-              MavingTech Business Solutions
+          <div className="hidden flex-col leading-tight sm:flex">
+            <span className="font-heading text-base font-bold text-foreground md:text-lg">
+              MavingTech
             </span>
-            <span className="block text-[10px] italic text-white/60 md:text-xs lg:text-sm">
-              Empowering Your Business Through Technology
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Business Solutions
             </span>
           </div>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden items-center gap-0 lg:flex">
+        {/* Desktop nav center */}
+        <div className="hidden items-center gap-1 lg:flex">
           {navLinks.map((item) =>
             item.children ? (
               <DesktopDropdown key={item.path} item={item} />
@@ -214,49 +191,54 @@ export default function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 text-xs font-semibold uppercase tracking-widest transition-colors hover:text-secondary ${
-                  location.pathname === item.path ? "text-white" : "text-white/80"
+                className={`px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === item.path ? "text-primary" : "text-foreground/80"
                 }`}
               >
                 {item.label}
               </Link>
             )
           )}
-          <Link to="/login">
-            <Button size="sm" className="ml-3 bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs uppercase tracking-wider font-semibold">
+        </div>
+
+        {/* Right side: socials + portal */}
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 md:flex">
+            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Twitter">
+              <Twitter className="h-4 w-4" />
+            </a>
+            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Facebook">
+              <Facebook className="h-4 w-4" />
+            </a>
+            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Instagram">
+              <Instagram className="h-4 w-4" />
+            </a>
+          </div>
+          <Link to="/login" className="hidden sm:block">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
               Portal Login
             </Button>
           </Link>
-        </div>
 
-        <div className="ml-2 flex flex-shrink-0 items-center gap-2">
-          <img
-            src={zimbabweFlag}
-            alt="Flag of Zimbabwe"
-            className="h-6 w-10 rounded object-cover shadow-md sm:h-7 sm:w-12 lg:h-8 lg:w-14"
-          />
-
-          {/* Mobile toggle */}
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/90 lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/10 bg-primary lg:hidden"
+            className="overflow-hidden border-t border-border bg-background lg:hidden"
           >
-            <div className="container flex flex-col gap-1 py-4">
+            <div className="container flex flex-col py-2">
               {navLinks.map((item) =>
                 item.children ? (
                   <MobileAccordion key={item.path} item={item} onClose={() => setMobileOpen(false)} />
@@ -265,16 +247,18 @@ export default function Navbar() {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileOpen(false)}
-                    className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-primary-foreground/10 ${
-                      location.pathname === item.path ? "text-primary-foreground font-semibold" : "text-primary-foreground/70"
+                    className={`border-b border-border/60 px-3 py-3 text-sm font-medium ${
+                      location.pathname === item.path ? "text-primary" : "text-foreground"
                     }`}
                   >
                     {item.label}
                   </Link>
                 )
               )}
-              <Link to="/login" onClick={() => setMobileOpen(false)}>
-                <Button size="sm" className="mt-2 w-full bg-secondary text-secondary-foreground hover:bg-secondary/90">Portal Login</Button>
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="mt-3">
+                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  Portal Login
+                </Button>
               </Link>
             </div>
           </motion.div>
