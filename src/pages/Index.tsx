@@ -43,7 +43,7 @@ const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, 
   return (
     <div ref={ref} className="relative">
       {photoUrl ? (
-        <img src={photoUrl} alt="The Director" className="aspect-[4/5] w-full rounded-lg object-cover object-top shadow-xl" />
+        <img src={photoUrl} alt="The Principal" className="aspect-[4/5] w-full rounded-lg object-cover object-top shadow-xl" />
       ) : (
         <div className="flex aspect-[4/5] w-full items-center justify-center rounded-lg bg-muted shadow-xl">
           <img src={schoolLogo} alt="MavingTech" className="h-32 w-32 object-contain opacity-30" />
