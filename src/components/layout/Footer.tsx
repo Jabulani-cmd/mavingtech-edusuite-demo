@@ -37,8 +37,8 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="MavingTech" className="h-[4.5rem] w-[4.5rem] object-contain" />
-              <span className="font-heading text-xl font-bold">MavingTech</span>
+              <img src={schoolLogo} alt="MavingTech" className="h-[6rem] w-[6rem] object-contain" />
+              <span className="font-heading text-xl font-bold">MavingTech High School</span>
             </div>
             <p className="text-sm leading-relaxed text-white/70">
               We are an early learning academy focused on social-emotional development and early literacy and numeracy. Our students walk out with the character and confidence to make their mark.
