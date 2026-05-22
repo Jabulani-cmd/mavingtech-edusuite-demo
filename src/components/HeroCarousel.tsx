@@ -58,7 +58,7 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
         <img
           key={img.id}
           src={img.image_url}
-          alt="MavingTech Business Solutions"
+          alt="MavingTech High School"
           className="absolute inset-0 h-full w-full object-contain md:object-cover object-center transition-opacity duration-1000"
           style={{ 
             opacity: i === current ? 1 : 0,
