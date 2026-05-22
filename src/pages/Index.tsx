@@ -222,20 +222,21 @@ export default function Home() {
             transition={{ duration: 0.7 }}
             className="lg:col-span-3"
           >
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Message from the Director</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Message from the Principal</span>
             <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-foreground md:text-4xl">
-              From the Director's Desk
+              From the Principal's Desk
             </h2>
             <div className="mt-4 h-[3px] w-12 bg-primary" />
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground italic">
-              "We aim at inspiring our students to dream more, learn more, do more, and become more in their respective journeys with MavingTech High School."
+              "At MavingTech High School, we believe every learner carries a unique gift. Our calling is to nurture that gift through discipline, faith, hard work and a love for knowledge — so that each of our students rises to become a leader of integrity and purpose."
             </p>
             <p className="mt-6 leading-relaxed text-muted-foreground">
-              Welcome to MavingTech High School. We are a technology-driven company dedicated to empowering organisations with innovative software solutions that streamline operations, enhance communication, and drive efficiency.
+              Welcome to our school community. Together with our dedicated teachers, supportive parents and ambitious students, we are building a school where academic excellence walks hand in hand with strong character. We are proud of who our learners are becoming, and we invite you to be part of this journey.
             </p>
             <p className="mt-6 font-heading text-base font-semibold text-foreground">
-              Mr. F.J. Moyo <span className="font-normal text-muted-foreground">— The Director, MavingTech High School</span>
+              Mr. F.J. Moyo <span className="font-normal text-muted-foreground">— Principal, MavingTech High School</span>
             </p>
+
           </motion.div>
         </div>
       </section>
