@@ -35,6 +35,7 @@ import StudentProgressTracker from "@/components/teacher/StudentProgressTracker"
 import ResourceLibraryTab from "@/components/teacher/ResourceLibraryTab";
 import ParentCommunicationLog from "@/components/teacher/ParentCommunicationLog";
 import FullWeekTimetable from "@/components/shared/FullWeekTimetable";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 const assessmentTypes = ["test", "exam", "assignment", "project"];
 
