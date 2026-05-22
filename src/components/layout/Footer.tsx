@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Twitter, Facebook, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin, Twitter, Facebook, Instagram, MessageCircle } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import moeLogo from "@/assets/ministry-of-education-logo.png";
 import cambridgeLogo from "@/assets/cambridge-logo.png";
@@ -9,25 +9,25 @@ export default function Footer() {
   return (
     <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
       {/* Affiliations strip on white */}
-      <div className="bg-background py-10 border-t border-border">
+      <div className="bg-background py-14 border-t border-border">
         <div className="container">
-          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="mb-10 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Affiliated With
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-10 opacity-80">
-            <div className="flex flex-col items-center gap-1">
-              <img src={cambridgeLogo} alt="Cambridge" className="h-16 w-16 object-contain" />
-              <span className="text-[10px] text-muted-foreground">Cambridge</span>
+          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-around gap-x-16 gap-y-10">
+            <div className="flex flex-col items-center gap-3">
+              <img src={cambridgeLogo} alt="Cambridge" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <span className="text-xs font-medium text-muted-foreground">Cambridge</span>
             </div>
-            <div className="flex flex-col items-center gap-1">
-              <img src={moeLogo} alt="Ministry of Education" className="h-14 w-14 object-contain" />
-              <span className="max-w-[140px] text-center text-[10px] leading-tight text-muted-foreground">
+            <div className="flex flex-col items-center gap-3">
+              <img src={moeLogo} alt="Ministry of Education" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <span className="max-w-[180px] text-center text-xs font-medium leading-tight text-muted-foreground">
                 Ministry of Primary &amp; Secondary Education
               </span>
             </div>
-            <div className="flex flex-col items-center gap-1">
-              <img src={zimsecLogo} alt="ZIMSEC" className="h-16 w-16 object-contain" />
-              <span className="text-[10px] text-muted-foreground">ZIMSEC</span>
+            <div className="flex flex-col items-center gap-3">
+              <img src={zimsecLogo} alt="ZIMSEC" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <span className="text-xs font-medium text-muted-foreground">ZIMSEC</span>
             </div>
           </div>
         </div>
@@ -52,6 +52,9 @@ export default function Footer() {
               </a>
               <a href="#" aria-label="Instagram" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
                 <Instagram className="h-4 w-4" />
+              </a>
+              <a href="https://wa.me/263000000000" aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
+                <MessageCircle className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -83,7 +86,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>Bulawayo, Zimbabwe</span>
+                <span>Harare, Zimbabwe</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
