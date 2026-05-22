@@ -48,7 +48,6 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
     );
   }
 
-  const goTo = (index: number) => setCurrent(index);
   const slide = heroSlides[current % heroSlides.length];
 
   return (
