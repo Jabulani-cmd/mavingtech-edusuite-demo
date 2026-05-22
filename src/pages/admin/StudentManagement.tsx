@@ -462,7 +462,7 @@ export default function StudentManagement() {
       // Generate a guaranteed-unique admission number using timestamp
       const timestamp = Date.now().toString().slice(-6);
       const randomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, "0");
-      const nextAdmissionNumber = `GHS${timestamp}${randomSuffix}`;
+      const nextAdmissionNumber = `MHS${timestamp}${randomSuffix}`;
 
       const { admission_number, ...rest } = payload;
       const insertPayload = { ...rest, admission_number: nextAdmissionNumber };
@@ -818,7 +818,7 @@ export default function StudentManagement() {
                 <Input value={formData.admission_number} readOnly className="bg-muted" />
               ) : (
                 <p className="text-sm text-muted-foreground border rounded-md px-3 py-2 bg-muted">
-                  Will be auto-generated as <strong>GHS#####</strong> on save
+                  Will be auto-generated as <strong>MHS#####</strong> on save
                 </p>
               )}
             </div>
