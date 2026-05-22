@@ -314,6 +314,16 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           {staffInfo?.staff_number && (
             <p className="text-sm text-muted-foreground mb-4">Staff No: <span className="font-medium text-foreground">{staffInfo.staff_number}</span>{staffInfo.department ? ` · ${staffInfo.department}` : ""}</p>
           )}
+          <a href="/portal/teacher/ai-marker" className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 transition hover:from-primary/15">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/15 text-primary">✨</div>
+              <div>
+                <p className="font-heading font-semibold text-foreground">AI Shadow Marker</p>
+                <p className="text-xs text-muted-foreground">Auto-grade MCQs & let AI draft essay grades and feedback.</p>
+              </div>
+            </div>
+            <Button size="sm" variant="outline">Open</Button>
+          </a>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Card><CardContent className="flex items-center gap-3 p-4">
               <Users className="h-8 w-8 text-primary" />
