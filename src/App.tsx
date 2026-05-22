@@ -19,6 +19,7 @@ import StudentDashboard from "./pages/portal/StudentDashboard";
 import ParentTeacherDashboard from "./pages/portal/ParentTeacherDashboard";
 import ParentDashboard from "./pages/portal/ParentDashboard";
 import TeacherDashboard from "./pages/portal/TeacherDashboard";
+import AIShadowMarker from "./pages/portal/AIShadowMarker";
 import AdminDashboard from "./pages/portal/AdminDashboard";
 import FinanceDashboard from "./pages/portal/FinanceDashboard";
 import PrincipalDashboard from "./pages/portal/PrincipalDashboard";
