@@ -14,7 +14,7 @@ export default function PageHero({ eyebrow, title, subtitle, image }: PageHeroPr
         src={image}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 30%" }}
+        style={{ objectPosition: "center 45%" }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/20" />
       <div className="container relative z-10 flex h-full items-end pb-14">
