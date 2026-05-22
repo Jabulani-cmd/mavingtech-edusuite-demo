@@ -33,7 +33,15 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
       .order("updated_at", { ascending: false });
     const activeDefs = d ?? [];
     setDefs(activeDefs);
-    if (activeDefs.length && !selectedDefId) setSelectedDefId(activeDefs[0].id);
+    if (activeDefs.length && !selectedDefId) {
+      // Auto-pick by class_label match when caller specified one
+      let pick = activeDefs[0].id;
+      if (mode === "class" && filterValue) {
+        const match = activeDefs.find((x: any) => (x.class_label || "").toLowerCase() === filterValue.toLowerCase());
+        if (match) pick = match.id;
+      }
+      setSelectedDefId(pick);
+    }
     const { data: s } = await supabase.from("tt_slots").select("*");
     setSlots(s ?? []);
   };
