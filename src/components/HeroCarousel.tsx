@@ -48,7 +48,6 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
     );
   }
 
-  const goTo = (index: number) => setCurrent(index);
   const slide = heroSlides[current % heroSlides.length];
 
   return (
@@ -92,23 +91,6 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
         </div>
       </div>
 
-      {/* Dot navigation */}
-      {images.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-3">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              className={`rounded-full border-2 transition-all ${
-                i === current
-                  ? "h-3 w-3 border-secondary bg-secondary"
-                  : "h-3 w-3 border-white/60 bg-transparent hover:border-white"
-              }`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-      )}
     </section>
   );
 });
