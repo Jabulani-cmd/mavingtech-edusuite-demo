@@ -14,7 +14,281 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_timetable_logs: {
+        Row: {
+          conflicts_count: number | null
+          created_at: string
+          definition_id: string | null
+          feature: string
+          generation_time_ms: number | null
+          id: string
+          optimization_score: number | null
+          prompt_sent: Json | null
+          response_received: Json | null
+          user_id: string | null
+          warnings: Json | null
+        }
+        Insert: {
+          conflicts_count?: number | null
+          created_at?: string
+          definition_id?: string | null
+          feature: string
+          generation_time_ms?: number | null
+          id?: string
+          optimization_score?: number | null
+          prompt_sent?: Json | null
+          response_received?: Json | null
+          user_id?: string | null
+          warnings?: Json | null
+        }
+        Update: {
+          conflicts_count?: number | null
+          created_at?: string
+          definition_id?: string | null
+          feature?: string
+          generation_time_ms?: number | null
+          id?: string
+          optimization_score?: number | null
+          prompt_sent?: Json | null
+          response_received?: Json | null
+          user_id?: string | null
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_timetable_logs_definition_id_fkey"
+            columns: ["definition_id"]
+            isOneToOne: false
+            referencedRelation: "tt_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tt_conflicts: {
+        Row: {
+          conflict_type: string
+          created_at: string
+          definition_id: string
+          description: string
+          id: string
+          resolved: boolean
+          resolved_at: string | null
+          severity: string
+          slot_ids: Json | null
+        }
+        Insert: {
+          conflict_type: string
+          created_at?: string
+          definition_id: string
+          description: string
+          id?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          slot_ids?: Json | null
+        }
+        Update: {
+          conflict_type?: string
+          created_at?: string
+          definition_id?: string
+          description?: string
+          id?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          slot_ids?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tt_conflicts_definition_id_fkey"
+            columns: ["definition_id"]
+            isOneToOne: false
+            referencedRelation: "tt_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tt_definitions: {
+        Row: {
+          academic_year: string | null
+          breaks: Json | null
+          class_label: string | null
+          created_at: string
+          created_by: string | null
+          day_start_time: string | null
+          end_date: string | null
+          id: string
+          name: string
+          period_minutes: number | null
+          periods_per_day: number | null
+          school_days: number[] | null
+          settings: Json | null
+          start_date: string | null
+          status: string
+          term: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          academic_year?: string | null
+          breaks?: Json | null
+          class_label?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_start_time?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          period_minutes?: number | null
+          periods_per_day?: number | null
+          school_days?: number[] | null
+          settings?: Json | null
+          start_date?: string | null
+          status?: string
+          term?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          academic_year?: string | null
+          breaks?: Json | null
+          class_label?: string | null
+          created_at?: string
+          created_by?: string | null
+          day_start_time?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          period_minutes?: number | null
+          periods_per_day?: number | null
+          school_days?: number[] | null
+          settings?: Json | null
+          start_date?: string | null
+          status?: string
+          term?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tt_exam_slots: {
+        Row: {
+          capacity: number | null
+          class_label: string | null
+          created_at: string
+          definition_id: string
+          end_time: string | null
+          exam_date: string
+          id: string
+          invigilator_name: string | null
+          notes: string | null
+          session: string
+          start_time: string | null
+          subject_name: string | null
+          venue: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          class_label?: string | null
+          created_at?: string
+          definition_id: string
+          end_time?: string | null
+          exam_date: string
+          id?: string
+          invigilator_name?: string | null
+          notes?: string | null
+          session: string
+          start_time?: string | null
+          subject_name?: string | null
+          venue?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          class_label?: string | null
+          created_at?: string
+          definition_id?: string
+          end_time?: string | null
+          exam_date?: string
+          id?: string
+          invigilator_name?: string | null
+          notes?: string | null
+          session?: string
+          start_time?: string | null
+          subject_name?: string | null
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tt_exam_slots_definition_id_fkey"
+            columns: ["definition_id"]
+            isOneToOne: false
+            referencedRelation: "tt_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tt_slots: {
+        Row: {
+          break_label: string | null
+          created_at: string
+          day_of_week: number
+          definition_id: string
+          end_time: string
+          id: string
+          is_break: boolean
+          is_manual_override: boolean
+          notes: string | null
+          period_index: number
+          room: string | null
+          start_time: string
+          subject_color: string | null
+          subject_name: string | null
+          teacher_name: string | null
+        }
+        Insert: {
+          break_label?: string | null
+          created_at?: string
+          day_of_week: number
+          definition_id: string
+          end_time: string
+          id?: string
+          is_break?: boolean
+          is_manual_override?: boolean
+          notes?: string | null
+          period_index: number
+          room?: string | null
+          start_time: string
+          subject_color?: string | null
+          subject_name?: string | null
+          teacher_name?: string | null
+        }
+        Update: {
+          break_label?: string | null
+          created_at?: string
+          day_of_week?: number
+          definition_id?: string
+          end_time?: string
+          id?: string
+          is_break?: boolean
+          is_manual_override?: boolean
+          notes?: string | null
+          period_index?: number
+          room?: string | null
+          start_time?: string
+          subject_color?: string | null
+          subject_name?: string | null
+          teacher_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tt_slots_definition_id_fkey"
+            columns: ["definition_id"]
+            isOneToOne: false
+            referencedRelation: "tt_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
