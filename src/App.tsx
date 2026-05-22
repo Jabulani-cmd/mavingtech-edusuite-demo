@@ -151,8 +151,29 @@ const App = () => (
                 <AuthenticatedLayout><TimetableManagement /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
+            <Route path="/portal/allocations" element={
+              <ProtectedRoute allowedRoles={["admin", "principal", "deputy_principal"]}>
+                <AuthenticatedLayout><TeacherAllocations /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/teacher/timetable" element={
+              <ProtectedRoute allowedRoles={["teacher", "hod", "admin"]}>
+                <AuthenticatedLayout><TeacherMyTimetable /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/student/timetable" element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <AuthenticatedLayout><StudentMyTimetable /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/parent/timetable" element={
+              <ProtectedRoute allowedRoles={["parent"]}>
+                <AuthenticatedLayout><ParentChildTimetable /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </AllocationProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
