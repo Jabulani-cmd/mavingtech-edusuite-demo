@@ -22,36 +22,20 @@ import actMusic from "@/assets/activity-music.jpg";
 import actArts from "@/assets/activity-arts.jpg";
 import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import principalPhoto from "@/assets/principal-moyo.jpg";
 
 const heroImages = [hero1, hero2, hero3, hero4, hero5];
 
 
 /* ---------- Director Photo ---------- */
 const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, ref) {
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  useEffect(() => {
-    supabase
-      .from("site_settings")
-      .select("setting_value")
-      .eq("setting_key", "principal_photo")
-      .limit(1)
-      .then(({ data }) => {
-        if (data && data.length > 0 && data[0].setting_value) setPhotoUrl(data[0].setting_value);
-      });
-  }, []);
-
   return (
     <div ref={ref} className="relative">
-      {photoUrl ? (
-        <img src={photoUrl} alt="The Principal" className="aspect-[4/5] w-full rounded-lg object-cover object-top shadow-xl" />
-      ) : (
-        <div className="flex aspect-[4/5] w-full items-center justify-center rounded-lg bg-muted shadow-xl">
-          <img src={schoolLogo} alt="MavingTech" className="h-32 w-32 object-contain opacity-30" />
-        </div>
-      )}
+      <img src={principalPhoto} alt="Mr. F.J. Moyo, Principal" className="aspect-[4/5] w-full rounded-lg object-cover object-top shadow-xl" />
     </div>
   );
 });
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
