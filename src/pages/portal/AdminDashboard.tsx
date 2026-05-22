@@ -15,6 +15,7 @@ import StaffManagementFull from "@/pages/admin/StaffManagementFull";
 import BoardingManagement from "@/pages/admin/BoardingManagement";
 import InventoryManagement from "@/pages/admin/InventoryManagement";
 import CommunicationModule from "@/pages/admin/CommunicationModule";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import EMISReports from "@/pages/admin/EMISReports";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -1013,56 +1014,21 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
           {/* Timetable Tab */}
           <TabsContent value="timetable">
             <Card>
-              <CardHeader><CardTitle className="font-heading">Manage Timetable</CardTitle></CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading">School Timetables</CardTitle>
+                <Button onClick={() => window.location.assign("/portal/timetables")}>
+                  <Calendar className="mr-2 h-4 w-4" /> Open Timetable Management
+                </Button>
+              </CardHeader>
               <CardContent>
-                <div className="mb-4 flex items-center gap-4">
-                  <Label>Class:</Label>
-                  <Select value={ttSelectedClassId} onValueChange={setTtSelectedClassId}>
-                    <SelectTrigger className="w-40"><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>
-                      {ttClasses.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" onClick={saveTimetable} disabled={!ttSelectedClassId || ttSaving}>
-                    {ttSaving ? "Saving..." : "Save Timetable"}
-                  </Button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted">
-                      <tr>
-                        <th className="px-3 py-2">Time</th>
-                        {timetableDays.map((d) => <th key={d} className="px-3 py-2">{d}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {timetableSlots.map((slot) => (
-                        <tr key={slot.start} className="border-t">
-                          <td className="px-3 py-2 font-medium">{slot.start}–{slot.end}</td>
-                          {timetableDays.map((_, dayIndex) => {
-                            const key = getTimetableCellKey(dayIndex, slot.start);
-                            return (
-                              <td key={key} className="px-1 py-1">
-                                <Input
-                                  className="h-8 text-xs text-center"
-                                  placeholder={ttLoading ? "Loading..." : "Subject"}
-                                  value={ttGrid[key] || ""}
-                                  onChange={(e) => setTtGrid((prev) => ({ ...prev, [key]: e.target.value }))}
-                                  disabled={ttLoading || !ttSelectedClassId}
-                                />
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Live view of published timetables. Create, AI-generate, edit and publish from Timetable Management — changes appear here and in every portal in real time.
+                </p>
+                <PublishedTimetableWidget title="Published Class Timetable" mode="class" />
               </CardContent>
             </Card>
           </TabsContent>
+
 
           {/* Site Images Tab */}
           <TabsContent value="site-images">

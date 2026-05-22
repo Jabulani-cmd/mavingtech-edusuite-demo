@@ -18,6 +18,7 @@ import StudentAttendanceTab from "@/components/student/StudentAttendanceTab";
 import StudentProfileTab from "@/components/student/StudentProfileTab";
 import StudentAnnouncementsSection from "@/components/student/StudentAnnouncementsSection";
 import StudentTimetableTab from "@/components/student/StudentTimetableTab";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import StudentFeeTab from "@/components/student/StudentFeeTab";
 import StudentExamResultsTab from "@/components/student/StudentExamResultsTab";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
@@ -382,7 +383,7 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && <StudentTimetableTab studentClassId={studentClassId} studentId={student?.id} />}
+        {homeSubTab === "timetable" && <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />}
         {homeSubTab === "planner" && <PersonalTimetableEditor title="My Personal Planner" />}
         {homeSubTab === "announcements" && <StudentAnnouncementsSection announcements={announcements} />}
         {homeSubTab === "marks" && <StudentMarksTab studentId={student?.id} />}

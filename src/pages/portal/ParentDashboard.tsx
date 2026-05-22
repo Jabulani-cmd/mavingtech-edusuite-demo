@@ -43,6 +43,7 @@ import { openPrintWindow } from "@/lib/finance/print";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 
 type TabId = "overview" | "grades" | "marks" | "timetable" | "attendance" | "fees" | "announcements" | "exam-timetable" | "reports";
 
@@ -623,6 +624,10 @@ function TabContent(props: TabContentProps) {
             {child.form} {child.stream} · {child.admission_number}
           </p>
         </div>
+
+        <PublishedTimetableWidget title={`${child.full_name?.split(" ")[0]}'s Timetable`} mode="class" filterValue={`${child.form || ""} ${child.stream || ""}`.trim()} compact />
+
+
 
         {/* Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
