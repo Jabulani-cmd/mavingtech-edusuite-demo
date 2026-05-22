@@ -1,18 +1,1 @@
-project_id = "fdzjjoaaqnozpiblilvt"
-
-[functions.manage-users]
-verify_jwt = false
-
-[functions.link-child]
-verify_jwt = false
-[functions.ai-shadow-marker]
-verify_jwt = false
-
-[functions.ai-report-comment]
-verify_jwt = false
-
-[functions.ai-parent-message]
-verify_jwt = false
-
-[functions.generate-lesson-plan]
-verify_jwt = false
+project_id = "oymqqsvabbzognjgbxtl"
