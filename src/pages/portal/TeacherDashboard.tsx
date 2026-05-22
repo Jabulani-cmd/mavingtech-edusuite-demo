@@ -13,8 +13,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   LogOut, BookOpen, Bell, BarChart3, Calendar, CalendarDays, ClipboardList,
   FileText, Users, CheckCircle2, Clock, GraduationCap, AlertCircle, CalendarOff,
-  TrendingUp, FolderOpen, MessageSquare
+  TrendingUp, FolderOpen, MessageSquare, Sparkles
 } from "lucide-react";
+import ReportCardCommentGenerator from "@/components/teacher/ReportCardCommentGenerator";
+import ParentMessageComposer from "@/components/teacher/ParentMessageComposer";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -374,6 +376,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
             <TabsTrigger value="parent-log" className="text-xs sm:text-sm"><MessageSquare className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Parents</TabsTrigger>
             <TabsTrigger value="schedule" className="text-xs sm:text-sm"><ClipboardList className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Schedule</TabsTrigger>
             <TabsTrigger value="leave" className="text-xs sm:text-sm"><CalendarOff className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Leave</TabsTrigger>
+            <TabsTrigger value="ai-assist" className="text-xs sm:text-sm bg-gradient-to-r from-primary/10 to-accent/10 data-[state=active]:from-primary/30 data-[state=active]:to-accent/30"><Sparkles className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" /> AI Assist</TabsTrigger>
           </TabsList>
           </div>
 
@@ -599,6 +602,74 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           {/* LEAVE REQUESTS */}
           <TabsContent value="leave">
             <StaffLeaveRequest />
+          </TabsContent>
+
+          {/* AI ASSIST */}
+          <TabsContent value="ai-assist" className="space-y-4">
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <CardHeader>
+                <CardTitle className="font-heading flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" /> AI Assistants
+                  <Badge variant="secondary" className="ml-2 bg-gradient-to-r from-primary/20 to-accent/20">Powered by AI</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Speed up admin writing tasks. Every output is editable before you save or send.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base font-heading flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary" /> Report Card Comments
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Generate 3–4 sentence narrative comments from a student's marks, attendance and your notes. Pick the tone.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ReportCardCommentGenerator students={students} marks={marks} subjects={subjects} triggerLabel="Open Generator" />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base font-heading flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-primary" /> Parent / Student Messages
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Draft personalised progress updates, concerns, meeting invites or fee reminders. Regenerate for alternative phrasing.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ParentMessageComposer students={students} teacherName={profile?.full_name || staffInfo?.full_name} triggerLabel="Open Composer" />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base font-heading flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-primary" /> Lesson Plan AI
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        Already integrated. Open the <strong>Lessons</strong> tab and use the <em>AI Generate</em> button to draft a full plan.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button variant="outline" className="w-full" onClick={() => {
+                        const el = document.querySelector('[data-state][value="lesson-plans"]') as HTMLElement | null;
+                        el?.click();
+                      }}>
+                        Go to Lessons
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  ✨ All AI-generated text is clearly labelled and fully editable. AI assists — you decide what gets sent.
+                </p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
