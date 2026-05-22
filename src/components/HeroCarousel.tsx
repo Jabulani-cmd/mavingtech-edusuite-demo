@@ -58,10 +58,10 @@ const HeroCarousel = forwardRef<HTMLElement>(function HeroCarousel(_props, ref) 
           key={img.id}
           src={img.image_url}
           alt="MavingTech High School"
-          className="absolute inset-0 h-full w-full object-contain md:object-cover object-center transition-opacity duration-1000"
+          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000"
           style={{ 
             opacity: i === current ? 1 : 0,
-            filter: "grayscale(60%)",
+            objectPosition: "center 30%",
           }}
         />
       ))}
