@@ -4,6 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AllocationProvider } from "@/contexts/AllocationContext";
+import TeacherAllocations from "./pages/portal/TeacherAllocations";
+import TeacherMyTimetable from "./pages/portal/TeacherMyTimetable";
+import StudentMyTimetable from "./pages/portal/StudentMyTimetable";
+import ParentChildTimetable from "./pages/portal/ParentChildTimetable";
 import ScrollToTop from "@/components/ScrollToTop";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
@@ -54,6 +59,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
+          <AllocationProvider>
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
