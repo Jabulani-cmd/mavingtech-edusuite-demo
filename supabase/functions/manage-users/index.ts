@@ -127,40 +127,64 @@ Deno.serve(async (req) => {
     if (action === "seed-admin") {
       const { data: existingUsers } =
         await supabaseAdmin.auth.admin.listUsers();
-      const adminCheckEmail = Deno.env.get("ADMIN_SEED_EMAIL") || "admin@mavingtech.com";
-      const adminExists = existingUsers?.users?.some(
-        (u) => u.email === adminCheckEmail
-      );
-      if (adminExists) {
-        return new Response(
-          JSON.stringify({ message: "Admin already exists" }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+
+      // Seed (or repair) a set of admin accounts. Each entry is created if missing,
+      // and its password is reset if it already exists.
+      const adminsToSeed = [
+        {
+          email: "francis.moyo@mavingtech.com",
+          password: "Mavingire75$",
+          full_name: "Francis Moyo",
+        },
+        {
+          email: Deno.env.get("ADMIN_SEED_EMAIL") || "admin@mavingtech.com",
+          password: Deno.env.get("ADMIN_SEED_PASSWORD") || "demo123",
+          full_name: "System Administrator",
+        },
+      ];
+
+      const results: Array<{ email: string; status: string }> = [];
+
+      for (const a of adminsToSeed) {
+        const existing = existingUsers?.users?.find((u) => u.email === a.email);
+        let userId: string | undefined = existing?.id;
+
+        if (existing) {
+          await supabaseAdmin.auth.admin.updateUserById(existing.id, {
+            password: a.password,
+            email_confirm: true,
+          });
+          results.push({ email: a.email, status: "password reset" });
+        } else {
+          const { data: newUser, error: createError } =
+            await supabaseAdmin.auth.admin.createUser({
+              email: a.email,
+              password: a.password,
+              email_confirm: true,
+              user_metadata: { full_name: a.full_name },
+            });
+          if (createError) throw createError;
+          userId = newUser.user.id;
+          results.push({ email: a.email, status: "created" });
+        }
+
+        if (userId) {
+          // Ensure admin role exists (ignore conflicts)
+          await supabaseAdmin
+            .from("user_roles")
+            .upsert(
+              { user_id: userId, role: "admin" },
+              { onConflict: "user_id,role" }
+            );
+        }
       }
 
-      const adminEmail = adminCheckEmail;
-      const adminPassword = Deno.env.get("ADMIN_SEED_PASSWORD") || "demo123";
-
-      const { data: newUser, error: createError } =
-        await supabaseAdmin.auth.admin.createUser({
-          email: adminEmail,
-          password: adminPassword,
-          email_confirm: true,
-          user_metadata: { full_name: "System Administrator" },
-          app_metadata: { must_change_password: true },
-        });
-
-      if (createError) throw createError;
-
-      await supabaseAdmin
-        .from("user_roles")
-        .insert({ user_id: newUser.user.id, role: "admin" });
-
       return new Response(
-        JSON.stringify({ message: "Admin seeded successfully" }),
+        JSON.stringify({ message: "Admins seeded", results }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
 
     // ==================== SEED TEACHER ====================
     if (action === "seed-teacher") {
