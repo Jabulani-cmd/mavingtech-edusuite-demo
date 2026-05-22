@@ -157,8 +157,13 @@ export default function Contact() {
       </section>
 
       {/* Forms */}
-      <section className="py-16">
+      <section className="bg-muted/40 py-20 md:py-28">
         <div className="container max-w-4xl">
+          <div className="mb-10 text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">We're Listening</span>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">Send a Message or Book a Visit</h2>
+            <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
+          </div>
           <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="contact">Send a Message</TabsTrigger>
