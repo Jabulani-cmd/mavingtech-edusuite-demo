@@ -170,7 +170,7 @@ export default function Navbar() {
           <img
             src={schoolLogo}
             alt="MavingTech High School"
-            className="h-20 w-20 flex-shrink-0 object-contain md:h-24 md:w-24"
+            className="h-[7.5rem] w-[7.5rem] flex-shrink-0 object-contain md:h-[9rem] md:w-[9rem]"
           />
           <div className="hidden flex-col leading-tight sm:flex">
             <span className="font-heading text-xl font-bold text-foreground md:text-2xl">
