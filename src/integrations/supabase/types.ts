@@ -704,6 +704,10 @@ export type Database = {
         | "hod"
         | "registration"
         | "supervisor"
+        | "finance"
+        | "principal"
+        | "deputy_principal"
+        | "admin_supervisor"
       grant_type: "paid" | "complimentary" | "trial" | "suspended"
       payment_method:
         | "ecocash"
@@ -866,6 +870,10 @@ export const Constants = {
         "hod",
         "registration",
         "supervisor",
+        "finance",
+        "principal",
+        "deputy_principal",
+        "admin_supervisor",
       ],
       grant_type: ["paid", "complimentary", "trial", "suspended"],
       payment_method: [
