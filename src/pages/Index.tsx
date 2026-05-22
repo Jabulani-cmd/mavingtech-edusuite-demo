@@ -168,11 +168,12 @@ export default function Home() {
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
             <p className="leading-relaxed text-muted-foreground">
-              We, at MavingTech, offer supportive and inspirational environments for young enquiring minds to learn and grow with us. Our passion for learning means we achieve more than outstanding results. We strive to build confident and creative thinkers and aim at delivering an education that is truly relevant to their future.
+              At MavingTech High School, we offer a supportive and inspiring environment for young African minds to learn, grow and thrive. Our passion for education goes beyond outstanding academic results — we build confident, creative thinkers prepared for a global future.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              We are an early learning academy focused on social-emotional development and early literacy and numeracy. Our students walk out with the character and confidence to make their mark in the world.
+              From Form 1 through A-Level, our students walk out with the character, discipline and skills to make their mark in the world.
             </p>
+
             <Link to="/about" className="mt-8 inline-block">
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                 Know More About Us
