@@ -66,44 +66,21 @@ const stats = [
 ];
 
 const curriculum = [
-  {
-    title: "Computer Science",
-    desc: "Hands-on experience with the latest programming languages and technology.",
-    img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=70",
-  },
-  {
-    title: "Mathematics",
-    desc: "Building strong analytical foundations through engaging, real-world problem solving.",
-    img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=70",
-  },
-  {
-    title: "Literature & Languages",
-    desc: "Cultivating expression, comprehension and a lifelong love of reading and writing.",
-    img: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=800&q=70",
-  },
-  {
-    title: "Sciences",
-    desc: "Inquiry-led learning in physics, chemistry and biology with modern lab facilities.",
-    img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=70",
-  },
-  {
-    title: "Visual Arts",
-    desc: "Creative studios where students explore drawing, painting, design and craft.",
-    img: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=70",
-  },
-  {
-    title: "Performing Arts",
-    desc: "Music, drama and dance programmes that build confidence and collaboration.",
-    img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=70",
-  },
+  { title: "Computer Science", desc: "Hands-on experience with the latest programming languages and technology.", img: currCs },
+  { title: "Mathematics", desc: "Building strong analytical foundations through engaging, real-world problem solving.", img: currMath },
+  { title: "Literature & Languages", desc: "Cultivating expression, comprehension and a lifelong love of reading and writing.", img: currLit },
+  { title: "Sciences", desc: "Inquiry-led learning in physics, chemistry and biology with modern lab facilities.", img: currSci },
+  { title: "Visual Arts", desc: "Creative studios where students explore drawing, painting, design and craft.", img: currArts },
+  { title: "Performing Arts", desc: "Music, drama and dance programmes that build confidence and collaboration.", img: currPerf },
 ];
 
 const activities = [
-  { title: "Sports", img: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=800&q=70" },
-  { title: "Music", img: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=70" },
-  { title: "Arts & Crafts", img: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=800&q=70" },
-  { title: "Clubs", img: "https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=800&q=70" },
+  { title: "Sports", img: actSports },
+  { title: "Music", img: actMusic },
+  { title: "Arts & Crafts", img: actArts },
+  { title: "Clubs", img: actClubs },
 ];
+
 
 export default function Home() {
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
