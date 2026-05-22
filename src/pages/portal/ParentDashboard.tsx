@@ -624,6 +624,10 @@ function TabContent(props: TabContentProps) {
           </p>
         </div>
 
+        <PublishedTimetableWidget title={`${child.full_name?.split(" ")[0]}'s Timetable`} mode="class" filterValue={`${child.form || ""} ${child.stream || ""}`.trim()} compact />
+
+
+
         {/* Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setActiveTab("attendance")}>
