@@ -382,7 +382,7 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && <StudentTimetableTab studentClassId={studentClassId} studentId={student?.id} />}
+        {homeSubTab === "timetable" && <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />}
         {homeSubTab === "planner" && <PersonalTimetableEditor title="My Personal Planner" />}
         {homeSubTab === "announcements" && <StudentAnnouncementsSection announcements={announcements} />}
         {homeSubTab === "marks" && <StudentMarksTab studentId={student?.id} />}
