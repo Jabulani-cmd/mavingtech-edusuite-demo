@@ -139,6 +139,11 @@ const App = () => (
                 <RegistrationDashboard />
               </ProtectedRoute>
             } />
+            <Route path="/portal/timetables" element={
+              <ProtectedRoute allowedRoles={["admin", "principal", "deputy_principal", "hod", "teacher"]}>
+                <AuthenticatedLayout><TimetableManagement /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
