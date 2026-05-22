@@ -115,39 +115,44 @@ export default function Contact() {
 
   return (
     <Layout>
-      {/* Hero */}
-      <section className="bg-maroon-gradient py-16">
-        <div className="container text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-primary-foreground md:text-5xl">
-            Contact Us
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mx-auto mt-4 max-w-2xl text-primary-foreground/80">
-            We'd love to hear from you. Reach out with questions or book an appointment with our school authorities.
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Get in Touch"
+        title="Contact Us"
+        subtitle="We'd love to hear from you. Reach out with questions or book an appointment with our school authorities."
+        image={hero}
+      />
 
       {/* Contact Info Cards */}
-      <section className="bg-section-warm py-12">
-        <div className="container grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: MapPin, title: "Address", text: "MavingTech High School, Bulawayo, Zimbabwe" },
-            { icon: Phone, title: "Phone", text: "+263 29 2XXXXXX" },
-            { icon: Mail, title: "Email", text: "info@mavingtech.com" },
-            { icon: Clock, title: "Office Hours", text: "Mon – Fri: 07:30 – 15:30" },
-          ].map((item, i) => (
-            <motion.div key={item.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-              <Card className="h-full border-none shadow-maroon text-center">
-                <CardContent className="flex flex-col items-center p-6">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <item.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-heading font-semibold">{item.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.text}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+      <section className="py-20 md:py-24">
+        <div className="container">
+          <div className="mb-14 text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">How to Reach Us</span>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">Our Details</h2>
+            <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: MapPin, title: "Address", text: "MavingTech High School, Bulawayo, Zimbabwe" },
+              { icon: Phone, title: "Phone", text: "+263 29 2XXXXXX" },
+              { icon: Mail, title: "Email", text: "info@mavingtech.com" },
+              { icon: Clock, title: "Office Hours", text: "Mon – Fri: 07:30 – 15:30" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="rounded-lg bg-card p-6 text-center shadow-sm ring-1 ring-border/60"
+              >
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-heading text-base font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
