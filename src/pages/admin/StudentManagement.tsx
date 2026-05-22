@@ -818,7 +818,7 @@ export default function StudentManagement() {
                 <Input value={formData.admission_number} readOnly className="bg-muted" />
               ) : (
                 <p className="text-sm text-muted-foreground border rounded-md px-3 py-2 bg-muted">
-                  Will be auto-generated as <strong>GHS#####</strong> on save
+                  Will be auto-generated as <strong>MHS#####</strong> on save
                 </p>
               )}
             </div>
