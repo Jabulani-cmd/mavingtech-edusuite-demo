@@ -462,7 +462,7 @@ export default function StudentManagement() {
       // Generate a guaranteed-unique admission number using timestamp
       const timestamp = Date.now().toString().slice(-6);
       const randomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, "0");
-      const nextAdmissionNumber = `GHS${timestamp}${randomSuffix}`;
+      const nextAdmissionNumber = `MHS${timestamp}${randomSuffix}`;
 
       const { admission_number, ...rest } = payload;
       const insertPayload = { ...rest, admission_number: nextAdmissionNumber };
