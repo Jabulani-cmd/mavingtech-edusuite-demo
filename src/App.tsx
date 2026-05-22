@@ -92,7 +92,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/portal/student" element={
               <ProtectedRoute allowedRoles={["student"]}>
-                <AuthenticatedLayout><StudentDashboard /></AuthenticatedLayout>
+                <AuthenticatedLayout><PortalAccessGate portalName="student"><StudentDashboard /></PortalAccessGate></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/teacher" element={
