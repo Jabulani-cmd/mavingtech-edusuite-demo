@@ -32,20 +32,25 @@ Deno.serve(async (req) => {
     const hasUserJwt = !!(authHeader && authHeader.startsWith("Bearer ") && authHeader.replace("Bearer ", "") !== Deno.env.get("SUPABASE_ANON_KEY"));
 
     if (action === "seed-admin" && !hasUserJwt) {
+      // Allow unauthenticated bootstrap when either no admin exists yet, OR
+      // the required director account (francis.moyo) has not been provisioned.
+      const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const directorExists = existingUsers?.users?.some(
+        (u) => u.email === "francis.moyo@mavingtech.com"
+      );
       const { count } = await supabaseAdmin
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "admin");
-      if ((count ?? 0) > 0) {
+      if ((count ?? 0) > 0 && directorExists) {
         return new Response(JSON.stringify({ error: "Admin already exists. Sign in as admin to manage users." }), {
           status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      // Allow unauthenticated bootstrap; fall through to the seed-admin handler below.
-      const { action: _a, ...rest } = { action, ...payload };
       (req as any)._bootstrapSeed = true;
     }
+
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       if (!(req as any)._bootstrapSeed) {
