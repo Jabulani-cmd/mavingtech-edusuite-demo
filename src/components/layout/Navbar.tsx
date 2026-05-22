@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, Twitter, Facebook, Instagram } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -166,18 +166,18 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex items-center justify-between py-3">
         {/* Logo left */}
-        <Link to="/" className="flex items-center gap-3 min-w-0 flex-shrink-0">
+        <Link to="/" className="flex items-center gap-4 min-w-0 flex-shrink-0">
           <img
             src={schoolLogo}
             alt="MavingTech High School"
-            className="h-12 w-12 flex-shrink-0 object-contain md:h-14 md:w-14"
+            className="h-20 w-20 flex-shrink-0 object-contain md:h-24 md:w-24"
           />
           <div className="hidden flex-col leading-tight sm:flex">
-            <span className="font-heading text-base font-bold text-foreground md:text-lg">
+            <span className="font-heading text-xl font-bold text-foreground md:text-2xl">
               MavingTech
             </span>
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              Business Solutions
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground md:text-sm">
+              High School
             </span>
           </div>
         </Link>
@@ -201,19 +201,8 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Right side: socials + portal */}
+        {/* Right side: portal */}
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 md:flex">
-            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Twitter">
-              <Twitter className="h-4 w-4" />
-            </a>
-            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Facebook">
-              <Facebook className="h-4 w-4" />
-            </a>
-            <a href="#" className="text-foreground/60 transition-colors hover:text-primary" aria-label="Instagram">
-              <Instagram className="h-4 w-4" />
-            </a>
-          </div>
           <Link to="/login" className="hidden sm:block">
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
               Portal Login
