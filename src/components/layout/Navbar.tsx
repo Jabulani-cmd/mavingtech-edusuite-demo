@@ -166,17 +166,17 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex items-center justify-between py-3">
         {/* Logo left */}
-        <Link to="/" className="flex items-center gap-4 min-w-0 flex-shrink-0">
+        <Link to="/" className="flex items-center gap-5 min-w-0 flex-shrink-0">
           <img
             src={schoolLogo}
             alt="MavingTech High School"
             className="h-[7.5rem] w-[7.5rem] flex-shrink-0 object-contain md:h-[9rem] md:w-[9rem]"
           />
           <div className="hidden flex-col leading-tight sm:flex">
-            <span className="font-heading text-xl font-bold text-foreground md:text-2xl">
+            <span className="font-heading text-2xl font-extrabold tracking-tight text-foreground md:text-4xl lg:text-5xl">
               MavingTech
             </span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground md:text-sm">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary md:text-base lg:text-lg">
               High School
             </span>
           </div>
