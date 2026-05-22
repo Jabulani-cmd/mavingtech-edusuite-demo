@@ -1,14 +1,30 @@
 // @ts-nocheck
 import { useState, useEffect, forwardRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import classroomImg from "@/assets/classroom.png";
-import achievementsImg from "@/assets/achievements.png";
 import schoolLogo from "@/assets/mavingtech-logo.png";
+import hero1 from "@/assets/hero-students-1.jpg";
+import hero2 from "@/assets/hero-students-2.jpg";
+import hero3 from "@/assets/hero-students-3.jpg";
+import hero4 from "@/assets/hero-students-4.jpg";
+import hero5 from "@/assets/hero-students-5.jpg";
+import currCs from "@/assets/curriculum-cs.jpg";
+import currMath from "@/assets/curriculum-math.jpg";
+import currLit from "@/assets/curriculum-literature.jpg";
+import currSci from "@/assets/curriculum-science.jpg";
+import currArts from "@/assets/curriculum-arts.jpg";
+import currPerf from "@/assets/curriculum-performing.jpg";
+import actSports from "@/assets/activity-sports.jpg";
+import actMusic from "@/assets/activity-music.jpg";
+import actArts from "@/assets/activity-arts.jpg";
+import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
+
+const heroImages = [hero1, hero2, hero3, hero4, hero5];
+
 
 /* ---------- Director Photo ---------- */
 const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, ref) {
