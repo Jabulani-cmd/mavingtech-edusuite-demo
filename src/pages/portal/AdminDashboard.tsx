@@ -1016,9 +1016,14 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-heading">School Timetables</CardTitle>
-                <Button onClick={() => window.location.assign("/portal/timetables")}>
-                  <Calendar className="mr-2 h-4 w-4" /> Open Timetable Management
-                </Button>
+                <div className="flex gap-2 flex-wrap">
+                  <Button onClick={() => window.location.assign("/portal/allocations")} variant="secondary">
+                    <Calendar className="mr-2 h-4 w-4" /> Teacher Allocations (Demo)
+                  </Button>
+                  <Button onClick={() => window.location.assign("/portal/timetables")}>
+                    <Calendar className="mr-2 h-4 w-4" /> Open Timetable Management
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
