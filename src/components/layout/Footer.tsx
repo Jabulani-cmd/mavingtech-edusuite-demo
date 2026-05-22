@@ -26,7 +26,7 @@ export default function Footer() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <img src={zimsecLogo} alt="ZIMSEC" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <img src={zimsecLogo} alt="ZIMSEC" className="h-32 w-32 object-contain md:h-40 md:w-40" />
               <span className="text-xs font-medium text-muted-foreground">ZIMSEC</span>
             </div>
           </div>
