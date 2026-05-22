@@ -43,6 +43,7 @@ import { openPrintWindow } from "@/lib/finance/print";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 
 type TabId = "overview" | "grades" | "marks" | "timetable" | "attendance" | "fees" | "announcements" | "exam-timetable" | "reports";
 
