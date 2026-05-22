@@ -19,6 +19,7 @@ import StudentDashboard from "./pages/portal/StudentDashboard";
 import ParentTeacherDashboard from "./pages/portal/ParentTeacherDashboard";
 import ParentDashboard from "./pages/portal/ParentDashboard";
 import TeacherDashboard from "./pages/portal/TeacherDashboard";
+import AIShadowMarker from "./pages/portal/AIShadowMarker";
 import AdminDashboard from "./pages/portal/AdminDashboard";
 import FinanceDashboard from "./pages/portal/FinanceDashboard";
 import PrincipalDashboard from "./pages/portal/PrincipalDashboard";
@@ -86,6 +87,11 @@ const App = () => (
             <Route path="/portal/teacher" element={
               <ProtectedRoute allowedRoles={["teacher"]}>
                 <AuthenticatedLayout><TeacherDashboard /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/teacher/ai-marker" element={
+              <ProtectedRoute allowedRoles={["teacher", "admin", "principal", "deputy_principal", "hod"]}>
+                <AuthenticatedLayout><AIShadowMarker /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent-teacher" element={
