@@ -9,13 +9,13 @@ interface PageHeroProps {
 
 export default function PageHero({ eyebrow, title, subtitle, image }: PageHeroProps) {
   return (
-    <section className="relative isolate h-[52vh] min-h-[380px] w-full overflow-hidden">
+    <section className="relative isolate h-[52vh] min-h-[380px] w-full overflow-hidden bg-foreground">
       <img
         src={image}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-top"
+        className="absolute inset-0 h-full w-full object-contain object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
       <div className="container relative z-10 flex h-full items-end pb-14">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

@@ -90,7 +90,7 @@ export default function Home() {
   return (
     <Layout>
       {/* ===== HERO CAROUSEL ===== */}
-      <section className="relative isolate h-[80vh] min-h-[560px] w-full overflow-hidden">
+      <section className="relative isolate h-[80vh] min-h-[560px] w-full overflow-hidden bg-foreground">
         <AnimatePresence initial={false}>
           <motion.img
             key={slide}
@@ -100,7 +100,7 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2 }}
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-contain object-center"
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/20" />
