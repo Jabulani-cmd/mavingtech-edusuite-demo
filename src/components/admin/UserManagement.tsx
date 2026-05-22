@@ -299,17 +299,16 @@ export default function UserManagement() {
       console.log("Staff users from table count:", staffUsersFromTable.length);
       console.log("Staff users from table:", staffUsersFromTable);
 
-      // 3. Fetch student users from students table (active only)
+      // 3. Fetch student users from students table (optional — table may not exist in demo)
       const { data: studentsData, error: studentsError } = await supabase
         .from("students")
         .select("id, user_id, admission_number, full_name, enrollment_date")
-        
         .not("user_id", "is", null);
-      if (studentsError) throw studentsError;
+      if (studentsError) console.warn("Students table unavailable:", studentsError.message);
 
       const studentUsers: ManagedUser[] = (studentsData || []).map((s: any) => ({
         id: s.user_id,
-        email: `ghs${s.admission_number.toLowerCase().replace(/^ghs/, "")}@mavingtech.com`,
+        email: `mhs${(s.admission_number || "").toLowerCase().replace(/^mhs/, "")}@mavingtech.com`,
         full_name: s.full_name,
         portal_role: "student",
         staff_role: undefined,
