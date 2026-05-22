@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
     if (action === "seed-admin") {
       const { data: existingUsers } =
         await supabaseAdmin.auth.admin.listUsers();
-      const adminCheckEmail = Deno.env.get("ADMIN_SEED_EMAIL") || "admin@giffordhigh.com";
+      const adminCheckEmail = Deno.env.get("ADMIN_SEED_EMAIL") || "admin@mavingtech.com";
       const adminExists = existingUsers?.users?.some(
         (u) => u.email === adminCheckEmail
       );
@@ -138,13 +138,8 @@ Deno.serve(async (req) => {
         );
       }
 
-      const adminEmail = Deno.env.get("ADMIN_SEED_EMAIL") || "admin@giffordhigh.com";
-      const adminPassword = Deno.env.get("ADMIN_SEED_PASSWORD");
-      if (!adminPassword) {
-        return new Response(JSON.stringify({ error: "ADMIN_SEED_PASSWORD secret not configured" }), {
-          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      const adminEmail = adminCheckEmail;
+      const adminPassword = Deno.env.get("ADMIN_SEED_PASSWORD") || "demo123";
 
       const { data: newUser, error: createError } =
         await supabaseAdmin.auth.admin.createUser({
