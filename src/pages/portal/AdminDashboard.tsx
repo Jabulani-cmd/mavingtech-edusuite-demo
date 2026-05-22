@@ -15,6 +15,7 @@ import StaffManagementFull from "@/pages/admin/StaffManagementFull";
 import BoardingManagement from "@/pages/admin/BoardingManagement";
 import InventoryManagement from "@/pages/admin/InventoryManagement";
 import CommunicationModule from "@/pages/admin/CommunicationModule";
+import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import EMISReports from "@/pages/admin/EMISReports";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
