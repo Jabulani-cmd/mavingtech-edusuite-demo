@@ -7,3 +7,12 @@ verify_jwt = false
 verify_jwt = false
 [functions.ai-shadow-marker]
 verify_jwt = false
+
+[functions.ai-report-comment]
+verify_jwt = false
+
+[functions.ai-parent-message]
+verify_jwt = false
+
+[functions.generate-lesson-plan]
+verify_jwt = false
