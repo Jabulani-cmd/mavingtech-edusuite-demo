@@ -169,7 +169,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-3 min-w-0 flex-shrink-0">
           <img
             src={schoolLogo}
-            alt="MavingTech Business Solutions"
+            alt="MavingTech High School"
             className="h-12 w-12 flex-shrink-0 object-contain md:h-14 md:w-14"
           />
           <div className="hidden flex-col leading-tight sm:flex">

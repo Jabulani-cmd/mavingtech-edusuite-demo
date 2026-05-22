@@ -207,13 +207,13 @@ export default function Home() {
             </h2>
             <div className="mt-4 h-[3px] w-12 bg-primary" />
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground italic">
-              "We aim at inspiring our students to dream more, learn more, do more, and become more in their respective journeys with MavingTech Business Solutions."
+              "We aim at inspiring our students to dream more, learn more, do more, and become more in their respective journeys with MavingTech High School."
             </p>
             <p className="mt-6 leading-relaxed text-muted-foreground">
-              Welcome to MavingTech Business Solutions. We are a technology-driven company dedicated to empowering organisations with innovative software solutions that streamline operations, enhance communication, and drive efficiency.
+              Welcome to MavingTech High School. We are a technology-driven company dedicated to empowering organisations with innovative software solutions that streamline operations, enhance communication, and drive efficiency.
             </p>
             <p className="mt-6 font-heading text-base font-semibold text-foreground">
-              Mr. F.J. Moyo <span className="font-normal text-muted-foreground">— The Director, MavingTech Business Solutions</span>
+              Mr. F.J. Moyo <span className="font-normal text-muted-foreground">— The Director, MavingTech High School</span>
             </p>
           </motion.div>
         </div>

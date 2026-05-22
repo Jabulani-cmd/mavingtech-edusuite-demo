@@ -65,7 +65,7 @@ export default function Facilities() {
             viewport={{ once: true }}
             className="text-lg leading-relaxed text-muted-foreground"
           >
-            MavingTech Business Solutions is a boys-only boarding school providing excellent facilities to support
+            MavingTech High School is a boys-only boarding school providing excellent facilities to support
             academic excellence, sporting achievement, and holistic development. Our campus features modern
             classrooms, well-equipped laboratories, expansive sports grounds, a comprehensive library,
             ICT facilities, and comfortable boarding accommodation.

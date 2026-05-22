@@ -98,7 +98,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/50">
-          <p>© {new Date().getFullYear()} MavingTech Business Solutions. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MavingTech High School. All rights reserved.</p>
         </div>
       </div>
     </footer>

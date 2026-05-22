@@ -76,7 +76,7 @@ export default function Admissions() {
                 <div className="py-12 text-center">
                   <CheckCircle className="mx-auto mb-4 h-16 w-16 text-primary" />
                   <h3 className="font-heading text-xl font-bold">Application Received!</h3>
-                  <p className="mt-2 text-muted-foreground">Thank you for applying to MavingTech Business Solutions. We will contact you within 5 business days.</p>
+                  <p className="mt-2 text-muted-foreground">Thank you for applying to MavingTech High School. We will contact you within 5 business days.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">

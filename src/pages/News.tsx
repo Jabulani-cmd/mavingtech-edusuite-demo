@@ -20,7 +20,7 @@ const newsItems = [
   {
     id: 3, title: "Open Day for Prospective Students", date: "Apr 5, 2026",
     excerpt: "Tour our campus and meet our teachers. Register online now.",
-    body: "MavingTech Business Solutions invites prospective students and their families to our annual Open Day on Saturday, 5 April 2026. The programme includes campus tours, subject demonstrations, meet-and-greet with teachers, and a Q&A session with the headmaster. Pre-registration is recommended via the admissions page.",
+    body: "MavingTech High School invites prospective students and their families to our annual Open Day on Saturday, 5 April 2026. The programme includes campus tours, subject demonstrations, meet-and-greet with teachers, and a Q&A session with the headmaster. Pre-registration is recommended via the admissions page.",
   },
   {
     id: 4, title: "Science Olympiad Team Wins Silver", date: "Feb 10, 2026",

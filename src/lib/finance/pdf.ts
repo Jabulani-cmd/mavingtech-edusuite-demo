@@ -2,7 +2,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 // School branding constants
-export const SCHOOL_NAME = "MavingTech Business Solutions";
+export const SCHOOL_NAME = "MavingTech High School";
 export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
 export const SCHOOL_ADDRESS = "P.O. Box 1965, Bulawayo, Zimbabwe";
 export const SCHOOL_PHONE = "+263 29 288 3621";
