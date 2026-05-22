@@ -89,6 +89,11 @@ const App = () => (
                 <AuthenticatedLayout><TeacherDashboard /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
+            <Route path="/portal/teacher/ai-marker" element={
+              <ProtectedRoute allowedRoles={["teacher", "admin", "principal", "deputy_principal", "hod"]}>
+                <AuthenticatedLayout><AIShadowMarker /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
             <Route path="/portal/parent-teacher" element={
               <ProtectedRoute allowedRoles={["parent"]}>
                 <AuthenticatedLayout><ParentDashboard /></AuthenticatedLayout>
