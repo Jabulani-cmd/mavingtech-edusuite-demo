@@ -26,15 +26,37 @@ Deno.serve(async (req) => {
 
     const { action, ...payload } = await req.json();
 
-    // Verify caller authentication
+    // Bootstrap exception: seed-admin can run without a logged-in user, but ONLY
+    // when there is no admin in the system yet (first-run setup from /login).
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const hasUserJwt = !!(authHeader && authHeader.startsWith("Bearer ") && authHeader.replace("Bearer ", "") !== Deno.env.get("SUPABASE_ANON_KEY"));
+
+    if (action === "seed-admin" && !hasUserJwt) {
+      const { count } = await supabaseAdmin
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "admin");
+      if ((count ?? 0) > 0) {
+        return new Response(JSON.stringify({ error: "Admin already exists. Sign in as admin to manage users." }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      // Allow unauthenticated bootstrap; fall through to the seed-admin handler below.
+      const { action: _a, ...rest } = { action, ...payload };
+      (req as any)._bootstrapSeed = true;
     }
-    const token = authHeader.replace("Bearer ", "");
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      if (!(req as any)._bootstrapSeed) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+    const token = authHeader ? authHeader.replace("Bearer ", "") : "";
+
 
     // Use getClaims for faster validation
     const supabaseAuth = createClient(
