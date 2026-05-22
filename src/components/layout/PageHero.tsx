@@ -13,9 +13,10 @@ export default function PageHero({ eyebrow, title, subtitle, image }: PageHeroPr
       <img
         src={image}
         alt=""
-        className="absolute inset-0 h-full w-full object-contain object-center"
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: "center 30%" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/20" />
       <div className="container relative z-10 flex h-full items-end pb-14">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
