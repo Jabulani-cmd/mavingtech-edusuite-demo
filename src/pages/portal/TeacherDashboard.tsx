@@ -358,6 +358,9 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           </div>
         </motion.div>
 
+        <PublishedTimetableWidget title="Teaching Timetable" mode="teacher" filterValue={displayName} />
+
+
         <Tabs defaultValue="materials" className="space-y-4">
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide">
           <TabsList className="flex-wrap sm:flex-wrap h-auto gap-1 w-max sm:w-auto">
