@@ -37,7 +37,7 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="MavingTech" className="h-12 w-12 object-contain" />
+              <img src={schoolLogo} alt="MavingTech" className="h-[4.5rem] w-[4.5rem] object-contain" />
               <span className="font-heading text-xl font-bold">MavingTech</span>
             </div>
             <p className="text-sm leading-relaxed text-white/70">
