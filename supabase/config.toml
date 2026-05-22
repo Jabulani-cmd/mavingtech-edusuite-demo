@@ -1,1 +1,19 @@
 project_id = "oymqqsvabbzognjgbxtl"
+
+[functions.ai-generate-timetable]
+verify_jwt = false
+
+[functions.ai-generate-exam-timetable]
+verify_jwt = false
+
+[functions.ai-find-substitute]
+verify_jwt = false
+
+[functions.ai-shadow-marker]
+verify_jwt = false
+
+[functions.ai-report-comment]
+verify_jwt = false
+
+[functions.ai-parent-message]
+verify_jwt = false
