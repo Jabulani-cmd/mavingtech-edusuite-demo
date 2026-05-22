@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_grants: {
+        Row: {
+          access_end: string | null
+          access_start: string
+          created_at: string
+          grant_type: Database["public"]["Enums"]["grant_type"]
+          granted_by: string | null
+          id: string
+          is_active: boolean
+          parent_id: string
+          reason: string | null
+          student_id: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_end?: string | null
+          access_start?: string
+          created_at?: string
+          grant_type?: Database["public"]["Enums"]["grant_type"]
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          parent_id: string
+          reason?: string | null
+          student_id: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_end?: string | null
+          access_start?: string
+          created_at?: string
+          grant_type?: Database["public"]["Enums"]["grant_type"]
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          parent_id?: string
+          reason?: string | null
+          student_id?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_grants_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_timetable_logs: {
         Row: {
           conflicts_count: number | null
@@ -60,6 +113,319 @@ export type Database = {
             columns: ["definition_id"]
             isOneToOne: false
             referencedRelation: "tt_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exchange_rates: {
+        Row: {
+          created_at: string
+          fetched_at: string
+          id: string
+          is_active: boolean
+          set_by_admin: string | null
+          source: string
+          usd_to_zwg: number
+        }
+        Insert: {
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          is_active?: boolean
+          set_by_admin?: string | null
+          source?: string
+          usd_to_zwg: number
+        }
+        Update: {
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          is_active?: boolean
+          set_by_admin?: string | null
+          source?: string
+          usd_to_zwg?: number
+        }
+        Relationships: []
+      }
+      payment_reminders: {
+        Row: {
+          ai_generated_message: string | null
+          created_at: string
+          created_by: string | null
+          delivery_method: string
+          id: string
+          parent_id: string
+          reminder_type: string
+          sent_at: string
+          status: string
+          student_id: string | null
+        }
+        Insert: {
+          ai_generated_message?: string | null
+          created_at?: string
+          created_by?: string | null
+          delivery_method?: string
+          id?: string
+          parent_id: string
+          reminder_type: string
+          sent_at?: string
+          status?: string
+          student_id?: string | null
+        }
+        Update: {
+          ai_generated_message?: string | null
+          created_at?: string
+          created_by?: string | null
+          delivery_method?: string
+          id?: string
+          parent_id?: string
+          reminder_type?: string
+          sent_at?: string
+          status?: string
+          student_id?: string | null
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          ip_address: string | null
+          mobile_number: string | null
+          notes: string | null
+          parent_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          paynow_poll_url: string | null
+          paynow_reference: string | null
+          proof_of_payment_url: string | null
+          receipt_number: string | null
+          receipt_url: string | null
+          rejection_reason: string | null
+          subscription_id: string | null
+          transaction_id: string | null
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          ip_address?: string | null
+          mobile_number?: string | null
+          notes?: string | null
+          parent_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          paynow_poll_url?: string | null
+          paynow_reference?: string | null
+          proof_of_payment_url?: string | null
+          receipt_number?: string | null
+          receipt_url?: string | null
+          rejection_reason?: string | null
+          subscription_id?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          ip_address?: string | null
+          mobile_number?: string | null
+          notes?: string | null
+          parent_id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          paynow_poll_url?: string | null
+          paynow_reference?: string | null
+          proof_of_payment_url?: string | null
+          receipt_number?: string | null
+          receipt_url?: string | null
+          rejection_reason?: string | null
+          subscription_id?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_bank_details: {
+        Row: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          branch: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          paynow_integration_id: string | null
+          paynow_integration_key_secret_ref: string | null
+          swift_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          branch?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          paynow_integration_id?: string | null
+          paynow_integration_key_secret_ref?: string | null
+          swift_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          bank_name?: string
+          branch?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          paynow_integration_id?: string | null
+          paynow_integration_key_secret_ref?: string | null
+          swift_code?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          amount_usd: number
+          created_at: string
+          description: string | null
+          duration_days: number
+          features: Json
+          id: string
+          is_active: boolean
+          is_recommended: boolean
+          name: string
+          plan_type: Database["public"]["Enums"]["subscription_plan_type"]
+          sibling_discount_2: number
+          sibling_discount_3_plus: number
+          updated_at: string
+        }
+        Insert: {
+          amount_usd: number
+          created_at?: string
+          description?: string | null
+          duration_days: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_recommended?: boolean
+          name: string
+          plan_type: Database["public"]["Enums"]["subscription_plan_type"]
+          sibling_discount_2?: number
+          sibling_discount_3_plus?: number
+          updated_at?: string
+        }
+        Update: {
+          amount_usd?: number
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_recommended?: boolean
+          name?: string
+          plan_type?: Database["public"]["Enums"]["subscription_plan_type"]
+          sibling_discount_2?: number
+          sibling_discount_3_plus?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          academic_year: string | null
+          access_end: string | null
+          access_start: string | null
+          amount_usd: number
+          amount_zwg: number | null
+          auto_renew: boolean
+          created_at: string
+          currency_paid: string
+          id: string
+          parent_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          paynow_reference: string | null
+          plan_id: string | null
+          plan_type: Database["public"]["Enums"]["subscription_plan_type"]
+          status: Database["public"]["Enums"]["subscription_status"]
+          student_id: string
+          term: string | null
+          transaction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          academic_year?: string | null
+          access_end?: string | null
+          access_start?: string | null
+          amount_usd: number
+          amount_zwg?: number | null
+          auto_renew?: boolean
+          created_at?: string
+          currency_paid?: string
+          id?: string
+          parent_id: string
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          paynow_reference?: string | null
+          plan_id?: string | null
+          plan_type: Database["public"]["Enums"]["subscription_plan_type"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          student_id: string
+          term?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          academic_year?: string | null
+          access_end?: string | null
+          access_start?: string | null
+          amount_usd?: number
+          amount_zwg?: number | null
+          auto_renew?: boolean
+          created_at?: string
+          currency_paid?: string
+          id?: string
+          parent_id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          paynow_reference?: string | null
+          plan_id?: string | null
+          plan_type?: Database["public"]["Enums"]["subscription_plan_type"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          student_id?: string
+          term?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -326,6 +692,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_finance_admin: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       app_role:
@@ -337,6 +704,32 @@ export type Database = {
         | "hod"
         | "registration"
         | "supervisor"
+      grant_type: "paid" | "complimentary" | "trial" | "suspended"
+      payment_method:
+        | "ecocash"
+        | "onemoney"
+        | "telecash"
+        | "paynow_web"
+        | "bank_transfer"
+        | "visa_mastercard"
+        | "manual"
+      payment_status:
+        | "pending"
+        | "paid"
+        | "failed"
+        | "cancelled"
+        | "refunded"
+        | "awaiting_verification"
+        | "rejected"
+      subscription_plan_type: "monthly" | "term" | "custom"
+      subscription_status:
+        | "active"
+        | "expired"
+        | "pending"
+        | "suspended"
+        | "complimentary"
+        | "trial"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -473,6 +866,35 @@ export const Constants = {
         "hod",
         "registration",
         "supervisor",
+      ],
+      grant_type: ["paid", "complimentary", "trial", "suspended"],
+      payment_method: [
+        "ecocash",
+        "onemoney",
+        "telecash",
+        "paynow_web",
+        "bank_transfer",
+        "visa_mastercard",
+        "manual",
+      ],
+      payment_status: [
+        "pending",
+        "paid",
+        "failed",
+        "cancelled",
+        "refunded",
+        "awaiting_verification",
+        "rejected",
+      ],
+      subscription_plan_type: ["monthly", "term", "custom"],
+      subscription_status: [
+        "active",
+        "expired",
+        "pending",
+        "suspended",
+        "complimentary",
+        "trial",
+        "cancelled",
       ],
     },
   },
