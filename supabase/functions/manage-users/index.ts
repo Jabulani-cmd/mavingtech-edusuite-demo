@@ -767,6 +767,15 @@ Deno.serve(async (req) => {
       // Link student record to auth user
       await supabaseAdmin.from("students").update({ user_id: userId }).eq("id", student_id);
 
+      // Ensure profile row exists so student appears in admin Users list
+      await supabaseAdmin.from("profiles").upsert({
+        id: userId,
+        user_id: userId,
+        full_name,
+        email: studentEmail,
+        role: "student",
+      }, { onConflict: "id" });
+
       // Update profile with guardian email if available
       if (guardian_email) {
         await supabaseAdmin.from("profiles").update({ email: guardian_email }).eq("user_id", userId);
