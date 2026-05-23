@@ -24,6 +24,13 @@ import StudentExamResultsTab from "@/components/student/StudentExamResultsTab";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
+  <div className="relative min-h-[60vh]">
+    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
+  </div>
+);
 
 type TabId = "home" | "materials" | "assessments" | "attendance" | "profile";
 
