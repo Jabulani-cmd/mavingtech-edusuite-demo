@@ -348,6 +348,24 @@ function TabContent({
   userId, onRefresh,
 }: TabContentProps) {
   const [homeSubTab, setHomeSubTab] = useState<"overview" | "timetable" | "planner" | "fees" | "announcements" | "marks" | "results" | "exam-timetable" | "reports">("overview");
+  const subscription = useSubscription();
+  const lockedFeatureLabels: Record<string, string> = {
+    timetable: "the timetable",
+    planner: "the planner",
+    announcements: "announcements",
+    marks: "marks",
+    results: "exam results",
+    "exam-timetable": "the exam timetable",
+    reports: "term reports",
+    fees: "fees",
+  };
+
+  const renderLocked = (feature: string, children: React.ReactNode) => {
+    if (subscription.loading || !subscription.isActive) {
+      return <StudentLockedNotice feature={feature} loading={subscription.loading} status={subscription.status} />;
+    }
+    return children;
+  };
 
   if (activeTab === "home") {
     return (
@@ -417,12 +435,12 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && <Locked feature="the timetable"><PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></Locked>}
-        {homeSubTab === "planner" && <Locked feature="the planner"><PersonalTimetableEditor title="My Personal Planner" /></Locked>}
-        {homeSubTab === "announcements" && <Locked feature="announcements"><StudentAnnouncementsSection announcements={announcements} /></Locked>}
-        {homeSubTab === "marks" && <Locked feature="marks"><StudentMarksTab studentId={student?.id} /></Locked>}
+        {homeSubTab === "timetable" && renderLocked("the timetable", <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />)}
+        {homeSubTab === "planner" && renderLocked("the planner", <PersonalTimetableEditor title="My Personal Planner" />)}
+        {homeSubTab === "announcements" && renderLocked("announcements", <StudentAnnouncementsSection announcements={announcements} />)}
+        {homeSubTab === "marks" && renderLocked("marks", <StudentMarksTab studentId={student?.id} />)}
         {homeSubTab === "results" && (
-          <Locked feature="exam results">
+          renderLocked("exam results",
             <StudentExamResultsTab
               studentId={student?.id}
               studentName={student?.full_name || displayName}
@@ -430,11 +448,11 @@ function TabContent({
               form={student?.form}
               stream={student?.stream}
             />
-          </Locked>
+          )
         )}
-        {homeSubTab === "fees" && <Locked feature="fees"><StudentFeeTab studentId={student?.id} /></Locked>}
-        {homeSubTab === "exam-timetable" && <Locked feature="the exam timetable"><StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} /></Locked>}
-        {homeSubTab === "reports" && <Locked feature="term reports"><StudentTermReportsTab /></Locked>}
+        {homeSubTab === "fees" && renderLocked("fees", <StudentFeeTab studentId={student?.id} />)}
+        {homeSubTab === "exam-timetable" && renderLocked("the exam timetable", <StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} />)}
+        {homeSubTab === "reports" && renderLocked("term reports", <StudentTermReportsTab />)}
       </motion.div>
     );
   }
