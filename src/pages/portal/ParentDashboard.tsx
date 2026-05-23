@@ -737,7 +737,7 @@ function TabContent(props: TabContentProps) {
     const overallRank = rankings?.overall_rank ? { rank: rankings.overall_rank, total: rankings.total_students } : null;
     const avgGrade = getZIMSECGrade(avgMark);
 
-    return (
+    return (<Locked feature="exam results">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Exam Results — {child.full_name}</h2>
 
