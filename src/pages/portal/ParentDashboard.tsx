@@ -594,7 +594,25 @@ interface TabContentProps {
   usdToZig: (usd: number) => number;
 }
 
+const FEATURE_LABELS: Record<string, string> = {
+  grades: "exam results",
+  marks: "marks",
+  attendance: "attendance",
+  fees: "fees",
+  announcements: "announcements",
+  timetable: "the timetable",
+  "exam-timetable": "the exam timetable",
+  reports: "term reports",
+};
+
 function TabContent(props: TabContentProps) {
+  const inner = <TabContentInner {...props} />;
+  if (props.activeTab === "overview") return inner;
+  const feature = FEATURE_LABELS[props.activeTab] || "this feature";
+  return <Locked feature={feature}>{inner}</Locked>;
+}
+
+function TabContentInner(props: TabContentProps) {
   const {
     activeTab,
     setActiveTab,
