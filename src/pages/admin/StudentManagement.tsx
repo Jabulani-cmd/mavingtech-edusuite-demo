@@ -744,7 +744,7 @@ export default function StudentManagement() {
                   <TableCell>{s.guardian_phone || "—"}</TableCell>
                   <TableCell>
                     {s.user_id ? (
-                      <Badge className="bg-green-100 text-green-800">Active</Badge>
+                      <Badge className="bg-green-100 text-green-800">Student Portal</Badge>
                     ) : (
                       <Badge variant="outline" className="text-amber-600 border-amber-300">No Account</Badge>
                     )}
