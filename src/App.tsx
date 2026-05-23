@@ -92,7 +92,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/portal/student" element={
               <ProtectedRoute allowedRoles={["student"]}>
-                <AuthenticatedLayout><PortalAccessGate portalName="student"><StudentDashboard /></PortalAccessGate></AuthenticatedLayout>
+                <AuthenticatedLayout><StudentDashboard /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/teacher" element={
@@ -107,12 +107,12 @@ const App = () => (
             } />
             <Route path="/portal/parent-teacher" element={
               <ProtectedRoute allowedRoles={["parent"]}>
-                <AuthenticatedLayout><PortalAccessGate portalName="parent"><ParentDashboard /></PortalAccessGate></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentDashboard /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent" element={
               <ProtectedRoute allowedRoles={["parent"]}>
-                <AuthenticatedLayout><PortalAccessGate portalName="parent"><ParentDashboard /></PortalAccessGate></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentDashboard /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent/subscribe" element={
