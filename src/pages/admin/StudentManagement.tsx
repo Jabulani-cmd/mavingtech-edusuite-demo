@@ -281,7 +281,7 @@ export default function StudentManagement() {
   const [uploading, setUploading] = useState(false);
   const [showWebcam, setShowWebcam] = useState(false);
   const [dbSubjects, setDbSubjects] = useState<{ id: string; name: string; department: string | null }[]>([]);
-  const [provisionResult, setProvisionResult] = useState<{ email: string; temp_password: string; admission_number: string } | null>(null);
+  const [provisionResult, setProvisionResult] = useState<{ email: string; temp_password: string; admission_number: string; parent?: { email: string; temp_password: string | null; existed: boolean } | null } | null>(null);
   const [provisionDialogOpen, setProvisionDialogOpen] = useState(false);
 
   // Boarding fields
