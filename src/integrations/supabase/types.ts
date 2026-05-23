@@ -2419,6 +2419,7 @@ export type Database = {
           date_of_birth: string | null
           email: string | null
           emergency_contact: string | null
+          enrollment_date: string | null
           first_name: string | null
           form: string | null
           full_name: string
@@ -2426,12 +2427,19 @@ export type Database = {
           guardian_email: string | null
           guardian_name: string | null
           guardian_phone: string | null
+          has_medical_alert: boolean | null
           id: string
           last_name: string | null
+          medical_conditions: string | null
+          name: string | null
           photo_url: string | null
+          profile_photo_url: string | null
+          sports: string[] | null
           sports_activities: string[] | null
           status: string | null
           stream: string | null
+          student_number: string | null
+          subject_combination: string | null
           updated_at: string
           user_id: string | null
         }
@@ -2444,6 +2452,7 @@ export type Database = {
           date_of_birth?: string | null
           email?: string | null
           emergency_contact?: string | null
+          enrollment_date?: string | null
           first_name?: string | null
           form?: string | null
           full_name?: string
@@ -2451,12 +2460,19 @@ export type Database = {
           guardian_email?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
+          has_medical_alert?: boolean | null
           id?: string
           last_name?: string | null
+          medical_conditions?: string | null
+          name?: string | null
           photo_url?: string | null
+          profile_photo_url?: string | null
+          sports?: string[] | null
           sports_activities?: string[] | null
           status?: string | null
           stream?: string | null
+          student_number?: string | null
+          subject_combination?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -2469,6 +2485,7 @@ export type Database = {
           date_of_birth?: string | null
           email?: string | null
           emergency_contact?: string | null
+          enrollment_date?: string | null
           first_name?: string | null
           form?: string | null
           full_name?: string
@@ -2476,12 +2493,19 @@ export type Database = {
           guardian_email?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
+          has_medical_alert?: boolean | null
           id?: string
           last_name?: string | null
+          medical_conditions?: string | null
+          name?: string | null
           photo_url?: string | null
+          profile_photo_url?: string | null
+          sports?: string[] | null
           sports_activities?: string[] | null
           status?: string | null
           stream?: string | null
+          student_number?: string | null
+          subject_combination?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -2553,6 +2577,7 @@ export type Database = {
           created_at: string
           department: string | null
           id: string
+          is_examinable: boolean | null
           name: string
         }
         Insert: {
@@ -2560,6 +2585,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           id?: string
+          is_examinable?: boolean | null
           name: string
         }
         Update: {
@@ -2567,6 +2593,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           id?: string
+          is_examinable?: boolean | null
           name?: string
         }
         Relationships: []
@@ -3308,6 +3335,10 @@ export type Database = {
       }
     }
     Functions: {
+      delete_student_cascade: {
+        Args: { _student_id: string }
+        Returns: undefined
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
