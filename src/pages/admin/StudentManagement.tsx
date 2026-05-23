@@ -488,6 +488,7 @@ export default function StudentManagement() {
       }
 
       // Auto-provision student auth account
+      let provisioned = false;
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const res = await fetch(
@@ -509,7 +510,9 @@ export default function StudentManagement() {
           }
         );
         const provData = await res.json();
+        console.log("provision-student response:", res.status, provData);
         if (res.ok) {
+          provisioned = true;
           setProvisionResult({
             email: provData.email,
             temp_password: provData.temp_password,
@@ -517,17 +520,21 @@ export default function StudentManagement() {
           });
           setProvisionDialogOpen(true);
         } else {
-          toast({ title: "Student added but account creation failed", description: provData.error, variant: "destructive" });
+          toast({ title: "Portal account NOT created", description: provData.error || `HTTP ${res.status}`, variant: "destructive" });
         }
       } catch (provErr: any) {
-        toast({ title: "Student added but account creation failed", description: provErr?.message, variant: "destructive" });
+        console.error("provision-student error:", provErr);
+        toast({ title: "Portal account NOT created", description: provErr?.message || "Network error", variant: "destructive" });
       }
 
       // Allocate boarding if applicable
       await allocateBoarding(newStudent.id);
 
-      toast({ title: "Student added!", description: `Student number: ${newStudent?.admission_number}` });
+      if (!provisioned) {
+        toast({ title: "Student added (no portal account)", description: `Student number: ${newStudent?.admission_number}` });
+      }
     }
+
     setSaving(false);
     setDialogOpen(false);
     fetchStudents();

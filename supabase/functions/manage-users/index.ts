@@ -718,6 +718,7 @@ Deno.serve(async (req) => {
 
     // ==================== PROVISION STUDENT ====================
     if (action === "provision-student") {
+      console.log("[provision-student] called", payload);
       const { student_id, full_name, admission_number, guardian_email } = payload;
       if (!student_id || !full_name || !admission_number) {
         return new Response(JSON.stringify({ error: "student_id, full_name, and admission_number are required" }), {
@@ -737,9 +738,10 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Generate email and temporary password
-      const studentEmail = `${admission_number.toLowerCase()}@giffordhigh.ac.zw`;
-      const tempPassword = `${admission_number}@Ghs2026`;
+      // Generate email and temporary password (school domain)
+      const studentEmail = `${admission_number.toLowerCase()}@mbsmavingtech.ac.zw`;
+      const tempPassword = `${admission_number}@Mbs2026`;
+
 
       // Check if email already exists
       const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
