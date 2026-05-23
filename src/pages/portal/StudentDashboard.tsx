@@ -24,6 +24,13 @@ import StudentExamResultsTab from "@/components/student/StudentExamResultsTab";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
+  <div className="relative min-h-[60vh]">
+    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
+  </div>
+);
 
 type TabId = "home" | "materials" | "assessments" | "attendance" | "profile";
 
@@ -383,22 +390,24 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />}
-        {homeSubTab === "planner" && <PersonalTimetableEditor title="My Personal Planner" />}
-        {homeSubTab === "announcements" && <StudentAnnouncementsSection announcements={announcements} />}
-        {homeSubTab === "marks" && <StudentMarksTab studentId={student?.id} />}
+        {homeSubTab === "timetable" && <Locked feature="the timetable"><PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></Locked>}
+        {homeSubTab === "planner" && <Locked feature="the planner"><PersonalTimetableEditor title="My Personal Planner" /></Locked>}
+        {homeSubTab === "announcements" && <Locked feature="announcements"><StudentAnnouncementsSection announcements={announcements} /></Locked>}
+        {homeSubTab === "marks" && <Locked feature="marks"><StudentMarksTab studentId={student?.id} /></Locked>}
         {homeSubTab === "results" && (
-          <StudentExamResultsTab
-            studentId={student?.id}
-            studentName={student?.full_name || displayName}
-            admissionNumber={student?.admission_number}
-            form={student?.form}
-            stream={student?.stream}
-          />
+          <Locked feature="exam results">
+            <StudentExamResultsTab
+              studentId={student?.id}
+              studentName={student?.full_name || displayName}
+              admissionNumber={student?.admission_number}
+              form={student?.form}
+              stream={student?.stream}
+            />
+          </Locked>
         )}
-        {homeSubTab === "fees" && <StudentFeeTab studentId={student?.id} />}
-        {homeSubTab === "exam-timetable" && <StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} />}
-        {homeSubTab === "reports" && <StudentTermReportsTab />}
+        {homeSubTab === "fees" && <Locked feature="fees"><StudentFeeTab studentId={student?.id} /></Locked>}
+        {homeSubTab === "exam-timetable" && <Locked feature="the exam timetable"><StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} /></Locked>}
+        {homeSubTab === "reports" && <Locked feature="term reports"><StudentTermReportsTab /></Locked>}
       </motion.div>
     );
   }
@@ -407,7 +416,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Study Materials</h2>
-        <StudentMaterialsTab studentClassId={studentClassId} />
+        <Locked feature="study materials"><StudentMaterialsTab studentClassId={studentClassId} /></Locked>
       </motion.div>
     );
   }
@@ -416,7 +425,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Assessments</h2>
-        <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />
+        <Locked feature="assessments"><StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} /></Locked>
       </motion.div>
     );
   }
@@ -425,7 +434,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Attendance</h2>
-        <StudentAttendanceTab studentId={student?.id} />
+        <Locked feature="attendance"><StudentAttendanceTab studentId={student?.id} /></Locked>
       </motion.div>
     );
   }

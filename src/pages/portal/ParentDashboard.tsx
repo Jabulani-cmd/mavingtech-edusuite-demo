@@ -44,6 +44,13 @@ import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
+  <div className="relative min-h-[60vh]">
+    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
+  </div>
+);
 
 type TabId = "overview" | "grades" | "marks" | "timetable" | "attendance" | "fees" | "announcements" | "exam-timetable" | "reports";
 
@@ -587,7 +594,25 @@ interface TabContentProps {
   usdToZig: (usd: number) => number;
 }
 
+const FEATURE_LABELS: Record<string, string> = {
+  grades: "exam results",
+  marks: "marks",
+  attendance: "attendance",
+  fees: "fees",
+  announcements: "announcements",
+  timetable: "the timetable",
+  "exam-timetable": "the exam timetable",
+  reports: "term reports",
+};
+
 function TabContent(props: TabContentProps) {
+  const inner = <TabContentInner {...props} />;
+  if (props.activeTab === "overview") return inner;
+  const feature = FEATURE_LABELS[props.activeTab] || "this feature";
+  return <Locked feature={feature}>{inner}</Locked>;
+}
+
+function TabContentInner(props: TabContentProps) {
   const {
     activeTab,
     setActiveTab,
