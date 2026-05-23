@@ -842,6 +842,7 @@ Deno.serve(async (req) => {
         password: tempPassword,
         email_confirm: true,
         user_metadata: { full_name, must_change_password: true },
+        app_metadata: { must_change_password: true },
       });
       if (createError) throw createError;
 
@@ -860,6 +861,15 @@ Deno.serve(async (req) => {
 
       // Link staff record to auth user
       await supabaseAdmin.from("staff").update({ user_id: userId }).eq("id", staff_id);
+
+      // Ensure profile row exists so staff appears in admin Users list
+      await supabaseAdmin.from("profiles").upsert({
+        id: userId,
+        user_id: userId,
+        full_name,
+        email: generatedEmail,
+        role: portalRole,
+      }, { onConflict: "id" });
 
       return new Response(JSON.stringify({
         message: "Staff account provisioned",
