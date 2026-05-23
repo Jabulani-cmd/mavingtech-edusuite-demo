@@ -2287,55 +2287,73 @@ export type Database = {
       }
       staff: {
         Row: {
+          address: string | null
           bio: string | null
           category: string
           created_at: string
           date_joined: string | null
           department: string | null
           email: string | null
+          emergency_contact: string | null
+          employment_date: string | null
           full_name: string
           id: string
+          national_id: string | null
           phone: string | null
           photo_url: string | null
           qualifications: string | null
+          role: string | null
           staff_number: string | null
           status: string | null
+          subjects_taught: string[] | null
           title: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          address?: string | null
           bio?: string | null
           category?: string
           created_at?: string
           date_joined?: string | null
           department?: string | null
           email?: string | null
+          emergency_contact?: string | null
+          employment_date?: string | null
           full_name: string
           id?: string
+          national_id?: string | null
           phone?: string | null
           photo_url?: string | null
           qualifications?: string | null
+          role?: string | null
           staff_number?: string | null
           status?: string | null
+          subjects_taught?: string[] | null
           title?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          address?: string | null
           bio?: string | null
           category?: string
           created_at?: string
           date_joined?: string | null
           department?: string | null
           email?: string | null
+          emergency_contact?: string | null
+          employment_date?: string | null
           full_name?: string
           id?: string
+          national_id?: string | null
           phone?: string | null
           photo_url?: string | null
           qualifications?: string | null
+          role?: string | null
           staff_number?: string | null
           status?: string | null
+          subjects_taught?: string[] | null
           title?: string | null
           updated_at?: string
           user_id?: string | null
