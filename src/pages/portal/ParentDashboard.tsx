@@ -44,6 +44,13 @@ import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
+  <div className="relative min-h-[60vh]">
+    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
+  </div>
+);
 
 type TabId = "overview" | "grades" | "marks" | "timetable" | "attendance" | "fees" | "announcements" | "exam-timetable" | "reports";
 
