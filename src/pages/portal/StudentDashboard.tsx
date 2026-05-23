@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign } from "lucide-react";
+import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign, Lock } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,12 +25,39 @@ import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTa
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
     <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
   </div>
 );
+
+function StudentLockedNotice({ feature, loading = false, status = "none" }: { feature: string; loading?: boolean; status?: string }) {
+  const pending = status === "pending";
+
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-4">
+      <Card className="w-full max-w-md border-2 border-primary/30 bg-background shadow-lg">
+        <CardContent className="p-6 text-center">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+            <Lock className="h-7 w-7" />
+          </div>
+          <h3 className="mb-1 text-xl font-bold">
+            {loading ? "Checking subscription access" : pending ? "Payment verification in progress" : "Subscription required"}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {loading
+              ? "Please wait while we confirm whether your portal access has been unlocked."
+              : pending
+              ? "Your parent or guardian's payment is being verified. Access will unlock once it is approved."
+              : `Your parent or guardian must subscribe from the parent portal before you can access ${feature}.`}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 type TabId = "home" | "materials" | "assessments" | "attendance" | "profile";
 
