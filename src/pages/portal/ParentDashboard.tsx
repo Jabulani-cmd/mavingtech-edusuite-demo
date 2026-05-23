@@ -48,11 +48,22 @@ import SubscriptionGate from "@/components/subscription/SubscriptionGate";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
-    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
+    <SubscriptionGate feature={feature} hard>
+      {children}
+    </SubscriptionGate>
   </div>
 );
 
-type TabId = "overview" | "grades" | "marks" | "timetable" | "attendance" | "fees" | "announcements" | "exam-timetable" | "reports";
+type TabId =
+  | "overview"
+  | "grades"
+  | "marks"
+  | "timetable"
+  | "attendance"
+  | "fees"
+  | "announcements"
+  | "exam-timetable"
+  | "reports";
 
 interface ChildInfo {
   id: string;
@@ -206,12 +217,7 @@ export default function ParentDashboard() {
         .eq("is_published", true)
         .order("academic_year", { ascending: false })
         .order("term", { ascending: false }),
-      supabase
-        .from("student_classes")
-        .select("class_id")
-        .eq("student_id", studentId)
-        .limit(1)
-        .single(),
+      supabase.from("student_classes").select("class_id").eq("student_id", studentId).limit(1).single(),
     ]);
 
     setAttendanceData(att || []);
@@ -650,9 +656,12 @@ function TabContentInner(props: TabContentProps) {
           </p>
         </div>
 
-        <PublishedTimetableWidget title={`${child.full_name?.split(" ")[0]}'s Timetable`} mode="class" filterValue={`${child.form || ""} ${child.stream || ""}`.trim()} compact />
-
-
+        <PublishedTimetableWidget
+          title={`${child.full_name?.split(" ")[0]}'s Timetable`}
+          mode="class"
+          filterValue={`${child.form || ""} ${child.stream || ""}`.trim()}
+          compact
+        />
 
         {/* Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1027,7 +1036,8 @@ function TabContentInner(props: TabContentProps) {
                 {feeBalance !== 0 && ` (ZiG ${usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: ${totalInvoiced.toFixed(2)} (ZiG {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: ${totalPaidAll.toFixed(2)}
+                Total Invoiced: ${totalInvoiced.toFixed(2)} (ZiG {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: $
+                {totalPaidAll.toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground">Rate: 1 USD = {rate} ZiG</p>
             </div>
@@ -1104,7 +1114,9 @@ function TabContentInner(props: TabContentProps) {
                             {inv.status}
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {inv.term} {inv.academic_year}
+                        </p>
 
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                           <span className="text-muted-foreground">Total:</span>
@@ -1119,8 +1131,14 @@ function TabContentInner(props: TabContentProps) {
                           <span className="text-right font-mono text-emerald-600">${paid.toFixed(2)}</span>
 
                           <span className="text-muted-foreground">Balance:</span>
-                          <span className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}>
-                            {bal < 0 ? `+$${Math.abs(bal).toFixed(2)} credit` : bal > 0 ? `$${bal.toFixed(2)}` : "$0.00"}
+                          <span
+                            className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
+                          >
+                            {bal < 0
+                              ? `+$${Math.abs(bal).toFixed(2)} credit`
+                              : bal > 0
+                                ? `$${bal.toFixed(2)}`
+                                : "$0.00"}
                           </span>
                         </div>
                       </CardContent>
@@ -1153,11 +1171,22 @@ function TabContentInner(props: TabContentProps) {
                           <td className="px-3 py-2 text-muted-foreground">
                             {inv.term} {inv.academic_year}
                           </td>
-                          <td className="px-3 py-2 text-center">${Number(inv.total_usd || 0).toFixed(2)}<br/><span className="text-xs text-muted-foreground">ZiG {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}</span></td>
+                          <td className="px-3 py-2 text-center">
+                            ${Number(inv.total_usd || 0).toFixed(2)}
+                            <br />
+                            <span className="text-xs text-muted-foreground">
+                              ZiG {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
+                            </span>
+                          </td>
                           <td className="px-3 py-2 text-center text-emerald-600">${paid.toFixed(2)}</td>
-                          <td className={`px-3 py-2 text-center font-bold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}>
+                          <td
+                            className={`px-3 py-2 text-center font-bold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
+                          >
                             {bal < 0 ? `+$${Math.abs(bal).toFixed(2)}` : bal > 0 ? `$${bal.toFixed(2)}` : "$0.00"}
-                            <br/><span className="text-xs font-normal text-muted-foreground">ZiG {usdToZig(Math.abs(bal)).toFixed(2)}</span>
+                            <br />
+                            <span className="text-xs font-normal text-muted-foreground">
+                              ZiG {usdToZig(Math.abs(bal)).toFixed(2)}
+                            </span>
                           </td>
                           <td className="px-3 py-2 text-center">
                             <Badge
@@ -1251,7 +1280,7 @@ function ParentPaymentHistory({
   useEffect(() => {
     fetchPayments();
     const channel = supabase
-      .channel(`parent-pay-hist-${childId}`)
+      .channel(`parent-pay-hist-${childId}-${Date.now()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "payments", filter: `student_id=eq.${childId}` },
