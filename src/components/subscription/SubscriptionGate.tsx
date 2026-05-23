@@ -6,6 +6,7 @@ import { Lock, Sparkles, AlertTriangle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Props {
   children: ReactNode;
@@ -19,12 +20,14 @@ interface Props {
 
 export default function SubscriptionGate({ children, feature = "this feature", hard = false, preview }: Props) {
   const sub = useSubscription();
+  const { role } = useAuth();
 
   if (sub.loading) {
     return <div className="animate-pulse h-40 rounded-xl bg-muted/40" />;
   }
   if (sub.isActive) return <>{children}</>;
 
+  const isStudent = role === "student";
   const renewExpired = sub.status === "expired";
   const pending = sub.status === "pending";
 
@@ -45,16 +48,24 @@ export default function SubscriptionGate({ children, feature = "this feature", h
             {pending ? <Clock className="w-7 h-7 text-white" /> : renewExpired ? <AlertTriangle className="w-7 h-7 text-white" /> : <Lock className="w-7 h-7 text-white" />}
           </div>
           <h3 className="font-display text-xl font-bold mb-1">
-            {pending ? "Payment verification in progress" : renewExpired ? "Your access has expired" : `Subscribe to access ${feature}`}
+            {pending
+              ? "Payment verification in progress"
+              : isStudent
+              ? "Subscription required"
+              : renewExpired
+              ? "Your access has expired"
+              : `Subscribe to access ${feature}`}
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
             {pending
               ? "Your bank transfer is being verified by the school. We'll unlock the portal as soon as it's approved."
+              : isStudent
+              ? `Your parent or guardian must subscribe for you to access ${feature}. Please ask them to subscribe via the parent portal.`
               : renewExpired
               ? `Your subscription expired. Renew now to restore access to ${feature} and all premium features.`
               : `Unlock full access to ${feature}, the timetable, results, materials, messaging, and more.`}
           </p>
-          {!pending && (
+          {!pending && !isStudent && (
             <Button asChild className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
               <Link to="/portal/parent/subscribe">
                 <Sparkles className="w-4 h-4 mr-2" />
