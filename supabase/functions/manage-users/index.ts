@@ -756,6 +756,7 @@ Deno.serve(async (req) => {
         password: tempPassword,
         email_confirm: true,
         user_metadata: { full_name, must_change_password: true },
+        app_metadata: { must_change_password: true },
       });
       if (createError) throw createError;
 
