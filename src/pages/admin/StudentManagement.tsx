@@ -517,6 +517,7 @@ export default function StudentManagement() {
             email: provData.email,
             temp_password: provData.temp_password,
             admission_number: newStudent.admission_number,
+            parent: provData.parent || null,
           });
           setProvisionDialogOpen(true);
         } else {
