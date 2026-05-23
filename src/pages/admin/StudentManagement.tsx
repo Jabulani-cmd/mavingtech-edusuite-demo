@@ -1188,6 +1188,7 @@ export default function StudentManagement() {
                   )}
                 </div>
               )}
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
                   className="flex-1"
