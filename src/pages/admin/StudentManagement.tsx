@@ -746,7 +746,7 @@ export default function StudentManagement() {
                     {s.user_id ? (
                       <Badge className="bg-green-100 text-green-800">Student Portal</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-amber-600 border-amber-300">No Account</Badge>
+                      <Badge variant="outline" className="text-amber-600 border-amber-300">Student Portal (no account)</Badge>
                     )}
                   </TableCell>
                   <TableCell><Badge className={statusColor(s.status)}>{s.status}</Badge></TableCell>
