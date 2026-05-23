@@ -22,11 +22,6 @@ export default function SubscriptionGate({ children, feature = "this feature", h
   const sub = useSubscription();
   const { role } = useAuth();
 
-  if (sub.loading) {
-    return <div className="animate-pulse h-40 rounded-xl bg-muted/40" />;
-  }
-  if (sub.isActive) return <>{children}</>;
-
   const isStudent = role === "student";
   const renewExpired = sub.status === "expired";
   const pending = sub.status === "pending";
@@ -70,6 +65,11 @@ export default function SubscriptionGate({ children, feature = "this feature", h
       </Card>
     </motion.div>
   );
+
+  if (sub.loading) {
+    return hard ? lockCard : <div className="animate-pulse h-40 rounded-xl bg-muted/40" />;
+  }
+  if (sub.isActive) return <>{children}</>;
 
   if (hard) return lockCard;
 
