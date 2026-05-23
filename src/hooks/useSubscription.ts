@@ -135,9 +135,11 @@ export function useSubscription(): SubscriptionState {
     load();
     if (!user) return;
 
-    // realtime: refresh when payment or subscription rows change for this user
+    // realtime: refresh when payment or subscription rows change for this user.
+    // Use a random suffix so a re-mounted hook never reattaches `.on()` callbacks
+    // to an already-subscribed channel (which throws and white-screens the portal).
     const channel = supabase
-      .channel("subscription-realtime-" + user.id)
+      .channel(`subscription-realtime-${user.id}-${Math.random().toString(36).slice(2, 8)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "subscriptions" }, () => load())
       .on("postgres_changes", { event: "*", schema: "public", table: "payments" }, () => load())
       .on("postgres_changes", { event: "*", schema: "public", table: "access_grants" }, () => load())
@@ -145,7 +147,8 @@ export function useSubscription(): SubscriptionState {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, load]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, role]);
 
   return state;
 }
