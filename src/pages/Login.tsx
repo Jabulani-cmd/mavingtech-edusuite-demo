@@ -29,7 +29,7 @@ export default function Login() {
   // Only redirect after a manual login, not on page load with existing session
   useEffect(() => {
     if (!authLoading && user && role && justLoggedIn) {
-      if (user.user_metadata?.must_change_password) {
+      if (user.user_metadata?.must_change_password || user.app_metadata?.must_change_password) {
         navigate("/change-password");
         return;
       }
