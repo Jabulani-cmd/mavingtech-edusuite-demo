@@ -31,50 +31,54 @@ export default function SubscriptionGate({ children, feature = "this feature", h
   const renewExpired = sub.status === "expired";
   const pending = sub.status === "pending";
 
+  const lockCard = (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={hard ? "flex items-center justify-center p-4 min-h-[50vh]" : "absolute inset-0 flex items-center justify-center p-4"}
+    >
+      <Card className="w-full max-w-md p-6 text-center border-2 border-primary/40 shadow-xl bg-background/95 backdrop-blur">
+        <div className="mx-auto w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-blue-700 flex items-center justify-center mb-3">
+          {pending ? <Clock className="w-7 h-7 text-white" /> : renewExpired ? <AlertTriangle className="w-7 h-7 text-white" /> : <Lock className="w-7 h-7 text-white" />}
+        </div>
+        <h3 className="font-display text-xl font-bold mb-1">
+          {pending
+            ? "Payment verification in progress"
+            : isStudent
+            ? "Subscription required"
+            : renewExpired
+            ? "Your access has expired"
+            : `Subscribe to access ${feature}`}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {pending
+            ? "Your bank transfer is being verified by the school. We'll unlock the portal as soon as it's approved."
+            : isStudent
+            ? `Your parent or guardian must subscribe for you to access ${feature}. Please ask them to subscribe via the parent portal.`
+            : renewExpired
+            ? `Your subscription expired. Renew now to restore access to ${feature} and all premium features.`
+            : `Unlock full access to ${feature}, the timetable, results, materials, messaging, and more.`}
+        </p>
+        {!pending && !isStudent && (
+          <Button asChild className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
+            <Link to="/portal/parent/subscribe">
+              <Sparkles className="w-4 h-4 mr-2" />
+              {renewExpired ? "Renew Now" : "View Plans"}
+            </Link>
+          </Button>
+        )}
+      </Card>
+    </motion.div>
+  );
+
+  if (hard) return lockCard;
+
   return (
     <div className="relative">
-      {!hard && (
-        <div className="pointer-events-none select-none filter blur-[6px] opacity-60" aria-hidden>
-          {preview ?? children}
-        </div>
-      )}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="absolute inset-0 flex items-center justify-center p-4"
-      >
-        <Card className="w-full max-w-md p-6 text-center border-2 border-primary/40 shadow-xl bg-background/95 backdrop-blur">
-          <div className="mx-auto w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-blue-700 flex items-center justify-center mb-3">
-            {pending ? <Clock className="w-7 h-7 text-white" /> : renewExpired ? <AlertTriangle className="w-7 h-7 text-white" /> : <Lock className="w-7 h-7 text-white" />}
-          </div>
-          <h3 className="font-display text-xl font-bold mb-1">
-            {pending
-              ? "Payment verification in progress"
-              : isStudent
-              ? "Subscription required"
-              : renewExpired
-              ? "Your access has expired"
-              : `Subscribe to access ${feature}`}
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            {pending
-              ? "Your bank transfer is being verified by the school. We'll unlock the portal as soon as it's approved."
-              : isStudent
-              ? `Your parent or guardian must subscribe for you to access ${feature}. Please ask them to subscribe via the parent portal.`
-              : renewExpired
-              ? `Your subscription expired. Renew now to restore access to ${feature} and all premium features.`
-              : `Unlock full access to ${feature}, the timetable, results, materials, messaging, and more.`}
-          </p>
-          {!pending && !isStudent && (
-            <Button asChild className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
-              <Link to="/portal/parent/subscribe">
-                <Sparkles className="w-4 h-4 mr-2" />
-                {renewExpired ? "Renew Now" : "View Plans"}
-              </Link>
-            </Button>
-          )}
-        </Card>
-      </motion.div>
+      <div className="pointer-events-none select-none filter blur-[6px] opacity-60" aria-hidden>
+        {preview ?? children}
+      </div>
+      {lockCard}
     </div>
   );
 }
