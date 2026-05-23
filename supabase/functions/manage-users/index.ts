@@ -779,9 +779,90 @@ Deno.serve(async (req) => {
         role: "student",
       }, { onConflict: "id" });
 
-      // Update profile with guardian email if available
-      if (guardian_email) {
-        await supabaseAdmin.from("profiles").update({ email: guardian_email }).eq("user_id", userId);
+      // ===== Auto-provision PARENT portal account when guardian_email provided =====
+      let parentInfo: {
+        email: string;
+        temp_password: string | null;
+        existed: boolean;
+        user_id: string;
+      } | null = null;
+
+      const isValidEmail = (e?: string | null) => !!e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+      if (isValidEmail(guardian_email)) {
+        try {
+          // Fetch additional guardian info from the student record
+          const { data: studentRecord } = await supabaseAdmin
+            .from("students")
+            .select("guardian_name, guardian_phone")
+            .eq("id", student_id)
+            .single();
+
+          const guardianName = studentRecord?.guardian_name || `Guardian of ${full_name}`;
+          const guardianPhone = studentRecord?.guardian_phone || null;
+
+          // Check if an auth user already exists with the guardian email
+          const existingParentUser = existingUsers?.users?.find((u) => u.email === guardian_email);
+
+          let parentUserId: string;
+          let parentTempPassword: string | null = null;
+          let existed = false;
+
+          if (existingParentUser) {
+            parentUserId = existingParentUser.id;
+            existed = true;
+          } else {
+            parentTempPassword = `Parent@${admission_number}`;
+            const { data: parentUser, error: parentCreateErr } =
+              await supabaseAdmin.auth.admin.createUser({
+                email: guardian_email,
+                password: parentTempPassword,
+                email_confirm: true,
+                user_metadata: { full_name: guardianName, must_change_password: true },
+                app_metadata: { must_change_password: true },
+              });
+            if (parentCreateErr) throw parentCreateErr;
+            parentUserId = parentUser.user.id;
+          }
+
+          // Ensure parent role
+          await supabaseAdmin
+            .from("user_roles")
+            .upsert(
+              { user_id: parentUserId, role: "parent" },
+              { onConflict: "user_id,role", ignoreDuplicates: true },
+            );
+
+          // Ensure profile row
+          await supabaseAdmin.from("profiles").upsert(
+            {
+              id: parentUserId,
+              user_id: parentUserId,
+              full_name: guardianName,
+              email: guardian_email,
+              phone: guardianPhone,
+              role: "parent",
+            },
+            { onConflict: "id" },
+          );
+
+          // Link parent to student
+          await supabaseAdmin
+            .from("parent_students")
+            .upsert(
+              { parent_id: parentUserId, student_id, relationship: "parent" },
+              { onConflict: "parent_id,student_id", ignoreDuplicates: true },
+            );
+
+          parentInfo = {
+            email: guardian_email,
+            temp_password: parentTempPassword,
+            existed,
+            user_id: parentUserId,
+          };
+        } catch (parentErr) {
+          console.error("[provision-student] parent provisioning failed", parentErr);
+        }
       }
 
       return new Response(JSON.stringify({
@@ -789,6 +870,7 @@ Deno.serve(async (req) => {
         user_id: userId,
         email: studentEmail,
         temp_password: tempPassword,
+        parent: parentInfo,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
