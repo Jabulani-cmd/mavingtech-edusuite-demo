@@ -416,7 +416,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Study Materials</h2>
-        <StudentMaterialsTab studentClassId={studentClassId} />
+        <Locked feature="study materials"><StudentMaterialsTab studentClassId={studentClassId} /></Locked>
       </motion.div>
     );
   }
@@ -425,7 +425,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Assessments</h2>
-        <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />
+        <Locked feature="assessments"><StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} /></Locked>
       </motion.div>
     );
   }
@@ -434,7 +434,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Attendance</h2>
-        <StudentAttendanceTab studentId={student?.id} />
+        <Locked feature="attendance"><StudentAttendanceTab studentId={student?.id} /></Locked>
       </motion.div>
     );
   }
