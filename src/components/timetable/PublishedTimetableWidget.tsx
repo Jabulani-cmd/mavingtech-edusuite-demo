@@ -17,7 +17,12 @@ interface Props {
   compact?: boolean;
 }
 
-export default function PublishedTimetableWidget({ title = "Published Timetable", mode = "class", filterValue, compact = false }: Props) {
+export default function PublishedTimetableWidget({
+  title = "Published Timetable",
+  mode = "class",
+  filterValue,
+  compact = false,
+}: Props) {
   const [defs, setDefs] = useState<any[]>([]);
   const [slots, setSlots] = useState<any[]>([]);
   const [selectedDefId, setSelectedDefId] = useState<string>("");
@@ -46,15 +51,25 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
     setSlots(s ?? []);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   useEffect(() => {
     const ch = supabase
-      .channel("published-timetable-sync")
-      .on("postgres_changes", { event: "*", schema: "public", table: "tt_slots" }, () => { setLive(true); load(); })
-      .on("postgres_changes", { event: "*", schema: "public", table: "tt_definitions" }, () => { setLive(true); load(); })
+      .channel(`published-timetable-sync-${Date.now()}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "tt_slots" }, () => {
+        setLive(true);
+        load();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "tt_definitions" }, () => {
+        setLive(true);
+        load();
+      })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, []);
 
   const activeDef = defs.find((x) => x.id === selectedDefId);
@@ -76,11 +91,13 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
   const periods = useMemo(() => {
     const map = new Map<number, { start: string; end: string; isBreak: boolean; label?: string }>();
     filteredSlots.forEach((s) => {
-      if (!map.has(s.period_index)) map.set(s.period_index, { start: s.start_time, end: s.end_time, isBreak: s.is_break, label: s.break_label });
+      if (!map.has(s.period_index))
+        map.set(s.period_index, { start: s.start_time, end: s.end_time, isBreak: s.is_break, label: s.break_label });
     });
     // also pull from full def slots so break rows show even if filter empties them
     defSlots.forEach((s) => {
-      if (!map.has(s.period_index)) map.set(s.period_index, { start: s.start_time, end: s.end_time, isBreak: s.is_break, label: s.break_label });
+      if (!map.has(s.period_index))
+        map.set(s.period_index, { start: s.start_time, end: s.end_time, isBreak: s.is_break, label: s.break_label });
     });
     return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
   }, [filteredSlots, defSlots]);
@@ -92,7 +109,10 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
     if (!s.subject_name) return <div className="text-[10px] text-muted-foreground">—</div>;
     const color = s.subject_color || colorForSubject(s.subject_name);
     return (
-      <div className="rounded px-1.5 py-1 text-[10px] leading-tight" style={{ background: `${color}22`, borderLeft: `3px solid ${color}` }}>
+      <div
+        className="rounded px-1.5 py-1 text-[10px] leading-tight"
+        style={{ background: `${color}22`, borderLeft: `3px solid ${color}` }}
+      >
         <div className="font-semibold truncate">{s.subject_name}</div>
         {s.teacher_name && <div className="text-muted-foreground truncate">{s.teacher_name}</div>}
         {s.room && <div className="text-muted-foreground truncate">{s.room}</div>}
@@ -104,10 +124,16 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base"><Calendar className="h-4 w-4" /> {title}</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Calendar className="h-4 w-4" /> {title}
+          </CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          No published timetable yet. <Link to="/portal/timetables" className="text-primary underline">Open Timetable Management</Link> to create and publish one.
+          No published timetable yet.{" "}
+          <Link to="/portal/timetables" className="text-primary underline">
+            Open Timetable Management
+          </Link>{" "}
+          to create and publish one.
         </CardContent>
       </Card>
     );
@@ -119,21 +145,39 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Calendar className="h-4 w-4" /> {title}
-            {live && <Badge variant="secondary" className="gap-1 text-[10px]"><Radio className="h-3 w-3 animate-pulse text-green-500" /> Live</Badge>}
+            {live && (
+              <Badge variant="secondary" className="gap-1 text-[10px]">
+                <Radio className="h-3 w-3 animate-pulse text-green-500" /> Live
+              </Badge>
+            )}
           </CardTitle>
           <div className="flex flex-wrap gap-2">
             <Select value={selectedDefId} onValueChange={setSelectedDefId}>
-              <SelectTrigger className="h-8 w-[180px] text-xs"><SelectValue placeholder="Pick timetable" /></SelectTrigger>
+              <SelectTrigger className="h-8 w-[180px] text-xs">
+                <SelectValue placeholder="Pick timetable" />
+              </SelectTrigger>
               <SelectContent>
-                {defs.map((d) => <SelectItem key={d.id} value={d.id} className="text-xs">{d.name} {d.class_label ? `· ${d.class_label}` : ""}</SelectItem>)}
+                {defs.map((d) => (
+                  <SelectItem key={d.id} value={d.id} className="text-xs">
+                    {d.name} {d.class_label ? `· ${d.class_label}` : ""}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {mode === "teacher" && (
               <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue placeholder="All teachers" /></SelectTrigger>
+                <SelectTrigger className="h-8 w-[160px] text-xs">
+                  <SelectValue placeholder="All teachers" />
+                </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="" className="text-xs">All teachers</SelectItem>
-                  {teachers.map((t) => <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>)}
+                  <SelectItem value="" className="text-xs">
+                    All teachers
+                  </SelectItem>
+                  {teachers.map((t) => (
+                    <SelectItem key={t} value={t} className="text-xs">
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -145,18 +189,29 @@ export default function PublishedTimetableWidget({ title = "Published Timetable"
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr>
-                <th className="border-b bg-muted/50 p-1.5 text-left text-[10px] uppercase text-muted-foreground">Time</th>
+                <th className="border-b bg-muted/50 p-1.5 text-left text-[10px] uppercase text-muted-foreground">
+                  Time
+                </th>
                 {days.map((d: number) => (
-                  <th key={d} className="border-b bg-muted/50 p-1.5 text-left text-[10px] uppercase text-muted-foreground">{dayName(d).slice(0, 3)}</th>
+                  <th
+                    key={d}
+                    className="border-b bg-muted/50 p-1.5 text-left text-[10px] uppercase text-muted-foreground"
+                  >
+                    {dayName(d).slice(0, 3)}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {periods.map(([p, t]) => (
                 <tr key={p}>
-                  <td className="border-b p-1.5 align-top text-[10px] text-muted-foreground whitespace-nowrap">{t.start}–{t.end}</td>
+                  <td className="border-b p-1.5 align-top text-[10px] text-muted-foreground whitespace-nowrap">
+                    {t.start}–{t.end}
+                  </td>
                   {days.map((d: number) => (
-                    <td key={d} className="border-b p-1 align-top" style={{ minWidth: compact ? 90 : 120 }}>{cell(d, p)}</td>
+                    <td key={d} className="border-b p-1 align-top" style={{ minWidth: compact ? 90 : 120 }}>
+                      {cell(d, p)}
+                    </td>
                   ))}
                 </tr>
               ))}
