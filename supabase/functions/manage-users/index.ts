@@ -820,7 +820,11 @@ Deno.serve(async (req) => {
 
       const isValidEmail = (e?: string | null) => !!e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
-      if (isValidEmail(guardian_email)) {
+      // Guard: never reuse the student's own school email as a parent account
+      const guardianEmailNormalized = (guardian_email || "").toLowerCase().trim();
+      const guardianIsStudentEmail = guardianEmailNormalized === studentEmail.toLowerCase();
+
+      if (isValidEmail(guardian_email) && !guardianIsStudentEmail) {
         try {
           // Fetch additional guardian info from the student record
           const { data: studentRecord } = await supabaseAdmin
