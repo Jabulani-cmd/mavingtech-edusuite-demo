@@ -729,7 +729,7 @@ Deno.serve(async (req) => {
       // Check if student already has a user_id
       const { data: existingStudent } = await supabaseAdmin
         .from("students")
-        .select("user_id")
+        .select("user_id, email")
         .eq("id", student_id)
         .single();
       if (existingStudent?.user_id) {
@@ -738,37 +738,68 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Generate email and temporary password (school domain)
+      // Canonical school email (always derived from admission number)
       const studentEmail = `${admission_number.toLowerCase()}@mbsmavingtech.ac.zw`;
       const tempPassword = `${admission_number}@Mbs2026`;
 
-
-      // Check if email already exists
+      // List auth users once and reuse for both student + parent dedupe
       const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-      const emailExists = existingUsers?.users?.some((u) => u.email === studentEmail);
-      if (emailExists) {
-        return new Response(JSON.stringify({ error: `Email ${studentEmail} already exists` }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+      const findUserByEmail = (email?: string | null) =>
+        email ? existingUsers?.users?.find((u) => (u.email || "").toLowerCase() === email.toLowerCase()) : undefined;
+
+      // Safeguard: another student row already owns this canonical email -> refuse
+      const { data: clashingStudent } = await supabaseAdmin
+        .from("students")
+        .select("id, admission_number")
+        .eq("email", studentEmail)
+        .neq("id", student_id)
+        .maybeSingle();
+      if (clashingStudent) {
+        return new Response(JSON.stringify({
+          error: `Email ${studentEmail} is already used by student ${clashingStudent.admission_number}`,
+        }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
-      // Create auth user with must_change_password flag
-      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email: studentEmail,
-        password: tempPassword,
-        email_confirm: true,
-        user_metadata: { full_name, must_change_password: true },
-        app_metadata: { must_change_password: true },
-      });
-      if (createError) throw createError;
+      // Idempotency: if an auth user with this email already exists, reuse it
+      // (covers retries, partial failures, or a prior bulk import).
+      let userId: string;
+      const existingStudentAuth = findUserByEmail(studentEmail);
+      if (existingStudentAuth) {
+        userId = existingStudentAuth.id;
+        console.log("[provision-student] reusing existing auth user for", studentEmail);
+      } else {
+        const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          email: studentEmail,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { full_name, must_change_password: true },
+          app_metadata: { must_change_password: true },
+        });
+        if (createError) throw createError;
+        userId = newUser.user.id;
+      }
 
-      const userId = newUser.user.id;
+      // Refuse if this auth user is already attached to a different student record
+      const { data: otherStudent } = await supabaseAdmin
+        .from("students")
+        .select("id")
+        .eq("user_id", userId)
+        .neq("id", student_id)
+        .maybeSingle();
+      if (otherStudent) {
+        return new Response(JSON.stringify({
+          error: "This auth account is already linked to another student record",
+        }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
 
-      // Assign student role
-      await supabaseAdmin.from("user_roles").insert({ user_id: userId, role: "student" });
+      // Assign student role (idempotent)
+      await supabaseAdmin.from("user_roles").upsert(
+        { user_id: userId, role: "student" },
+        { onConflict: "user_id,role", ignoreDuplicates: true },
+      );
 
       // Link student record to auth user
-      await supabaseAdmin.from("students").update({ user_id: userId }).eq("id", student_id);
+      await supabaseAdmin.from("students").update({ user_id: userId, email: studentEmail }).eq("id", student_id);
 
       // Ensure profile row exists so student appears in admin Users list
       await supabaseAdmin.from("profiles").upsert({
@@ -789,7 +820,11 @@ Deno.serve(async (req) => {
 
       const isValidEmail = (e?: string | null) => !!e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
-      if (isValidEmail(guardian_email)) {
+      // Guard: never reuse the student's own school email as a parent account
+      const guardianEmailNormalized = (guardian_email || "").toLowerCase().trim();
+      const guardianIsStudentEmail = guardianEmailNormalized === studentEmail.toLowerCase();
+
+      if (isValidEmail(guardian_email) && !guardianIsStudentEmail) {
         try {
           // Fetch additional guardian info from the student record
           const { data: studentRecord } = await supabaseAdmin
