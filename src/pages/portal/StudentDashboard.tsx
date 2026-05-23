@@ -443,7 +443,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">My Profile</h2>
-        <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />
+        <Locked feature="your profile"><StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} /></Locked>
       </motion.div>
     );
   }
