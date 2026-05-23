@@ -1278,16 +1278,21 @@ function ParentPaymentHistory({
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    let active = true;
     fetchPayments();
+    supabase.removeAllChannels();
     const channel = supabase
       .channel(`parent-pay-hist-${childId}-${Date.now()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "payments", filter: `student_id=eq.${childId}` },
-        () => fetchPayments(),
+        () => {
+          if (active) fetchPayments();
+        },
       )
       .subscribe();
     return () => {
+      active = false;
       supabase.removeChannel(channel);
     };
   }, [childId]);
