@@ -244,7 +244,7 @@ Deno.serve(async (req) => {
         email,
         password,
         email_confirm: true,
-        user_metadata: { full_name },
+        user_metadata: { full_name, must_change_password: true },
         app_metadata: { must_change_password: true },
       });
       if (createError) throw createError;
@@ -254,8 +254,15 @@ Deno.serve(async (req) => {
       // Assign portal role (admin, teacher, student, parent)
       await supabaseAdmin.from("user_roles").insert({ user_id: userId, role: effectivePortalRole });
 
-      // Update profile (profiles.id = auth user id)
-      await supabaseAdmin.from("profiles").update({ phone: phone || null }).eq("id", userId);
+      // Ensure a profile row exists so the user appears in the admin Users list
+      await supabaseAdmin.from("profiles").upsert({
+        id: userId,
+        user_id: userId,
+        full_name,
+        email,
+        phone: phone || null,
+        role: effectivePortalRole,
+      }, { onConflict: "id" });
       if (effectivePortalRole === "student") {
         // Create student record linked to auth user
         await supabaseAdmin.from("students").insert({
