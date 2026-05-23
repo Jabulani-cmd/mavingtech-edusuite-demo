@@ -281,7 +281,7 @@ export default function StudentManagement() {
   const [uploading, setUploading] = useState(false);
   const [showWebcam, setShowWebcam] = useState(false);
   const [dbSubjects, setDbSubjects] = useState<{ id: string; name: string; department: string | null }[]>([]);
-  const [provisionResult, setProvisionResult] = useState<{ email: string; temp_password: string; admission_number: string } | null>(null);
+  const [provisionResult, setProvisionResult] = useState<{ email: string; temp_password: string; admission_number: string; parent?: { email: string; temp_password: string | null; existed: boolean } | null } | null>(null);
   const [provisionDialogOpen, setProvisionDialogOpen] = useState(false);
 
   // Boarding fields
@@ -517,6 +517,7 @@ export default function StudentManagement() {
             email: provData.email,
             temp_password: provData.temp_password,
             admission_number: newStudent.admission_number,
+            parent: provData.parent || null,
           });
           setProvisionDialogOpen(true);
         } else {
@@ -1166,6 +1167,27 @@ export default function StudentManagement() {
                   <p className="font-mono font-bold text-primary">{provisionResult.temp_password}</p>
                 </div>
               </div>
+              {provisionResult.parent && (
+                <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+                  <p className="text-sm font-semibold">Parent Portal Account</p>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Parent Login Email</p>
+                    <p className="font-mono font-bold">{provisionResult.parent.email}</p>
+                  </div>
+                  {provisionResult.parent.temp_password ? (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Temporary Password</p>
+                      <p className="font-mono font-bold text-primary">{provisionResult.parent.temp_password}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      {provisionResult.parent.existed
+                        ? "An existing parent account was linked to this student. Use the parent's existing password."
+                        : "No temporary password generated."}
+                    </p>
+                  )}
+                </div>
+              )}
               <div className="flex gap-2">
                 <Button
                   variant="outline"
