@@ -20,12 +20,14 @@ interface Props {
 
 export default function SubscriptionGate({ children, feature = "this feature", hard = false, preview }: Props) {
   const sub = useSubscription();
+  const { role } = useAuth();
 
   if (sub.loading) {
     return <div className="animate-pulse h-40 rounded-xl bg-muted/40" />;
   }
   if (sub.isActive) return <>{children}</>;
 
+  const isStudent = role === "student";
   const renewExpired = sub.status === "expired";
   const pending = sub.status === "pending";
 
