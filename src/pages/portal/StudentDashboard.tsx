@@ -349,17 +349,6 @@ function TabContent({
 }: TabContentProps) {
   const [homeSubTab, setHomeSubTab] = useState<"overview" | "timetable" | "planner" | "fees" | "announcements" | "marks" | "results" | "exam-timetable" | "reports">("overview");
   const subscription = useSubscription();
-  const lockedFeatureLabels: Record<string, string> = {
-    timetable: "the timetable",
-    planner: "the planner",
-    announcements: "announcements",
-    marks: "marks",
-    results: "exam results",
-    "exam-timetable": "the exam timetable",
-    reports: "term reports",
-    fees: "fees",
-  };
-
   const renderLocked = (feature: string, children: React.ReactNode) => {
     if (subscription.loading || !subscription.isActive) {
       return <StudentLockedNotice feature={feature} loading={subscription.loading} status={subscription.status} />;
@@ -461,7 +450,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Study Materials</h2>
-        <Locked feature="study materials"><StudentMaterialsTab studentClassId={studentClassId} /></Locked>
+        {renderLocked("study materials", <StudentMaterialsTab studentClassId={studentClassId} />)}
       </motion.div>
     );
   }
@@ -470,7 +459,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Assessments</h2>
-        <Locked feature="assessments"><StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} /></Locked>
+        {renderLocked("assessments", <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />)}
       </motion.div>
     );
   }
@@ -479,7 +468,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Attendance</h2>
-        <Locked feature="attendance"><StudentAttendanceTab studentId={student?.id} /></Locked>
+        {renderLocked("attendance", <StudentAttendanceTab studentId={student?.id} />)}
       </motion.div>
     );
   }
@@ -488,7 +477,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">My Profile</h2>
-        <Locked feature="your profile"><StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} /></Locked>
+        {renderLocked("your profile", <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />)}
       </motion.div>
     );
   }
