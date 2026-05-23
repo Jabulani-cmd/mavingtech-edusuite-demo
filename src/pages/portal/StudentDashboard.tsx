@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign } from "lucide-react";
+import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Bell, Megaphone, DollarSign, Lock } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,13 +24,33 @@ import StudentExamResultsTab from "@/components/student/StudentExamResultsTab";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
-import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+import { useSubscription } from "@/hooks/useSubscription";
 
-const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
-  <div className="relative min-h-[60vh]">
-    <SubscriptionGate feature={feature} hard>{children}</SubscriptionGate>
-  </div>
-);
+function StudentLockedNotice({ feature, loading = false, status = "none" }: { feature: string; loading?: boolean; status?: string }) {
+  const pending = status === "pending";
+
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-4">
+      <Card className="w-full max-w-md border-2 border-primary/30 bg-background shadow-lg">
+        <CardContent className="p-6 text-center">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+            <Lock className="h-7 w-7" />
+          </div>
+          <h3 className="mb-1 text-xl font-bold">
+            {loading ? "Checking subscription access" : pending ? "Payment verification in progress" : "Subscription required"}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {loading
+              ? "Please wait while we confirm whether your portal access has been unlocked."
+              : pending
+              ? "Your parent or guardian's payment is being verified. Access will unlock once it is approved."
+              : `Your parent or guardian must subscribe from the parent portal before you can access ${feature}.`}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 type TabId = "home" | "materials" | "assessments" | "attendance" | "profile";
 
@@ -321,6 +341,13 @@ function TabContent({
   userId, onRefresh,
 }: TabContentProps) {
   const [homeSubTab, setHomeSubTab] = useState<"overview" | "timetable" | "planner" | "fees" | "announcements" | "marks" | "results" | "exam-timetable" | "reports">("overview");
+  const subscription = useSubscription();
+  const renderLocked = (feature: string, children: React.ReactNode) => {
+    if (subscription.loading || !subscription.isActive) {
+      return <StudentLockedNotice feature={feature} loading={subscription.loading} status={subscription.status} />;
+    }
+    return children;
+  };
 
   if (activeTab === "home") {
     return (
@@ -390,12 +417,12 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && <Locked feature="the timetable"><PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></Locked>}
-        {homeSubTab === "planner" && <Locked feature="the planner"><PersonalTimetableEditor title="My Personal Planner" /></Locked>}
-        {homeSubTab === "announcements" && <Locked feature="announcements"><StudentAnnouncementsSection announcements={announcements} /></Locked>}
-        {homeSubTab === "marks" && <Locked feature="marks"><StudentMarksTab studentId={student?.id} /></Locked>}
+        {homeSubTab === "timetable" && renderLocked("the timetable", <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />)}
+        {homeSubTab === "planner" && renderLocked("the planner", <PersonalTimetableEditor title="My Personal Planner" />)}
+        {homeSubTab === "announcements" && renderLocked("announcements", <StudentAnnouncementsSection announcements={announcements} />)}
+        {homeSubTab === "marks" && renderLocked("marks", <StudentMarksTab studentId={student?.id} />)}
         {homeSubTab === "results" && (
-          <Locked feature="exam results">
+          renderLocked("exam results",
             <StudentExamResultsTab
               studentId={student?.id}
               studentName={student?.full_name || displayName}
@@ -403,11 +430,11 @@ function TabContent({
               form={student?.form}
               stream={student?.stream}
             />
-          </Locked>
+          )
         )}
-        {homeSubTab === "fees" && <Locked feature="fees"><StudentFeeTab studentId={student?.id} /></Locked>}
-        {homeSubTab === "exam-timetable" && <Locked feature="the exam timetable"><StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} /></Locked>}
-        {homeSubTab === "reports" && <Locked feature="term reports"><StudentTermReportsTab /></Locked>}
+        {homeSubTab === "fees" && renderLocked("fees", <StudentFeeTab studentId={student?.id} />)}
+        {homeSubTab === "exam-timetable" && renderLocked("the exam timetable", <StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} />)}
+        {homeSubTab === "reports" && renderLocked("term reports", <StudentTermReportsTab />)}
       </motion.div>
     );
   }
@@ -416,7 +443,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Study Materials</h2>
-        <Locked feature="study materials"><StudentMaterialsTab studentClassId={studentClassId} /></Locked>
+        {renderLocked("study materials", <StudentMaterialsTab studentClassId={studentClassId} />)}
       </motion.div>
     );
   }
@@ -425,7 +452,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Assessments</h2>
-        <Locked feature="assessments"><StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} /></Locked>
+        {renderLocked("assessments", <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />)}
       </motion.div>
     );
   }
@@ -434,7 +461,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Attendance</h2>
-        <Locked feature="attendance"><StudentAttendanceTab studentId={student?.id} /></Locked>
+        {renderLocked("attendance", <StudentAttendanceTab studentId={student?.id} />)}
       </motion.div>
     );
   }
@@ -443,7 +470,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">My Profile</h2>
-        <Locked feature="your profile"><StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} /></Locked>
+        {renderLocked("your profile", <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />)}
       </motion.div>
     );
   }
