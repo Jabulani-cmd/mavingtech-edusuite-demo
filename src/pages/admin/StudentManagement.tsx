@@ -1167,7 +1167,27 @@ export default function StudentManagement() {
                   <p className="font-mono font-bold text-primary">{provisionResult.temp_password}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              {provisionResult.parent && (
+                <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+                  <p className="text-sm font-semibold">Parent Portal Account</p>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Parent Login Email</p>
+                    <p className="font-mono font-bold">{provisionResult.parent.email}</p>
+                  </div>
+                  {provisionResult.parent.temp_password ? (
+                    <div>
+                      <p className="text-xs text-muted-foreground">Temporary Password</p>
+                      <p className="font-mono font-bold text-primary">{provisionResult.parent.temp_password}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      {provisionResult.parent.existed
+                        ? "An existing parent account was linked to this student. Use the parent's existing password."
+                        : "No temporary password generated."}
+                    </p>
+                  )}
+                </div>
+              )}
                 <Button
                   variant="outline"
                   className="flex-1"
