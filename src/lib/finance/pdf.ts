@@ -7,7 +7,13 @@ export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
 export const SCHOOL_ADDRESS = "P.O. Box 1965, Bulawayo, Zimbabwe";
 export const SCHOOL_PHONE = "+263 29 288 3621";
 export const SCHOOL_EMAIL = "info@mavingtech.com";
-export const SCHOOL_LOGO_URL = "/images/school-logo-print.png";
+// Use an absolute URL so the logo resolves inside print windows (about:blank)
+// and any other context that doesn't share the app's base URL.
+export const SCHOOL_LOGO_PATH = "/images/school-logo-print.png";
+export const SCHOOL_LOGO_URL =
+  typeof window !== "undefined" && window.location?.origin
+    ? `${window.location.origin}${SCHOOL_LOGO_PATH}`
+    : SCHOOL_LOGO_PATH;
 
 export type Money = { usd: number; zig: number };
 
