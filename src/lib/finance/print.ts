@@ -8,10 +8,15 @@ export function openPrintWindow(html: string) {
   w.document.write(html);
   w.document.close();
   w.focus();
-  // Give the browser a beat to load images
-  setTimeout(() => {
-    w.print();
-  }, 250);
+  // Wait for images (logo) to fully load before printing
+  const triggerPrint = () => {
+    try { w.print(); } catch { /* noop */ }
+  };
+  if (w.document.readyState === "complete") {
+    setTimeout(triggerPrint, 300);
+  } else {
+    w.addEventListener("load", () => setTimeout(triggerPrint, 200));
+  }
 }
 
 export function printReceipt(input: ReceiptPrintInput) {
