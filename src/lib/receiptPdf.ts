@@ -2,6 +2,7 @@
 // Simple HTML→print-window receipt generator, consistent with existing
 // finance/pdf helpers. Opens a printable PDF view in a new tab.
 import { openPrintWindow } from "@/lib/finance/print";
+import { SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 
 interface ReceiptData {
   receiptNumber: string;
