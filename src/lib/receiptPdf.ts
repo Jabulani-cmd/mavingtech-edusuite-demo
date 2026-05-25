@@ -22,11 +22,14 @@ const fmt = (d: Date | string) =>
   new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
 
 export function buildSubscriptionReceiptHtml(r: ReceiptData) {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
   return `
   <html><head><title>Receipt ${r.receiptNumber}</title>
+  <base href="${origin}/" />
   <style>
     body{font-family:Inter,system-ui,sans-serif;padding:32px;color:#0f172a;}
     .head{display:flex;align-items:center;gap:14px;border-bottom:3px solid #0d9488;padding-bottom:16px;margin-bottom:24px;}
+    .head img{height:90px;width:auto;max-width:140px;object-fit:contain;display:block;}
     .head h1{margin:0;color:#0f172a;font-size:22px;}
     .head .sub{color:#475569;font-size:13px;}
     table{width:100%;border-collapse:collapse;margin-top:12px;}
@@ -39,11 +42,13 @@ export function buildSubscriptionReceiptHtml(r: ReceiptData) {
   </style></head><body>
   <div class="demo">DEMO</div>
   <div class="head">
+    <img src="${SCHOOL_LOGO_URL}" alt="School Logo" />
     <div>
       <h1>MavingTech Business Solutions</h1>
       <div class="sub">Official Subscription Receipt</div>
     </div>
   </div>
+
 
   <h2 style="margin:0 0 4px;">Receipt #${r.receiptNumber}</h2>
   <div style="color:#64748b;font-size:13px;margin-bottom:18px;">Issued ${fmt(r.date)}</div>
