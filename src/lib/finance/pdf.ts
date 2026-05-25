@@ -7,7 +7,13 @@ export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
 export const SCHOOL_ADDRESS = "P.O. Box 1965, Bulawayo, Zimbabwe";
 export const SCHOOL_PHONE = "+263 29 288 3621";
 export const SCHOOL_EMAIL = "info@mavingtech.com";
-export const SCHOOL_LOGO_URL = "/images/school-logo-print.png";
+// Use an absolute URL so the logo resolves inside print windows (about:blank)
+// and any other context that doesn't share the app's base URL.
+export const SCHOOL_LOGO_PATH = "/images/school-logo-print.png";
+export const SCHOOL_LOGO_URL =
+  typeof window !== "undefined" && window.location?.origin
+    ? `${window.location.origin}${SCHOOL_LOGO_PATH}`
+    : SCHOOL_LOGO_PATH;
 
 export type Money = { usd: number; zig: number };
 
@@ -178,12 +184,13 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
 <html>
 <head>
   <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
   <title>Invoice ${safe(input.invoiceNumber)}</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 24px; font-size: 12px; max-width: 700px; margin: 0 auto; }
     .header { display:flex; justify-content:space-between; align-items:center; }
     .brand { display:flex; gap:14px; align-items:center; }
-    .brand img { height:160px; width:auto; max-width:140px; object-fit:contain; aspect-ratio:3 / 4; display:block; }
+    .brand img { height:90px; width:auto; max-width:140px; object-fit:contain; display:block; }
     .brand-text h1 { font-size: 18px; margin: 0; }
     .brand-text .motto { color: #555; font-style: italic; font-size: 10px; margin: 2px 0; }
     .brand-text .address { color: #666; font-size: 9px; }
@@ -279,12 +286,13 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
 <html>
 <head>
   <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
   <title>Receipt ${safe(input.receiptNumber)}</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 24px; font-size: 12px; max-width: 700px; margin: 0 auto; }
     .header { display:flex; justify-content:space-between; align-items:center; }
     .brand { display:flex; gap:14px; align-items:center; }
-    .brand img { height:160px; width:auto; max-width:140px; object-fit:contain; aspect-ratio:3 / 4; display:block; }
+    .brand img { height:90px; width:auto; max-width:140px; object-fit:contain; display:block; }
     .brand-text h1 { font-size: 18px; margin: 0; }
     .brand-text .motto { color: #555; font-style: italic; font-size: 10px; margin: 2px 0; }
     .brand-text .address { color: #666; font-size: 9px; }
@@ -398,11 +406,12 @@ export function buildStatementHtml(input: StatementPrintInput) {
 <html>
 <head>
   <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
   <title>Statement - ${safe(input.student.fullName)}</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 24px; font-size: 11px; max-width: 800px; margin: 0 auto; }
     .header { display:flex; gap:14px; align-items:center; margin-bottom: 6px; }
-    .header img { height:160px; width:auto; max-width:140px; object-fit:contain; aspect-ratio:3 / 4; display:block; }
+    .header img { height:90px; width:auto; max-width:140px; object-fit:contain; display:block; }
     .header h1 { font-size: 18px; margin: 0; }
     .header .motto { color: #555; font-style: italic; font-size: 10px; }
     .header .address { color: #666; font-size: 9px; }
