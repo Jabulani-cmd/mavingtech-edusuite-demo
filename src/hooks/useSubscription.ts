@@ -66,18 +66,32 @@ export function useSubscription(): SubscriptionState {
       return;
     }
 
-    // Pull latest subscription for this user (as parent OR student)
+    // For students, also include any linked parents' subscriptions/grants.
+    const userIds: string[] = [user.id];
+    if (role === "student") {
+      const { data: links } = await supabase
+        .from("parent_students")
+        .select("parent_id")
+        .eq("student_id", user.id);
+      for (const l of links || []) {
+        if (l?.parent_id && !userIds.includes(l.parent_id)) userIds.push(l.parent_id);
+      }
+    }
+    const orFilter = userIds
+      .flatMap((id) => [`parent_id.eq.${id}`, `student_id.eq.${id}`])
+      .join(",");
+
     const { data: subs } = await supabase
       .from("subscriptions")
       .select("*, subscription_plans(name, plan_type)")
-      .or(`parent_id.eq.${user.id},student_id.eq.${user.id}`)
+      .or(orFilter)
       .order("access_end", { ascending: false, nullsFirst: false })
-      .limit(10);
+      .limit(20);
 
     const { data: grants } = await supabase
       .from("access_grants")
       .select("*")
-      .or(`parent_id.eq.${user.id},student_id.eq.${user.id}`)
+      .or(orFilter)
       .eq("is_active", true);
 
     const now = new Date();
