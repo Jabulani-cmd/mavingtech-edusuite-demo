@@ -406,11 +406,12 @@ export function buildStatementHtml(input: StatementPrintInput) {
 <html>
 <head>
   <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
   <title>Statement - ${safe(input.student.fullName)}</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 24px; font-size: 11px; max-width: 800px; margin: 0 auto; }
     .header { display:flex; gap:14px; align-items:center; margin-bottom: 6px; }
-    .header img { height:160px; width:auto; max-width:140px; object-fit:contain; aspect-ratio:3 / 4; display:block; }
+    .header img { height:90px; width:auto; max-width:140px; object-fit:contain; display:block; }
     .header h1 { font-size: 18px; margin: 0; }
     .header .motto { color: #555; font-style: italic; font-size: 10px; }
     .header .address { color: #666; font-size: 9px; }
