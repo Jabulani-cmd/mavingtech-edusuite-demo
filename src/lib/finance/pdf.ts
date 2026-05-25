@@ -286,12 +286,13 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
 <html>
 <head>
   <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
   <title>Receipt ${safe(input.receiptNumber)}</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 24px; font-size: 12px; max-width: 700px; margin: 0 auto; }
     .header { display:flex; justify-content:space-between; align-items:center; }
     .brand { display:flex; gap:14px; align-items:center; }
-    .brand img { height:160px; width:auto; max-width:140px; object-fit:contain; aspect-ratio:3 / 4; display:block; }
+    .brand img { height:90px; width:auto; max-width:140px; object-fit:contain; display:block; }
     .brand-text h1 { font-size: 18px; margin: 0; }
     .brand-text .motto { color: #555; font-style: italic; font-size: 10px; margin: 2px 0; }
     .brand-text .address { color: #666; font-size: 9px; }
