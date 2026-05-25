@@ -67,7 +67,13 @@ export default function SubscriptionGate({ children, feature = "this feature", h
   );
 
   if (sub.loading) {
-    return hard ? lockCard : <div className="animate-pulse h-40 rounded-xl bg-muted/40" />;
+    return hard ? (
+      <div className="flex items-center justify-center p-4 min-h-[50vh]">
+        <div className="animate-pulse h-40 w-full max-w-md rounded-xl bg-muted/40" />
+      </div>
+    ) : (
+      <div className="animate-pulse h-40 rounded-xl bg-muted/40" />
+    );
   }
   if (sub.isActive) return <>{children}</>;
 
