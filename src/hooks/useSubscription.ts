@@ -157,6 +157,7 @@ export function useSubscription(): SubscriptionState {
       .on("postgres_changes", { event: "*", schema: "public", table: "subscriptions" }, () => load())
       .on("postgres_changes", { event: "*", schema: "public", table: "payments" }, () => load())
       .on("postgres_changes", { event: "*", schema: "public", table: "access_grants" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "parent_students" }, () => load())
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
