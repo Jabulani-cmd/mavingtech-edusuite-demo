@@ -391,19 +391,21 @@ export default function ParentDashboard() {
           />
           {/* Tab pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
-                  activeTab === t.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
+            {tabs.map((t) => {
+              const cls = `rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                activeTab === t.id
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`;
+              if (t.id === "billing") {
+                return <Link key={t.id} to="/portal/parent/billing" className={cls}>{t.label}</Link>;
+              }
+              return (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} className={cls}>
+                  {t.label}
+                </button>
+              );
+            })}
           </div>
           <TabContent
             activeTab={activeTab}
