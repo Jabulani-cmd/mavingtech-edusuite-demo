@@ -1318,19 +1318,8 @@ function ParentPaymentHistory({
     setLoading(false);
   }
 
-  function handlePrintReceipt(p: any) {
-    const html = buildReceiptHtml({
-      logoUrl: SCHOOL_LOGO_URL,
-      receiptNumber: p.receipt_number,
-      paymentDate: p.payment_date,
-      student: { fullName: childName, admissionNumber, form },
-      invoiceNumber: p.invoices?.invoice_number,
-      amounts: { usd: Number(p.amount_usd || 0), zig: Number(p.amount_zig || 0) },
-      paymentMethod: p.payment_method,
-      referenceNumber: p.reference_number,
-    });
-    openPrintWindow(html);
-  }
+  const docStudent = { fullName: childName, admissionNumber, form };
+  const actionsFor = (p: any) => receiptActions(p, docStudent);
 
   if (loading) return <div className="h-20 animate-pulse rounded-lg bg-muted" />;
   if (payments.length === 0) return null;
