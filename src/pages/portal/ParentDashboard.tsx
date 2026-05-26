@@ -1239,8 +1239,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "announcements") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Announcements</h2>
-        <StudentAnnouncementsSection announcements={announcements} />
+        <PrintableSection title="Announcements" fileName="parent-announcements" bare>
+          <StudentAnnouncementsSection announcements={announcements} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1248,8 +1249,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Class Timetable — {child.full_name}</h2>
-        <StudentTimetableTab studentClassId={childClassId} studentId={child.id} />
+        <PrintableSection title={`Class Timetable — ${child.full_name}`} subtitle={`${child.form || ""} ${child.stream || ""}`.trim()} fileName={`class-timetable-${child.admission_number || child.full_name}`} bare>
+          <StudentTimetableTab studentClassId={childClassId} studentId={child.id} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1257,8 +1259,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "exam-timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Exam Timetable — {child.full_name}</h2>
-        <StudentExamTimetableTab studentId={child.id} formLevel={child.form} />
+        <PrintableSection title={`Exam Timetable — ${child.full_name}`} subtitle={child.form || ""} fileName={`exam-timetable-${child.admission_number || child.full_name}`} bare>
+          <StudentExamTimetableTab studentId={child.id} formLevel={child.form} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1266,8 +1269,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "reports") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Term Reports — {child.full_name}</h2>
-        <StudentTermReportsTab />
+        <PrintableSection title={`Term Reports — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`term-reports-${child.admission_number || child.full_name}`} bare>
+          <StudentTermReportsTab />
+        </PrintableSection>
       </motion.div>
     );
   }
