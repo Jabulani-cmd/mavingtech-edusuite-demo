@@ -370,6 +370,8 @@ function TabContent({
           feeBalance={feeBalance}
         />
 
+        <AccessStatusPanel />
+
         {/* Quick Nav Sections */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {[
