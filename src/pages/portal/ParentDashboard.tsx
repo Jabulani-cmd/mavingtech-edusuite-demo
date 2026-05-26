@@ -296,6 +296,7 @@ export default function ParentDashboard() {
     { id: "attendance", label: "Attendance", icon: Calendar },
     { id: "fees", label: "Fees", icon: DollarSign },
     { id: "announcements", label: "Announcements", icon: Bell },
+    { id: "billing", label: "Billing", icon: CreditCard },
   ];
 
   return (
