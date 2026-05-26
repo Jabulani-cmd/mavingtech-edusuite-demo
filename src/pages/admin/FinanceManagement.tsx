@@ -2721,7 +2721,7 @@ export default function FinanceManagement() {
                   email={{
                     documentLabel: "Expenses Report",
                     filename: "expenses-report",
-                    subject: `${SCHOOL_NAME_DISPLAY} – Expenses Report`,
+                    subject: `MavingTech Business Solutions – Expenses Report`,
                   }}
                 />
               </div>
