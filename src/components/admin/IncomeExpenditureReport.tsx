@@ -9,7 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
-import { Search, Printer, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import { incomeExpenditureActions } from "@/lib/finance/documentActions";
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
