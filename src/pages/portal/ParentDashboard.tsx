@@ -27,7 +27,9 @@ import {
   FileText,
   Printer,
   ClipboardList,
+  CreditCard,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
