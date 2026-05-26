@@ -1027,6 +1027,7 @@ function TabContentInner(props: TabContentProps) {
             )}
           </CardContent>
         </Card>
+        </PrintableSection>
       </motion.div>
     );
   }
