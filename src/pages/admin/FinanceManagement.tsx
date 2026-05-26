@@ -1810,6 +1810,9 @@ export default function FinanceManagement() {
                 </Select>
               </div>
 
+              <DateRangeFilter value={invoiceDateFilter} onChange={setInvoiceDateFilter} />
+
+
               {filteredInvoices.length === 0 ? (
                 <p className="text-center py-8 text-muted-foreground">No invoices found.</p>
               ) : (
