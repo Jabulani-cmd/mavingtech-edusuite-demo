@@ -779,7 +779,8 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Exam Results — {child.full_name}</h2>
+        <PrintableSection title={`Exam Results — ${child.full_name}`} subtitle={selectedExam ? `${selectedExam.name} — ${selectedExam.term} ${selectedExam.academic_year}` : (child.form || "")} fileName={`exam-results-${child.admission_number || child.full_name}`} bare>
+
 
         {exams.length === 0 ? (
           <Card>
