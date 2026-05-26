@@ -418,24 +418,26 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && renderLocked("the timetable", <PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} />)}
-        {homeSubTab === "planner" && renderLocked("the planner", <PersonalTimetableEditor title="My Personal Planner" />)}
-        {homeSubTab === "announcements" && renderLocked("announcements", <StudentAnnouncementsSection announcements={announcements} />)}
-        {homeSubTab === "marks" && renderLocked("marks", <StudentMarksTab studentId={student?.id} />)}
+        {homeSubTab === "timetable" && renderLocked("the timetable", <PrintableSection title="My Class Timetable" subtitle={`${student?.form || ""} ${student?.stream || ""}`.trim()} fileName={`timetable-${student?.admission_number || "student"}`} bare><PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></PrintableSection>)}
+        {homeSubTab === "planner" && renderLocked("the planner", <PrintableSection title="My Personal Planner" fileName={`planner-${student?.admission_number || "student"}`} bare><PersonalTimetableEditor title="My Personal Planner" /></PrintableSection>)}
+        {homeSubTab === "announcements" && renderLocked("announcements", <PrintableSection title="Announcements" fileName="announcements" bare><StudentAnnouncementsSection announcements={announcements} /></PrintableSection>)}
+        {homeSubTab === "marks" && renderLocked("marks", <PrintableSection title="My Marks" subtitle={student?.full_name || displayName} fileName={`marks-${student?.admission_number || "student"}`} bare><StudentMarksTab studentId={student?.id} /></PrintableSection>)}
         {homeSubTab === "results" && (
           renderLocked("exam results",
-            <StudentExamResultsTab
-              studentId={student?.id}
-              studentName={student?.full_name || displayName}
-              admissionNumber={student?.admission_number}
-              form={student?.form}
-              stream={student?.stream}
-            />
+            <PrintableSection title="Exam Results" subtitle={student?.full_name || displayName} fileName={`exam-results-${student?.admission_number || "student"}`} bare>
+              <StudentExamResultsTab
+                studentId={student?.id}
+                studentName={student?.full_name || displayName}
+                admissionNumber={student?.admission_number}
+                form={student?.form}
+                stream={student?.stream}
+              />
+            </PrintableSection>
           )
         )}
         {homeSubTab === "fees" && renderLocked("fees", <StudentFeeTab studentId={student?.id} />)}
-        {homeSubTab === "exam-timetable" && renderLocked("the exam timetable", <StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} />)}
-        {homeSubTab === "reports" && renderLocked("term reports", <StudentTermReportsTab />)}
+        {homeSubTab === "exam-timetable" && renderLocked("the exam timetable", <PrintableSection title="Exam Timetable" subtitle={student?.form || ""} fileName={`exam-timetable-${student?.admission_number || "student"}`} bare><StudentExamTimetableTab studentId={student?.id} formLevel={student?.form} /></PrintableSection>)}
+        {homeSubTab === "reports" && renderLocked("term reports", <PrintableSection title="Term Reports" subtitle={student?.full_name || displayName} fileName={`term-reports-${student?.admission_number || "student"}`} bare><StudentTermReportsTab /></PrintableSection>)}
       </motion.div>
     );
   }
