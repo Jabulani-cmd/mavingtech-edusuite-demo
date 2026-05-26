@@ -38,6 +38,7 @@ import StudentTimetableTab from "@/components/student/StudentTimetableTab";
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import NotificationBell from "@/components/NotificationBell";
 import StudentAnnouncementsSection from "@/components/student/StudentAnnouncementsSection";
+import AccessStatusPanel from "@/components/subscription/AccessStatusPanel";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, buildStatementHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
