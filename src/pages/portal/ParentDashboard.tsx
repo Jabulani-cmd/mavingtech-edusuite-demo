@@ -43,6 +43,7 @@ import { format } from "date-fns";
 import { buildReceiptHtml, buildStatementHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { openPrintWindow } from "@/lib/finance/print";
 import DocActionButtons from "@/components/finance/DocActionButtons";
+import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
@@ -655,6 +656,7 @@ function TabContentInner(props: TabContentProps) {
     usdToZig,
   } = props;
   const isMobile = useIsMobile();
+  const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
 
   if (!child) return null;
 
@@ -1033,9 +1035,12 @@ function TabContentInner(props: TabContentProps) {
   }
 
   if (activeTab === "fees") {
+    const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
+    const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Fee Statement — {child.full_name}</h2>
+
 
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
@@ -1062,17 +1067,30 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
+        {/* Date filter */}
+        <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+
         {/* Statement actions */}
-        {(invoices.length > 0 || childPayments.length > 0) && (
-          <DocActionButtons
-            labels
-            actions={statementActions(
-              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-              invoices,
-              childPayments,
-            )}
-          />
-        )}
+        {(invoices.length > 0 || childPayments.length > 0) && (() => {
+          const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
+          const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
+          return (
+            <DocActionButtons
+              labels
+              actions={statementActions(
+                { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+                fInv,
+                fPay,
+              )}
+              email={{
+                documentLabel: "Student Statement",
+                filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+                subject: `Statement of Account — ${child.full_name}`,
+              }}
+            />
+          );
+        })()}
+
 
         {/* Invoices */}
         <Card>
@@ -1080,11 +1098,11 @@ function TabContentInner(props: TabContentProps) {
             <CardTitle className="text-sm">Invoices</CardTitle>
           </CardHeader>
           <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
-            {invoices.length === 0 ? (
+            {fInv.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-muted-foreground">No invoices found.</p>
             ) : isMobile ? (
               <div className="space-y-2">
-                {invoices.map((inv: any) => {
+                {fInv.map((inv: any) => {
                   const paid = childPayments
                     .filter((p: any) => p.invoice_id === inv.id)
                     .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
@@ -1116,6 +1134,11 @@ function TabContentInner(props: TabContentProps) {
                                   form: child.form,
                                 })
                               }
+                              email={{
+                                documentLabel: "Invoice",
+                                filename: `invoice-${inv.invoice_number}`,
+                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1166,7 +1189,7 @@ function TabContentInner(props: TabContentProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoices.map((inv: any) => {
+                    {fInv.map((inv: any) => {
                       const paid = childPayments
                         .filter((p: any) => p.invoice_id === inv.id)
                         .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
@@ -1217,6 +1240,11 @@ function TabContentInner(props: TabContentProps) {
                                   form: child.form,
                                 })
                               }
+                              email={{
+                                documentLabel: "Invoice",
+                                filename: `invoice-${inv.invoice_number}`,
+                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                              }}
                             />
                           </td>
                         </tr>
@@ -1235,10 +1263,12 @@ function TabContentInner(props: TabContentProps) {
           childName={child.full_name}
           admissionNumber={child.admission_number}
           form={child.form}
+          dateFilter={feeDateFilter}
         />
       </motion.div>
     );
   }
+
 
   if (activeTab === "announcements") {
     return (
@@ -1288,11 +1318,13 @@ function ParentPaymentHistory({
   childName,
   admissionNumber,
   form,
+  dateFilter,
 }: {
   childId: string;
   childName: string;
   admissionNumber: string;
   form: string;
+  dateFilter?: FinanceDateFilter;
 }) {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1329,10 +1361,17 @@ function ParentPaymentHistory({
   }
 
   const docStudent = { fullName: childName, admissionNumber, form };
+  const filter = dateFilter || emptyDateFilter();
+  const visiblePayments = payments.filter((p: any) => dateMatches(filter, p.payment_date));
   const actionsFor = (p: any) => receiptActions(p, docStudent);
+  const emailFor = (p: any) => ({
+    documentLabel: "Receipt",
+    filename: `receipt-${p.receipt_number}`,
+    subject: `Official Receipt ${p.receipt_number} — ${childName}`,
+  });
 
   if (loading) return <div className="h-20 animate-pulse rounded-lg bg-muted" />;
-  if (payments.length === 0) return null;
+  if (visiblePayments.length === 0) return null;
 
   return (
     <Card>

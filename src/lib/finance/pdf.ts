@@ -611,3 +611,97 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
 </body></html>`;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Expenses list (branded) – used by the Bursar Expenses tab for view/print/
+// download/email of a filtered set of expense entries.
+// ─────────────────────────────────────────────────────────────────────────────
+export type ExpensesListInput = {
+  logoUrl?: string;
+  periodLabel: string;
+  expenses: {
+    expense_date: string;
+    category: string;
+    description: string;
+    amount_usd: number;
+    amount_zig: number;
+    payment_method?: string;
+    reference_number?: string;
+  }[];
+};
+
+export function buildExpensesListHtml(input: ExpensesListInput): string {
+  const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const fmt = (n: number) => Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
+
+  const totalUsd = input.expenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
+  const totalZig = input.expenses.reduce((s, e) => s + Number(e.amount_zig || 0), 0);
+
+  const rows = input.expenses.map((e, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${safe(e.expense_date)}</td>
+      <td>${safe(e.category)}</td>
+      <td>${safe(e.description)}</td>
+      <td>${safe(e.payment_method || "—")}</td>
+      <td class="mono">${safe(e.reference_number || "—")}</td>
+      <td class="right mono red">$${fmt(Number(e.amount_usd))}</td>
+      <td class="right mono">${fmt(Number(e.amount_zig))}</td>
+    </tr>`).join("");
+
+  return `<!doctype html>
+<html><head>
+  <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
+  <title>Expenses Report — ${safe(input.periodLabel)}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 24px; font-size: 11px; max-width: 900px; margin: 0 auto; color: #1a1a1a; }
+    .header { display:flex; gap:18px; align-items:center; }
+    .header img { height:90px; width:auto; max-width:140px; object-fit:contain; }
+    .header h1 { font-size: 20px; margin: 0; color: #0f172a; }
+    .header .motto { color: #555; font-style: italic; font-size: 11px; margin: 2px 0; }
+    .header .address { color: #666; font-size: 10px; }
+    .divider { border-top: 3px double #0d9488; margin: 14px 0; }
+    .title-row { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px; }
+    .title-row h2 { font-size: 16px; margin: 0; color: #0f172a; letter-spacing: 1px; }
+    .title-row .period { font-size: 12px; color: #555; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 18px; }
+    th, td { border: 1px solid #d1d5db; padding: 5px 8px; text-align: left; font-size: 10px; }
+    th { background: #0f172a; color: #fff; font-weight: 600; }
+    .right { text-align: right; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .red { color: #b91c1c; }
+    tfoot td { font-weight: 700; background: #fef2f2; }
+    .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 9px; color: #888; text-align: center; }
+    @media print { body { padding: 12px; } }
+  </style>
+</head><body>
+  <div class="header">
+    <img src="${safe(logoUrl)}" alt="School Logo" />
+    <div>
+      <h1>${safe(SCHOOL_NAME)}</h1>
+      <div class="motto">"${safe(SCHOOL_MOTTO)}"</div>
+      <div class="address">${safe(SCHOOL_ADDRESS)} &nbsp;|&nbsp; Tel: ${safe(SCHOOL_PHONE)} &nbsp;|&nbsp; Email: ${safe(SCHOOL_EMAIL)}</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="title-row">
+    <h2>EXPENSES REPORT</h2>
+    <div class="period">Period: ${safe(input.periodLabel)}</div>
+  </div>
+
+  <table>
+    <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="8" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+    <tfoot><tr><td colspan="6" class="right">TOTAL (${input.expenses.length} entries)</td><td class="right mono red">$${fmt(totalUsd)}</td><td class="right mono">${fmt(totalZig)}</td></tr></tfoot>
+  </table>
+
+  <div class="footer">
+    <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated expenses report.</p>
+    <p><strong>${safe(SCHOOL_NAME)}</strong> &nbsp;|&nbsp; ${safe(SCHOOL_ADDRESS)} &nbsp;|&nbsp; Tel ${safe(SCHOOL_PHONE)} &nbsp;|&nbsp; ${safe(SCHOOL_EMAIL)}</p>
+  </div>
+</body></html>`;
+}
+
+

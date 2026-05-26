@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import DocActionButtons from "@/components/finance/DocActionButtons";
+import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import {
   invoiceActions,
   receiptActions,
@@ -30,6 +31,7 @@ export default function StudentFeeTab({ studentId }: Props) {
   const [payments, setPayments] = useState<any[]>([]);
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [dateFilter, setDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
 
   useEffect(() => {
     if (studentId) fetchData();
@@ -98,7 +100,19 @@ export default function StudentFeeTab({ studentId }: Props) {
     );
   }
 
-  const stmtActions = statementActions(docStudent, invoices, payments);
+  const filteredInvoices = invoices.filter((i: any) =>
+    dateMatches(dateFilter, i.created_at || i.due_date),
+  );
+  const filteredPayments = payments.filter((p: any) =>
+    dateMatches(dateFilter, p.payment_date),
+  );
+
+  const stmtActions = statementActions(docStudent, filteredInvoices, filteredPayments);
+  const stmtEmail = {
+    documentLabel: "Student Statement",
+    filename: `statement-${(student?.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+    subject: `Statement of Account — ${student?.full_name || "Student"}`,
+  };
 
   return (
     <div className="space-y-4">
@@ -108,10 +122,13 @@ export default function StudentFeeTab({ studentId }: Props) {
           <h2 className="text-lg font-bold">Fee Statement</h2>
           <p className="text-sm text-muted-foreground">All invoices and payments</p>
         </div>
-        {(invoices.length > 0 || payments.length > 0) && (
-          <DocActionButtons actions={stmtActions} labels />
+        {(invoices.length > 0 || filteredPayments.length > 0) && (
+          <DocActionButtons actions={stmtActions} labels email={stmtEmail} />
         )}
       </div>
+
+      <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+
 
       {/* Balance summary */}
       <Card
@@ -150,11 +167,11 @@ export default function StudentFeeTab({ studentId }: Props) {
           <CardTitle className="text-sm">Invoices</CardTitle>
         </CardHeader>
         <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
-          {invoices.length === 0 ? (
+          {filteredInvoices.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">No invoices found.</p>
           ) : isMobile ? (
             <div className="space-y-2">
-              {invoices.map((inv) => {
+              {filteredInvoices.map((inv) => {
                 const invPayments = payments.filter((p) => p.invoice_id === inv.id);
                 const actualPaid = invPayments.reduce((sum, p) => sum + parseFloat(p.amount_usd || 0), 0);
                 const balance = inv.total_usd - actualPaid;
@@ -165,7 +182,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="font-mono text-xs font-medium">{inv.invoice_number}</span>
                         <div className="flex items-center gap-2">
                           {statusBadge(inv.status)}
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} />
+                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
@@ -199,7 +216,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((inv) => {
+                  {filteredInvoices.map((inv) => {
                     const invPayments = payments.filter((p) => p.invoice_id === inv.id);
                     const actualPaid = invPayments.reduce((sum, p) => sum + parseFloat(p.amount_usd || 0), 0);
                     const balance = inv.total_usd - actualPaid;
@@ -218,7 +235,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} />
+                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </TableCell>
                       </TableRow>
                     );
@@ -231,7 +248,7 @@ export default function StudentFeeTab({ studentId }: Props) {
       </Card>
 
       {/* Payment history */}
-      {payments.length > 0 && (
+      {filteredPayments.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Payment History</CardTitle>
@@ -239,12 +256,12 @@ export default function StudentFeeTab({ studentId }: Props) {
           <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
             {isMobile ? (
               <div className="space-y-2">
-                {payments.map((p) => (
+                {filteredPayments.map((p) => (
                   <Card key={p.id} className="border">
                     <CardContent className="p-3 space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                        <DocActionButtons actions={receiptActions(p, docStudent)} />
+                        <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(p.payment_date), "dd MMM yyyy")} · {p.payment_method}
@@ -277,7 +294,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {payments.map((p) => (
+                    {filteredPayments.map((p) => (
                       <TableRow key={p.id}>
                         <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
                         <TableCell>{format(new Date(p.payment_date), "dd MMM yyyy")}</TableCell>
@@ -286,7 +303,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right font-mono">ZiG {fmt(p.amount_zig)}</TableCell>
                         <TableCell>{p.payment_method}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={receiptActions(p, docStudent)} />
+                          <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                         </TableCell>
                       </TableRow>
                     ))}
