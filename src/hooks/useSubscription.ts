@@ -67,12 +67,24 @@ export function useSubscription(): SubscriptionState {
     }
 
     // For students, also include any linked parents' subscriptions/grants.
+    // NOTE: parent_students.student_id references students.id (row id), NOT auth user id.
     const userIds: string[] = [user.id];
     if (role === "student") {
+      // Resolve the student's row id from the students table via auth user id
+      const { data: studentRow } = await supabase
+        .from("students")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const studentRowId = studentRow?.id;
+
+      // Try linkages by both possible identifiers (defensive)
+      const linkIds = [user.id];
+      if (studentRowId) linkIds.push(studentRowId);
       const { data: links } = await supabase
         .from("parent_students")
         .select("parent_id")
-        .eq("student_id", user.id);
+        .in("student_id", linkIds);
       for (const l of links || []) {
         if (l?.parent_id && !userIds.includes(l.parent_id)) userIds.push(l.parent_id);
       }
