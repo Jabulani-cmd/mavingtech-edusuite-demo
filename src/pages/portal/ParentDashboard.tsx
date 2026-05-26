@@ -360,6 +360,7 @@ export default function ParentDashboard() {
             onSelect={setSelectedChildId}
             onLinked={fetchInitialData}
           />
+          <AccessStatusPanel className="mt-4" />
           <TabContent
             activeTab={activeTab}
             setActiveTab={setActiveTab}
