@@ -26,6 +26,7 @@ import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useSubscription } from "@/hooks/useSubscription";
 import PrintableSection from "@/components/shared/PrintableSection";
+import AccessStatusPanel from "@/components/subscription/AccessStatusPanel";
 
 function StudentLockedNotice({ feature, loading = false, status = "none" }: { feature: string; loading?: boolean; status?: string }) {
   const pending = status === "pending";
@@ -368,6 +369,8 @@ function TabContent({
           newMaterials={newMaterials}
           feeBalance={feeBalance}
         />
+
+        <AccessStatusPanel />
 
         {/* Quick Nav Sections */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">

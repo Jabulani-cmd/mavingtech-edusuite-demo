@@ -38,6 +38,7 @@ import StudentTimetableTab from "@/components/student/StudentTimetableTab";
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import NotificationBell from "@/components/NotificationBell";
 import StudentAnnouncementsSection from "@/components/student/StudentAnnouncementsSection";
+import AccessStatusPanel from "@/components/subscription/AccessStatusPanel";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, buildStatementHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
@@ -359,6 +360,7 @@ export default function ParentDashboard() {
             onSelect={setSelectedChildId}
             onLinked={fetchInitialData}
           />
+          <AccessStatusPanel className="mt-4" />
           <TabContent
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -393,6 +395,7 @@ export default function ParentDashboard() {
             onSelect={setSelectedChildId}
             onLinked={fetchInitialData}
           />
+          <AccessStatusPanel />
           {/* Tab pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {tabs.map((t) => {
