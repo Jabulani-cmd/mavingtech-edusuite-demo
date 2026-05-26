@@ -1156,6 +1156,7 @@ function TabContentInner(props: TabContentProps) {
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Paid</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Balance</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Status</th>
+                      <th className="px-3 py-2 text-center font-medium text-muted-foreground">Document</th>
                     </tr>
                   </thead>
                   <tbody>
