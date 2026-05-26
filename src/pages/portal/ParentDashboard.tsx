@@ -1056,40 +1056,16 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
-        {invoices.length > 0 && (
-          <div className="flex gap-2 flex-wrap">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const html = buildStatementHtml({
-                  logoUrl: SCHOOL_LOGO_URL,
-                  student: { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-                  invoices: invoices.map((i: any) => ({
-                    invoice_number: i.invoice_number,
-                    term: i.term,
-                    academic_year: i.academic_year,
-                    total_usd: i.total_usd,
-                    total_zig: i.total_zig,
-                    paid_usd: i.paid_usd,
-                    paid_zig: i.paid_zig,
-                    status: i.status,
-                  })),
-                  payments: childPayments.map((p: any) => ({
-                    receipt_number: p.receipt_number,
-                    payment_date: p.payment_date,
-                    amount_usd: p.amount_usd,
-                    amount_zig: p.amount_zig,
-                    payment_method: p.payment_method,
-                  })),
-                });
-                openPrintWindow(html);
-              }}
-            >
-              <FileText className="mr-1 h-4 w-4" /> View / Print Statement
-            </Button>
-          </div>
+        {/* Statement actions */}
+        {(invoices.length > 0 || childPayments.length > 0) && (
+          <DocActionButtons
+            labels
+            actions={statementActions(
+              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+              invoices,
+              childPayments,
+            )}
+          />
         )}
 
         {/* Invoices */}
