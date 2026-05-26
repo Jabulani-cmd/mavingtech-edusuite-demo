@@ -190,7 +190,7 @@ export default function FinanceManagement() {
     }
     toast({
       title: "Approval requested",
-      description: "Your request has been sent to the Admin Supervisor for approval.",
+      description: "Your request has been sent to the Bursar for review and approval.",
     });
     return true;
   }
