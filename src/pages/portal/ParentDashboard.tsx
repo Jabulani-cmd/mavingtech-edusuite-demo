@@ -1202,6 +1202,17 @@ function TabContentInner(props: TabContentProps) {
                               {inv.status}
                             </Badge>
                           </td>
+                          <td className="px-3 py-2 text-center">
+                            <DocActionButtons
+                              actions={() =>
+                                invoiceActions(inv, {
+                                  fullName: child.full_name,
+                                  admissionNumber: child.admission_number,
+                                  form: child.form,
+                                })
+                              }
+                            />
+                          </td>
                         </tr>
                       );
                     })}
