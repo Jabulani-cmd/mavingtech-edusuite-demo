@@ -1960,9 +1960,16 @@ export default function FinanceManagement() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardHeader>
-            <CardContent>
-              {payments.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">No payments recorded yet.</p>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-3 items-center">
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Search by receipt #, student, invoice…" className="pl-9" value={paymentSearch} onChange={(e) => setPaymentSearch(e.target.value)} />
+                </div>
+                <DateRangeFilter value={paymentDateFilter} onChange={setPaymentDateFilter} />
+              </div>
+              {filteredPayments.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No payments match the filters.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
