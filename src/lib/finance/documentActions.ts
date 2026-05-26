@@ -1,0 +1,123 @@
+// @ts-nocheck
+// Centralised view / print / download helpers for finance documents.
+// Every document goes through buildInvoiceHtml / buildReceiptHtml /
+// buildStatementHtml which already render the school logo at the top.
+import { supabase } from "@/integrations/supabase/client";
+import {
+  buildInvoiceHtml,
+  buildReceiptHtml,
+  buildStatementHtml,
+  SCHOOL_LOGO_URL,
+} from "./pdf";
+import { openPrintWindow, openViewWindow, downloadHtmlDocument } from "./print";
+
+export type DocStudent = {
+  fullName: string;
+  admissionNumber: string;
+  form?: string | null;
+};
+
+export type DocActions = {
+  view: () => void;
+  print: () => void;
+  download: () => void;
+};
+
+async function fetchInvoiceItems(invoiceId: string) {
+  const { data } = await supabase
+    .from("invoice_items")
+    .select("description, amount_usd, amount_zig")
+    .eq("invoice_id", invoiceId);
+  return (data || []).map((it: any) => ({
+    description: it.description,
+    amount_usd: Number(it.amount_usd || 0),
+    amount_zig: Number(it.amount_zig || 0),
+  }));
+}
+
+export async function getInvoiceHtml(invoice: any, student: DocStudent) {
+  let items = invoice._items as any[] | undefined;
+  if (!items) items = await fetchInvoiceItems(invoice.id);
+  if (items.length === 0) {
+    items = [{
+      description: `${invoice.term || ""} ${invoice.academic_year || ""} fees`.trim() || "Tuition fees",
+      amount_usd: Number(invoice.total_usd || 0),
+      amount_zig: Number(invoice.total_zig || 0),
+    }];
+  }
+  return buildInvoiceHtml({
+    invoiceNumber: invoice.invoice_number,
+    academicYear: invoice.academic_year,
+    term: invoice.term,
+    dueDate: invoice.due_date,
+    student,
+    items,
+    totals: {
+      total_usd: Number(invoice.total_usd || 0),
+      total_zig: Number(invoice.total_zig || 0),
+      paid_usd: Number(invoice.paid_usd || 0),
+      paid_zig: Number(invoice.paid_zig || 0),
+    },
+  });
+}
+
+export async function invoiceActions(invoice: any, student: DocStudent): Promise<DocActions> {
+  const html = await getInvoiceHtml(invoice, student);
+  return {
+    view: () => openViewWindow(html),
+    print: () => openPrintWindow(html),
+    download: () => downloadHtmlDocument(html, `invoice-${invoice.invoice_number}`),
+  };
+}
+
+export function receiptActions(payment: any, student: DocStudent): DocActions {
+  const html = buildReceiptHtml({
+    logoUrl: SCHOOL_LOGO_URL,
+    receiptNumber: payment.receipt_number,
+    paymentDate: payment.payment_date,
+    student,
+    invoiceNumber: payment.invoices?.invoice_number || payment.invoice_number,
+    amounts: { usd: Number(payment.amount_usd || 0), zig: Number(payment.amount_zig || 0) },
+    paymentMethod: payment.payment_method,
+    referenceNumber: payment.reference_number,
+  });
+  return {
+    view: () => openViewWindow(html),
+    print: () => openPrintWindow(html),
+    download: () => downloadHtmlDocument(html, `receipt-${payment.receipt_number}`),
+  };
+}
+
+export function statementActions(
+  student: DocStudent,
+  invoices: any[],
+  payments: any[],
+): DocActions {
+  const html = buildStatementHtml({
+    logoUrl: SCHOOL_LOGO_URL,
+    student,
+    invoices: invoices.map((i: any) => ({
+      invoice_number: i.invoice_number,
+      term: i.term,
+      academic_year: i.academic_year,
+      total_usd: i.total_usd,
+      total_zig: i.total_zig,
+      paid_usd: i.paid_usd,
+      paid_zig: i.paid_zig,
+      status: i.status,
+    })),
+    payments: payments.map((p: any) => ({
+      receipt_number: p.receipt_number,
+      payment_date: p.payment_date,
+      amount_usd: p.amount_usd,
+      amount_zig: p.amount_zig,
+      payment_method: p.payment_method,
+    })),
+  });
+  const safeName = (student.fullName || "student").replace(/\s+/g, "-").toLowerCase();
+  return {
+    view: () => openViewWindow(html),
+    print: () => openPrintWindow(html),
+    download: () => downloadHtmlDocument(html, `statement-${safeName}`),
+  };
+}
