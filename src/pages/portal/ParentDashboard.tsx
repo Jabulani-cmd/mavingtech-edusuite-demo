@@ -42,6 +42,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, buildStatementHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { openPrintWindow } from "@/lib/finance/print";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -1054,40 +1056,16 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
-        {invoices.length > 0 && (
-          <div className="flex gap-2 flex-wrap">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const html = buildStatementHtml({
-                  logoUrl: SCHOOL_LOGO_URL,
-                  student: { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-                  invoices: invoices.map((i: any) => ({
-                    invoice_number: i.invoice_number,
-                    term: i.term,
-                    academic_year: i.academic_year,
-                    total_usd: i.total_usd,
-                    total_zig: i.total_zig,
-                    paid_usd: i.paid_usd,
-                    paid_zig: i.paid_zig,
-                    status: i.status,
-                  })),
-                  payments: childPayments.map((p: any) => ({
-                    receipt_number: p.receipt_number,
-                    payment_date: p.payment_date,
-                    amount_usd: p.amount_usd,
-                    amount_zig: p.amount_zig,
-                    payment_method: p.payment_method,
-                  })),
-                });
-                openPrintWindow(html);
-              }}
-            >
-              <FileText className="mr-1 h-4 w-4" /> View / Print Statement
-            </Button>
-          </div>
+        {/* Statement actions */}
+        {(invoices.length > 0 || childPayments.length > 0) && (
+          <DocActionButtons
+            labels
+            actions={statementActions(
+              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+              invoices,
+              childPayments,
+            )}
+          />
         )}
 
         {/* Invoices */}
@@ -1111,18 +1089,29 @@ function TabContentInner(props: TabContentProps) {
                       <CardContent className="p-3 space-y-1">
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-xs font-medium">{inv.invoice_number}</span>
-                          <Badge
-                            variant="outline"
-                            className={
-                              inv.status === "paid"
-                                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                                : inv.status === "partial"
-                                  ? "bg-amber-100 text-amber-800 border-amber-300"
-                                  : "bg-red-100 text-red-800 border-red-300"
-                            }
-                          >
-                            {inv.status}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="outline"
+                              className={
+                                inv.status === "paid"
+                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                  : inv.status === "partial"
+                                    ? "bg-amber-100 text-amber-800 border-amber-300"
+                                    : "bg-red-100 text-red-800 border-red-300"
+                              }
+                            >
+                              {inv.status}
+                            </Badge>
+                            <DocActionButtons
+                              actions={() =>
+                                invoiceActions(inv, {
+                                  fullName: child.full_name,
+                                  admissionNumber: child.admission_number,
+                                  form: child.form,
+                                })
+                              }
+                            />
+                          </div>
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {inv.term} {inv.academic_year}
@@ -1167,6 +1156,7 @@ function TabContentInner(props: TabContentProps) {
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Paid</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Balance</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Status</th>
+                      <th className="px-3 py-2 text-center font-medium text-muted-foreground">Document</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1211,6 +1201,17 @@ function TabContentInner(props: TabContentProps) {
                             >
                               {inv.status}
                             </Badge>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            <DocActionButtons
+                              actions={() =>
+                                invoiceActions(inv, {
+                                  fullName: child.full_name,
+                                  admissionNumber: child.admission_number,
+                                  form: child.form,
+                                })
+                              }
+                            />
                           </td>
                         </tr>
                       );
@@ -1317,19 +1318,8 @@ function ParentPaymentHistory({
     setLoading(false);
   }
 
-  function handlePrintReceipt(p: any) {
-    const html = buildReceiptHtml({
-      logoUrl: SCHOOL_LOGO_URL,
-      receiptNumber: p.receipt_number,
-      paymentDate: p.payment_date,
-      student: { fullName: childName, admissionNumber, form },
-      invoiceNumber: p.invoices?.invoice_number,
-      amounts: { usd: Number(p.amount_usd || 0), zig: Number(p.amount_zig || 0) },
-      paymentMethod: p.payment_method,
-      referenceNumber: p.reference_number,
-    });
-    openPrintWindow(html);
-  }
+  const docStudent = { fullName: childName, admissionNumber, form };
+  const actionsFor = (p: any) => receiptActions(p, docStudent);
 
   if (loading) return <div className="h-20 animate-pulse rounded-lg bg-muted" />;
   if (payments.length === 0) return null;
@@ -1347,15 +1337,7 @@ function ParentPaymentHistory({
                 <CardContent className="p-3 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => handlePrintReceipt(p)}
-                      title="Print Receipt"
-                    >
-                      <Printer className="h-3.5 w-3.5" />
-                    </Button>
+                    <DocActionButtons actions={actionsFor(p)} />
                   </div>
 
                   <p className="text-xs text-muted-foreground">
@@ -1394,15 +1376,7 @@ function ParentPaymentHistory({
                     <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handlePrintReceipt(p)}
-                        title="Print Receipt"
-                      >
-                        <Printer className="h-3.5 w-3.5" />
-                      </Button>
+                      <DocActionButtons actions={actionsFor(p)} />
                     </td>
                   </tr>
                 ))}
