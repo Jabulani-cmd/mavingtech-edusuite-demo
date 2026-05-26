@@ -1860,33 +1860,21 @@ export default function FinanceManagement() {
                           </TableCell>
                           {isFinanceOrAdmin && (
                             <TableCell>
-                              <div className="flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => openViewInvoice(inv)}
-                                  title="View Invoice"
-                                >
-                                  <FileText className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => downloadInvoicePdf(inv)}
-                                  title="Download PDF"
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => printInvoice(inv)}
-                                  title="Print Invoice"
-                                >
-                                  <Printer className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => deleteInvoice(inv)}>
-                                  <Trash2 className="h-4 w-4 text-destructive" />
+                              <div className="flex items-center gap-1">
+                                <DocActionButtons
+                                  actions={() => invoiceActions(inv, {
+                                    fullName: inv.students?.full_name || "—",
+                                    admissionNumber: inv.students?.admission_number || "",
+                                    form: inv.students?.form,
+                                  })}
+                                  email={{
+                                    documentLabel: "invoice",
+                                    filename: `invoice-${inv.invoice_number}`,
+                                    subject: `Invoice ${inv.invoice_number} — MavingTech Business Solutions`,
+                                  }}
+                                />
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteInvoice(inv)} title="Delete">
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
                                 </Button>
                               </div>
                             </TableCell>
