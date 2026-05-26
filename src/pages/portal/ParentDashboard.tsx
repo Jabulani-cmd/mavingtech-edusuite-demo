@@ -928,8 +928,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "marks") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Marks — {child.full_name}</h2>
-        <StudentMarksTab studentId={child.id} studentClassId={null} userId="" />
+        <PrintableSection title={`Marks — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`marks-${child.admission_number || child.full_name}`} bare>
+          <StudentMarksTab studentId={child.id} studentClassId={null} userId="" />
+        </PrintableSection>
       </motion.div>
     );
   }
