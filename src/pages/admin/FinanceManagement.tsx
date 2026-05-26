@@ -2524,7 +2524,7 @@ export default function FinanceManagement() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Button
                         variant="outline"
                         size="icon"
@@ -2533,11 +2533,26 @@ export default function FinanceManagement() {
                       >
                         <RefreshCw className={`h-4 w-4 ${stmtLoading ? "animate-spin" : ""}`} />
                       </Button>
-                      <Button variant="outline" onClick={printStudentStatement}>
-                        <Printer className="mr-1 h-4 w-4" /> Print Statement
-                      </Button>
+                      <DocActionButtons
+                        labels
+                        actions={statementActions(
+                          {
+                            fullName: stmtStudent.full_name,
+                            admissionNumber: stmtStudent.admission_number,
+                            form: stmtStudent.form,
+                          },
+                          stmtInvoices,
+                          stmtPayments,
+                        )}
+                        email={{
+                          documentLabel: "Student Statement",
+                          filename: `statement-${(stmtStudent.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+                          subject: `Statement of Account — ${stmtStudent.full_name}`,
+                        }}
+                      />
                     </div>
                   </div>
+
 
                   {(() => {
                     const tInvUsd = stmtInvoices.reduce((s, i) => s + parseFloat(i.total_usd), 0);
