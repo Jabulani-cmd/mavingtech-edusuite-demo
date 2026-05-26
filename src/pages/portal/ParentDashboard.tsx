@@ -1134,6 +1134,11 @@ function TabContentInner(props: TabContentProps) {
                                   form: child.form,
                                 })
                               }
+                              email={{
+                                documentLabel: "Invoice",
+                                filename: `invoice-${inv.invoice_number}`,
+                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1235,6 +1240,11 @@ function TabContentInner(props: TabContentProps) {
                                   form: child.form,
                                 })
                               }
+                              email={{
+                                documentLabel: "Invoice",
+                                filename: `invoice-${inv.invoice_number}`,
+                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                              }}
                             />
                           </td>
                         </tr>
@@ -1253,10 +1263,12 @@ function TabContentInner(props: TabContentProps) {
           childName={child.full_name}
           admissionNumber={child.admission_number}
           form={child.form}
+          dateFilter={feeDateFilter}
         />
       </motion.div>
     );
   }
+
 
   if (activeTab === "announcements") {
     return (
