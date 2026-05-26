@@ -1318,11 +1318,13 @@ function ParentPaymentHistory({
   childName,
   admissionNumber,
   form,
+  dateFilter,
 }: {
   childId: string;
   childName: string;
   admissionNumber: string;
   form: string;
+  dateFilter?: FinanceDateFilter;
 }) {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1359,10 +1361,17 @@ function ParentPaymentHistory({
   }
 
   const docStudent = { fullName: childName, admissionNumber, form };
+  const filter = dateFilter || emptyDateFilter();
+  const visiblePayments = payments.filter((p: any) => dateMatches(filter, p.payment_date));
   const actionsFor = (p: any) => receiptActions(p, docStudent);
+  const emailFor = (p: any) => ({
+    documentLabel: "Receipt",
+    filename: `receipt-${p.receipt_number}`,
+    subject: `Official Receipt ${p.receipt_number} — ${childName}`,
+  });
 
   if (loading) return <div className="h-20 animate-pulse rounded-lg bg-muted" />;
-  if (payments.length === 0) return null;
+  if (visiblePayments.length === 0) return null;
 
   return (
     <Card>
