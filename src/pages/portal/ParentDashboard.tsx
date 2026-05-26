@@ -1035,9 +1035,12 @@ function TabContentInner(props: TabContentProps) {
   }
 
   if (activeTab === "fees") {
+    const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
+    const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Fee Statement — {child.full_name}</h2>
+
 
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
