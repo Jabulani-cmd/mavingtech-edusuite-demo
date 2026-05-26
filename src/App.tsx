@@ -126,6 +126,11 @@ const App = () => (
                 <AuthenticatedLayout><ParentPaymentHistory /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
+            <Route path="/portal/parent/billing" element={
+              <ProtectedRoute allowedRoles={["parent", "admin"]}>
+                <AuthenticatedLayout><ParentBilling /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
             <Route path="/portal/admin/payments" element={
               <ProtectedRoute allowedRoles={["admin", "principal", "deputy_principal", "finance", "bursar"]}>
                 <AuthenticatedLayout><AdminPayments /></AuthenticatedLayout>
