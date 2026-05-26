@@ -1987,7 +1987,7 @@ export default function FinanceManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {payments.map((pay) => (
+                      {filteredPayments.map((pay) => (
                         <TableRow key={pay.id}>
                           <TableCell className="font-mono text-xs">{pay.receipt_number}</TableCell>
                           <TableCell>{pay.payment_date}</TableCell>
@@ -1999,9 +1999,23 @@ export default function FinanceManagement() {
                           <TableCell className="text-xs">{pay.reference_number || "—"}</TableCell>
                           {isFinanceOrAdmin && (
                             <TableCell>
-                              <Button variant="ghost" size="icon" onClick={() => deletePayment(pay)}>
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
+                              <div className="flex items-center gap-1">
+                                <DocActionButtons
+                                  actions={receiptActions(pay, {
+                                    fullName: pay.students?.full_name || "—",
+                                    admissionNumber: pay.students?.admission_number || "",
+                                    form: pay.students?.form,
+                                  })}
+                                  email={{
+                                    documentLabel: "receipt",
+                                    filename: `receipt-${pay.receipt_number}`,
+                                    subject: `Official Receipt ${pay.receipt_number} — MavingTech Business Solutions`,
+                                  }}
+                                />
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deletePayment(pay)} title="Delete">
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                                </Button>
+                              </div>
                             </TableCell>
                           )}
                         </TableRow>
