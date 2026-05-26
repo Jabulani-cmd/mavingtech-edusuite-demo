@@ -945,7 +945,8 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Attendance — {child.full_name}</h2>
+        <PrintableSection title={`Attendance — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`attendance-${child.admission_number || child.full_name}`} bare>
+
 
         {/* Summary */}
         <div className="grid grid-cols-4 gap-2">
