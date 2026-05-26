@@ -39,6 +39,9 @@ import {
 } from "@/lib/finance/pdf";
 import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
 import { printReceipt, openPrintWindow } from "@/lib/finance/print";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
+import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import {
   DollarSign,
   Plus,
