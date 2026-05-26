@@ -188,8 +188,17 @@ export default function IncomeExpenditureReport() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Button variant="outline" onClick={printReport}><Printer className="mr-1 h-4 w-4" /> Print Report</Button>
+        <DocActionButtons
+          actions={docActions}
+          labels
+          email={{
+            documentLabel: "income & expenditure report",
+            filename: `income-expenditure-${periodLabel.replace(/\s+/g, "-").toLowerCase()}`,
+            subject: `Income & Expenditure Report — ${periodLabel}`,
+          }}
+        />
       </div>
+
 
       {/* Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-4">
