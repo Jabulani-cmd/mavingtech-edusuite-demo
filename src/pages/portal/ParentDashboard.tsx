@@ -921,6 +921,7 @@ function TabContentInner(props: TabContentProps) {
             )}
           </>
         )}
+        </PrintableSection>
       </motion.div>
     );
   }
