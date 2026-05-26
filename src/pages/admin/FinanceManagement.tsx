@@ -1539,12 +1539,33 @@ export default function FinanceManagement() {
   const filteredInvoices = invoices.filter((inv) => {
     if (invoiceStatusFilter !== "all" && inv.status !== invoiceStatusFilter) return false;
     if (invoiceTermFilter !== "all" && inv.term !== invoiceTermFilter) return false;
+    if (!dateMatches(invoiceDateFilter, inv.created_at || inv.due_date)) return false;
     if (invoiceSearch) {
       const s = invoiceSearch.toLowerCase();
       const name = inv.students?.full_name?.toLowerCase() || "";
       const num = inv.invoice_number?.toLowerCase() || "";
       const adm = inv.students?.admission_number?.toLowerCase() || "";
       if (!name.includes(s) && !num.includes(s) && !adm.includes(s)) return false;
+    }
+    return true;
+  });
+
+  const filteredPayments = payments.filter((p: any) => {
+    if (!dateMatches(paymentDateFilter, p.payment_date)) return false;
+    if (paymentSearch) {
+      const s = paymentSearch.toLowerCase();
+      const hay = `${p.receipt_number || ""} ${p.students?.full_name || ""} ${p.invoices?.invoice_number || ""} ${p.payment_method || ""} ${p.reference_number || ""}`.toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  });
+
+  const filteredExpenses = expenses.filter((e: any) => {
+    if (!dateMatches(expenseDateFilter, e.expense_date)) return false;
+    if (expenseSearch) {
+      const s = expenseSearch.toLowerCase();
+      const hay = `${e.description || ""} ${e.category || ""} ${e.payment_method || ""} ${e.reference_number || ""}`.toLowerCase();
+      if (!hay.includes(s)) return false;
     }
     return true;
   });
