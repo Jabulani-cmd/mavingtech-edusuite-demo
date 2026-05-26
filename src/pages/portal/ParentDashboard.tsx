@@ -1098,11 +1098,11 @@ function TabContentInner(props: TabContentProps) {
             <CardTitle className="text-sm">Invoices</CardTitle>
           </CardHeader>
           <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
-            {invoices.length === 0 ? (
+            {fInv.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-muted-foreground">No invoices found.</p>
             ) : isMobile ? (
               <div className="space-y-2">
-                {invoices.map((inv: any) => {
+                {fInv.map((inv: any) => {
                   const paid = childPayments
                     .filter((p: any) => p.invoice_id === inv.id)
                     .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
@@ -1184,7 +1184,7 @@ function TabContentInner(props: TabContentProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoices.map((inv: any) => {
+                    {fInv.map((inv: any) => {
                       const paid = childPayments
                         .filter((p: any) => p.invoice_id === inv.id)
                         .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
