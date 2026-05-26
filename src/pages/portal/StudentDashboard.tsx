@@ -445,8 +445,11 @@ function TabContent({
   if (activeTab === "materials") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Study Materials</h2>
-        {renderLocked("study materials", <StudentMaterialsTab studentClassId={studentClassId} />)}
+        {renderLocked("study materials",
+          <PrintableSection title="Study Materials" fileName="study-materials" bare>
+            <StudentMaterialsTab studentClassId={studentClassId} />
+          </PrintableSection>
+        )}
       </motion.div>
     );
   }
@@ -454,8 +457,11 @@ function TabContent({
   if (activeTab === "assessments") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Assessments</h2>
-        {renderLocked("assessments", <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />)}
+        {renderLocked("assessments",
+          <PrintableSection title="Assessments" subtitle={student?.full_name || displayName} fileName={`assessments-${student?.admission_number || "student"}`} bare>
+            <StudentAssessmentsTab studentId={student?.id} studentClassId={studentClassId} userId={userId} />
+          </PrintableSection>
+        )}
       </motion.div>
     );
   }
@@ -463,8 +469,11 @@ function TabContent({
   if (activeTab === "attendance") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Attendance</h2>
-        {renderLocked("attendance", <StudentAttendanceTab studentId={student?.id} />)}
+        {renderLocked("attendance",
+          <PrintableSection title="Attendance Record" subtitle={student?.full_name || displayName} fileName={`attendance-${student?.admission_number || "student"}`} bare>
+            <StudentAttendanceTab studentId={student?.id} />
+          </PrintableSection>
+        )}
       </motion.div>
     );
   }
@@ -472,8 +481,11 @@ function TabContent({
   if (activeTab === "profile") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">My Profile</h2>
-        {renderLocked("your profile", <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />)}
+        {renderLocked("your profile",
+          <PrintableSection title="Student Profile" subtitle={student?.full_name || displayName} fileName={`profile-${student?.admission_number || "student"}`} bare>
+            <StudentProfileTab profile={profile} student={student} studentClassName={studentClassName} onRefresh={onRefresh} />
+          </PrintableSection>
+        )}
       </motion.div>
     );
   }
