@@ -42,6 +42,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, buildStatementHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { openPrintWindow } from "@/lib/finance/print";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
