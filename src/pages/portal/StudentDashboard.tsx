@@ -25,6 +25,7 @@ import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTa
 import StudentTermReportsTab from "@/components/student/StudentTermReportsTab";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
 import { useSubscription } from "@/hooks/useSubscription";
+import PrintableSection from "@/components/shared/PrintableSection";
 
 function StudentLockedNotice({ feature, loading = false, status = "none" }: { feature: string; loading?: boolean; status?: string }) {
   const pending = status === "pending";
