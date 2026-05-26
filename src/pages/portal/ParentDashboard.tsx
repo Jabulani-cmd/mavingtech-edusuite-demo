@@ -326,16 +326,21 @@ export default function ParentDashboard() {
         <aside className="sticky top-14 h-[calc(100vh-56px)] w-56 border-r bg-card p-4 space-y-1">
           {tabs.map((item) => {
             const Icon = item.icon;
+            const cls = `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              activeTab === item.id
+                ? "bg-secondary text-secondary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`;
+            if (item.id === "billing") {
+              return (
+                <Link key={item.id} to="/portal/parent/billing" className={cls}>
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            }
             return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
+              <button key={item.id} onClick={() => setActiveTab(item.id)} className={cls}>
                 <Icon className="h-4 w-4" />
                 {item.label}
               </button>
