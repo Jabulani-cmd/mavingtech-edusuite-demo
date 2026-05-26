@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import DocActionButtons from "@/components/finance/DocActionButtons";
+import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import {
   invoiceActions,
   receiptActions,
@@ -30,6 +31,7 @@ export default function StudentFeeTab({ studentId }: Props) {
   const [payments, setPayments] = useState<any[]>([]);
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [dateFilter, setDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
 
   useEffect(() => {
     if (studentId) fetchData();
@@ -98,7 +100,19 @@ export default function StudentFeeTab({ studentId }: Props) {
     );
   }
 
-  const stmtActions = statementActions(docStudent, invoices, payments);
+  const filteredInvoices = invoices.filter((i: any) =>
+    dateMatches(dateFilter, i.created_at || i.due_date),
+  );
+  const filteredPayments = payments.filter((p: any) =>
+    dateMatches(dateFilter, p.payment_date),
+  );
+
+  const stmtActions = statementActions(docStudent, filteredInvoices, filteredPayments);
+  const stmtEmail = {
+    documentLabel: "Student Statement",
+    filename: `statement-${(student?.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+    subject: `Statement of Account — ${student?.full_name || "Student"}`,
+  };
 
   return (
     <div className="space-y-4">
@@ -109,9 +123,12 @@ export default function StudentFeeTab({ studentId }: Props) {
           <p className="text-sm text-muted-foreground">All invoices and payments</p>
         </div>
         {(invoices.length > 0 || payments.length > 0) && (
-          <DocActionButtons actions={stmtActions} labels />
+          <DocActionButtons actions={stmtActions} labels email={stmtEmail} />
         )}
       </div>
+
+      <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+
 
       {/* Balance summary */}
       <Card
