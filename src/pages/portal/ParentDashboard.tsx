@@ -1376,15 +1376,7 @@ function ParentPaymentHistory({
                     <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handlePrintReceipt(p)}
-                        title="Print Receipt"
-                      >
-                        <Printer className="h-3.5 w-3.5" />
-                      </Button>
+                      <DocActionButtons actions={actionsFor(p)} />
                     </td>
                   </tr>
                 ))}
