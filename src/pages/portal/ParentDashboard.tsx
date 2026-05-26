@@ -395,6 +395,7 @@ export default function ParentDashboard() {
             onSelect={setSelectedChildId}
             onLinked={fetchInitialData}
           />
+          <AccessStatusPanel />
           {/* Tab pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {tabs.map((t) => {
