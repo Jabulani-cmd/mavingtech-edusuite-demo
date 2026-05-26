@@ -34,20 +34,27 @@ export default function AccessStatusPanel({ className = "" }: { className?: stri
     (async () => {
       try {
         if (role === "parent") {
-          const { data } = await supabase
+          const { data: links } = await supabase
             .from("parent_students")
-            .select("student_id, students:student_id (id, full_name, admission_number, form, stream)")
+            .select("student_id")
             .eq("parent_id", user.id);
-          if (!cancelled) {
-            setLinked(
-              (data || []).map((row: any) => ({
-                id: row.students?.id || row.student_id,
-                name: row.students?.full_name || "Student",
-                detail: [row.students?.admission_number, row.students?.form, row.students?.stream]
-                  .filter(Boolean)
-                  .join(" · "),
-              })),
-            );
+          const studentIds = (links || []).map((l: any) => l.student_id).filter(Boolean);
+          if (studentIds.length === 0) {
+            if (!cancelled) setLinked([]);
+          } else {
+            const { data: students } = await supabase
+              .from("students")
+              .select("id, full_name, admission_number, form, stream")
+              .in("id", studentIds);
+            if (!cancelled) {
+              setLinked(
+                (students || []).map((s: any) => ({
+                  id: s.id,
+                  name: s.full_name || "Student",
+                  detail: [s.admission_number, s.form, s.stream].filter(Boolean).join(" · "),
+                })),
+              );
+            }
           }
         } else if (role === "student") {
           const { data: studentRow } = await supabase
@@ -57,18 +64,30 @@ export default function AccessStatusPanel({ className = "" }: { className?: stri
             .maybeSingle();
           const ids = [user.id];
           if (studentRow?.id) ids.push(studentRow.id);
-          const { data } = await supabase
+          const { data: links } = await supabase
             .from("parent_students")
-            .select("parent_id, profiles:parent_id (user_id, full_name, email)")
+            .select("parent_id")
             .in("student_id", ids);
-          if (!cancelled) {
-            setLinked(
-              (data || []).map((row: any) => ({
-                id: row.parent_id,
-                name: row.profiles?.full_name || "Parent / Guardian",
-                detail: row.profiles?.email || undefined,
-              })),
-            );
+          const parentIds = Array.from(new Set((links || []).map((l: any) => l.parent_id).filter(Boolean)));
+          if (parentIds.length === 0) {
+            if (!cancelled) setLinked([]);
+          } else {
+            const { data: profiles } = await supabase
+              .from("profiles")
+              .select("user_id, full_name, email")
+              .in("user_id", parentIds);
+            if (!cancelled) {
+              setLinked(
+                parentIds.map((pid) => {
+                  const p = (profiles || []).find((x: any) => x.user_id === pid);
+                  return {
+                    id: pid,
+                    name: p?.full_name || "Parent / Guardian",
+                    detail: p?.email || undefined,
+                  };
+                }),
+              );
+            }
           }
         }
       } finally {
