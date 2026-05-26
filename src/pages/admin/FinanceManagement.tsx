@@ -41,7 +41,7 @@ import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
 import { printReceipt, openPrintWindow } from "@/lib/finance/print";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
-import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
+import { invoiceActions, receiptActions, statementActions, expensesListActions } from "@/lib/finance/documentActions";
 import {
   DollarSign,
   Plus,
@@ -2664,7 +2664,7 @@ export default function FinanceManagement() {
           </Card>
         </TabsContent>
 
-        {/* Expenses Tab – unchanged */}
+        {/* Expenses Tab – with date filter, search and view/print/download/email */}
         <TabsContent value="expenses">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -2690,9 +2690,44 @@ export default function FinanceManagement() {
                 <Plus className="mr-1 h-4 w-4" /> Record Expense
               </Button>
             </CardHeader>
-            <CardContent>
-              {expenses.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">No expenses recorded.</p>
+            <CardContent className="space-y-3">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                <div className="relative w-full max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search description, category, method, ref…"
+                    value={expenseSearch}
+                    onChange={(e) => setExpenseSearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <DateRangeFilter value={expenseDateFilter} onChange={setExpenseDateFilter} />
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/30 px-3 py-2 text-xs">
+                <span className="text-muted-foreground">
+                  Showing <strong>{filteredExpenses.length}</strong> of {expenses.length} · Total
+                  USD <strong className="text-destructive">${fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_usd || 0), 0))}</strong>
+                  &nbsp;·&nbsp; ZiG <strong>{fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_zig || 0), 0))}</strong>
+                </span>
+                <DocActionButtons
+                  labels
+                  actions={expensesListActions({
+                    periodLabel: expenseDateFilter.day
+                      ? expenseDateFilter.day
+                      : `${expenseDateFilter.month === "all" ? "All Months" : new Date(0, parseInt(expenseDateFilter.month)).toLocaleString("en-US", { month: "long" })} ${expenseDateFilter.year === "all" ? "All Years" : expenseDateFilter.year}`,
+                    expenses: filteredExpenses,
+                  })}
+                  email={{
+                    documentLabel: "Expenses Report",
+                    filename: "expenses-report",
+                    subject: `${SCHOOL_NAME_DISPLAY} – Expenses Report`,
+                  }}
+                />
+              </div>
+
+              {filteredExpenses.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No expenses match the current filters.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
@@ -2704,11 +2739,12 @@ export default function FinanceManagement() {
                         <TableHead className="text-right">USD</TableHead>
                         <TableHead className="text-right">ZiG</TableHead>
                         <TableHead>Method</TableHead>
+                        <TableHead className="text-center">Document</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {expenses.map((exp) => (
+                      {filteredExpenses.map((exp) => (
                         <TableRow key={exp.id}>
                           <TableCell>{exp.expense_date}</TableCell>
                           <TableCell>
@@ -2718,6 +2754,19 @@ export default function FinanceManagement() {
                           <TableCell className="text-right font-mono">{fmt(exp.amount_usd)}</TableCell>
                           <TableCell className="text-right font-mono">{fmt(exp.amount_zig)}</TableCell>
                           <TableCell>{exp.payment_method}</TableCell>
+                          <TableCell className="text-center">
+                            <DocActionButtons
+                              actions={expensesListActions({
+                                periodLabel: exp.expense_date,
+                                expenses: [exp],
+                              })}
+                              email={{
+                                documentLabel: "Expense Voucher",
+                                filename: `expense-${exp.expense_date}-${(exp.category || "general").toLowerCase()}`,
+                                subject: `Expense voucher – ${exp.category} – ${exp.expense_date}`,
+                              }}
+                            />
+                          </TableCell>
                           <TableCell>
                             <Button variant="ghost" size="icon" onClick={() => deleteExpense(exp.id)}>
                               <Trash2 className="h-4 w-4 text-destructive" />
@@ -2732,6 +2781,7 @@ export default function FinanceManagement() {
             </CardContent>
           </Card>
         </TabsContent>
+
 
         {/* Bank Reconciliation Tab – unchanged */}
         <TabsContent value="bank-recon">
