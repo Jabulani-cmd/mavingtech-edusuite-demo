@@ -162,8 +162,11 @@ export default function FinanceManagement() {
   );
   const isFinanceOrAdmin =
     role === "finance" || role === "finance_clerk" || role === "bursar" || role === "admin_supervisor" || role === "principal" || role === "deputy_principal";
-  const isAdminSupervisor = role === "admin_supervisor" || role === "principal" || role === "deputy_principal";
-  const isFinanceClerk = role === "finance" || role === "finance_clerk"; // needs approval for destructive actions — only admin_supervisor can void/delete directly
+  // Bursar is the finance supervisor — they can directly void/delete and
+  // approve requests from Finance Clerks. Finance/Finance Clerk roles must
+  // request approval from the Bursar before any destructive action.
+  const isAdminSupervisor = role === "admin_supervisor" || role === "principal" || role === "deputy_principal" || role === "bursar";
+  const isFinanceClerk = role === "finance" || role === "finance_clerk";
 
   // Helper: request supervisor approval instead of direct delete
   async function requestApproval(
@@ -187,7 +190,7 @@ export default function FinanceManagement() {
     }
     toast({
       title: "Approval requested",
-      description: "Your request has been sent to the Admin Supervisor for approval.",
+      description: "Your request has been sent to the Bursar for review and approval.",
     });
     return true;
   }
