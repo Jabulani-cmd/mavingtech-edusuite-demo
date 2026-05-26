@@ -122,7 +122,7 @@ export default function StudentFeeTab({ studentId }: Props) {
           <h2 className="text-lg font-bold">Fee Statement</h2>
           <p className="text-sm text-muted-foreground">All invoices and payments</p>
         </div>
-        {(invoices.length > 0 || payments.length > 0) && (
+        {(invoices.length > 0 || filteredPayments.length > 0) && (
           <DocActionButtons actions={stmtActions} labels email={stmtEmail} />
         )}
       </div>
@@ -167,11 +167,11 @@ export default function StudentFeeTab({ studentId }: Props) {
           <CardTitle className="text-sm">Invoices</CardTitle>
         </CardHeader>
         <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
-          {invoices.length === 0 ? (
+          {filteredInvoices.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">No invoices found.</p>
           ) : isMobile ? (
             <div className="space-y-2">
-              {invoices.map((inv) => {
+              {filteredInvoices.map((inv) => {
                 const invPayments = payments.filter((p) => p.invoice_id === inv.id);
                 const actualPaid = invPayments.reduce((sum, p) => sum + parseFloat(p.amount_usd || 0), 0);
                 const balance = inv.total_usd - actualPaid;
@@ -216,7 +216,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((inv) => {
+                  {filteredInvoices.map((inv) => {
                     const invPayments = payments.filter((p) => p.invoice_id === inv.id);
                     const actualPaid = invPayments.reduce((sum, p) => sum + parseFloat(p.amount_usd || 0), 0);
                     const balance = inv.total_usd - actualPaid;
@@ -248,7 +248,7 @@ export default function StudentFeeTab({ studentId }: Props) {
       </Card>
 
       {/* Payment history */}
-      {payments.length > 0 && (
+      {filteredPayments.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Payment History</CardTitle>
@@ -256,7 +256,7 @@ export default function StudentFeeTab({ studentId }: Props) {
           <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
             {isMobile ? (
               <div className="space-y-2">
-                {payments.map((p) => (
+                {filteredPayments.map((p) => (
                   <Card key={p.id} className="border">
                     <CardContent className="p-3 space-y-1">
                       <div className="flex items-center justify-between">
@@ -294,7 +294,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {payments.map((p) => (
+                    {filteredPayments.map((p) => (
                       <TableRow key={p.id}>
                         <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
                         <TableCell>{format(new Date(p.payment_date), "dd MMM yyyy")}</TableCell>
