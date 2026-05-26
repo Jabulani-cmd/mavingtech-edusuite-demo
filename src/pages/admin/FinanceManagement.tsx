@@ -219,6 +219,11 @@ export default function FinanceManagement() {
   const [invoiceSearch, setInvoiceSearch] = useState("");
   const [invoiceStatusFilter, setInvoiceStatusFilter] = useState("all");
   const [invoiceTermFilter, setInvoiceTermFilter] = useState("all");
+  const [invoiceDateFilter, setInvoiceDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [paymentSearch, setPaymentSearch] = useState("");
+  const [paymentDateFilter, setPaymentDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [expenseSearch, setExpenseSearch] = useState("");
+  const [expenseDateFilter, setExpenseDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
   const [bulkInvoiceOpen, setBulkInvoiceOpen] = useState(false);
   const [bulkYear, setBulkYear] = useState("2026");
   const [bulkTerm, setBulkTerm] = useState("Term 1");
