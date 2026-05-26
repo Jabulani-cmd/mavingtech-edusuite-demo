@@ -8,8 +8,10 @@ import {
   buildReceiptHtml,
   buildStatementHtml,
   buildIncomeExpenditureHtml,
+  buildExpensesListHtml,
   SCHOOL_LOGO_URL,
   type IncomeExpenditureInput,
+  type ExpensesListInput,
 } from "./pdf";
 import { openPrintWindow, openViewWindow, downloadHtmlDocument } from "./print";
 
@@ -127,4 +129,10 @@ export function incomeExpenditureActions(input: IncomeExpenditureInput): DocActi
   const html = buildIncomeExpenditureHtml({ ...input, logoUrl: input.logoUrl || SCHOOL_LOGO_URL });
   const safePeriod = (input.periodLabel || "report").replace(/\s+/g, "-").toLowerCase();
   return makeActions(html, `income-expenditure-${safePeriod}`);
+}
+
+export function expensesListActions(input: ExpensesListInput): DocActions {
+  const html = buildExpensesListHtml({ ...input, logoUrl: input.logoUrl || SCHOOL_LOGO_URL });
+  const safePeriod = (input.periodLabel || "report").replace(/\s+/g, "-").toLowerCase();
+  return makeActions(html, `expenses-${safePeriod}`);
 }
