@@ -1337,15 +1337,7 @@ function ParentPaymentHistory({
                 <CardContent className="p-3 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => handlePrintReceipt(p)}
-                      title="Print Receipt"
-                    >
-                      <Printer className="h-3.5 w-3.5" />
-                    </Button>
+                    <DocActionButtons actions={actionsFor(p)} />
                   </div>
 
                   <p className="text-xs text-muted-foreground">
