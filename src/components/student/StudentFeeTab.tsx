@@ -182,7 +182,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="font-mono text-xs font-medium">{inv.invoice_number}</span>
                         <div className="flex items-center gap-2">
                           {statusBadge(inv.status)}
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} />
+                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
@@ -235,7 +235,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} />
+                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </TableCell>
                       </TableRow>
                     );
@@ -261,7 +261,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                     <CardContent className="p-3 space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                        <DocActionButtons actions={receiptActions(p, docStudent)} />
+                        <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(p.payment_date), "dd MMM yyyy")} · {p.payment_method}
@@ -303,7 +303,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right font-mono">ZiG {fmt(p.amount_zig)}</TableCell>
                         <TableCell>{p.payment_method}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={receiptActions(p, docStudent)} />
+                          <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                         </TableCell>
                       </TableRow>
                     ))}
