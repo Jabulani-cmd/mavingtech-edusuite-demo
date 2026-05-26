@@ -1064,17 +1064,30 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
+        {/* Date filter */}
+        <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+
         {/* Statement actions */}
-        {(invoices.length > 0 || childPayments.length > 0) && (
-          <DocActionButtons
-            labels
-            actions={statementActions(
-              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-              invoices,
-              childPayments,
-            )}
-          />
-        )}
+        {(invoices.length > 0 || childPayments.length > 0) && (() => {
+          const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
+          const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
+          return (
+            <DocActionButtons
+              labels
+              actions={statementActions(
+                { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+                fInv,
+                fPay,
+              )}
+              email={{
+                documentLabel: "Student Statement",
+                filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+                subject: `Statement of Account — ${child.full_name}`,
+              }}
+            />
+          );
+        })()}
+
 
         {/* Invoices */}
         <Card>
