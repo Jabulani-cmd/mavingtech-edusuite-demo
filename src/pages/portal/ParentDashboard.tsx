@@ -49,6 +49,7 @@ import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+import PrintableSection from "@/components/shared/PrintableSection";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
@@ -778,7 +779,8 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Exam Results — {child.full_name}</h2>
+        <PrintableSection title={`Exam Results — ${child.full_name}`} subtitle={selectedExam ? `${selectedExam.name} — ${selectedExam.term} ${selectedExam.academic_year}` : (child.form || "")} fileName={`exam-results-${child.admission_number || child.full_name}`} bare>
+
 
         {exams.length === 0 ? (
           <Card>
@@ -919,6 +921,7 @@ function TabContentInner(props: TabContentProps) {
             )}
           </>
         )}
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -927,8 +930,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "marks") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Marks — {child.full_name}</h2>
-        <StudentMarksTab studentId={child.id} studentClassId={null} userId="" />
+        <PrintableSection title={`Marks — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`marks-${child.admission_number || child.full_name}`} bare>
+          <StudentMarksTab studentId={child.id} studentClassId={null} userId="" />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -941,7 +945,8 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Attendance — {child.full_name}</h2>
+        <PrintableSection title={`Attendance — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`attendance-${child.admission_number || child.full_name}`} bare>
+
 
         {/* Summary */}
         <div className="grid grid-cols-4 gap-2">
@@ -1022,6 +1027,7 @@ function TabContentInner(props: TabContentProps) {
             )}
           </CardContent>
         </Card>
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1237,8 +1243,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "announcements") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Announcements</h2>
-        <StudentAnnouncementsSection announcements={announcements} />
+        <PrintableSection title="Announcements" fileName="parent-announcements" bare>
+          <StudentAnnouncementsSection announcements={announcements} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1246,8 +1253,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Class Timetable — {child.full_name}</h2>
-        <StudentTimetableTab studentClassId={childClassId} studentId={child.id} />
+        <PrintableSection title={`Class Timetable — ${child.full_name}`} subtitle={`${child.form || ""} ${child.stream || ""}`.trim()} fileName={`class-timetable-${child.admission_number || child.full_name}`} bare>
+          <StudentTimetableTab studentClassId={childClassId} studentId={child.id} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1255,8 +1263,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "exam-timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Exam Timetable — {child.full_name}</h2>
-        <StudentExamTimetableTab studentId={child.id} formLevel={child.form} />
+        <PrintableSection title={`Exam Timetable — ${child.full_name}`} subtitle={child.form || ""} fileName={`exam-timetable-${child.admission_number || child.full_name}`} bare>
+          <StudentExamTimetableTab studentId={child.id} formLevel={child.form} />
+        </PrintableSection>
       </motion.div>
     );
   }
@@ -1264,8 +1273,9 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "reports") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <h2 className="text-lg font-bold">Term Reports — {child.full_name}</h2>
-        <StudentTermReportsTab />
+        <PrintableSection title={`Term Reports — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`term-reports-${child.admission_number || child.full_name}`} bare>
+          <StudentTermReportsTab />
+        </PrintableSection>
       </motion.div>
     );
   }
