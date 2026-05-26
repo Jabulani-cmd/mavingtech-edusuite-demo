@@ -9,7 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
-import { Search, Printer, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import { incomeExpenditureActions } from "@/lib/finance/documentActions";
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -118,34 +120,45 @@ export default function IncomeExpenditureReport() {
     return Object.entries(map).sort((a, b) => b[1].usd - a[1].usd);
   }, [searchedExpenses]);
 
-  function printReport() {
-    const printWin = window.open("", "_blank");
-    if (!printWin) return;
-    const title = `Income & Expenditure Report — ${months[Number(selectedMonth)]} ${selectedYear}`;
-    printWin.document.write(`<html><head><title>${title}</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;font-size:12px}th{background:#f5f5f5}.right{text-align:right}.green{color:green}.red{color:red}h3{margin-top:20px}</style></head><body>`);
-    printWin.document.write(`<h2>${title}</h2><p>Generated: ${new Date().toLocaleString()}</p>`);
-    printWin.document.write(`<h3>Summary</h3><table><tr><th>Item</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
-    printWin.document.write(`<tr><td>Total Income</td><td class="right green">${fmt(totalIncomeUsd)}</td><td class="right">${fmt(totalIncomeZig)}</td></tr>`);
-    printWin.document.write(`<tr><td>Total Expenses</td><td class="right red">${fmt(totalExpensesUsd)}</td><td class="right">${fmt(totalExpensesZig)}</td></tr>`);
-    printWin.document.write(`<tr><td>Supplier Payments</td><td class="right red">${fmt(totalSupplierUsd)}</td><td class="right">${fmt(totalSupplierZig)}</td></tr>`);
-    printWin.document.write(`<tr style="font-weight:bold"><td>Net</td><td class="right ${netUsd >= 0 ? "green" : "red"}">${fmt(netUsd)}</td><td class="right">${fmt(netZig)}</td></tr></table>`);
+  const periodLabel = `${months[Number(selectedMonth)]} ${selectedYear}`;
+  const docActions = () => incomeExpenditureActions({
+    periodLabel,
+    income: searchedPayments.map((p: any) => ({
+      date: p.payment_date,
+      receipt: p.receipt_number,
+      party: p.students?.full_name || "—",
+      method: p.payment_method,
+      usd: Number(p.amount_usd || 0),
+      zig: Number(p.amount_zig || 0),
+      ref: p.reference_number,
+    })),
+    expenses: searchedExpenses.map((e: any) => ({
+      date: e.expense_date,
+      category: e.category || "General",
+      description: e.description || "",
+      method: e.payment_method,
+      usd: Number(e.amount_usd || 0),
+      zig: Number(e.amount_zig || 0),
+    })),
+    supplierPayments: searchedSupplierPayments.map((sp: any) => ({
+      date: sp.payment_date,
+      supplier: sp.supplier_invoices?.supplier_name || "—",
+      method: sp.payment_method,
+      ref: sp.reference_number,
+      usd: Number(sp.amount_usd || 0),
+      zig: Number(sp.amount_zig || 0),
+    })),
+    totals: {
+      incomeUsd: totalIncomeUsd, incomeZig: totalIncomeZig,
+      expensesUsd: totalExpensesUsd, expensesZig: totalExpensesZig,
+      supplierUsd: totalSupplierUsd, supplierZig: totalSupplierZig,
+      netUsd, netZig,
+    },
+    breakdownByCategory: expenseByCategory.map(([category, totals]) => ({
+      category, usd: totals.usd, zig: totals.zig,
+    })),
+  });
 
-    if (searchedPayments.length > 0) {
-      printWin.document.write(`<h3>Income (${searchedPayments.length} transactions)</h3><table><tr><th>Date</th><th>Receipt</th><th>Student</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
-      searchedPayments.forEach(p => printWin.document.write(`<tr><td>${safeHtml(p.payment_date)}</td><td>${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.students?.full_name || "—")}</td><td>${safeHtml(p.payment_method)}</td><td class="right">${fmt(p.amount_usd)}</td><td class="right">${fmt(p.amount_zig)}</td></tr>`));
-      printWin.document.write(`</table>`);
-    }
-
-    if (searchedExpenses.length > 0) {
-      printWin.document.write(`<h3>Expenses (${searchedExpenses.length} transactions)</h3><table><tr><th>Date</th><th>Category</th><th>Description</th><th class="right">USD</th><th class="right">ZiG</th></tr>`);
-      searchedExpenses.forEach(e => printWin.document.write(`<tr><td>${safeHtml(e.expense_date)}</td><td>${safeHtml(e.category)}</td><td>${safeHtml(e.description)}</td><td class="right">${fmt(e.amount_usd)}</td><td class="right">${fmt(e.amount_zig)}</td></tr>`));
-      printWin.document.write(`</table>`);
-    }
-
-    printWin.document.write(`</body></html>`);
-    printWin.document.close();
-    printWin.print();
-  }
 
   if (loading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-accent" /></div>;
 
@@ -175,8 +188,17 @@ export default function IncomeExpenditureReport() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Button variant="outline" onClick={printReport}><Printer className="mr-1 h-4 w-4" /> Print Report</Button>
+        <DocActionButtons
+          actions={docActions}
+          labels
+          email={{
+            documentLabel: "income & expenditure report",
+            filename: `income-expenditure-${periodLabel.replace(/\s+/g, "-").toLowerCase()}`,
+            subject: `Income & Expenditure Report — ${periodLabel}`,
+          }}
+        />
       </div>
+
 
       {/* Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-4">

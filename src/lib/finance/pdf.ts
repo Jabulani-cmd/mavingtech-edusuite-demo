@@ -461,3 +461,153 @@ export function buildStatementHtml(input: StatementPrintInput) {
 </body>
 </html>`;
 }
+
+// ═══ INCOME & EXPENDITURE HTML ═══
+
+export type IncomeExpenditureInput = {
+  logoUrl?: string;
+  periodLabel: string; // e.g. "January 2026"
+  income: { date: string; receipt: string; party: string; method: string; usd: number; zig: number; ref?: string }[];
+  expenses: { date: string; category: string; description: string; method?: string; usd: number; zig: number }[];
+  supplierPayments: { date: string; supplier: string; method?: string; ref?: string; usd: number; zig: number }[];
+  totals: {
+    incomeUsd: number; incomeZig: number;
+    expensesUsd: number; expensesZig: number;
+    supplierUsd: number; supplierZig: number;
+    netUsd: number; netZig: number;
+  };
+  breakdownByCategory?: { category: string; usd: number; zig: number }[];
+};
+
+export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): string {
+  const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const fmt = (n: number) => Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
+  const t = input.totals;
+
+  const incomeRows = input.income.map(r => `
+    <tr>
+      <td>${safe(r.date)}</td>
+      <td class="mono">${safe(r.receipt)}</td>
+      <td>${safe(r.party)}</td>
+      <td>${safe(r.method)}</td>
+      <td class="right mono green">$${fmt(r.usd)}</td>
+      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="mono">${safe(r.ref || "—")}</td>
+    </tr>`).join("");
+
+  const expenseRows = input.expenses.map(r => `
+    <tr>
+      <td>${safe(r.date)}</td>
+      <td>${safe(r.category)}</td>
+      <td>${safe(r.description)}</td>
+      <td>${safe(r.method || "—")}</td>
+      <td class="right mono red">$${fmt(r.usd)}</td>
+      <td class="right mono">${fmt(r.zig)}</td>
+    </tr>`).join("");
+
+  const supplierRows = input.supplierPayments.map(r => `
+    <tr>
+      <td>${safe(r.date)}</td>
+      <td>${safe(r.supplier)}</td>
+      <td>${safe(r.method || "—")}</td>
+      <td class="mono">${safe(r.ref || "—")}</td>
+      <td class="right mono red">$${fmt(r.usd)}</td>
+      <td class="right mono">${fmt(r.zig)}</td>
+    </tr>`).join("");
+
+  const categoryRows = (input.breakdownByCategory || []).map(c => `
+    <tr>
+      <td>${safe(c.category)}</td>
+      <td class="right mono">$${fmt(c.usd)}</td>
+      <td class="right mono">${fmt(c.zig)}</td>
+    </tr>`).join("");
+
+  return `<!doctype html>
+<html><head>
+  <meta charset="utf-8" />
+  <base href="${typeof window !== "undefined" ? window.location.origin : ""}/" />
+  <title>Income & Expenditure — ${safe(input.periodLabel)}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 24px; font-size: 11px; max-width: 900px; margin: 0 auto; color: #1a1a1a; }
+    .header { display:flex; gap:18px; align-items:center; }
+    .header img { height:90px; width:auto; max-width:140px; object-fit:contain; }
+    .header h1 { font-size: 20px; margin: 0; color: #0f172a; }
+    .header .motto { color: #555; font-style: italic; font-size: 11px; margin: 2px 0; }
+    .header .address { color: #666; font-size: 10px; }
+    .divider { border-top: 3px double #0d9488; margin: 14px 0; }
+    .title-row { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px; }
+    .title-row h2 { font-size: 16px; margin: 0; color: #0f172a; letter-spacing: 1px; }
+    .title-row .period { font-size: 12px; color: #555; font-weight: bold; }
+    .summary { display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+    .stat { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 12px; background: #f9fafb; }
+    .stat .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; }
+    .stat .val { font-size: 15px; font-weight: bold; font-family: monospace; margin-top: 4px; }
+    .stat.income .val { color: #047857; }
+    .stat.expense .val { color: #b91c1c; }
+    .stat.net.pos { background: #ecfdf5; border-color: #a7f3d0; }
+    .stat.net.neg { background: #fef2f2; border-color: #fecaca; }
+    .stat.net.pos .val { color: #047857; }
+    .stat.net.neg .val { color: #b91c1c; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 18px; }
+    th, td { border: 1px solid #d1d5db; padding: 5px 8px; text-align: left; font-size: 10px; }
+    th { background: #0f172a; color: #fff; font-weight: 600; }
+    .right { text-align: right; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .green { color: #047857; }
+    .red { color: #b91c1c; }
+    h3 { font-size: 13px; color: #0f172a; margin: 18px 0 4px; border-left: 4px solid #0d9488; padding-left: 8px; }
+    .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 9px; color: #888; text-align: center; }
+    @media print { body { padding: 12px; } .summary { gap: 6px; } }
+  </style>
+</head><body>
+  <div class="header">
+    <img src="${safe(logoUrl)}" alt="School Logo" />
+    <div>
+      <h1>${safe(SCHOOL_NAME)}</h1>
+      <div class="motto">"${safe(SCHOOL_MOTTO)}"</div>
+      <div class="address">${safe(SCHOOL_ADDRESS)} &nbsp;|&nbsp; Tel: ${safe(SCHOOL_PHONE)} &nbsp;|&nbsp; Email: ${safe(SCHOOL_EMAIL)}</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="title-row">
+    <h2>INCOME &amp; EXPENDITURE REPORT</h2>
+    <div class="period">Period: ${safe(input.periodLabel)}</div>
+  </div>
+
+  <div class="summary">
+    <div class="stat income"><div class="label">Total Income</div><div class="val">USD ${fmt(t.incomeUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.incomeZig)}</div></div>
+    <div class="stat expense"><div class="label">General Expenses</div><div class="val">USD ${fmt(t.expensesUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.expensesZig)}</div></div>
+    <div class="stat expense"><div class="label">Supplier Payments</div><div class="val">USD ${fmt(t.supplierUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.supplierZig)}</div></div>
+    <div class="stat net ${t.netUsd >= 0 ? "pos" : "neg"}"><div class="label">Net ${t.netUsd >= 0 ? "Surplus" : "Deficit"}</div><div class="val">USD ${fmt(Math.abs(t.netUsd))}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(Math.abs(t.netZig))}</div></div>
+  </div>
+
+  ${categoryRows ? `<h3>Expenditure breakdown by category</h3>
+  <table><thead><tr><th>Category</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead><tbody>${categoryRows}</tbody></table>` : ""}
+
+  <h3>Income — ${input.income.length} transaction(s)</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Receipt #</th><th>Party / Student</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th><th>Reference</th></tr></thead>
+    <tbody>${incomeRows || `<tr><td colspan="7" style="text-align:center;color:#999;">No income recorded for this period.</td></tr>`}</tbody>
+  </table>
+
+  <h3>General Expenses — ${input.expenses.length} transaction(s)</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
+    <tbody>${expenseRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+  </table>
+
+  <h3>Supplier Payments — ${input.supplierPayments.length} transaction(s)</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Supplier</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
+    <tbody>${supplierRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No supplier payments recorded for this period.</td></tr>`}</tbody>
+  </table>
+
+  <div class="footer">
+    <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated financial report.</p>
+    <p><strong>${safe(SCHOOL_NAME)}</strong> &nbsp;|&nbsp; ${safe(SCHOOL_ADDRESS)} &nbsp;|&nbsp; Tel ${safe(SCHOOL_PHONE)} &nbsp;|&nbsp; ${safe(SCHOOL_EMAIL)}</p>
+  </div>
+</body></html>`;
+}
+

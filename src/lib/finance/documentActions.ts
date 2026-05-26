@@ -1,13 +1,15 @@
 // @ts-nocheck
-// Centralised view / print / download helpers for finance documents.
-// Every document goes through buildInvoiceHtml / buildReceiptHtml /
-// buildStatementHtml which already render the school logo at the top.
+// Centralised view / print / download / email helpers for finance documents.
+// Every document goes through the buildXxxHtml helpers which already render
+// the school logo, address and contact details at the top.
 import { supabase } from "@/integrations/supabase/client";
 import {
   buildInvoiceHtml,
   buildReceiptHtml,
   buildStatementHtml,
+  buildIncomeExpenditureHtml,
   SCHOOL_LOGO_URL,
+  type IncomeExpenditureInput,
 } from "./pdf";
 import { openPrintWindow, openViewWindow, downloadHtmlDocument } from "./print";
 
@@ -21,7 +23,18 @@ export type DocActions = {
   view: () => void;
   print: () => void;
   download: () => void;
+  /** Raw branded HTML — used by the Email dialog as an attachment-like body. */
+  html: () => string;
 };
+
+function makeActions(html: string, filename: string): DocActions {
+  return {
+    view: () => openViewWindow(html),
+    print: () => openPrintWindow(html),
+    download: () => downloadHtmlDocument(html, filename),
+    html: () => html,
+  };
+}
 
 async function fetchInvoiceItems(invoiceId: string) {
   const { data } = await supabase
@@ -63,11 +76,7 @@ export async function getInvoiceHtml(invoice: any, student: DocStudent) {
 
 export async function invoiceActions(invoice: any, student: DocStudent): Promise<DocActions> {
   const html = await getInvoiceHtml(invoice, student);
-  return {
-    view: () => openViewWindow(html),
-    print: () => openPrintWindow(html),
-    download: () => downloadHtmlDocument(html, `invoice-${invoice.invoice_number}`),
-  };
+  return makeActions(html, `invoice-${invoice.invoice_number}`);
 }
 
 export function receiptActions(payment: any, student: DocStudent): DocActions {
@@ -81,11 +90,7 @@ export function receiptActions(payment: any, student: DocStudent): DocActions {
     paymentMethod: payment.payment_method,
     referenceNumber: payment.reference_number,
   });
-  return {
-    view: () => openViewWindow(html),
-    print: () => openPrintWindow(html),
-    download: () => downloadHtmlDocument(html, `receipt-${payment.receipt_number}`),
-  };
+  return makeActions(html, `receipt-${payment.receipt_number}`);
 }
 
 export function statementActions(
@@ -115,9 +120,11 @@ export function statementActions(
     })),
   });
   const safeName = (student.fullName || "student").replace(/\s+/g, "-").toLowerCase();
-  return {
-    view: () => openViewWindow(html),
-    print: () => openPrintWindow(html),
-    download: () => downloadHtmlDocument(html, `statement-${safeName}`),
-  };
+  return makeActions(html, `statement-${safeName}`);
+}
+
+export function incomeExpenditureActions(input: IncomeExpenditureInput): DocActions {
+  const html = buildIncomeExpenditureHtml({ ...input, logoUrl: input.logoUrl || SCHOOL_LOGO_URL });
+  const safePeriod = (input.periodLabel || "report").replace(/\s+/g, "-").toLowerCase();
+  return makeActions(html, `income-expenditure-${safePeriod}`);
 }

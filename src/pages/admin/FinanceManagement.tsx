@@ -39,6 +39,9 @@ import {
 } from "@/lib/finance/pdf";
 import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
 import { printReceipt, openPrintWindow } from "@/lib/finance/print";
+import DocActionButtons from "@/components/finance/DocActionButtons";
+import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
+import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import {
   DollarSign,
   Plus,
@@ -216,6 +219,11 @@ export default function FinanceManagement() {
   const [invoiceSearch, setInvoiceSearch] = useState("");
   const [invoiceStatusFilter, setInvoiceStatusFilter] = useState("all");
   const [invoiceTermFilter, setInvoiceTermFilter] = useState("all");
+  const [invoiceDateFilter, setInvoiceDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [paymentSearch, setPaymentSearch] = useState("");
+  const [paymentDateFilter, setPaymentDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [expenseSearch, setExpenseSearch] = useState("");
+  const [expenseDateFilter, setExpenseDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
   const [bulkInvoiceOpen, setBulkInvoiceOpen] = useState(false);
   const [bulkYear, setBulkYear] = useState("2026");
   const [bulkTerm, setBulkTerm] = useState("Term 1");
@@ -1531,12 +1539,33 @@ export default function FinanceManagement() {
   const filteredInvoices = invoices.filter((inv) => {
     if (invoiceStatusFilter !== "all" && inv.status !== invoiceStatusFilter) return false;
     if (invoiceTermFilter !== "all" && inv.term !== invoiceTermFilter) return false;
+    if (!dateMatches(invoiceDateFilter, inv.created_at || inv.due_date)) return false;
     if (invoiceSearch) {
       const s = invoiceSearch.toLowerCase();
       const name = inv.students?.full_name?.toLowerCase() || "";
       const num = inv.invoice_number?.toLowerCase() || "";
       const adm = inv.students?.admission_number?.toLowerCase() || "";
       if (!name.includes(s) && !num.includes(s) && !adm.includes(s)) return false;
+    }
+    return true;
+  });
+
+  const filteredPayments = payments.filter((p: any) => {
+    if (!dateMatches(paymentDateFilter, p.payment_date)) return false;
+    if (paymentSearch) {
+      const s = paymentSearch.toLowerCase();
+      const hay = `${p.receipt_number || ""} ${p.students?.full_name || ""} ${p.invoices?.invoice_number || ""} ${p.payment_method || ""} ${p.reference_number || ""}`.toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  });
+
+  const filteredExpenses = expenses.filter((e: any) => {
+    if (!dateMatches(expenseDateFilter, e.expense_date)) return false;
+    if (expenseSearch) {
+      const s = expenseSearch.toLowerCase();
+      const hay = `${e.description || ""} ${e.category || ""} ${e.payment_method || ""} ${e.reference_number || ""}`.toLowerCase();
+      if (!hay.includes(s)) return false;
     }
     return true;
   });
@@ -1781,6 +1810,9 @@ export default function FinanceManagement() {
                 </Select>
               </div>
 
+              <DateRangeFilter value={invoiceDateFilter} onChange={setInvoiceDateFilter} />
+
+
               {filteredInvoices.length === 0 ? (
                 <p className="text-center py-8 text-muted-foreground">No invoices found.</p>
               ) : (
@@ -1828,33 +1860,21 @@ export default function FinanceManagement() {
                           </TableCell>
                           {isFinanceOrAdmin && (
                             <TableCell>
-                              <div className="flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => openViewInvoice(inv)}
-                                  title="View Invoice"
-                                >
-                                  <FileText className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => downloadInvoicePdf(inv)}
-                                  title="Download PDF"
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => printInvoice(inv)}
-                                  title="Print Invoice"
-                                >
-                                  <Printer className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => deleteInvoice(inv)}>
-                                  <Trash2 className="h-4 w-4 text-destructive" />
+                              <div className="flex items-center gap-1">
+                                <DocActionButtons
+                                  actions={() => invoiceActions(inv, {
+                                    fullName: inv.students?.full_name || "—",
+                                    admissionNumber: inv.students?.admission_number || "",
+                                    form: inv.students?.form,
+                                  })}
+                                  email={{
+                                    documentLabel: "invoice",
+                                    filename: `invoice-${inv.invoice_number}`,
+                                    subject: `Invoice ${inv.invoice_number} — MavingTech Business Solutions`,
+                                  }}
+                                />
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteInvoice(inv)} title="Delete">
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
                                 </Button>
                               </div>
                             </TableCell>
@@ -1940,9 +1960,16 @@ export default function FinanceManagement() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardHeader>
-            <CardContent>
-              {payments.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">No payments recorded yet.</p>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-3 items-center">
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Search by receipt #, student, invoice…" className="pl-9" value={paymentSearch} onChange={(e) => setPaymentSearch(e.target.value)} />
+                </div>
+                <DateRangeFilter value={paymentDateFilter} onChange={setPaymentDateFilter} />
+              </div>
+              {filteredPayments.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No payments match the filters.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
@@ -1960,7 +1987,7 @@ export default function FinanceManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {payments.map((pay) => (
+                      {filteredPayments.map((pay) => (
                         <TableRow key={pay.id}>
                           <TableCell className="font-mono text-xs">{pay.receipt_number}</TableCell>
                           <TableCell>{pay.payment_date}</TableCell>
@@ -1972,9 +1999,23 @@ export default function FinanceManagement() {
                           <TableCell className="text-xs">{pay.reference_number || "—"}</TableCell>
                           {isFinanceOrAdmin && (
                             <TableCell>
-                              <Button variant="ghost" size="icon" onClick={() => deletePayment(pay)}>
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
+                              <div className="flex items-center gap-1">
+                                <DocActionButtons
+                                  actions={receiptActions(pay, {
+                                    fullName: pay.students?.full_name || "—",
+                                    admissionNumber: pay.students?.admission_number || "",
+                                    form: pay.students?.form,
+                                  })}
+                                  email={{
+                                    documentLabel: "receipt",
+                                    filename: `receipt-${pay.receipt_number}`,
+                                    subject: `Official Receipt ${pay.receipt_number} — MavingTech Business Solutions`,
+                                  }}
+                                />
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deletePayment(pay)} title="Delete">
+                                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                                </Button>
+                              </div>
                             </TableCell>
                           )}
                         </TableRow>
