@@ -1089,18 +1089,29 @@ function TabContentInner(props: TabContentProps) {
                       <CardContent className="p-3 space-y-1">
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-xs font-medium">{inv.invoice_number}</span>
-                          <Badge
-                            variant="outline"
-                            className={
-                              inv.status === "paid"
-                                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                                : inv.status === "partial"
-                                  ? "bg-amber-100 text-amber-800 border-amber-300"
-                                  : "bg-red-100 text-red-800 border-red-300"
-                            }
-                          >
-                            {inv.status}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="outline"
+                              className={
+                                inv.status === "paid"
+                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                  : inv.status === "partial"
+                                    ? "bg-amber-100 text-amber-800 border-amber-300"
+                                    : "bg-red-100 text-red-800 border-red-300"
+                              }
+                            >
+                              {inv.status}
+                            </Badge>
+                            <DocActionButtons
+                              actions={() =>
+                                invoiceActions(inv, {
+                                  fullName: child.full_name,
+                                  admissionNumber: child.admission_number,
+                                  form: child.form,
+                                })
+                              }
+                            />
+                          </div>
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {inv.term} {inv.academic_year}
