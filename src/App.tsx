@@ -11,6 +11,7 @@ import StudentMyTimetable from "./pages/portal/StudentMyTimetable";
 import ParentChildTimetable from "./pages/portal/ParentChildTimetable";
 import ParentSubscribe from "./pages/portal/ParentSubscribe";
 import ParentPaymentHistory from "./pages/portal/ParentPaymentHistory";
+import ParentBilling from "./pages/portal/ParentBilling";
 import AdminPayments from "./pages/portal/AdminPayments";
 import PortalAccessGate from "@/components/subscription/PortalAccessGate";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -123,6 +124,11 @@ const App = () => (
             <Route path="/portal/parent/payments" element={
               <ProtectedRoute allowedRoles={["parent", "admin"]}>
                 <AuthenticatedLayout><ParentPaymentHistory /></AuthenticatedLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/parent/billing" element={
+              <ProtectedRoute allowedRoles={["parent", "admin"]}>
+                <AuthenticatedLayout><ParentBilling /></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/admin/payments" element={

@@ -27,7 +27,9 @@ import {
   FileText,
   Printer,
   ClipboardList,
+  CreditCard,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -294,6 +296,7 @@ export default function ParentDashboard() {
     { id: "attendance", label: "Attendance", icon: Calendar },
     { id: "fees", label: "Fees", icon: DollarSign },
     { id: "announcements", label: "Announcements", icon: Bell },
+    { id: "billing", label: "Billing", icon: CreditCard },
   ];
 
   return (
@@ -323,16 +326,21 @@ export default function ParentDashboard() {
         <aside className="sticky top-14 h-[calc(100vh-56px)] w-56 border-r bg-card p-4 space-y-1">
           {tabs.map((item) => {
             const Icon = item.icon;
+            const cls = `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              activeTab === item.id
+                ? "bg-secondary text-secondary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`;
+            if (item.id === "billing") {
+              return (
+                <Link key={item.id} to="/portal/parent/billing" className={cls}>
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            }
             return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
+              <button key={item.id} onClick={() => setActiveTab(item.id)} className={cls}>
                 <Icon className="h-4 w-4" />
                 {item.label}
               </button>
@@ -383,19 +391,21 @@ export default function ParentDashboard() {
           />
           {/* Tab pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
-                  activeTab === t.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
+            {tabs.map((t) => {
+              const cls = `rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                activeTab === t.id
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`;
+              if (t.id === "billing") {
+                return <Link key={t.id} to="/portal/parent/billing" className={cls}>{t.label}</Link>;
+              }
+              return (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} className={cls}>
+                  {t.label}
+                </button>
+              );
+            })}
           </div>
           <TabContent
             activeTab={activeTab}
