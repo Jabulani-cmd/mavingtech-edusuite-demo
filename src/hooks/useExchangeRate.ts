@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const SETTING_KEY = "usd_zig_exchange_rate";
 const DEFAULT_RATE = 1;
 
 export function useExchangeRate() {
@@ -11,11 +10,13 @@ export function useExchangeRate() {
 
   const fetchRate = useCallback(async () => {
     const { data } = await supabase
-      .from("site_settings")
-      .select("setting_value")
-      .eq("setting_key", SETTING_KEY)
+      .from("exchange_rates")
+      .select("usd_to_zwg")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
-    if (data) setRate(parseFloat(data.setting_value) || DEFAULT_RATE);
+    if (data?.usd_to_zwg) setRate(parseFloat(String(data.usd_to_zwg)) || DEFAULT_RATE);
     setLoading(false);
   }, []);
 
@@ -25,37 +26,29 @@ export function useExchangeRate() {
       .channel(`exchange-rate-sync-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "site_settings", filter: `setting_key=eq.${SETTING_KEY}` },
-        (payload: any) => {
-          const v = payload?.new?.setting_value;
-          if (v != null) setRate(parseFloat(v) || DEFAULT_RATE);
-        },
+        { event: "*", schema: "public", table: "exchange_rates" },
+        () => { fetchRate(); },
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchRate]);
 
   const updateRate = async (newRate: number) => {
-    const { data: existing } = await supabase
-      .from("site_settings")
-      .select("id")
-      .eq("setting_key", SETTING_KEY);
-
-    if (existing && existing.length > 0) {
-      await supabase
-        .from("site_settings")
-        .update({ setting_value: String(newRate), updated_at: new Date().toISOString() })
-        .eq("setting_key", SETTING_KEY);
-    } else {
-      await supabase
-        .from("site_settings")
-        .insert({ setting_key: SETTING_KEY, setting_value: String(newRate) });
-    }
+    // Deactivate previous active rates, then insert a new active one
+    await supabase.from("exchange_rates").update({ is_active: false }).eq("is_active", true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase.from("exchange_rates").insert({
+      usd_to_zwg: newRate,
+      source: "manual",
+      is_active: true,
+      set_by_admin: userData?.user?.id ?? null,
+    });
+    if (error) throw error;
     setRate(newRate);
   };
 
   const usdToZig = (usd: number) => usd * rate;
-  const zigToUsd = (zig: number) => rate > 0 ? zig / rate : 0;
+  const zigToUsd = (zig: number) => (rate > 0 ? zig / rate : 0);
 
   return { rate, loading, updateRate, usdToZig, zigToUsd, refetch: fetchRate };
 }
