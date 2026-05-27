@@ -22,7 +22,7 @@ export function useExchangeRate() {
   useEffect(() => {
     fetchRate();
     const channel = supabase
-      .channel("exchange-rate-sync")
+      .channel(`exchange-rate-sync-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "site_settings", filter: `setting_key=eq.${SETTING_KEY}` },
