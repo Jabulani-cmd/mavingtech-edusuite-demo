@@ -1165,28 +1165,37 @@ export type Database = {
         Row: {
           academic_year: string
           amount_usd: number
+          amount_zig: number
           boarding_status: string | null
           created_at: string
+          description: string | null
           form: string
           id: string
+          is_active: boolean
           term: string
         }
         Insert: {
           academic_year: string
           amount_usd?: number
+          amount_zig?: number
           boarding_status?: string | null
           created_at?: string
+          description?: string | null
           form: string
           id?: string
+          is_active?: boolean
           term: string
         }
         Update: {
           academic_year?: string
           amount_usd?: number
+          amount_zig?: number
           boarding_status?: string | null
           created_at?: string
+          description?: string | null
           form?: string
           id?: string
+          is_active?: boolean
           term?: string
         }
         Relationships: []
