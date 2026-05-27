@@ -19,7 +19,21 @@ export function useExchangeRate() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchRate(); }, [fetchRate]);
+  useEffect(() => {
+    fetchRate();
+    const channel = supabase
+      .channel("exchange-rate-sync")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "site_settings", filter: `setting_key=eq.${SETTING_KEY}` },
+        (payload: any) => {
+          const v = payload?.new?.setting_value;
+          if (v != null) setRate(parseFloat(v) || DEFAULT_RATE);
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchRate]);
 
   const updateRate = async (newRate: number) => {
     const { data: existing } = await supabase
