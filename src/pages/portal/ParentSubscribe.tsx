@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { downloadSubscriptionReceipt } from "@/lib/receiptPdf";
 
 type Step = "plans" | "method" | "mobile" | "bank" | "redirect" | "success";
@@ -44,9 +45,9 @@ export default function ParentSubscribe() {
   const { toast } = useToast();
   const { user } = useAuth();
   const sub = useSubscription();
+  const { rate } = useExchangeRate();
 
   const [plans, setPlans] = useState<any[]>([]);
-  const [rate, setRate] = useState<number>(350);
   const [children, setChildren] = useState<any[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [bank, setBank] = useState<any>(null);
@@ -64,13 +65,11 @@ export default function ParentSubscribe() {
   // ── load reference data ───────────────────────────────────────────────
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: r }, { data: b }] = await Promise.all([
+      const [{ data: p }, { data: b }] = await Promise.all([
         supabase.from("subscription_plans").select("*").eq("is_active", true).order("amount_usd"),
-        supabase.from("exchange_rates").select("*").eq("is_active", true).order("fetched_at", { ascending: false }).limit(1),
         supabase.from("school_bank_details").select("*").eq("is_active", true).maybeSingle(),
       ]);
       setPlans(p || []);
-      if (r?.[0]) setRate(Number(r[0].usd_to_zwg));
       setBank(b);
 
       // children linked to this parent

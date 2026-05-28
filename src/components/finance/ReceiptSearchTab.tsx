@@ -185,7 +185,7 @@ export default function ReceiptSearchTab() {
                     <TableCell>{p.students?.form}</TableCell>
                     <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
                     <TableCell className="text-right font-mono">${fmt(p.amount_usd)}</TableCell>
-                    <TableCell className="text-right font-mono">ZiG {fmt(p.amount_zig)}</TableCell>
+                    <TableCell className="text-right font-mono">ZiG {fmt(usdToZig(Number(p.amount_usd || 0)))}</TableCell>
                     <TableCell>{p.payment_method}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
