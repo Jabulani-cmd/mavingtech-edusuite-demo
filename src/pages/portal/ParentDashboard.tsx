@@ -1285,6 +1285,7 @@ function TabContentInner(props: TabContentProps) {
           admissionNumber={child.admission_number}
           form={child.form}
           dateFilter={feeDateFilter}
+          searchTerm={feeSearch}
         />
       </motion.div>
     );
