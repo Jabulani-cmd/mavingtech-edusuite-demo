@@ -28,6 +28,7 @@ import {
   Printer,
   ClipboardList,
   CreditCard,
+  Search,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import schoolLogo from "@/assets/mavingtech-logo.png";
@@ -660,6 +661,7 @@ function TabContentInner(props: TabContentProps) {
   } = props;
   const isMobile = useIsMobile();
   const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [feeSearch, setFeeSearch] = useState("");
 
   if (!child) return null;
 
@@ -1038,8 +1040,16 @@ function TabContentInner(props: TabContentProps) {
   }
 
   if (activeTab === "fees") {
-    const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
-    const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
+    const q = feeSearch.trim().toLowerCase();
+    const ms = (t?: any) => !q || (t ?? "").toString().toLowerCase().includes(q);
+    const fInv = invoices.filter((i: any) =>
+      dateMatches(feeDateFilter, i.created_at || i.due_date) &&
+      (ms(i.invoice_number) || ms(i.term) || ms(i.academic_year) || ms(i.status)),
+    );
+    const fPay = childPayments.filter((p: any) =>
+      dateMatches(feeDateFilter, p.payment_date) &&
+      (ms(p.receipt_number) || ms(p.invoices?.invoice_number) || ms(p.payment_method) || ms(p.reference_number)),
+    );
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Fee Statement — {child.full_name}</h2>
@@ -1070,29 +1080,37 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
-        {/* Date filter */}
-        <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+        {/* Search + date filter */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={feeSearch}
+              onChange={(e) => setFeeSearch(e.target.value)}
+              placeholder="Search invoice #, receipt #, term, method…"
+              className="pl-9"
+            />
+          </div>
+          <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+        </div>
 
         {/* Statement actions */}
-        {(invoices.length > 0 || childPayments.length > 0) && (() => {
-          const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
-          const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
-          return (
-            <DocActionButtons
-              labels
-              actions={statementActions(
-                { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-                fInv,
-                fPay,
-              )}
-              email={{
-                documentLabel: "Student Statement",
-                filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
-                subject: `Statement of Account — ${child.full_name}`,
-              }}
-            />
-          );
-        })()}
+        {(invoices.length > 0 || childPayments.length > 0) && (
+          <DocActionButtons
+            labels
+            actions={statementActions(
+              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+              fInv,
+              fPay,
+            )}
+            email={{
+              documentLabel: "Student Statement",
+              filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+              subject: `Statement of Account — ${child.full_name}`,
+            }}
+          />
+        )}
+
 
 
         {/* Invoices */}
@@ -1129,7 +1147,7 @@ function TabContentInner(props: TabContentProps) {
                             >
                               {inv.status}
                             </Badge>
-                            <DocActionButtons
+                             <DocActionButtons labels
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
@@ -1235,7 +1253,7 @@ function TabContentInner(props: TabContentProps) {
                             </Badge>
                           </td>
                           <td className="px-3 py-2 text-center">
-                            <DocActionButtons
+                             <DocActionButtons labels
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
@@ -1267,6 +1285,7 @@ function TabContentInner(props: TabContentProps) {
           admissionNumber={child.admission_number}
           form={child.form}
           dateFilter={feeDateFilter}
+          searchTerm={feeSearch}
         />
       </motion.div>
     );
@@ -1322,12 +1341,14 @@ function ParentPaymentHistory({
   admissionNumber,
   form,
   dateFilter,
+  searchTerm,
 }: {
   childId: string;
   childName: string;
   admissionNumber: string;
   form: string;
   dateFilter?: FinanceDateFilter;
+  searchTerm?: string;
 }) {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1365,7 +1386,12 @@ function ParentPaymentHistory({
 
   const docStudent = { fullName: childName, admissionNumber, form };
   const filter = dateFilter || emptyDateFilter();
-  const visiblePayments = payments.filter((p: any) => dateMatches(filter, p.payment_date));
+  const q = (searchTerm || "").trim().toLowerCase();
+  const ms = (t?: any) => !q || (t ?? "").toString().toLowerCase().includes(q);
+  const visiblePayments = payments.filter((p: any) =>
+    dateMatches(filter, p.payment_date) &&
+    (ms(p.receipt_number) || ms(p.invoices?.invoice_number) || ms(p.payment_method) || ms(p.reference_number)),
+  );
   const actionsFor = (p: any) => receiptActions(p, docStudent);
   const emailFor = (p: any) => ({
     documentLabel: "Receipt",
@@ -1384,12 +1410,12 @@ function ParentPaymentHistory({
       <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
         {isMobile ? (
           <div className="space-y-2">
-            {payments.map((p: any) => (
+            {visiblePayments.map((p: any) => (
               <Card key={p.id} className="border">
                 <CardContent className="p-3 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                    <DocActionButtons actions={actionsFor(p)} />
+                    <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
                   </div>
 
                   <p className="text-xs text-muted-foreground">
@@ -1420,7 +1446,7 @@ function ParentPaymentHistory({
                 </tr>
               </thead>
               <tbody>
-                {payments.map((p: any) => (
+                {visiblePayments.map((p: any) => (
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
@@ -1428,7 +1454,7 @@ function ParentPaymentHistory({
                     <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
-                      <DocActionButtons actions={actionsFor(p)} />
+                      <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
                     </td>
                   </tr>
                 ))}

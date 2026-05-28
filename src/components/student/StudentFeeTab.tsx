@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -32,6 +33,7 @@ export default function StudentFeeTab({ studentId }: Props) {
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (studentId) fetchData();
@@ -100,11 +102,17 @@ export default function StudentFeeTab({ studentId }: Props) {
     );
   }
 
+  const q = searchTerm.trim().toLowerCase();
+  const matchesSearch = (text?: string | null) =>
+    !q || (text || "").toString().toLowerCase().includes(q);
+
   const filteredInvoices = invoices.filter((i: any) =>
-    dateMatches(dateFilter, i.created_at || i.due_date),
+    dateMatches(dateFilter, i.created_at || i.due_date) &&
+    (matchesSearch(i.invoice_number) || matchesSearch(i.term) || matchesSearch(i.academic_year) || matchesSearch(i.status)),
   );
   const filteredPayments = payments.filter((p: any) =>
-    dateMatches(dateFilter, p.payment_date),
+    dateMatches(dateFilter, p.payment_date) &&
+    (matchesSearch(p.receipt_number) || matchesSearch(p.invoices?.invoice_number) || matchesSearch(p.payment_method) || matchesSearch(p.reference_number)),
   );
 
   const stmtActions = statementActions(docStudent, filteredInvoices, filteredPayments);
@@ -127,7 +135,18 @@ export default function StudentFeeTab({ studentId }: Props) {
         )}
       </div>
 
-      <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search invoice #, receipt #, term, method…"
+            className="pl-9"
+          />
+        </div>
+        <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+      </div>
 
 
       {/* Balance summary */}
@@ -182,7 +201,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="font-mono text-xs font-medium">{inv.invoice_number}</span>
                         <div className="flex items-center gap-2">
                           {statusBadge(inv.status)}
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
+                          <DocActionButtons labels actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
@@ -235,7 +254,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
+                          <DocActionButtons labels actions={() => invoiceActions(inv, docStudent)} email={{ documentLabel: "Invoice", filename: `invoice-${inv.invoice_number}`, subject: `Invoice ${inv.invoice_number} — ${docStudent.fullName}` }} />
                         </TableCell>
                       </TableRow>
                     );
@@ -261,7 +280,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                     <CardContent className="p-3 space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                        <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
+                        <DocActionButtons labels actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(p.payment_date), "dd MMM yyyy")} · {p.payment_method}
@@ -303,7 +322,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right font-mono">ZiG {fmt(p.amount_zig)}</TableCell>
                         <TableCell>{p.payment_method}</TableCell>
                         <TableCell className="text-center">
-                          <DocActionButtons actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
+                          <DocActionButtons labels actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />
                         </TableCell>
                       </TableRow>
                     ))}
