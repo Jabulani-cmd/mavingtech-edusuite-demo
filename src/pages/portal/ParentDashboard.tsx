@@ -1096,7 +1096,7 @@ function TabContentInner(props: TabContentProps) {
 
         {/* Statement actions */}
         {(invoices.length > 0 || childPayments.length > 0) && (
-           <DocActionButtonsXXX
+           <DocActionButtons
             labels
             actions={statementActions(
               { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
@@ -1147,7 +1147,7 @@ function TabContentInner(props: TabContentProps) {
                             >
                               {inv.status}
                             </Badge>
-                             <DocActionButtonsXXX
+                             <DocActionButtons
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
@@ -1253,7 +1253,7 @@ function TabContentInner(props: TabContentProps) {
                             </Badge>
                           </td>
                           <td className="px-3 py-2 text-center">
-                             <DocActionButtonsXXX
+                             <DocActionButtons
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
@@ -1407,7 +1407,7 @@ function ParentPaymentHistory({
                 <CardContent className="p-3 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-medium">{p.receipt_number}</span>
-                    <DocActionButtons actions={actionsFor(p)} />
+                    <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
                   </div>
 
                   <p className="text-xs text-muted-foreground">
@@ -1446,7 +1446,7 @@ function ParentPaymentHistory({
                     <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
-                      <DocActionButtons actions={actionsFor(p)} />
+                      <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
                     </td>
                   </tr>
                 ))}
