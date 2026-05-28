@@ -1341,12 +1341,14 @@ function ParentPaymentHistory({
   admissionNumber,
   form,
   dateFilter,
+  searchTerm,
 }: {
   childId: string;
   childName: string;
   admissionNumber: string;
   form: string;
   dateFilter?: FinanceDateFilter;
+  searchTerm?: string;
 }) {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1384,7 +1386,12 @@ function ParentPaymentHistory({
 
   const docStudent = { fullName: childName, admissionNumber, form };
   const filter = dateFilter || emptyDateFilter();
-  const visiblePayments = payments.filter((p: any) => dateMatches(filter, p.payment_date));
+  const q = (searchTerm || "").trim().toLowerCase();
+  const ms = (t?: any) => !q || (t ?? "").toString().toLowerCase().includes(q);
+  const visiblePayments = payments.filter((p: any) =>
+    dateMatches(filter, p.payment_date) &&
+    (ms(p.receipt_number) || ms(p.invoices?.invoice_number) || ms(p.payment_method) || ms(p.reference_number)),
+  );
   const actionsFor = (p: any) => receiptActions(p, docStudent);
   const emailFor = (p: any) => ({
     documentLabel: "Receipt",
