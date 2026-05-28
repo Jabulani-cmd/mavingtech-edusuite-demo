@@ -102,11 +102,17 @@ export default function StudentFeeTab({ studentId }: Props) {
     );
   }
 
+  const q = searchTerm.trim().toLowerCase();
+  const matchesSearch = (text?: string | null) =>
+    !q || (text || "").toString().toLowerCase().includes(q);
+
   const filteredInvoices = invoices.filter((i: any) =>
-    dateMatches(dateFilter, i.created_at || i.due_date),
+    dateMatches(dateFilter, i.created_at || i.due_date) &&
+    (matchesSearch(i.invoice_number) || matchesSearch(i.term) || matchesSearch(i.academic_year) || matchesSearch(i.status)),
   );
   const filteredPayments = payments.filter((p: any) =>
-    dateMatches(dateFilter, p.payment_date),
+    dateMatches(dateFilter, p.payment_date) &&
+    (matchesSearch(p.receipt_number) || matchesSearch(p.invoices?.invoice_number) || matchesSearch(p.payment_method) || matchesSearch(p.reference_number)),
   );
 
   const stmtActions = statementActions(docStudent, filteredInvoices, filteredPayments);
@@ -129,7 +135,18 @@ export default function StudentFeeTab({ studentId }: Props) {
         )}
       </div>
 
-      <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search invoice #, receipt #, term, method…"
+            className="pl-9"
+          />
+        </div>
+        <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
+      </div>
 
 
       {/* Balance summary */}
