@@ -1096,7 +1096,7 @@ function TabContentInner(props: TabContentProps) {
 
         {/* Statement actions */}
         {(invoices.length > 0 || childPayments.length > 0) && (
-           <DocActionButtons labels
+          <DocActionButtons
             labels
             actions={statementActions(
               { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
