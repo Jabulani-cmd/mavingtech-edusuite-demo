@@ -28,6 +28,7 @@ import {
   Printer,
   ClipboardList,
   CreditCard,
+  Search,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import schoolLogo from "@/assets/mavingtech-logo.png";
