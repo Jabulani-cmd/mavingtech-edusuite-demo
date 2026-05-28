@@ -1410,7 +1410,7 @@ function ParentPaymentHistory({
       <CardContent className={isMobile ? "px-3 pb-3" : "p-0"}>
         {isMobile ? (
           <div className="space-y-2">
-            {payments.map((p: any) => (
+            {visiblePayments.map((p: any) => (
               <Card key={p.id} className="border">
                 <CardContent className="p-3 space-y-1">
                   <div className="flex items-center justify-between">
@@ -1446,7 +1446,7 @@ function ParentPaymentHistory({
                 </tr>
               </thead>
               <tbody>
-                {payments.map((p: any) => (
+                {visiblePayments.map((p: any) => (
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
