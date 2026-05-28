@@ -1040,8 +1040,16 @@ function TabContentInner(props: TabContentProps) {
   }
 
   if (activeTab === "fees") {
-    const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
-    const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
+    const q = feeSearch.trim().toLowerCase();
+    const ms = (t?: any) => !q || (t ?? "").toString().toLowerCase().includes(q);
+    const fInv = invoices.filter((i: any) =>
+      dateMatches(feeDateFilter, i.created_at || i.due_date) &&
+      (ms(i.invoice_number) || ms(i.term) || ms(i.academic_year) || ms(i.status)),
+    );
+    const fPay = childPayments.filter((p: any) =>
+      dateMatches(feeDateFilter, p.payment_date) &&
+      (ms(p.receipt_number) || ms(p.invoices?.invoice_number) || ms(p.payment_method) || ms(p.reference_number)),
+    );
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <h2 className="text-lg font-bold">Fee Statement — {child.full_name}</h2>
@@ -1072,29 +1080,37 @@ function TabContentInner(props: TabContentProps) {
           </CardContent>
         </Card>
 
-        {/* Date filter */}
-        <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+        {/* Search + date filter */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={feeSearch}
+              onChange={(e) => setFeeSearch(e.target.value)}
+              placeholder="Search invoice #, receipt #, term, method…"
+              className="pl-9"
+            />
+          </div>
+          <DateRangeFilter value={feeDateFilter} onChange={setFeeDateFilter} />
+        </div>
 
         {/* Statement actions */}
-        {(invoices.length > 0 || childPayments.length > 0) && (() => {
-          const fInv = invoices.filter((i: any) => dateMatches(feeDateFilter, i.created_at || i.due_date));
-          const fPay = childPayments.filter((p: any) => dateMatches(feeDateFilter, p.payment_date));
-          return (
-            <DocActionButtons
-              labels
-              actions={statementActions(
-                { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
-                fInv,
-                fPay,
-              )}
-              email={{
-                documentLabel: "Student Statement",
-                filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
-                subject: `Statement of Account — ${child.full_name}`,
-              }}
-            />
-          );
-        })()}
+        {(invoices.length > 0 || childPayments.length > 0) && (
+          <DocActionButtons
+            labels
+            actions={statementActions(
+              { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
+              fInv,
+              fPay,
+            )}
+            email={{
+              documentLabel: "Student Statement",
+              filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
+              subject: `Statement of Account — ${child.full_name}`,
+            }}
+          />
+        )}
+
 
 
         {/* Invoices */}
