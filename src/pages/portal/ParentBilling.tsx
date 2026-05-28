@@ -9,21 +9,21 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { format } from "date-fns";
 
 export default function ParentBilling() {
   const nav = useNavigate();
   const { user } = useAuth();
   const sub = useSubscription();
+  const { rate } = useExchangeRate();
   const [plans, setPlans] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
-  const [rate, setRate] = useState(350);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: r }, { data: pay }] = await Promise.all([
+      const [{ data: p }, { data: pay }] = await Promise.all([
         supabase.from("subscription_plans").select("*").eq("is_active", true).order("amount_usd"),
-        supabase.from("exchange_rates").select("*").eq("is_active", true).order("fetched_at", { ascending: false }).limit(1),
         user
           ? supabase
               .from("payments")
@@ -34,7 +34,6 @@ export default function ParentBilling() {
           : Promise.resolve({ data: [] }),
       ]);
       setPlans(p || []);
-      if (r?.[0]) setRate(Number(r[0].usd_to_zwg));
       setPayments(pay || []);
     })();
   }, [user]);
