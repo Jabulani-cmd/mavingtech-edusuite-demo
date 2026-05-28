@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { downloadSubscriptionReceipt } from "@/lib/receiptPdf";
 
 type Step = "plans" | "method" | "mobile" | "bank" | "redirect" | "success";
