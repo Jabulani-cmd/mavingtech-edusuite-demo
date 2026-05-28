@@ -33,6 +33,7 @@ export default function StudentFeeTab({ studentId }: Props) {
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (studentId) fetchData();
