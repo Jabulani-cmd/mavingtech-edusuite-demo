@@ -1096,7 +1096,7 @@ function TabContentInner(props: TabContentProps) {
 
         {/* Statement actions */}
         {(invoices.length > 0 || childPayments.length > 0) && (
-           <DocActionButtons
+           <DocActionButtons labels
             labels
             actions={statementActions(
               { fullName: child.full_name, admissionNumber: child.admission_number, form: child.form },
@@ -1147,7 +1147,7 @@ function TabContentInner(props: TabContentProps) {
                             >
                               {inv.status}
                             </Badge>
-                             <DocActionButtons
+                             <DocActionButtons labels
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
@@ -1253,7 +1253,7 @@ function TabContentInner(props: TabContentProps) {
                             </Badge>
                           </td>
                           <td className="px-3 py-2 text-center">
-                             <DocActionButtons
+                             <DocActionButtons labels
                               actions={() =>
                                 invoiceActions(inv, {
                                   fullName: child.full_name,
