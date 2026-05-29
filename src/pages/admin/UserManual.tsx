@@ -155,10 +155,9 @@ export default function UserManual() {
             <Step n={2} text="Filter by Form, Stream, or Status using the dropdown filters." />
             <Step n={3} text="Click 'View' on any student to see their full profile with tabs for academics, attendance, and boarding." />
           </ManualSection>
-          <ManualSection title="Generating Verification Codes">
-            <Step n={1} text="Open a student's profile by clicking 'View'." />
-            <Step n={2} text="Click 'Generate Code' to create a 6-character verification code." />
-            <Step n={3} text="Share this code with the parent so they can link their account to the student." />
+          <ManualSection title="Parent Child Linking">
+            <Step n={1} text="Give the parent the student's admission number." />
+            <Step n={2} text="The parent can use that admission number to link the child from the Parent Dashboard." />
           </ManualSection>
           <ManualSection title="Bulk Student Import">
             <Step n={1} text="Go to Admin Dashboard → Data Migration tab." />
@@ -547,9 +546,8 @@ export default function UserManual() {
           <ManualSection title="Linking Your Child's Account">
             <Step n={1} text="After logging in, you'll see a 'Link Child' option." />
             <Step n={2} text="Enter your child's Admission Number (provided by the school)." />
-            <Step n={3} text="Enter the 6-character Verification Code (obtained from the school administrator)." />
-            <Step n={4} text="Click 'Link' — your child's information will now appear on your dashboard." />
-            <Step n={5} text="Repeat for additional children if applicable." />
+            <Step n={3} text="Click 'Link' — your child's information will now appear on your dashboard." />
+            <Step n={4} text="Repeat for additional children if applicable." />
           </ManualSection>
           <ManualSection title="Monitoring Your Child">
             <p className="text-sm text-muted-foreground">Once linked, you can view:</p>
@@ -620,7 +618,7 @@ export default function UserManual() {
             <div className="space-y-3">
               {[
                 { q: "I forgot my password", a: "Contact the school administrator to reset your password. They can do this from User Management." },
-                { q: "I can't see my child's data", a: "Ensure you've linked your child using their Admission Number and the verification code from the administrator." },
+                { q: "I can't see my child's data", a: "Ensure you've linked your child using their Admission Number from the school." },
                 { q: "My exam results are not showing", a: "Results are only visible after the teacher/admin publishes them. Contact your class teacher if they should be available." },
                 { q: "The camera isn't working for photos", a: "Ensure you've granted browser permission to access the camera. Try refreshing the page. If using a USB camera, check that it's properly connected." },
                 { q: "I'm getting a 'Row Level Security' error", a: "This means you don't have permission for that action. Ensure you're logged in with the correct role." },
