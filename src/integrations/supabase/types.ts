@@ -2398,44 +2398,6 @@ export type Database = {
           },
         ]
       }
-      student_verification_codes: {
-        Row: {
-          code: string
-          created_at: string
-          expires_at: string
-          id: string
-          student_id: string | null
-          used_at: string | null
-          used_by: string | null
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          expires_at?: string
-          id?: string
-          student_id?: string | null
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          expires_at?: string
-          id?: string
-          student_id?: string | null
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_verification_codes_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       students: {
         Row: {
           address: string | null
