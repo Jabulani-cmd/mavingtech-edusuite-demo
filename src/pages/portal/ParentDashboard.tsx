@@ -446,13 +446,12 @@ export default function ParentDashboard() {
 function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
   const [open, setOpen] = useState(false);
   const [admissionNumber, setAdmissionNumber] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
   const [linking, setLinking] = useState(false);
   const { toast } = useToast();
 
   const handleLink = async () => {
-    if (!admissionNumber.trim() || !verificationCode.trim()) {
-      toast({ title: "Please fill in all fields", variant: "destructive" });
+    if (!admissionNumber.trim()) {
+      toast({ title: "Please enter the admission number", variant: "destructive" });
       return;
     }
     setLinking(true);
@@ -470,7 +469,6 @@ function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
         body: JSON.stringify({
           action: "link",
           admission_number: admissionNumber.trim(),
-          verification_code: verificationCode.trim().toUpperCase(),
         }),
       });
       const data = await res.json();
@@ -478,7 +476,6 @@ function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
       toast({ title: "Child linked!", description: `${data.student.full_name} has been linked to your account.` });
       setOpen(false);
       setAdmissionNumber("");
-      setVerificationCode("");
       onLinked();
     } catch (err: any) {
       toast({ title: "Link failed", description: err.message, variant: "destructive" });
@@ -501,7 +498,7 @@ function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <p className="text-sm text-muted-foreground">
-            Enter your child's admission number and the verification code provided by the school.
+            Enter your child's admission number to link them to your parent portal.
           </p>
           <div className="space-y-2">
             <Label>Admission Number</Label>
@@ -509,16 +506,6 @@ function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
               placeholder="e.g. MHS-2026-001"
               value={admissionNumber}
               onChange={(e) => setAdmissionNumber(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Verification Code</Label>
-            <Input
-              placeholder="e.g. ABC123"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value.toUpperCase())}
-              maxLength={6}
-              className="tracking-widest font-mono text-center text-lg"
             />
           </div>
           <Button onClick={handleLink} disabled={linking} className="w-full">
@@ -548,7 +535,7 @@ function ChildSelector({
           <Users className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
           <p className="text-sm text-muted-foreground">No children linked to your account yet.</p>
           <p className="text-xs text-muted-foreground mt-1 mb-3">
-            Use a verification code from the school to link your child.
+            Use your child's admission number to link them to your account.
           </p>
           <LinkChildDialog onLinked={onLinked} />
         </CardContent>
