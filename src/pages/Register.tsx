@@ -15,7 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ChildEntry {
   admissionNumber: string;
-  verificationCode: string;
 }
 
 export default function Register() {
@@ -32,7 +31,7 @@ export default function Register() {
   const [children, setChildren] = useState<ChildEntry[]>([]);
 
   const addChild = () => {
-    setChildren((prev) => [...prev, { admissionNumber: "", verificationCode: "" }]);
+    setChildren((prev) => [...prev, { admissionNumber: "" }]);
   };
 
   const removeChild = (index: number) => {
@@ -90,7 +89,7 @@ export default function Register() {
             action: "register-parent",
             user_id: userId,
             phone,
-            children: children.filter(c => c.admissionNumber && c.verificationCode),
+            children: children.filter(c => c.admissionNumber),
           }),
         }
       );
@@ -151,7 +150,7 @@ export default function Register() {
                   <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" required />
                 </div>
 
-                {/* Link Children via Verification Code */}
+                {/* Link Children by Admission Number */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Label>Link Your Children (Optional)</Label>
@@ -160,7 +159,7 @@ export default function Register() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Enter the admission number and verification code provided by the school for each child.
+                    Enter the admission number provided by the school for each child.
                   </p>
                   {children.map((child, index) => (
                     <div key={index} className="flex items-start gap-2 rounded-md border p-3">
@@ -169,13 +168,6 @@ export default function Register() {
                           placeholder="Admission Number"
                           value={child.admissionNumber}
                           onChange={(e) => updateChild(index, "admissionNumber", e.target.value)}
-                        />
-                        <Input
-                          placeholder="Verification Code"
-                          value={child.verificationCode}
-                          onChange={(e) => updateChild(index, "verificationCode", e.target.value.toUpperCase())}
-                          maxLength={6}
-                          className="uppercase tracking-widest"
                         />
                       </div>
                       <Button type="button" variant="ghost" size="icon" onClick={() => removeChild(index)}>

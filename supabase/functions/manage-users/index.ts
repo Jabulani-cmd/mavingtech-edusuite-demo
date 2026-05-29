@@ -635,11 +635,11 @@ Deno.serve(async (req) => {
         { onConflict: "user_id,role" }
       );
 
-      // Link children via verification codes
+      // Link children by admission number
       const linkResults: string[] = [];
       if (children && Array.isArray(children)) {
         for (const child of children) {
-          if (!child.admissionNumber || !child.verificationCode) continue;
+          if (!child.admissionNumber) continue;
           try {
             const { data: student } = await supabaseAdmin
               .from("students")
@@ -649,17 +649,6 @@ Deno.serve(async (req) => {
               .maybeSingle();
 
             if (!student) { linkResults.push(`No student found: ${child.admissionNumber}`); continue; }
-
-            const { data: codeRecord } = await supabaseAdmin
-              .from("student_verification_codes")
-              .select("*")
-              .eq("student_id", student.id)
-              .eq("code", child.verificationCode.trim().toUpperCase())
-              .is("used_at", null)
-              .gt("expires_at", new Date().toISOString())
-              .maybeSingle();
-
-            if (!codeRecord) { linkResults.push(`Invalid/expired code for ${child.admissionNumber}`); continue; }
 
             const { data: existing } = await supabaseAdmin
               .from("parent_students")
@@ -671,9 +660,6 @@ Deno.serve(async (req) => {
             if (existing) { linkResults.push(`${student.full_name} already linked`); continue; }
 
             await supabaseAdmin.from("parent_students").insert({ parent_id: user_id, student_id: student.id });
-            await supabaseAdmin.from("student_verification_codes")
-              .update({ used_at: new Date().toISOString(), used_by: user_id })
-              .eq("id", codeRecord.id);
 
             linkResults.push(student.full_name);
           } catch {

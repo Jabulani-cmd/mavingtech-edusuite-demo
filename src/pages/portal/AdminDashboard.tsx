@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import AcademicManagement from "@/pages/admin/AcademicManagement";
 import AdminAttendanceViewer from "@/components/admin/AdminAttendanceViewer";
-import VerificationCodesManager from "@/components/admin/VerificationCodesManager";
 import ImageCropper from "@/components/ImageCropper";
 import StaffManagement from "@/components/admin/StaffManagement";
 import ProjectsManagement from "@/components/admin/ProjectsManagement";
@@ -35,7 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bell, Image, Users, Calendar, LogOut, Plus, Trash2, Upload, Layers, GraduationCap, UserPlus, Download, FileText, HandshakeIcon, Settings, UserCheck, Building, FolderKanban, BookOpen, Briefcase, DollarSign, Shield, BedDouble, Package, MessageSquare, ClipboardList, ShieldCheck, Database, Rocket, KeyRound, Megaphone, Trophy, ShieldAlert, CheckCircle2, CalendarOff } from "lucide-react";
+import { Bell, Image, Users, Calendar, LogOut, Plus, Trash2, Upload, Layers, GraduationCap, UserPlus, Download, FileText, HandshakeIcon, Settings, UserCheck, Building, FolderKanban, BookOpen, Briefcase, DollarSign, Shield, BedDouble, Package, MessageSquare, ClipboardList, ShieldCheck, Database, Rocket, Megaphone, Trophy, ShieldAlert, CheckCircle2, CalendarOff } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -776,7 +775,6 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
               <TabsTrigger value="staff-mgmt" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><UserCheck className="mr-1 h-3.5 w-3.5" /> Staff</TabsTrigger>
               <TabsTrigger value="staff-full" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Briefcase className="mr-1 h-3.5 w-3.5" /> Directory</TabsTrigger>
               <TabsTrigger value="user-mgmt" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Shield className="mr-1 h-3.5 w-3.5" /> Users</TabsTrigger>
-              <TabsTrigger value="verification-codes" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><KeyRound className="mr-1 h-3.5 w-3.5" /> Codes</TabsTrigger>
               <TabsTrigger value="password-mgmt" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ShieldAlert className="mr-1 h-3.5 w-3.5" /> Passwords</TabsTrigger>
               <TabsTrigger value="academics" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><GraduationCap className="mr-1 h-3.5 w-3.5" /> Academics</TabsTrigger>
               <TabsTrigger value="timetable" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Calendar className="mr-1 h-3.5 w-3.5" /> Timetables</TabsTrigger>
@@ -1212,10 +1210,6 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
             <StaffAvailabilityOverview />
           </TabsContent>
 
-          {/* Verification Codes Tab */}
-          <TabsContent value="verification-codes">
-            <VerificationCodesManager />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
