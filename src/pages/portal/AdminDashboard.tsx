@@ -1210,10 +1210,6 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
             <StaffAvailabilityOverview />
           </TabsContent>
 
-          {/* Verification Codes Tab */}
-          <TabsContent value="verification-codes">
-            <VerificationCodesManager />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
