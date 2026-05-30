@@ -31,6 +31,7 @@ import StaffLeaveRequest from "@/components/teacher/StaffLeaveRequest";
 import ExamResultsUpload from "@/components/teacher/ExamResultsUpload";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
 import LessonPlansTab from "@/components/teacher/LessonPlansTab";
+import TeacherAIAssistant from "@/components/teacher/TeacherAIAssistant";
 import StudentProgressTracker from "@/components/teacher/StudentProgressTracker";
 import ResourceLibraryTab from "@/components/teacher/ResourceLibraryTab";
 import ParentCommunicationLog from "@/components/teacher/ParentCommunicationLog";
