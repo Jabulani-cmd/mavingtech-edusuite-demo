@@ -41,11 +41,40 @@ export default function DemoDataSeederPanel() {
 
   const seeded = people.loadedAt != null;
 
+  async function provisionAuthAccounts(seed: ReturnType<typeof generateDemoSeed>) {
+    const adminAcct = { email: "admin@schooldemo.com", password: "Demo@2025", full_name: "Demo Administrator", role: "admin" as const };
+    const teacherAccts = seed.teachers.map(t => ({
+      email: t.email, password: "Teacher@2025", full_name: t.name, role: "teacher" as const,
+    }));
+    const studentAccts = seed.students.map(s => ({
+      email: s.email, password: s.password, full_name: s.fullName, role: "student" as const,
+    }));
+    const parentAccts = seed.parents.map(p => ({
+      email: p.email, password: p.password, full_name: p.fullName, role: "parent" as const,
+    }));
+
+    // Phase 1 (blocking): admin + teachers so the demo can log in immediately.
+    const priority = [adminAcct, ...teacherAccts];
+    const { error: e1 } = await supabase.functions.invoke("seed-demo-accounts", { body: { accounts: priority } });
+    if (e1) throw e1;
+
+    // Phase 2 (background): students + parents in chunks of 50.
+    const rest = [...studentAccts, ...parentAccts];
+    (async () => {
+      for (let i = 0; i < rest.length; i += 50) {
+        const chunk = rest.slice(i, i + 50);
+        try { await supabase.functions.invoke("seed-demo-accounts", { body: { accounts: chunk } }); }
+        catch (err) { console.error("seed-demo-accounts chunk failed", err); }
+      }
+      toast({ title: "All demo logins ready", description: `Students & parents provisioned (${rest.length} accounts).` });
+    })();
+  }
+
   async function handleLoad() {
     setRunning(true);
     setStepIdx(0);
-    for (let i = 0; i < STEPS.length - 1; i++) {
-      await new Promise(r => setTimeout(r, 350));
+    for (let i = 0; i < 7; i++) {
+      await new Promise(r => setTimeout(r, 300));
       setStepIdx(i + 1);
     }
     const seed = generateDemoSeed();
@@ -58,7 +87,16 @@ export default function DemoDataSeederPanel() {
       slots: seed.slots,
     });
     people.setSeed({ students: seed.students, parents: seed.parents });
-    await new Promise(r => setTimeout(r, 350));
+
+    setStepIdx(7);
+    try {
+      await provisionAuthAccounts(seed);
+    } catch (e: any) {
+      toast({ title: "Account provisioning failed", description: e?.message || "Could not create login accounts", variant: "destructive" });
+    }
+    setStepIdx(8);
+    await new Promise(r => setTimeout(r, 300));
+
     const summ = {
       students: seed.students.length,
       parents: seed.parents.length,
@@ -71,7 +109,7 @@ export default function DemoDataSeederPanel() {
     setSummary(summ);
     setShowSummary(true);
     setRunning(false);
-    toast({ title: "Demo data loaded", description: `${summ.students} students, ${summ.teachers} teachers, ${summ.periods} timetable periods.` });
+    toast({ title: "Demo data loaded", description: `Admin + ${summ.teachers} teachers can log in now. Students & parents finishing in background.` });
   }
 
   function handleClear() {
