@@ -332,6 +332,7 @@ export default function DemoDataSeederPanel() {
     try {
       await supabase.from("students").delete().like("admission_number", "STU%");
       await supabase.from("timetable_entries").delete().eq("term", "DEMO");
+      await supabase.from("tt_definitions").delete().like("name", "DEMO %");
       await supabase.from("class_subjects").delete().in("class_id",
         (await supabase.from("classes").select("id").like("name", "Form %")).data?.map(r => r.id) ?? []);
       await supabase.from("classes").delete().like("name", "Form %");
