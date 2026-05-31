@@ -1013,6 +1013,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
 
           {/* Timetable Tab */}
           <TabsContent value="timetable" className="space-y-4">
+            <AITimetableBuilderAgent />
             <AISmartTimetable />
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
