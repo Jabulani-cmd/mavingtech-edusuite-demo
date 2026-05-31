@@ -404,21 +404,29 @@ interface Ctx {
 const AllocationCtx = createContext<Ctx | null>(null);
 
 export function AllocationProvider({ children }: { children: ReactNode }) {
-  const [teachers, setTeachers] = useState<Teacher[]>(seedTeachers);
-  const [subjects, setSubjects] = useState<Subject[]>(seedSubjects);
-  const [rooms, setRooms] = useState<Room[]>(seedRooms);
-  const [classes, setClasses] = useState<SchoolClass[]>(seedClasses);
-  const [allocations, setAllocations] = useState<Allocation[]>(initialAllocations);
-  const [slots, setSlots] = useState<TimetableSlot[]>(initialBuild.slots);
-  const [notifications, setNotifications] = useState<TimetableNotification[]>([
+  const [teachers, setTeachers] = useState<Teacher[]>(() => loadLS("teachers", seedTeachers));
+  const [subjects, setSubjects] = useState<Subject[]>(() => loadLS("subjects", seedSubjects));
+  const [rooms, setRooms] = useState<Room[]>(() => loadLS("rooms", seedRooms));
+  const [classes, setClasses] = useState<SchoolClass[]>(() => loadLS("classes", seedClasses));
+  const [allocations, setAllocations] = useState<Allocation[]>(() => loadLS("allocations", initialAllocations));
+  const [slots, setSlots] = useState<TimetableSlot[]>(() => loadLS("slots", initialBuild.slots));
+  const [notifications, setNotifications] = useState<TimetableNotification[]>(() => loadLS("notifications", [
     {
       id: `n-init`,
       at: new Date().toISOString(),
       kind: "ai_generated",
       message: `AI Agent generated the master timetable — ${initialBuild.slots.filter((s) => s.subjectId).length} periods placed across ${seedClasses.length} classes.`,
     },
-  ]);
-  const [publishedAt, setPublishedAt] = useState<string | null>(null);
+  ]));
+  const [publishedAt, setPublishedAt] = useState<string | null>(() => loadLS("publishedAt", null));
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(LS_KEY, JSON.stringify({
+        teachers, subjects, rooms, classes, allocations, slots, notifications, publishedAt,
+      }));
+    } catch {}
+  }, [teachers, subjects, rooms, classes, allocations, slots, notifications, publishedAt]);
 
   const pushNotification = useCallback((n: Omit<TimetableNotification, "id" | "at">) => {
     setNotifications((prev) => [
