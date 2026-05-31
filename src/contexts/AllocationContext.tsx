@@ -1,4 +1,14 @@
-import { createContext, useContext, useState, useMemo, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useCallback, useEffect, ReactNode } from "react";
+
+const LS_KEY = "mt_demo_allocation_v1";
+function loadLS<T>(field: string, fallback: T): T {
+  try {
+    const raw = typeof window !== "undefined" ? window.localStorage.getItem(LS_KEY) : null;
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return field in parsed ? (parsed[field] as T) : fallback;
+  } catch { return fallback; }
+}
 
 export type EmploymentType = "Full-time" | "Part-time" | "Contract";
 export type PreferredTime = "Morning" | "Afternoon" | "Both";
