@@ -260,11 +260,16 @@ export default function DemoDataSeederPanel() {
     people.clear();
     try { window.localStorage.removeItem("mt_demo_allocation_v1"); } catch {}
     setSummary(null);
-    // Remove demo students from DB (identified by the STU#### admission prefix).
+    // Remove demo data from DB
     try {
       await supabase.from("students").delete().like("admission_number", "STU%");
+      await supabase.from("timetable_entries").delete().eq("term", "DEMO");
+      await supabase.from("class_subjects").delete().in("class_id",
+        (await supabase.from("classes").select("id").like("name", "Form %")).data?.map(r => r.id) ?? []);
+      await supabase.from("classes").delete().like("name", "Form %");
+      await supabase.from("staff").delete().like("email", "%@schooldemo.com");
     } catch (e) {
-      console.error("Failed clearing demo students from DB", e);
+      console.error("Failed clearing demo data from DB", e);
     }
     toast({ title: "Demo data cleared", description: "Application reset to a clean state." });
   }
