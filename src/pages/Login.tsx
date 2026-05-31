@@ -11,6 +11,7 @@ import { Lock, Home, Eye, EyeOff } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,9 +20,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  
+  const [seedingDemo, setSeedingDemo] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // Admin seeding runs server-side; no client-side seed call needed.
+
+  const handleSeedDemoAdmin = async () => {
+    setSeedingDemo(true);
+    try {
+      const { error } = await supabase.functions.invoke("seed-demo-accounts", { body: {} });
+      if (error) throw error;
+      setEmail("admin@schooldemo.com");
+      setPassword("Demo@2025");
+      toast({ title: "Demo admin ready", description: "Credentials pre-filled — click Sign In." });
+    } catch (e: any) {
+      toast({ title: "Could not provision demo admin", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setSeedingDemo(false);
+    }
+  };
 
   // Track whether a manual login was just performed
   const [justLoggedIn, setJustLoggedIn] = useState(false);
@@ -119,6 +134,23 @@ export default function Login() {
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
+
+                <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    First-time demo? Provision the admin account, then sign in. Inside the admin dashboard use "Load Demo Data" to provision all teacher, student & parent logins.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSeedDemoAdmin}
+                    disabled={seedingDemo}
+                    className="w-full"
+                  >
+                    {seedingDemo ? "Provisioning…" : "Provision demo admin (admin@schooldemo.com)"}
+                  </Button>
+                </div>
+
 
 
                 <div className="text-center space-y-1">
