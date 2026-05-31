@@ -125,6 +125,11 @@ export default function DemoDataSeederPanel() {
 
     setStepIdx(7);
     try {
+      await persistStudentsToDb(seed);
+    } catch (e: any) {
+      toast({ title: "Saving students failed", description: e?.message || "Could not save students to the database", variant: "destructive" });
+    }
+    try {
       await provisionAuthAccounts(seed);
     } catch (e: any) {
       toast({ title: "Account provisioning failed", description: e?.message || "Could not create login accounts", variant: "destructive" });
