@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.ai-parent-message]
 verify_jwt = false
+
+[functions.seed-demo-accounts]
+verify_jwt = false
