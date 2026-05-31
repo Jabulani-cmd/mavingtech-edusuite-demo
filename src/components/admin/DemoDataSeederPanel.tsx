@@ -152,11 +152,17 @@ export default function DemoDataSeederPanel() {
     toast({ title: "Demo data loaded", description: `Admin + ${summ.teachers} teachers can log in now. Students & parents finishing in background.` });
   }
 
-  function handleClear() {
+  async function handleClear() {
     if (!confirm("Remove all seeded demo data and reset to a clean state? Real data is untouched.")) return;
     alloc.resetToSeed();
     people.clear();
     setSummary(null);
+    // Remove demo students from DB (identified by the STU#### admission prefix).
+    try {
+      await supabase.from("students").delete().like("admission_number", "STU%");
+    } catch (e) {
+      console.error("Failed clearing demo students from DB", e);
+    }
     toast({ title: "Demo data cleared", description: "Application reset to a clean state." });
   }
 
