@@ -224,7 +224,7 @@ export default function TeacherAIAssistant() {
 
         <div className="text-[11px] text-muted-foreground flex items-start gap-1.5 bg-muted/40 rounded-md p-2">
           <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-          <span>Claude and DeepSeek aren't on the integrated AI gateway yet — selecting them uses a close-equivalent model (GPT-5 or Gemini Pro) automatically.</span>
+          <span><strong>DEMO MODE:</strong> AI responses are simulated for demonstration purposes — no API keys are required. In production, each selected model would generate a real response.</span>
         </div>
 
         <ScrollArea className="h-[380px] border rounded-md p-3 bg-background">
