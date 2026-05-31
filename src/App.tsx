@@ -66,6 +66,7 @@ const App = () => (
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
           <AllocationProvider>
+          <DemoPeopleProvider>
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
