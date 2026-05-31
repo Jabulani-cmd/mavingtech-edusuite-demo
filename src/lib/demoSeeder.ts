@@ -109,7 +109,7 @@ export function generateDemoSeed(): DemoSeed {
   }));
 
   // ---- Teachers (20) ----
-  // Distribute subjects across teachers, ensuring every subject has >=1 teacher.
+  // Emails follow demo credential doc: <first>.<surname>@schooldemo.com / Teacher@2025
   const teachers: Teacher[] = [];
   for (let i = 0; i < 20; i++) {
     const isFemale = i % 2 === 0;
@@ -119,8 +119,8 @@ export function generateDemoSeed(): DemoSeed {
     teachers.push({
       id: `t-${i + 1}`,
       name: `${title} ${first} ${surname}`,
-      email: `${surname.toLowerCase()}.${first.toLowerCase()}@mavingtech.ac.zw`,
-      employeeNumber: `MHS-S${String(i + 1).padStart(5, "0")}`,
+      email: `${first.toLowerCase()}.${surname.toLowerCase()}@schooldemo.com`,
+      employeeNumber: `T${String(i + 1).padStart(3, "0")}`,
       employmentType: i % 7 === 0 ? "Part-time" : "Full-time",
       maxPeriodsPerWeek: i % 7 === 0 ? 18 : 30,
       preferredTime: "Both",
