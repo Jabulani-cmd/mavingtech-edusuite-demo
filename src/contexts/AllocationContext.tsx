@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useCallback, ReactNode } from "react";
 
 export type EmploymentType = "Full-time" | "Part-time" | "Contract";
 export type PreferredTime = "Morning" | "Afternoon" | "Both";
@@ -12,7 +12,7 @@ export interface Teacher {
   employmentType: EmploymentType;
   maxPeriodsPerWeek: number;
   preferredTime: PreferredTime;
-  qualifiedSubjects: string[]; // subject ids
+  qualifiedSubjects: string[];
   qualifiedGrades: number[];
   photoUrl?: string;
 }
@@ -20,7 +20,9 @@ export interface Teacher {
 export interface Subject {
   id: string;
   name: string;
-  color: string; // hsl token
+  color: string;
+  /** Allowed room types for this subject. First entry is preferred. */
+  allowedRoomTypes: RoomType[];
 }
 
 export interface Room {
@@ -51,13 +53,37 @@ export interface Allocation {
 export interface TimetableSlot {
   id: string;
   classId: string;
-  day: number; // 0..4 Mon-Fri
-  period: number; // 1..8
+  day: number;
+  period: number;
   startTime: string;
   endTime: string;
   subjectId?: string;
   teacherId?: string;
   roomId?: string;
+}
+
+export interface TimetableConflict {
+  id: string;
+  type: "teacher_double" | "room_double" | "missing_field" | "wrong_room_type";
+  severity: "error" | "warning";
+  description: string;
+  slotIds: string[];
+  suggestion: string;
+}
+
+export interface TimetableNotification {
+  id: string;
+  at: string;
+  kind: "ai_generated" | "slot_changed" | "substitution" | "venue_changed" | "time_changed";
+  message: string;
+  subjectName?: string;
+  teacherName?: string;
+  className?: string;
+  roomName?: string;
+  startTime?: string;
+  endTime?: string;
+  day?: number;
+  period?: number;
 }
 
 const PERIODS = [
@@ -72,22 +98,30 @@ const PERIODS = [
 ];
 
 const SUBJECT_PALETTE = [
-  "hsl(189 94% 43%)",
-  "hsl(217 91% 60%)",
-  "hsl(262 83% 58%)",
-  "hsl(330 81% 60%)",
-  "hsl(24 95% 53%)",
-  "hsl(142 71% 45%)",
-  "hsl(45 93% 47%)",
-  "hsl(0 84% 60%)",
-  "hsl(173 80% 40%)",
-  "hsl(280 65% 60%)",
+  "hsl(189 94% 43%)", "hsl(217 91% 60%)", "hsl(262 83% 58%)", "hsl(330 81% 60%)",
+  "hsl(24 95% 53%)", "hsl(142 71% 45%)", "hsl(45 93% 47%)", "hsl(0 84% 60%)",
+  "hsl(173 80% 40%)", "hsl(280 65% 60%)",
 ];
 
-const seedSubjects: Subject[] = [
-  "Mathematics", "English", "Combined Science", "History", "Geography",
-  "ICT", "Shona", "Physical Education", "Business Studies", "Art",
-].map((name, i) => ({ id: `sub-${i + 1}`, name, color: SUBJECT_PALETTE[i] }));
+const subjectSeed: Array<{ name: string; allowed: RoomType[] }> = [
+  { name: "Mathematics", allowed: ["Regular"] },
+  { name: "English", allowed: ["Regular"] },
+  { name: "Combined Science", allowed: ["Lab"] },
+  { name: "History", allowed: ["Regular"] },
+  { name: "Geography", allowed: ["Regular"] },
+  { name: "ICT", allowed: ["Computer Room"] },
+  { name: "Shona", allowed: ["Regular"] },
+  { name: "Physical Education", allowed: ["Hall", "Sports Field"] },
+  { name: "Business Studies", allowed: ["Regular"] },
+  { name: "Art", allowed: ["Regular"] },
+];
+
+const seedSubjects: Subject[] = subjectSeed.map((s, i) => ({
+  id: `sub-${i + 1}`,
+  name: s.name,
+  color: SUBJECT_PALETTE[i],
+  allowedRoomTypes: s.allowed,
+}));
 
 const seedRooms: Room[] = [
   { id: "rm-1", name: "Room 5", type: "Regular", capacity: 40 },
@@ -129,6 +163,7 @@ const seedClasses: SchoolClass[] = [
       { subjectId: "sub-5", periodsPerWeek: 3, roomType: "Regular" },
       { subjectId: "sub-9", periodsPerWeek: 4, roomType: "Regular" },
       { subjectId: "sub-7", periodsPerWeek: 3, roomType: "Regular" },
+      { subjectId: "sub-8", periodsPerWeek: 2, roomType: "Hall" },
     ],
   },
   {
@@ -148,7 +183,7 @@ function seedAllocations(): Allocation[] {
   for (const c of seedClasses) {
     for (const s of c.subjects) {
       const teacher = seedTeachers.find(
-        (t) => t.qualifiedSubjects.includes(s.subjectId) && t.qualifiedGrades.includes(c.gradeLevel)
+        (t) => t.qualifiedSubjects.includes(s.subjectId) && t.qualifiedGrades.includes(c.gradeLevel),
       );
       if (teacher) {
         out.push({
@@ -164,14 +199,26 @@ function seedAllocations(): Allocation[] {
   return out;
 }
 
-function seedTimetable(allocs: Allocation[]): TimetableSlot[] {
+/**
+ * AI Agent — constraint-solving timetable generator.
+ * Enforces: no teacher double-booking, no room double-booking, room-type rules
+ * (PE → Hall/Sports Field, Lab subjects → Lab, ICT → Computer Room),
+ * and guarantees every placed slot has subject + teacher + room + times.
+ */
+function aiGenerateTimetable(
+  allocs: Allocation[],
+  classes: SchoolClass[],
+  subjects: Subject[],
+  rooms: Room[],
+  teachers: Teacher[],
+): { slots: TimetableSlot[]; warnings: string[] } {
   const slots: TimetableSlot[] = [];
-  const teacherBusy = new Set<string>(); // day-period-teacher
-  const roomBusy = new Set<string>(); // day-period-room
+  const teacherBusy = new Set<string>();
+  const roomBusy = new Set<string>();
+  const warnings: string[] = [];
 
-  for (const c of seedClasses) {
-    const classAllocs = allocs.filter((a) => a.classId === c.id);
-    // create empty slot map for class
+  // Seed empty grid for every class.
+  for (const c of classes) {
     for (let day = 0; day < 5; day++) {
       for (const p of PERIODS) {
         slots.push({
@@ -184,37 +231,142 @@ function seedTimetable(allocs: Allocation[]): TimetableSlot[] {
         });
       }
     }
-    // fill
-    let cursor = 0;
-    for (const a of classAllocs) {
-      const classSubj = c.subjects.find((s) => s.subjectId === a.subjectId);
-      const roomCandidates = seedRooms.filter((r) => r.type === (classSubj?.roomType ?? "Regular"));
-      let placed = 0;
-      const total = 5 * PERIODS.length;
-      while (placed < a.periodsPerWeek && cursor < total * 2) {
-        const idx = cursor % total;
-        const day = Math.floor(idx / PERIODS.length);
-        const period = (idx % PERIODS.length) + 1;
-        const tKey = `${day}-${period}-${a.teacherId}`;
-        const slot = slots.find((s) => s.classId === c.id && s.day === day && s.period === period && !s.subjectId);
-        const room = roomCandidates.find((r) => !roomBusy.has(`${day}-${period}-${r.id}`));
-        if (slot && !teacherBusy.has(tKey) && room) {
-          slot.subjectId = a.subjectId;
-          slot.teacherId = a.teacherId;
-          slot.roomId = room.id;
-          teacherBusy.add(tKey);
-          roomBusy.add(`${day}-${period}-${room.id}`);
-          placed++;
-        }
-        cursor++;
+  }
+
+  // Build placement queue: heaviest-constraint subjects first
+  // (subjects with narrowest room allowances are placed before flexible ones).
+  const queue = allocs.flatMap((a) => {
+    const subj = subjects.find((s) => s.id === a.subjectId);
+    const constraint = subj?.allowedRoomTypes.length ?? 99;
+    return Array(a.periodsPerWeek).fill(null).map(() => ({ alloc: a, constraint }));
+  }).sort((a, b) => a.constraint - b.constraint);
+
+  for (const { alloc } of queue) {
+    const subj = subjects.find((s) => s.id === alloc.subjectId)!;
+    const allowedTypes = subj.allowedRoomTypes;
+    const candidateRooms = rooms.filter((r) => allowedTypes.includes(r.type));
+    let placed = false;
+
+    // Try every (day, period) combination — prefer mornings for core subjects.
+    const slotsOfClass = slots
+      .filter((s) => s.classId === alloc.classId && !s.subjectId)
+      .sort((a, b) => a.period - b.period || a.day - b.day);
+
+    for (const slot of slotsOfClass) {
+      if (teacherBusy.has(`${slot.day}-${slot.period}-${alloc.teacherId}`)) continue;
+      const room = candidateRooms.find(
+        (r) => !roomBusy.has(`${slot.day}-${slot.period}-${r.id}`),
+      );
+      if (!room) continue;
+      slot.subjectId = alloc.subjectId;
+      slot.teacherId = alloc.teacherId;
+      slot.roomId = room.id;
+      teacherBusy.add(`${slot.day}-${slot.period}-${alloc.teacherId}`);
+      roomBusy.add(`${slot.day}-${slot.period}-${room.id}`);
+      placed = true;
+      break;
+    }
+
+    if (!placed) {
+      const cls = classes.find((c) => c.id === alloc.classId);
+      warnings.push(
+        `Could not place ${subj.name} for ${cls?.name} — no free teacher/room slot satisfying constraints.`,
+      );
+    }
+  }
+
+  return { slots, warnings };
+}
+
+function validate(
+  slots: TimetableSlot[],
+  subjects: Subject[],
+  teachers: Teacher[],
+  rooms: Room[],
+  classes: SchoolClass[],
+): TimetableConflict[] {
+  const conflicts: TimetableConflict[] = [];
+  const teacherMap = new Map<string, TimetableSlot[]>();
+  const roomMap = new Map<string, TimetableSlot[]>();
+
+  for (const s of slots) {
+    const hasAny = s.subjectId || s.teacherId || s.roomId;
+    // Missing field check — only flag rows that were started.
+    if (hasAny && (!s.subjectId || !s.teacherId || !s.roomId)) {
+      const cls = classes.find((c) => c.id === s.classId);
+      conflicts.push({
+        id: `missing-${s.id}`,
+        type: "missing_field",
+        severity: "error",
+        description: `${cls?.name} • Day ${s.day + 1} P${s.period} (${s.startTime}–${s.endTime}) is missing ${[
+          !s.subjectId && "subject",
+          !s.teacherId && "teacher",
+          !s.roomId && "venue",
+        ].filter(Boolean).join(", ")}.`,
+        slotIds: [s.id],
+        suggestion: "Open the slot editor and complete all four fields, or re-run the AI agent.",
+      });
+    }
+    if (s.subjectId && s.teacherId) {
+      const k = `${s.day}-${s.period}-${s.teacherId}`;
+      const arr = teacherMap.get(k) ?? [];
+      arr.push(s);
+      teacherMap.set(k, arr);
+    }
+    if (s.subjectId && s.roomId) {
+      const k = `${s.day}-${s.period}-${s.roomId}`;
+      const arr = roomMap.get(k) ?? [];
+      arr.push(s);
+      roomMap.set(k, arr);
+    }
+    if (s.subjectId && s.roomId) {
+      const subj = subjects.find((x) => x.id === s.subjectId);
+      const room = rooms.find((x) => x.id === s.roomId);
+      if (subj && room && !subj.allowedRoomTypes.includes(room.type)) {
+        const cls = classes.find((c) => c.id === s.classId);
+        conflicts.push({
+          id: `roomtype-${s.id}`,
+          type: "wrong_room_type",
+          severity: "error",
+          description: `${subj.name} (${cls?.name}, P${s.period}) is in ${room.name} (${room.type}) — requires ${subj.allowedRoomTypes.join(" or ")}.`,
+          slotIds: [s.id],
+          suggestion: `Move to a ${subj.allowedRoomTypes[0]} room such as ${rooms.find((r) => subj.allowedRoomTypes.includes(r.type))?.name ?? "(none available)"}.`,
+        });
       }
     }
   }
-  return slots;
+
+  for (const [k, arr] of teacherMap) {
+    if (arr.length > 1) {
+      const t = teachers.find((x) => x.id === arr[0].teacherId);
+      conflicts.push({
+        id: `tdouble-${k}`,
+        type: "teacher_double",
+        severity: "error",
+        description: `${t?.name ?? "Teacher"} is double-booked at Day ${arr[0].day + 1} P${arr[0].period} (${arr[0].startTime}–${arr[0].endTime}) across ${arr.length} classes.`,
+        slotIds: arr.map((s) => s.id),
+        suggestion: `Reassign one class to another qualified teacher, or move the slot to a free period.`,
+      });
+    }
+  }
+  for (const [k, arr] of roomMap) {
+    if (arr.length > 1) {
+      const r = rooms.find((x) => x.id === arr[0].roomId);
+      conflicts.push({
+        id: `rdouble-${k}`,
+        type: "room_double",
+        severity: "error",
+        description: `${r?.name ?? "Room"} is double-booked at Day ${arr[0].day + 1} P${arr[0].period} (${arr[0].startTime}–${arr[0].endTime}).`,
+        slotIds: arr.map((s) => s.id),
+        suggestion: `Switch one class to another ${r?.type ?? "compatible"} room.`,
+      });
+    }
+  }
+  return conflicts;
 }
 
 const initialAllocations = seedAllocations();
-const initialSlots = seedTimetable(initialAllocations);
+const initialBuild = aiGenerateTimetable(initialAllocations, seedClasses, seedSubjects, seedRooms, seedTeachers);
 
 interface Ctx {
   teachers: Teacher[];
@@ -224,10 +376,14 @@ interface Ctx {
   allocations: Allocation[];
   slots: TimetableSlot[];
   periodSchedule: typeof PERIODS;
+  conflicts: TimetableConflict[];
+  notifications: TimetableNotification[];
   setAllocation: (classId: string, subjectId: string, teacherId: string) => void;
   removeAllocation: (allocationId: string) => void;
   updateSlot: (slotId: string, patch: Partial<TimetableSlot>) => void;
   rebuildTimetable: () => void;
+  runAIAgent: () => { warnings: string[]; placed: number };
+  clearNotifications: () => void;
   updateTeacher: (id: string, patch: Partial<Teacher>) => void;
 }
 
@@ -237,7 +393,27 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
   const [teachers, setTeachers] = useState<Teacher[]>(seedTeachers);
   const [classes] = useState<SchoolClass[]>(seedClasses);
   const [allocations, setAllocations] = useState<Allocation[]>(initialAllocations);
-  const [slots, setSlots] = useState<TimetableSlot[]>(initialSlots);
+  const [slots, setSlots] = useState<TimetableSlot[]>(initialBuild.slots);
+  const [notifications, setNotifications] = useState<TimetableNotification[]>([
+    {
+      id: `n-init`,
+      at: new Date().toISOString(),
+      kind: "ai_generated",
+      message: `AI Agent generated the master timetable — ${initialBuild.slots.filter((s) => s.subjectId).length} periods placed across ${seedClasses.length} classes.`,
+    },
+  ]);
+
+  const pushNotification = useCallback((n: Omit<TimetableNotification, "id" | "at">) => {
+    setNotifications((prev) => [
+      { id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, at: new Date().toISOString(), ...n },
+      ...prev,
+    ].slice(0, 50));
+  }, []);
+
+  const conflicts = useMemo(
+    () => validate(slots, seedSubjects, teachers, seedRooms, classes),
+    [slots, teachers, classes],
+  );
 
   const value = useMemo<Ctx>(() => ({
     teachers,
@@ -247,22 +423,71 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     allocations,
     slots,
     periodSchedule: PERIODS,
+    conflicts,
+    notifications,
     setAllocation: (classId, subjectId, teacherId) => {
       setAllocations((prev) => {
         const existing = prev.find((a) => a.classId === classId && a.subjectId === subjectId);
         const cs = classes.find((c) => c.id === classId)?.subjects.find((s) => s.subjectId === subjectId);
         const periods = cs?.periodsPerWeek ?? 3;
-        if (existing) {
-          return prev.map((a) => (a.id === existing.id ? { ...a, teacherId } : a));
-        }
+        if (existing) return prev.map((a) => (a.id === existing.id ? { ...a, teacherId } : a));
         return [...prev, { id: `a-${Date.now()}`, classId, subjectId, teacherId, periodsPerWeek: periods }];
       });
     },
     removeAllocation: (id) => setAllocations((prev) => prev.filter((a) => a.id !== id)),
-    updateSlot: (id, patch) => setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s))),
-    rebuildTimetable: () => setSlots(seedTimetable(allocations)),
+    updateSlot: (id, patch) => {
+      setSlots((prev) => prev.map((s) => {
+        if (s.id !== id) return s;
+        const next = { ...s, ...patch };
+        // Emit a notification describing what changed.
+        const subj = seedSubjects.find((x) => x.id === next.subjectId);
+        const teacher = teachers.find((x) => x.id === next.teacherId);
+        const room = seedRooms.find((x) => x.id === next.roomId);
+        const cls = classes.find((c) => c.id === next.classId);
+        const changes: string[] = [];
+        if (patch.teacherId && patch.teacherId !== s.teacherId) changes.push("teacher substituted");
+        if (patch.roomId && patch.roomId !== s.roomId) changes.push("venue changed");
+        if ((patch.startTime && patch.startTime !== s.startTime) || (patch.endTime && patch.endTime !== s.endTime)) changes.push("time adjusted");
+        if (patch.subjectId && patch.subjectId !== s.subjectId) changes.push("subject changed");
+        const kind: TimetableNotification["kind"] = patch.teacherId && patch.teacherId !== s.teacherId
+          ? "substitution"
+          : patch.roomId && patch.roomId !== s.roomId
+            ? "venue_changed"
+            : (patch.startTime || patch.endTime)
+              ? "time_changed"
+              : "slot_changed";
+        pushNotification({
+          kind,
+          message: `${cls?.name ?? ""} • ${subj?.name ?? "Slot"} — ${changes.join(", ") || "updated"}.`,
+          subjectName: subj?.name,
+          teacherName: teacher?.name,
+          className: cls?.name,
+          roomName: room?.name,
+          startTime: next.startTime,
+          endTime: next.endTime,
+          day: next.day,
+          period: next.period,
+        });
+        return next;
+      }));
+    },
+    rebuildTimetable: () => {
+      const built = aiGenerateTimetable(allocations, classes, seedSubjects, seedRooms, teachers);
+      setSlots(built.slots);
+    },
+    runAIAgent: () => {
+      const built = aiGenerateTimetable(allocations, classes, seedSubjects, seedRooms, teachers);
+      setSlots(built.slots);
+      const placed = built.slots.filter((s) => s.subjectId).length;
+      pushNotification({
+        kind: "ai_generated",
+        message: `AI Agent regenerated the master timetable — ${placed} periods placed${built.warnings.length ? `, ${built.warnings.length} warning(s)` : ""}.`,
+      });
+      return { warnings: built.warnings, placed };
+    },
+    clearNotifications: () => setNotifications([]),
     updateTeacher: (id, patch) => setTeachers((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
-  }), [teachers, classes, allocations, slots]);
+  }), [teachers, classes, allocations, slots, conflicts, notifications, pushNotification]);
 
   return <AllocationCtx.Provider value={value}>{children}</AllocationCtx.Provider>;
 }
