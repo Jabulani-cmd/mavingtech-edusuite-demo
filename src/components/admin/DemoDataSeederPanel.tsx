@@ -70,6 +70,41 @@ export default function DemoDataSeederPanel() {
     })();
   }
 
+  async function persistStudentsToDb(seed: ReturnType<typeof generateDemoSeed>) {
+    // Insert seeded students into the DB so they appear in the Admin → Students section
+    // (which reads from the `students` table). Logged-in admin satisfies RLS.
+    const rows = seed.students.map(s => {
+      const [first, ...rest] = s.fullName.split(" ");
+      const last = rest.join(" ");
+      const parent = seed.parents.find(p => p.studentId === s.id);
+      return {
+        admission_number: s.admissionNumber,
+        full_name: s.fullName,
+        first_name: first,
+        last_name: last,
+        email: s.email,
+        date_of_birth: s.dob,
+        gender: s.gender,
+        form: `Form ${s.form}`,
+        stream: s.stream,
+        class: `Form ${s.form}${s.stream}`,
+        boarding_status: "day",
+        status: "active",
+        guardian_name: parent?.fullName ?? null,
+        guardian_phone: parent?.phone ?? null,
+        guardian_email: parent?.email ?? null,
+      };
+    });
+    // Chunk to keep request size small.
+    for (let i = 0; i < rows.length; i += 60) {
+      const chunk = rows.slice(i, i + 60);
+      const { error } = await supabase
+        .from("students")
+        .upsert(chunk, { onConflict: "admission_number" });
+      if (error) throw error;
+    }
+  }
+
   async function handleLoad() {
     setRunning(true);
     setStepIdx(0);
