@@ -1010,23 +1010,21 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
           </TabsContent>
 
           {/* Timetable Tab */}
-          <TabsContent value="timetable">
+          <TabsContent value="timetable" className="space-y-4">
+            <AISmartTimetable />
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="font-heading">School Timetables</CardTitle>
+                <CardTitle className="font-heading">Advanced Tools</CardTitle>
                 <div className="flex gap-2 flex-wrap">
                   <Button onClick={() => window.location.assign("/portal/allocations")} variant="secondary">
-                    <Calendar className="mr-2 h-4 w-4" /> Teacher Allocations (Demo)
+                    <Calendar className="mr-2 h-4 w-4" /> Teacher Allocations
                   </Button>
                   <Button onClick={() => window.location.assign("/portal/timetables")}>
-                    <Calendar className="mr-2 h-4 w-4" /> Open Timetable Management
+                    <Calendar className="mr-2 h-4 w-4" /> Timetable Management
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Live view of published timetables. Create, AI-generate, edit and publish from Timetable Management — changes appear here and in every portal in real time.
-                </p>
                 <PublishedTimetableWidget title="Published Class Timetable" mode="class" />
               </CardContent>
             </Card>
