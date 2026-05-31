@@ -229,6 +229,13 @@ export default function DemoDataSeederPanel() {
     } catch (e: any) {
       toast({ title: "Account provisioning failed", description: e?.message || "Could not create login accounts", variant: "destructive" });
     }
+    // Auth accounts must exist before we can link staff.user_id via profiles email.
+    try {
+      await persistTimetableToDb(seed);
+    } catch (e: any) {
+      console.error(e);
+      toast({ title: "Saving timetable failed", description: e?.message || "Could not save classes/timetable to the database", variant: "destructive" });
+    }
     setStepIdx(8);
     await new Promise(r => setTimeout(r, 300));
 
