@@ -156,6 +156,7 @@ export default function DemoDataSeederPanel() {
     if (!confirm("Remove all seeded demo data and reset to a clean state? Real data is untouched.")) return;
     alloc.resetToSeed();
     people.clear();
+    try { window.localStorage.removeItem("mt_demo_allocation_v1"); } catch {}
     setSummary(null);
     // Remove demo students from DB (identified by the STU#### admission prefix).
     try {
