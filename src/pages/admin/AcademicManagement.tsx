@@ -166,7 +166,7 @@ export default function AcademicManagement() {
     if (data) setStudents(data);
   }
   async function fetchTimetable() {
-    const { data } = await supabase.from("timetable_entries").select("*, subjects(name), staff:teacher_id(full_name), classes(name)").order("day_of_week");
+    const { data } = await supabase.from("timetable_entries").select("*, subjects(name), staff(full_name), classes(name)").order("day_of_week");
     if (data) setTimetableEntries(data);
   }
   async function fetchSportsSchedule() {
@@ -174,7 +174,7 @@ export default function AcademicManagement() {
     if (data) setSportsEntries(data);
   }
   async function fetchClassSubjects() {
-    const { data } = await supabase.from("class_subjects").select("*, classes(name), subjects(name), staff:teacher_id(full_name)").order("created_at");
+    const { data } = await supabase.from("class_subjects").select("*, classes(name), subjects(name), staff(full_name)").order("created_at");
     if (data) setClassSubjects(data);
   }
   async function fetchExams() {

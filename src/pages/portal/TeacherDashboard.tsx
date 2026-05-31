@@ -165,7 +165,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
 
   useEffect(() => {
     if (selectedTTClass) {
-      supabase.from("timetable_entries").select("*, subjects(name), staff:teacher_id(full_name)").eq("class_id", selectedTTClass).order("start_time").then(({ data }) => {
+      supabase.from("timetable_entries").select("*, subjects(name), staff(full_name)").eq("class_id", selectedTTClass).order("start_time").then(({ data }) => {
         if (data) setTimetableData(data || []);
       });
     }

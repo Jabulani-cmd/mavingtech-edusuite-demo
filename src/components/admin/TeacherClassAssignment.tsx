@@ -61,8 +61,8 @@ export default function TeacherClassAssignment({ classes, subjects, staff, onRef
   async function fetchData() {
     setLoading(true);
     const [{ data: cs }, { data: tt }] = await Promise.all([
-      supabase.from("class_subjects").select("*, classes(name, form_level), subjects(name), staff:teacher_id(full_name)").order("created_at"),
-      supabase.from("timetable_entries").select("*, classes(name), subjects(name), staff:teacher_id(full_name)").order("day_of_week"),
+      supabase.from("class_subjects").select("*, classes(name, form_level), subjects(name), staff(full_name)").order("created_at"),
+      supabase.from("timetable_entries").select("*, classes(name), subjects(name), staff(full_name)").order("day_of_week"),
     ]);
     setAssignments(cs || []);
     setTimetableEntries(tt || []);
