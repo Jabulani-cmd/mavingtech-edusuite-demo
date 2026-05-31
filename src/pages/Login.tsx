@@ -135,6 +135,23 @@ export default function Login() {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
 
+                <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    First-time demo? Provision the admin account, then sign in. Inside the admin dashboard use "Load Demo Data" to provision all teacher, student & parent logins.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSeedDemoAdmin}
+                    disabled={seedingDemo}
+                    className="w-full"
+                  >
+                    {seedingDemo ? "Provisioning…" : "Provision demo admin (admin@schooldemo.com)"}
+                  </Button>
+                </div>
+
+
 
                 <div className="text-center space-y-1">
                   <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
