@@ -12,6 +12,7 @@ import { useAllocation } from "@/contexts/AllocationContext";
 import { useDemoPeople } from "@/contexts/DemoPeopleContext";
 import { generateDemoSeed, DEMO_PERIODS } from "@/lib/demoSeeder";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const STEPS = [
   "Generating venues and classrooms",
