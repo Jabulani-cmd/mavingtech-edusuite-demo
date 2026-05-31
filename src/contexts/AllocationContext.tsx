@@ -428,6 +428,15 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     periodSchedule: PERIODS,
     conflicts,
     notifications,
+    publishedAt,
+    publishTimetable: () => {
+      const now = new Date().toISOString();
+      setPublishedAt(now);
+      pushNotification({
+        kind: "ai_generated",
+        message: `Timetable published — synced to student, teacher and admin portals.`,
+      });
+    },
     setAllocation: (classId, subjectId, teacherId) => {
       setAllocations((prev) => {
         const existing = prev.find((a) => a.classId === classId && a.subjectId === subjectId);
