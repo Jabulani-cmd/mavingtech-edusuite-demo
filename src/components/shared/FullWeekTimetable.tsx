@@ -38,6 +38,7 @@ interface TimetableEntry {
   end_time?: string;
   subjects?: { name: string } | null;
   staff?: { full_name: string } | null;
+  classes?: { name: string } | null;
   room?: string | null;
   activity_name?: string;
   venue?: string;
