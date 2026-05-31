@@ -766,6 +766,8 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
           />
         )}
 
+        <div className="mb-4 sm:mb-6"><DemoDataSeederPanel /></div>
+
         <Tabs defaultValue="announcements" className="space-y-4 sm:space-y-6">
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide rounded-xl border bg-card p-1.5">
             <TabsList className="flex-wrap gap-1 bg-transparent h-auto p-0 w-max sm:w-auto">
