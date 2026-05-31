@@ -11,6 +11,7 @@ import { Lock, Home, Eye, EyeOff } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const navigate = useNavigate();
