@@ -20,9 +20,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  
+  const [seedingDemo, setSeedingDemo] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // Admin seeding runs server-side; no client-side seed call needed.
+
+  const handleSeedDemoAdmin = async () => {
+    setSeedingDemo(true);
+    try {
+      const { error } = await supabase.functions.invoke("seed-demo-accounts", { body: {} });
+      if (error) throw error;
+      setEmail("admin@schooldemo.com");
+      setPassword("Demo@2025");
+      toast({ title: "Demo admin ready", description: "Credentials pre-filled — click Sign In." });
+    } catch (e: any) {
+      toast({ title: "Could not provision demo admin", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setSeedingDemo(false);
+    }
+  };
 
   // Track whether a manual login was just performed
   const [justLoggedIn, setJustLoggedIn] = useState(false);
