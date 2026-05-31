@@ -378,11 +378,13 @@ interface Ctx {
   periodSchedule: typeof PERIODS;
   conflicts: TimetableConflict[];
   notifications: TimetableNotification[];
+  publishedAt: string | null;
   setAllocation: (classId: string, subjectId: string, teacherId: string) => void;
   removeAllocation: (allocationId: string) => void;
   updateSlot: (slotId: string, patch: Partial<TimetableSlot>) => void;
   rebuildTimetable: () => void;
   runAIAgent: () => { warnings: string[]; placed: number };
+  publishTimetable: () => void;
   clearNotifications: () => void;
   updateTeacher: (id: string, patch: Partial<Teacher>) => void;
 }
