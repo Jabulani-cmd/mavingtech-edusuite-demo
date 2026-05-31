@@ -395,7 +395,9 @@ const AllocationCtx = createContext<Ctx | null>(null);
 
 export function AllocationProvider({ children }: { children: ReactNode }) {
   const [teachers, setTeachers] = useState<Teacher[]>(seedTeachers);
-  const [classes] = useState<SchoolClass[]>(seedClasses);
+  const [subjects, setSubjects] = useState<Subject[]>(seedSubjects);
+  const [rooms, setRooms] = useState<Room[]>(seedRooms);
+  const [classes, setClasses] = useState<SchoolClass[]>(seedClasses);
   const [allocations, setAllocations] = useState<Allocation[]>(initialAllocations);
   const [slots, setSlots] = useState<TimetableSlot[]>(initialBuild.slots);
   const [notifications, setNotifications] = useState<TimetableNotification[]>([
