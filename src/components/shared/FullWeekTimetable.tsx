@@ -14,7 +14,7 @@ import {
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-const timeSlots = [
+const defaultTimeSlots = [
   { start: "07:30", end: "08:10" },
   { start: "08:10", end: "08:50" },
   { start: "08:50", end: "09:30" },
@@ -31,6 +31,12 @@ const timeSlots = [
   { start: "15:30", end: "16:10", isSports: true },
   { start: "16:10", end: "17:00", isSports: true },
 ];
+
+function normalizeTime(t?: string) {
+  if (!t) return "";
+  return t.slice(0, 5); // "07:30:00" -> "07:30"
+}
+
 
 interface TimetableEntry {
   day_of_week: number;
@@ -65,28 +71,47 @@ export default function FullWeekTimetable({
 }: Props) {
   const today = new Date().getDay(); // 0=Sun, 1=Mon...
 
+  // Detect whether entries use 0-indexed (0=Mon) or 1-indexed (1=Mon) days
+  const dayOffset = useMemo(() => {
+    if (!entries.length) return 1; // default 1-indexed
+    const min = Math.min(...entries.map((e) => e.day_of_week ?? 99));
+    return min === 0 ? 0 : 1;
+  }, [entries]);
+
+  // Build time slots dynamically from actual entries, fallback to defaults
+  const timeSlots = useMemo(() => {
+    const allTimes = [
+      ...entries.map((e) => ({ start: normalizeTime(e.start_time), end: normalizeTime(e.end_time) })),
+      ...sportsSchedule.map((e) => ({ start: normalizeTime(e.start_time), end: normalizeTime(e.end_time), isSports: true })),
+    ].filter((s) => s.start);
+
+    if (allTimes.length === 0) return defaultTimeSlots;
+
+    const uniq = new Map<string, { start: string; end: string; isSports?: boolean }>();
+    for (const s of allTimes) {
+      if (!uniq.has(s.start)) uniq.set(s.start, s);
+    }
+    return Array.from(uniq.values()).sort((a, b) => a.start.localeCompare(b.start));
+  }, [entries, sportsSchedule]);
+
   const getCell = useMemo(() => {
     return (startTime: string, dayIndex: number) => {
-      // Try both 0-indexed and 1-indexed day_of_week conventions
-      const entry = entries.find(
-        (t) =>
-          t.start_time === startTime &&
-          (t.day_of_week === dayIndex || t.day_of_week === dayIndex + 1)
+      const target = normalizeTime(startTime);
+      return entries.find(
+        (t) => normalizeTime(t.start_time) === target && t.day_of_week === dayIndex + dayOffset
       );
-      return entry;
     };
-  }, [entries]);
+  }, [entries, dayOffset]);
 
   const getSportsCell = useMemo(() => {
     return (startTime: string, dayIndex: number) => {
-      const entry = sportsSchedule.find(
-        (t) =>
-          t.start_time === startTime &&
-          (t.day_of_week === dayIndex || t.day_of_week === dayIndex + 1)
+      const target = normalizeTime(startTime);
+      return sportsSchedule.find(
+        (t) => normalizeTime(t.start_time) === target && t.day_of_week === dayIndex + dayOffset
       );
-      return entry;
     };
-  }, [sportsSchedule]);
+  }, [sportsSchedule, dayOffset]);
+
 
   if (loading) {
     return (
