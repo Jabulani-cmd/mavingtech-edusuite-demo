@@ -499,7 +499,7 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     },
     clearNotifications: () => setNotifications([]),
     updateTeacher: (id, patch) => setTeachers((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
-  }), [teachers, classes, allocations, slots, conflicts, notifications, pushNotification]);
+  }), [teachers, classes, allocations, slots, conflicts, notifications, publishedAt, pushNotification]);
 
   return <AllocationCtx.Provider value={value}>{children}</AllocationCtx.Provider>;
 }
