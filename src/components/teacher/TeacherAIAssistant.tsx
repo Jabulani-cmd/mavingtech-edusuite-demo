@@ -59,50 +59,16 @@ export default function TeacherAIAssistant() {
       });
     };
 
+    // DEMO MODE: simulated streaming response — no API key needed.
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/teacher-ai-assistant`;
-      const resp = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ messages: next, model, task }),
-      });
-
-      if (resp.status === 429) { toast({ title: "Rate limit", description: "Too many AI requests. Wait a moment and try again.", variant: "destructive" }); setStreaming(false); return; }
-      if (resp.status === 402) { toast({ title: "AI credits exhausted", description: "Please contact your administrator.", variant: "destructive" }); setStreaming(false); return; }
-      if (!resp.ok || !resp.body) { toast({ title: "AI error", description: "Failed to start AI response.", variant: "destructive" }); setStreaming(false); return; }
-
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let done = false;
-      while (!done) {
-        const { done: d, value } = await reader.read();
-        if (d) break;
-        buffer += decoder.decode(value, { stream: true });
-        let nl;
-        while ((nl = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, nl);
-          buffer = buffer.slice(nl + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") { done = true; break; }
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) upsert(content);
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
-          }
-        }
+      const reply = buildDemoReply(task, model, userMsg.content);
+      const tokens = reply.match(/\S+\s*|\s+/g) ?? [reply];
+      // small initial "thinking" delay
+      await new Promise(r => setTimeout(r, 350));
+      for (const t of tokens) {
+        await new Promise(r => setTimeout(r, 20 + Math.random() * 35));
+        upsert(t);
       }
-    } catch (e: any) {
-      toast({ title: "AI error", description: e.message || "Unknown error", variant: "destructive" });
     } finally {
       setStreaming(false);
     }
