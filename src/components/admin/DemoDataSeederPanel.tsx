@@ -139,23 +139,44 @@ export default function DemoDataSeederPanel() {
     const { data: existingStaff } = await supabase.from("staff").select("id, email, user_id").in("email", teacherEmails);
     const staffByEmail = new Map((existingStaff ?? []).map(s => [s.email?.toLowerCase(), s]));
 
+    // Department mapping (first qualified subject → dept name)
+    const DEPT: Record<string, string> = {
+      Mathematics: "Mathematics", English: "Languages", Shona: "Languages", Ndebele: "Languages",
+      Physics: "Sciences", Chemistry: "Sciences", Biology: "Sciences",
+      History: "Humanities", Geography: "Humanities", "Religious Studies": "Humanities",
+      "Computer Science": "Technical", "Technical Graphics": "Technical", Agriculture: "Technical",
+      "Physical Education": "Sports", Art: "Arts", Music: "Arts",
+      Accounts: "Commercials", Commerce: "Commercials", Business: "Commercials",
+    };
+    const deptFor = (t: any) => {
+      const subName = seed.subjects.find(s => s.id === t.qualifiedSubjects?.[0])?.name ?? "";
+      return DEPT[subName] ?? "Teaching";
+    };
+
     const staffIdMap = new Map<string, string>();
     for (const t of seed.teachers) {
       const key = t.email.toLowerCase();
       const uid = uidByEmail.get(key) ?? null;
       const existing = staffByEmail.get(key);
+      const subjectsTaught = t.qualifiedSubjects.map(sid => seed.subjects.find(s => s.id === sid)?.name).filter(Boolean);
+      const dept = deptFor(t);
       if (existing) {
         staffIdMap.set(t.id, existing.id);
-        if (uid && existing.user_id !== uid) {
-          await supabase.from("staff").update({ user_id: uid }).eq("id", existing.id);
-        }
+        await supabase.from("staff").update({
+          user_id: uid ?? existing.user_id ?? null,
+          role: "teacher", department: dept,
+          category: "teaching", status: "active",
+          subjects_taught: subjectsTaught,
+        }).eq("id", existing.id);
       } else {
         const { data: ins, error } = await supabase.from("staff").insert({
           full_name: t.name, email: t.email, user_id: uid,
+          role: "teacher", department: dept,
           category: "teaching", status: "active",
-          subjects_taught: t.qualifiedSubjects.map(sid => seed.subjects.find(s => s.id === sid)?.name).filter(Boolean),
+          subjects_taught: subjectsTaught,
         }).select("id").single();
         if (!error && ins) staffIdMap.set(t.id, ins.id);
+        else if (error) console.error("staff insert failed", t.email, error);
       }
     }
 
@@ -179,7 +200,7 @@ export default function DemoDataSeederPanel() {
       await supabase.from("class_subjects").upsert(chunk, { onConflict: "class_id,subject_id" });
     }
 
-    // 6) timetable_entries — wipe demo term then insert
+    // 6) timetable_entries — wipe demo term then insert (FullWeekTimetable widget)
     await supabase.from("timetable_entries").delete().eq("term", "DEMO");
     const ttRows = seed.slots.filter(s => s.subjectId).map(s => {
       const room = seed.rooms.find(r => r.id === s.roomId);
@@ -197,6 +218,53 @@ export default function DemoDataSeederPanel() {
     for (let i = 0; i < ttRows.length; i += 100) {
       const chunk = ttRows.slice(i, i + 100);
       await supabase.from("timetable_entries").insert(chunk);
+    }
+
+    // 7) tt_definitions + tt_slots — PublishedTimetableWidget across all portals
+    await supabase.from("tt_definitions").delete().like("name", "DEMO %");
+    // period 1..8 → visible row index (4=Break, 7=Lunch)
+    const periodToRow: Record<number, number> = { 1: 1, 2: 2, 3: 3, 4: 5, 5: 6, 6: 8, 7: 9, 8: 10 };
+    const breakRows = [
+      { period_index: 4, start_time: "09:45", end_time: "10:00", break_label: "Break" },
+      { period_index: 7, start_time: "11:30", end_time: "12:00", break_label: "Lunch" },
+    ];
+    for (const c of seed.classes) {
+      const dbClsId = classIdMap.get(c.id);
+      if (!dbClsId) continue;
+      const { data: def, error: defErr } = await supabase.from("tt_definitions").insert({
+        name: `DEMO ${c.name}`, type: "class", class_label: c.name,
+        term: "DEMO", academic_year: String(new Date().getFullYear()),
+        school_days: [1, 2, 3, 4, 5], period_minutes: 45, periods_per_day: 8,
+        day_start_time: "07:30", status: "active",
+      }).select("id").single();
+      if (defErr || !def) { console.error("tt_definitions insert failed", c.name, defErr); continue; }
+
+      const classSlots = seed.slots.filter(s => s.classId === c.id && s.subjectId);
+      const slotRows: any[] = [];
+      for (let day = 1; day <= 5; day++) {
+        for (const b of breakRows) {
+          slotRows.push({
+            definition_id: def.id, day_of_week: day, period_index: b.period_index,
+            start_time: b.start_time, end_time: b.end_time,
+            is_break: true, break_label: b.break_label,
+          });
+        }
+        for (const s of classSlots.filter(x => x.day === day - 1)) {
+          const subj = seed.subjects.find(x => x.id === s.subjectId);
+          const teach = seed.teachers.find(x => x.id === s.teacherId);
+          const room = seed.rooms.find(x => x.id === s.roomId);
+          slotRows.push({
+            definition_id: def.id, day_of_week: day,
+            period_index: periodToRow[s.period] ?? s.period,
+            start_time: s.startTime, end_time: s.endTime, is_break: false,
+            subject_name: subj?.name ?? null, subject_color: subj?.color ?? null,
+            teacher_name: teach?.name ?? null, room: room?.name ?? null,
+          });
+        }
+      }
+      for (let i = 0; i < slotRows.length; i += 100) {
+        await supabase.from("tt_slots").insert(slotRows.slice(i, i + 100));
+      }
     }
   }
 
@@ -264,6 +332,7 @@ export default function DemoDataSeederPanel() {
     try {
       await supabase.from("students").delete().like("admission_number", "STU%");
       await supabase.from("timetable_entries").delete().eq("term", "DEMO");
+      await supabase.from("tt_definitions").delete().like("name", "DEMO %");
       await supabase.from("class_subjects").delete().in("class_id",
         (await supabase.from("classes").select("id").like("name", "Form %")).data?.map(r => r.id) ?? []);
       await supabase.from("classes").delete().like("name", "Form %");
