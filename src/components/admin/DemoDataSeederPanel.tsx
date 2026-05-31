@@ -70,6 +70,41 @@ export default function DemoDataSeederPanel() {
     })();
   }
 
+  async function persistStudentsToDb(seed: ReturnType<typeof generateDemoSeed>) {
+    // Insert seeded students into the DB so they appear in the Admin → Students section
+    // (which reads from the `students` table). Logged-in admin satisfies RLS.
+    const rows = seed.students.map(s => {
+      const [first, ...rest] = s.fullName.split(" ");
+      const last = rest.join(" ");
+      const parent = seed.parents.find(p => p.studentId === s.id);
+      return {
+        admission_number: s.admissionNumber,
+        full_name: s.fullName,
+        first_name: first,
+        last_name: last,
+        email: s.email,
+        date_of_birth: s.dob,
+        gender: s.gender,
+        form: `Form ${s.form}`,
+        stream: s.stream,
+        class: `Form ${s.form}${s.stream}`,
+        boarding_status: "day",
+        status: "active",
+        guardian_name: parent?.fullName ?? null,
+        guardian_phone: parent?.phone ?? null,
+        guardian_email: parent?.email ?? null,
+      };
+    });
+    // Chunk to keep request size small.
+    for (let i = 0; i < rows.length; i += 60) {
+      const chunk = rows.slice(i, i + 60);
+      const { error } = await supabase
+        .from("students")
+        .upsert(chunk, { onConflict: "admission_number" });
+      if (error) throw error;
+    }
+  }
+
   async function handleLoad() {
     setRunning(true);
     setStepIdx(0);
@@ -89,6 +124,11 @@ export default function DemoDataSeederPanel() {
     people.setSeed({ students: seed.students, parents: seed.parents });
 
     setStepIdx(7);
+    try {
+      await persistStudentsToDb(seed);
+    } catch (e: any) {
+      toast({ title: "Saving students failed", description: e?.message || "Could not save students to the database", variant: "destructive" });
+    }
     try {
       await provisionAuthAccounts(seed);
     } catch (e: any) {
@@ -112,11 +152,17 @@ export default function DemoDataSeederPanel() {
     toast({ title: "Demo data loaded", description: `Admin + ${summ.teachers} teachers can log in now. Students & parents finishing in background.` });
   }
 
-  function handleClear() {
+  async function handleClear() {
     if (!confirm("Remove all seeded demo data and reset to a clean state? Real data is untouched.")) return;
     alloc.resetToSeed();
     people.clear();
     setSummary(null);
+    // Remove demo students from DB (identified by the STU#### admission prefix).
+    try {
+      await supabase.from("students").delete().like("admission_number", "STU%");
+    } catch (e) {
+      console.error("Failed clearing demo students from DB", e);
+    }
     toast({ title: "Demo data cleared", description: "Application reset to a clean state." });
   }
 
