@@ -83,12 +83,13 @@ export default function DemoDataSeederPanel() {
   function downloadCredentialsCsv() {
     if (!people.students.length) return;
     const lines = ["role,full_name,reference,email,password"];
+    lines.push(`admin,"Administrator","Full access",admin@schooldemo.com,Demo@2025`);
+    alloc.teachers.forEach(t => lines.push(`teacher,"${t.name}","${t.employeeNumber}",${t.email},Teacher@2025`));
     people.students.forEach(s => lines.push(`student,"${s.fullName}","${s.admissionNumber} • Form ${s.form}${s.stream}",${s.email},${s.password}`));
     people.parents.forEach(p => {
       const child = people.students.find(s => s.id === p.studentId);
       lines.push(`parent (${p.relationship}),"${p.fullName}","Child: ${child?.fullName ?? ""}",${p.email},${p.password}`);
     });
-    alloc.teachers.forEach(t => lines.push(`teacher,"${t.name}","${t.employeeNumber}",${t.email},demo123`));
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

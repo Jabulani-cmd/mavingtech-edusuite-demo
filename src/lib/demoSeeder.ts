@@ -109,7 +109,7 @@ export function generateDemoSeed(): DemoSeed {
   }));
 
   // ---- Teachers (20) ----
-  // Distribute subjects across teachers, ensuring every subject has >=1 teacher.
+  // Emails follow demo credential doc: <first>.<surname>@schooldemo.com / Teacher@2025
   const teachers: Teacher[] = [];
   for (let i = 0; i < 20; i++) {
     const isFemale = i % 2 === 0;
@@ -119,8 +119,8 @@ export function generateDemoSeed(): DemoSeed {
     teachers.push({
       id: `t-${i + 1}`,
       name: `${title} ${first} ${surname}`,
-      email: `${surname.toLowerCase()}.${first.toLowerCase()}@mavingtech.ac.zw`,
-      employeeNumber: `MHS-S${String(i + 1).padStart(5, "0")}`,
+      email: `${first.toLowerCase()}.${surname.toLowerCase()}@schooldemo.com`,
+      employeeNumber: `T${String(i + 1).padStart(3, "0")}`,
       employmentType: i % 7 === 0 ? "Part-time" : "Full-time",
       maxPeriodsPerWeek: i % 7 === 0 ? 18 : 30,
       preferredTime: "Both",
@@ -181,8 +181,8 @@ export function generateDemoSeed(): DemoSeed {
       const birthYear = new Date().getFullYear() - age;
       const month = ((sIdx * 3) % 12) + 1;
       const day = ((sIdx * 7) % 27) + 1;
-      const admissionNumber = `MHS${String(2026000 + sIdx + 1)}`;
-      const email = `${admissionNumber.toLowerCase()}@students.mavingtech.ac.zw`;
+      const admissionNumber = `STU${String(sIdx + 1).padStart(4, "0")}`;
+      const email = `${first.toLowerCase()}.${surname.toLowerCase()}${sIdx + 1}@student.schooldemo.com`;
       students.push({
         id: `st-${sIdx + 1}`,
         fullName: `${first} ${surname}`,
@@ -193,26 +193,28 @@ export function generateDemoSeed(): DemoSeed {
         stream: c.stream as "A" | "B",
         classId: c.id,
         email,
-        password: "demo123",
+        password: "Student@2025",
       });
       sIdx++;
     }
   }
 
   // ---- Parents (2 per student = 360) ----
+  // Emails: <first>.<surname>p<parentIdx>.<studentNum>@parent.schooldemo.com / Parent@2025
   const parents: DemoParent[] = [];
   students.forEach((stu, i) => {
     const surname = stu.fullName.split(" ").slice(-1)[0];
     const father = pick(ZW_FIRST_M, i + 4);
     const mother = pick(ZW_FIRST_F, i + 6);
+    const studentNum = i + 1;
     parents.push({
       id: `p-${i * 2 + 1}`,
       studentId: stu.id,
       fullName: `${father} ${surname}`,
       relationship: "Father",
       phone: `+263 77${String(1000000 + i).slice(0, 7)}`,
-      email: `${father.toLowerCase()}.${surname.toLowerCase()}${i}@parents.mavingtech.ac.zw`,
-      password: "demo123",
+      email: `${father.toLowerCase()}.${surname.toLowerCase()}p1.${studentNum}@parent.schooldemo.com`,
+      password: "Parent@2025",
     });
     parents.push({
       id: `p-${i * 2 + 2}`,
@@ -220,8 +222,8 @@ export function generateDemoSeed(): DemoSeed {
       fullName: `${mother} ${surname}`,
       relationship: "Mother",
       phone: `+263 78${String(2000000 + i).slice(0, 7)}`,
-      email: `${mother.toLowerCase()}.${surname.toLowerCase()}${i}@parents.mavingtech.ac.zw`,
-      password: "demo123",
+      email: `${mother.toLowerCase()}.${surname.toLowerCase()}p2.${studentNum}@parent.schooldemo.com`,
+      password: "Parent@2025",
     });
   });
 
