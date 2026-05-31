@@ -378,11 +378,13 @@ interface Ctx {
   periodSchedule: typeof PERIODS;
   conflicts: TimetableConflict[];
   notifications: TimetableNotification[];
+  publishedAt: string | null;
   setAllocation: (classId: string, subjectId: string, teacherId: string) => void;
   removeAllocation: (allocationId: string) => void;
   updateSlot: (slotId: string, patch: Partial<TimetableSlot>) => void;
   rebuildTimetable: () => void;
   runAIAgent: () => { warnings: string[]; placed: number };
+  publishTimetable: () => void;
   clearNotifications: () => void;
   updateTeacher: (id: string, patch: Partial<Teacher>) => void;
 }
@@ -402,6 +404,7 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
       message: `AI Agent generated the master timetable — ${initialBuild.slots.filter((s) => s.subjectId).length} periods placed across ${seedClasses.length} classes.`,
     },
   ]);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
 
   const pushNotification = useCallback((n: Omit<TimetableNotification, "id" | "at">) => {
     setNotifications((prev) => [
@@ -425,6 +428,15 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     periodSchedule: PERIODS,
     conflicts,
     notifications,
+    publishedAt,
+    publishTimetable: () => {
+      const now = new Date().toISOString();
+      setPublishedAt(now);
+      pushNotification({
+        kind: "ai_generated",
+        message: `Timetable published — synced to student, teacher and admin portals.`,
+      });
+    },
     setAllocation: (classId, subjectId, teacherId) => {
       setAllocations((prev) => {
         const existing = prev.find((a) => a.classId === classId && a.subjectId === subjectId);
@@ -487,7 +499,7 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     },
     clearNotifications: () => setNotifications([]),
     updateTeacher: (id, patch) => setTeachers((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
-  }), [teachers, classes, allocations, slots, conflicts, notifications, pushNotification]);
+  }), [teachers, classes, allocations, slots, conflicts, notifications, publishedAt, pushNotification]);
 
   return <AllocationCtx.Provider value={value}>{children}</AllocationCtx.Provider>;
 }

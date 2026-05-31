@@ -16,6 +16,7 @@ import InventoryManagement from "@/pages/admin/InventoryManagement";
 import CommunicationModule from "@/pages/admin/CommunicationModule";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import AISmartTimetable from "@/components/timetable/AISmartTimetable";
+import AITimetableBuilderAgent from "@/components/timetable/AITimetableBuilderAgent";
 import EMISReports from "@/pages/admin/EMISReports";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -1012,6 +1013,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
 
           {/* Timetable Tab */}
           <TabsContent value="timetable" className="space-y-4">
+            <AITimetableBuilderAgent />
             <AISmartTimetable />
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
