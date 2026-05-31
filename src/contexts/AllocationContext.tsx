@@ -404,6 +404,7 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
       message: `AI Agent generated the master timetable — ${initialBuild.slots.filter((s) => s.subjectId).length} periods placed across ${seedClasses.length} classes.`,
     },
   ]);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
 
   const pushNotification = useCallback((n: Omit<TimetableNotification, "id" | "at">) => {
     setNotifications((prev) => [
