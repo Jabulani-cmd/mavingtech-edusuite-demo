@@ -71,7 +71,13 @@ export default function PortalTimetableView({ mode, teacherId, classId, title, s
                     </div>
                     <div className="mt-2 font-semibold">{subj.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {mode === "teacher" ? cls?.name : teacher?.name} • {room?.name}
+                      Class: {cls?.name ?? "—"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Teacher: {teacher?.name ?? "—"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Venue: {room?.name ?? "—"}
                     </div>
                   </Card>
                 );

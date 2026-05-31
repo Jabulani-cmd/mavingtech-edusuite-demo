@@ -38,6 +38,7 @@ interface TimetableEntry {
   end_time?: string;
   subjects?: { name: string } | null;
   staff?: { full_name: string } | null;
+  classes?: { name: string } | null;
   room?: string | null;
   activity_name?: string;
   venue?: string;
@@ -138,7 +139,9 @@ export default function FullWeekTimetable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {timeSlots.map((slot, si) => (
+              {(() => { let periodCounter = 0; return timeSlots.map((slot, si) => {
+                const periodNum = !slot.isBreak ? ++periodCounter : null;
+                return (
                 <TableRow
                   key={si}
                   className={
@@ -150,6 +153,11 @@ export default function FullWeekTimetable({
                   }
                 >
                   <TableCell className="whitespace-nowrap py-2 text-xs font-medium">
+                    {periodNum && (
+                      <span className="block text-[10px] font-bold text-primary">
+                        P{periodNum}
+                      </span>
+                    )}
                     {slot.start}–{slot.end}
                     {slot.isBreak && (
                       <span className="block text-[10px] text-muted-foreground italic">
@@ -178,15 +186,20 @@ export default function FullWeekTimetable({
                       return (
                         <TableCell
                           key={di}
-                          className={`py-2 text-center text-xs ${
+                          className={`py-2 text-center text-xs align-top ${
                             today === di + 1 ? "bg-secondary/5" : ""
                           }`}
                         >
                           {entry ? (
-                            <div>
-                              <span className="font-medium">
+                            <div className="space-y-0.5">
+                              <span className="block font-semibold">
                                 {entry.subjects?.name || entry.activity_name || "—"}
                               </span>
+                              {entry.classes?.name && (
+                                <span className="block text-[10px] text-foreground/80">
+                                  Class: {entry.classes.name}
+                                </span>
+                              )}
                               {entry.staff?.full_name && (
                                 <span className="block text-[10px] text-muted-foreground">
                                   {entry.staff.full_name}
@@ -209,7 +222,8 @@ export default function FullWeekTimetable({
                     })
                   )}
                 </TableRow>
-              ))}
+                );
+              }); })()}
             </TableBody>
           </Table>
         </CardContent>

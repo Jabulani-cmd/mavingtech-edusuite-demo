@@ -102,8 +102,10 @@ export default function TimetableGrid({ classId, teacherId, highlightToday = tru
                           <MapPin className="h-3 w-3 shrink-0" />
                           <span className="truncate">{room!.name}</span>
                         </div>
-                        {!classId && cls && (
-                          <div className="mt-1 text-[10px] text-muted-foreground/80">{cls.name}</div>
+                        {cls && (
+                          <div className="mt-1 text-[10px] font-medium text-muted-foreground/90">
+                            Class: {cls.name}
+                          </div>
                         )}
                       </Card>
                     ) : (
