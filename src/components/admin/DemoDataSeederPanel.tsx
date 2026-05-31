@@ -105,6 +105,101 @@ export default function DemoDataSeederPanel() {
     }
   }
 
+  async function persistTimetableToDb(seed: ReturnType<typeof generateDemoSeed>) {
+    // 1) Subjects — upsert by name
+    const subjectNames = seed.subjects.map(s => s.name);
+    const { data: existingSubs } = await supabase.from("subjects").select("id, name").in("name", subjectNames);
+    const subByName = new Map((existingSubs ?? []).map(s => [s.name, s.id]));
+    const missingSubs = seed.subjects.filter(s => !subByName.has(s.name)).map(s => ({ name: s.name, is_examinable: true }));
+    if (missingSubs.length) {
+      const { data: ins } = await supabase.from("subjects").insert(missingSubs).select("id, name");
+      (ins ?? []).forEach(r => subByName.set(r.name, r.id));
+    }
+    const subIdMap = new Map(seed.subjects.map(s => [s.id, subByName.get(s.name)!]));
+
+    // 2) Classes — upsert by name
+    const classNames = seed.classes.map(c => c.name);
+    const { data: existingCls } = await supabase.from("classes").select("id, name").in("name", classNames);
+    const clsByName = new Map((existingCls ?? []).map(c => [c.name, c.id]));
+    const missingCls = seed.classes.filter(c => !clsByName.has(c.name)).map(c => ({
+      name: c.name, level: `Form ${c.name.match(/\d+/)?.[0] ?? ""}`, stream: c.stream, capacity: 40,
+      academic_year: String(new Date().getFullYear()),
+    }));
+    if (missingCls.length) {
+      const { data: ins } = await supabase.from("classes").insert(missingCls).select("id, name");
+      (ins ?? []).forEach(r => clsByName.set(r.name, r.id));
+    }
+    const classIdMap = new Map(seed.classes.map(c => [c.id, clsByName.get(c.name)!]));
+
+    // 3) Staff — link to auth user via profiles.email, then upsert staff per teacher
+    const teacherEmails = seed.teachers.map(t => t.email);
+    const { data: profs } = await supabase.from("profiles").select("id, email").in("email", teacherEmails);
+    const uidByEmail = new Map((profs ?? []).map(p => [p.email?.toLowerCase(), p.id]));
+
+    const { data: existingStaff } = await supabase.from("staff").select("id, email, user_id").in("email", teacherEmails);
+    const staffByEmail = new Map((existingStaff ?? []).map(s => [s.email?.toLowerCase(), s]));
+
+    const staffIdMap = new Map<string, string>();
+    for (const t of seed.teachers) {
+      const key = t.email.toLowerCase();
+      const uid = uidByEmail.get(key) ?? null;
+      const existing = staffByEmail.get(key);
+      if (existing) {
+        staffIdMap.set(t.id, existing.id);
+        if (uid && existing.user_id !== uid) {
+          await supabase.from("staff").update({ user_id: uid }).eq("id", existing.id);
+        }
+      } else {
+        const { data: ins, error } = await supabase.from("staff").insert({
+          full_name: t.name, email: t.email, user_id: uid,
+          category: "teaching", status: "active",
+          subjects_taught: t.qualifiedSubjects.map(sid => seed.subjects.find(s => s.id === sid)?.name).filter(Boolean),
+        }).select("id").single();
+        if (!error && ins) staffIdMap.set(t.id, ins.id);
+      }
+    }
+
+    // 4) Patch class_teacher_id on classes
+    for (const c of seed.classes) {
+      const dbCls = classIdMap.get(c.id);
+      const dbStaff = staffIdMap.get(c.classTeacherId ?? "");
+      if (dbCls && dbStaff) {
+        await supabase.from("classes").update({ class_teacher_id: dbStaff }).eq("id", dbCls);
+      }
+    }
+
+    // 5) class_subjects — upsert (class_id, subject_id, teacher_id)
+    const csRows = seed.allocations.map(a => ({
+      class_id: classIdMap.get(a.classId)!,
+      subject_id: subIdMap.get(a.subjectId)!,
+      teacher_id: staffIdMap.get(a.teacherId) ?? null,
+    })).filter(r => r.class_id && r.subject_id);
+    for (let i = 0; i < csRows.length; i += 100) {
+      const chunk = csRows.slice(i, i + 100);
+      await supabase.from("class_subjects").upsert(chunk, { onConflict: "class_id,subject_id" });
+    }
+
+    // 6) timetable_entries — wipe demo term then insert
+    await supabase.from("timetable_entries").delete().eq("term", "DEMO");
+    const ttRows = seed.slots.filter(s => s.subjectId).map(s => {
+      const room = seed.rooms.find(r => r.id === s.roomId);
+      return {
+        class_id: classIdMap.get(s.classId)!,
+        subject_id: subIdMap.get(s.subjectId!)!,
+        teacher_id: staffIdMap.get(s.teacherId!) ?? null,
+        day_of_week: s.day,
+        start_time: s.startTime,
+        end_time: s.endTime,
+        room: room?.name ?? null,
+        term: "DEMO",
+      };
+    }).filter(r => r.class_id && r.subject_id);
+    for (let i = 0; i < ttRows.length; i += 100) {
+      const chunk = ttRows.slice(i, i + 100);
+      await supabase.from("timetable_entries").insert(chunk);
+    }
+  }
+
   async function handleLoad() {
     setRunning(true);
     setStepIdx(0);
@@ -134,6 +229,13 @@ export default function DemoDataSeederPanel() {
     } catch (e: any) {
       toast({ title: "Account provisioning failed", description: e?.message || "Could not create login accounts", variant: "destructive" });
     }
+    // Auth accounts must exist before we can link staff.user_id via profiles email.
+    try {
+      await persistTimetableToDb(seed);
+    } catch (e: any) {
+      console.error(e);
+      toast({ title: "Saving timetable failed", description: e?.message || "Could not save classes/timetable to the database", variant: "destructive" });
+    }
     setStepIdx(8);
     await new Promise(r => setTimeout(r, 300));
 
@@ -158,11 +260,16 @@ export default function DemoDataSeederPanel() {
     people.clear();
     try { window.localStorage.removeItem("mt_demo_allocation_v1"); } catch {}
     setSummary(null);
-    // Remove demo students from DB (identified by the STU#### admission prefix).
+    // Remove demo data from DB
     try {
       await supabase.from("students").delete().like("admission_number", "STU%");
+      await supabase.from("timetable_entries").delete().eq("term", "DEMO");
+      await supabase.from("class_subjects").delete().in("class_id",
+        (await supabase.from("classes").select("id").like("name", "Form %")).data?.map(r => r.id) ?? []);
+      await supabase.from("classes").delete().like("name", "Form %");
+      await supabase.from("staff").delete().like("email", "%@schooldemo.com");
     } catch (e) {
-      console.error("Failed clearing demo students from DB", e);
+      console.error("Failed clearing demo data from DB", e);
     }
     toast({ title: "Demo data cleared", description: "Application reset to a clean state." });
   }
