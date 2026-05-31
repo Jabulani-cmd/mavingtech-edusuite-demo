@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AllocationProvider } from "@/contexts/AllocationContext";
+import { DemoPeopleProvider } from "@/contexts/DemoPeopleContext";
 import TeacherAllocations from "./pages/portal/TeacherAllocations";
 import TeacherMyTimetable from "./pages/portal/TeacherMyTimetable";
 import StudentMyTimetable from "./pages/portal/StudentMyTimetable";
@@ -65,6 +66,7 @@ const App = () => (
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
           <AllocationProvider>
+          <DemoPeopleProvider>
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
@@ -198,6 +200,7 @@ const App = () => (
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </DemoPeopleProvider>
           </AllocationProvider>
         </AuthProvider>
       </BrowserRouter>

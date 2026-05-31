@@ -17,6 +17,7 @@ import CommunicationModule from "@/pages/admin/CommunicationModule";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import AISmartTimetable from "@/components/timetable/AISmartTimetable";
 import AITimetableBuilderAgent from "@/components/timetable/AITimetableBuilderAgent";
+import DemoDataSeederPanel from "@/components/admin/DemoDataSeederPanel";
 import EMISReports from "@/pages/admin/EMISReports";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -764,6 +765,8 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
             title="Crop CTA Image"
           />
         )}
+
+        <div className="mb-4 sm:mb-6"><DemoDataSeederPanel /></div>
 
         <Tabs defaultValue="announcements" className="space-y-4 sm:space-y-6">
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-hide rounded-xl border bg-card p-1.5">
