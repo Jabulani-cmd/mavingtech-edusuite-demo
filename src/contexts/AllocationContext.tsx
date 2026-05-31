@@ -488,11 +488,11 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
       }));
     },
     rebuildTimetable: () => {
-      const built = aiGenerateTimetable(allocations, classes, seedSubjects, seedRooms, teachers);
+      const built = aiGenerateTimetable(allocations, classes, subjects, rooms, teachers);
       setSlots(built.slots);
     },
     runAIAgent: () => {
-      const built = aiGenerateTimetable(allocations, classes, seedSubjects, seedRooms, teachers);
+      const built = aiGenerateTimetable(allocations, classes, subjects, rooms, teachers);
       setSlots(built.slots);
       const placed = built.slots.filter((s) => s.subjectId).length;
       pushNotification({
@@ -503,7 +503,30 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
     },
     clearNotifications: () => setNotifications([]),
     updateTeacher: (id, patch) => setTeachers((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t))),
-  }), [teachers, classes, allocations, slots, conflicts, notifications, publishedAt, pushNotification]);
+    replaceAllData: (data) => {
+      setTeachers(data.teachers);
+      setSubjects(data.subjects);
+      setRooms(data.rooms);
+      setClasses(data.classes);
+      setAllocations(data.allocations);
+      setSlots(data.slots);
+      setPublishedAt(new Date().toISOString());
+      pushNotification({
+        kind: "ai_generated",
+        message: `Demo data loaded — ${data.classes.length} classes, ${data.teachers.length} teachers, ${data.slots.filter(s => s.subjectId).length} timetable periods.`,
+      });
+    },
+    resetToSeed: () => {
+      setTeachers(seedTeachers);
+      setSubjects(seedSubjects);
+      setRooms(seedRooms);
+      setClasses(seedClasses);
+      setAllocations(initialAllocations);
+      setSlots(initialBuild.slots);
+      setPublishedAt(null);
+      setNotifications([]);
+    },
+  }), [teachers, subjects, rooms, classes, allocations, slots, conflicts, notifications, publishedAt, pushNotification]);
 
   return <AllocationCtx.Provider value={value}>{children}</AllocationCtx.Provider>;
 }
