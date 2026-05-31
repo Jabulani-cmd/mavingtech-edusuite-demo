@@ -418,14 +418,14 @@ export function AllocationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const conflicts = useMemo(
-    () => validate(slots, seedSubjects, teachers, seedRooms, classes),
-    [slots, teachers, classes],
+    () => validate(slots, subjects, teachers, rooms, classes),
+    [slots, subjects, teachers, rooms, classes],
   );
 
   const value = useMemo<Ctx>(() => ({
     teachers,
-    subjects: seedSubjects,
-    rooms: seedRooms,
+    subjects,
+    rooms,
     classes,
     allocations,
     slots,
