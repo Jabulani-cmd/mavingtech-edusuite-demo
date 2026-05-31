@@ -14,7 +14,7 @@ import {
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-const timeSlots = [
+const defaultTimeSlots = [
   { start: "07:30", end: "08:10" },
   { start: "08:10", end: "08:50" },
   { start: "08:50", end: "09:30" },
@@ -31,6 +31,12 @@ const timeSlots = [
   { start: "15:30", end: "16:10", isSports: true },
   { start: "16:10", end: "17:00", isSports: true },
 ];
+
+function normalizeTime(t?: string) {
+  if (!t) return "";
+  return t.slice(0, 5); // "07:30:00" -> "07:30"
+}
+
 
 interface TimetableEntry {
   day_of_week: number;
