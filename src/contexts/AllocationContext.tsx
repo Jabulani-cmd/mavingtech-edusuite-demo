@@ -387,6 +387,8 @@ interface Ctx {
   publishTimetable: () => void;
   clearNotifications: () => void;
   updateTeacher: (id: string, patch: Partial<Teacher>) => void;
+  replaceAllData: (data: { teachers: Teacher[]; subjects: Subject[]; rooms: Room[]; classes: SchoolClass[]; allocations: Allocation[]; slots: TimetableSlot[] }) => void;
+  resetToSeed: () => void;
 }
 
 const AllocationCtx = createContext<Ctx | null>(null);
