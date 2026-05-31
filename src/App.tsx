@@ -200,6 +200,7 @@ const App = () => (
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </DemoPeopleProvider>
           </AllocationProvider>
         </AuthProvider>
       </BrowserRouter>
