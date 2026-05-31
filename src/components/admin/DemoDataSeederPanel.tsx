@@ -22,6 +22,7 @@ const STEPS = [
   "Assigning 360 parents and guardians",
   "Building class allocations",
   "Solving weekly timetable",
+  "Provisioning login accounts (admin + teachers)",
   "Publishing to all portals",
 ];
 
