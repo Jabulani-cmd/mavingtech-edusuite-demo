@@ -164,11 +164,18 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   };
 
   useEffect(() => {
-    if (selectedTTClass) {
+    if (!selectedTTClass) return;
+    const loadTT = () => {
       supabase.from("timetable_entries").select("*, subjects(name), staff(full_name)").eq("class_id", selectedTTClass).order("start_time").then(({ data }) => {
         if (data) setTimetableData(data || []);
       });
-    }
+    };
+    loadTT();
+    const channel = supabase
+      .channel(`teacher-tt-${selectedTTClass}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "timetable_entries", filter: `class_id=eq.${selectedTTClass}` }, () => loadTT())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [selectedTTClass]);
 
   useEffect(() => {
