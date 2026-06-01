@@ -42,7 +42,15 @@ export default function TimetableGridBuilder({
   const [slots, setSlots] = useState<SlotRow[]>(initialSlots);
   const history = useRef<SlotRow[][]>([]);
   const future = useRef<SlotRow[][]>([]);
-  useEffect(() => setSlots(initialSlots), [initialSlots]);
+  // Only re-seed local state when switching to a different timetable definition.
+  // Re-syncing on every initialSlots identity change wipes unsaved manual edits
+  // whenever the parent re-fetches (e.g. after Save Draft / Publish / realtime).
+  useEffect(() => {
+    setSlots(initialSlots);
+    history.current = [];
+    future.current = [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [definitionId]);
 
   const pushHistory = (next: SlotRow[]) => {
     history.current.push(slots);
