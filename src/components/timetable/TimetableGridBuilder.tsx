@@ -42,7 +42,15 @@ export default function TimetableGridBuilder({
   const [slots, setSlots] = useState<SlotRow[]>(initialSlots);
   const history = useRef<SlotRow[][]>([]);
   const future = useRef<SlotRow[][]>([]);
-  useEffect(() => setSlots(initialSlots), [initialSlots]);
+  // Only re-seed local state when switching to a different timetable definition.
+  // Re-syncing on every initialSlots identity change wipes unsaved manual edits
+  // whenever the parent re-fetches (e.g. after Save Draft / Publish / realtime).
+  useEffect(() => {
+    setSlots(initialSlots);
+    history.current = [];
+    future.current = [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [definitionId]);
 
   const pushHistory = (next: SlotRow[]) => {
     history.current.push(slots);
@@ -217,7 +225,7 @@ export default function TimetableGridBuilder({
           </div>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={() => onSave(slots)} disabled={saving}><Save className="h-3 w-3 mr-1" />Save Draft</Button>
-            {onPublish && <Button size="sm" onClick={onPublish} disabled={conflicts.length > 0}><CheckCircle2 className="h-3 w-3 mr-1" />Validate & Publish</Button>}
+            {onPublish && <Button size="sm" onClick={async () => { await onSave(slots); await onPublish(); }} disabled={conflicts.length > 0 || saving}><CheckCircle2 className="h-3 w-3 mr-1" />Validate & Publish</Button>}
           </div>
         </div>
 
