@@ -225,7 +225,7 @@ export default function TimetableGridBuilder({
           </div>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={() => onSave(slots)} disabled={saving}><Save className="h-3 w-3 mr-1" />Save Draft</Button>
-            {onPublish && <Button size="sm" onClick={onPublish} disabled={conflicts.length > 0}><CheckCircle2 className="h-3 w-3 mr-1" />Validate & Publish</Button>}
+            {onPublish && <Button size="sm" onClick={async () => { await onSave(slots); await onPublish(); }} disabled={conflicts.length > 0 || saving}><CheckCircle2 className="h-3 w-3 mr-1" />Validate & Publish</Button>}
           </div>
         </div>
 
