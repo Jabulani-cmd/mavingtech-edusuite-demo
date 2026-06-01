@@ -103,7 +103,21 @@ export default function StudentTimetableTab({ studentClassId, studentId }: Props
     };
 
     load();
-    return () => { mounted = false; };
+
+    // Realtime: refresh whenever any timetable_entries row for this class changes
+    // (e.g. admin published a new manual edit).
+    let channel: any;
+    if (resolvedClassId) {
+      channel = supabase
+        .channel(`student-tt-${resolvedClassId}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "timetable_entries", filter: `class_id=eq.${resolvedClassId}` }, () => load())
+        .subscribe();
+    }
+
+    return () => {
+      mounted = false;
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [resolvedClassId]);
 
   useEffect(() => {

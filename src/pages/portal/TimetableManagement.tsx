@@ -162,9 +162,53 @@ export default function TimetableManagement() {
 
   const publish = async () => {
     if (!activeDef) return;
-    await supabase.from("tt_definitions").update({ status: "active" }).eq("id", activeDef.id);
-    toast({ title: "Published", description: "Timetable is now active." });
-    await loadAll();
+    try {
+      // Mirror published tt_slots into timetable_entries so student/teacher/parent
+      // portals (which read from timetable_entries) see the same single source of truth.
+      if (activeDef.type === "class" && activeDef.class_label) {
+        const { data: cls } = await supabase
+          .from("classes").select("id").eq("name", activeDef.class_label).maybeSingle();
+        if (cls?.id) {
+          const { data: slotRows } = await supabase
+            .from("tt_slots").select("*")
+            .eq("definition_id", activeDef.id).eq("is_break", false);
+          const teaching = (slotRows ?? []).filter((s: any) => s.subject_name);
+          const subjectNames = Array.from(new Set(teaching.map((s: any) => s.subject_name)));
+          const teacherNames = Array.from(new Set(teaching.map((s: any) => s.teacher_name).filter(Boolean)));
+          const [subsRes, stfRes] = await Promise.all([
+            subjectNames.length
+              ? supabase.from("subjects").select("id,name").in("name", subjectNames)
+              : Promise.resolve({ data: [] as any[] }),
+            teacherNames.length
+              ? supabase.from("staff").select("id,full_name").in("full_name", teacherNames)
+              : Promise.resolve({ data: [] as any[] }),
+          ]);
+          const subMap = new Map((subsRes.data ?? []).map((r: any) => [r.name, r.id]));
+          const stfMap = new Map((stfRes.data ?? []).map((r: any) => [r.full_name, r.id]));
+          const entryRows = teaching.map((s: any) => ({
+            class_id: cls.id,
+            subject_id: subMap.get(s.subject_name) ?? null,
+            teacher_id: s.teacher_name ? (stfMap.get(s.teacher_name) ?? null) : null,
+            day_of_week: s.day_of_week,
+            start_time: s.start_time,
+            end_time: s.end_time,
+            room: s.room ?? null,
+            term: activeDef.term ?? null,
+          }));
+          await supabase.from("timetable_entries").delete().eq("class_id", cls.id);
+          if (entryRows.length) {
+            const { error: insErr } = await supabase.from("timetable_entries").insert(entryRows);
+            if (insErr) throw insErr;
+          }
+        }
+      }
+      const { error } = await supabase.from("tt_definitions").update({ status: "active" }).eq("id", activeDef.id);
+      if (error) throw error;
+      toast({ title: "Published", description: "Timetable is now live across all portals." });
+      await loadAll();
+    } catch (e: any) {
+      toast({ variant: "destructive", title: "Publish failed", description: e?.message });
+    }
   };
 
   const duplicate = async (def: Def) => {
