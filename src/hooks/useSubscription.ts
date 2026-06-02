@@ -67,20 +67,21 @@ export function useSubscription(): SubscriptionState {
     }
 
     // For students, also include any linked parents' subscriptions/grants.
-    // NOTE: parent_students.student_id references students.id (row id), NOT auth user id.
+    // For parents, also include all linked students so a subscription against
+    // the student row unlocks BOTH parents linked to that student.
     const userIds: string[] = [user.id];
+    const studentIds: string[] = [];
+
     if (role === "student") {
-      // Resolve the student's row id from the students table via auth user id
       const { data: studentRow } = await supabase
         .from("students")
         .select("id")
         .eq("user_id", user.id)
         .maybeSingle();
       const studentRowId = studentRow?.id;
+      if (studentRowId) studentIds.push(studentRowId);
 
-      // Try linkages by both possible identifiers (defensive)
-      const linkIds = [user.id];
-      if (studentRowId) linkIds.push(studentRowId);
+      const linkIds = [user.id, ...(studentRowId ? [studentRowId] : [])];
       const { data: links } = await supabase
         .from("parent_students")
         .select("parent_id")
@@ -88,10 +89,21 @@ export function useSubscription(): SubscriptionState {
       for (const l of links || []) {
         if (l?.parent_id && !userIds.includes(l.parent_id)) userIds.push(l.parent_id);
       }
+    } else if (role === "parent") {
+      const { data: links } = await supabase
+        .from("parent_students")
+        .select("student_id")
+        .eq("parent_id", user.id);
+      for (const l of links || []) {
+        if (l?.student_id) studentIds.push(l.student_id);
+      }
     }
-    const orFilter = userIds
-      .flatMap((id) => [`parent_id.eq.${id}`, `student_id.eq.${id}`])
-      .join(",");
+
+    const orParts: string[] = [];
+    userIds.forEach((id) => { orParts.push(`parent_id.eq.${id}`); orParts.push(`student_id.eq.${id}`); });
+    studentIds.forEach((id) => { orParts.push(`student_id.eq.${id}`); });
+    const orFilter = orParts.join(",");
+
 
     const { data: subs } = await supabase
       .from("subscriptions")

@@ -286,7 +286,14 @@ export type Database = {
           created_at: string
           description: string | null
           due_date: string | null
+          file_name: string | null
+          file_url: string | null
+          form: string | null
           id: string
+          instructions: string | null
+          is_published: boolean
+          max_marks: number | null
+          stream: string | null
           subject_id: string | null
           teacher_id: string | null
           title: string
@@ -298,7 +305,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
           id?: string
+          instructions?: string | null
+          is_published?: boolean
+          max_marks?: number | null
+          stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
           title: string
@@ -310,7 +324,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
           id?: string
+          instructions?: string | null
+          is_published?: boolean
+          max_marks?: number | null
+          stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
           title?: string
@@ -1307,7 +1328,12 @@ export type Database = {
           created_at: string
           description: string | null
           due_date: string | null
+          file_name: string | null
+          file_url: string | null
+          form: string | null
           id: string
+          instructions: string | null
+          stream: string | null
           subject_id: string | null
           teacher_id: string | null
           title: string
@@ -1317,7 +1343,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
           id?: string
+          instructions?: string | null
+          stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
           title: string
@@ -1327,7 +1358,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
           id?: string
+          instructions?: string | null
+          stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
           title?: string
@@ -1345,6 +1381,51 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      homework_submissions: {
+        Row: {
+          file_url: string | null
+          homework_id: string
+          id: string
+          notes: string | null
+          status: string
+          student_id: string
+          submitted_at: string
+        }
+        Insert: {
+          file_url?: string | null
+          homework_id: string
+          id?: string
+          notes?: string | null
+          status?: string
+          student_id: string
+          submitted_at?: string
+        }
+        Update: {
+          file_url?: string | null
+          homework_id?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          student_id?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homework_submissions_homework_id_fkey"
+            columns: ["homework_id"]
+            isOneToOne: false
+            referencedRelation: "homework"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "homework_submissions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]
@@ -1476,22 +1557,31 @@ export type Database = {
       invoice_items: {
         Row: {
           amount: number
+          amount_usd: number
+          amount_zig: number
           created_at: string
           description: string
+          fee_structure_id: string | null
           id: string
           invoice_id: string | null
         }
         Insert: {
           amount?: number
+          amount_usd?: number
+          amount_zig?: number
           created_at?: string
           description: string
+          fee_structure_id?: string | null
           id?: string
           invoice_id?: string | null
         }
         Update: {
           amount?: number
+          amount_usd?: number
+          amount_zig?: number
           created_at?: string
           description?: string
+          fee_structure_id?: string | null
           id?: string
           invoice_id?: string | null
         }
@@ -1516,9 +1606,13 @@ export type Database = {
           id: string
           invoice_number: string | null
           notes: string | null
+          paid_usd: number
+          paid_zig: number
           status: string | null
           student_id: string | null
           term: string | null
+          total_usd: number
+          total_zig: number
           updated_at: string
         }
         Insert: {
@@ -1531,9 +1625,13 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           notes?: string | null
+          paid_usd?: number
+          paid_zig?: number
           status?: string | null
           student_id?: string | null
           term?: string | null
+          total_usd?: number
+          total_zig?: number
           updated_at?: string
         }
         Update: {
@@ -1546,9 +1644,13 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           notes?: string | null
+          paid_usd?: number
+          paid_zig?: number
           status?: string | null
           student_id?: string | null
           term?: string | null
+          total_usd?: number
+          total_zig?: number
           updated_at?: string
         }
         Relationships: [
@@ -1560,6 +1662,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      learning_materials: {
+        Row: {
+          class_id: string | null
+          created_at: string
+          description: string | null
+          external_link: string | null
+          file_name: string | null
+          file_url: string | null
+          form: string | null
+          id: string
+          stream: string | null
+          subject_id: string | null
+          teacher_id: string | null
+          title: string
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string
+          description?: string | null
+          external_link?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
+          id?: string
+          stream?: string | null
+          subject_id?: string | null
+          teacher_id?: string | null
+          title: string
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string
+          description?: string | null
+          external_link?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          form?: string | null
+          id?: string
+          stream?: string | null
+          subject_id?: string | null
+          teacher_id?: string | null
+          title?: string
+        }
+        Relationships: []
       }
       leave_requests: {
         Row: {
@@ -1942,21 +2089,28 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          amount_usd: number
+          amount_zig: number
           created_at: string
           currency: string
           id: string
+          invoice_id: string | null
           ip_address: string | null
           mobile_number: string | null
           notes: string | null
           parent_id: string
+          payment_date: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_notes: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
           paynow_poll_url: string | null
           paynow_reference: string | null
           proof_of_payment_url: string | null
           receipt_number: string | null
           receipt_url: string | null
+          reference_number: string | null
           rejection_reason: string | null
+          student_id: string | null
           subscription_id: string | null
           transaction_id: string | null
           updated_at: string
@@ -1965,21 +2119,28 @@ export type Database = {
         }
         Insert: {
           amount: number
+          amount_usd?: number
+          amount_zig?: number
           created_at?: string
           currency?: string
           id?: string
+          invoice_id?: string | null
           ip_address?: string | null
           mobile_number?: string | null
           notes?: string | null
           parent_id: string
+          payment_date?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_notes?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           paynow_poll_url?: string | null
           paynow_reference?: string | null
           proof_of_payment_url?: string | null
           receipt_number?: string | null
           receipt_url?: string | null
+          reference_number?: string | null
           rejection_reason?: string | null
+          student_id?: string | null
           subscription_id?: string | null
           transaction_id?: string | null
           updated_at?: string
@@ -1988,21 +2149,28 @@ export type Database = {
         }
         Update: {
           amount?: number
+          amount_usd?: number
+          amount_zig?: number
           created_at?: string
           currency?: string
           id?: string
+          invoice_id?: string | null
           ip_address?: string | null
           mobile_number?: string | null
           notes?: string | null
           parent_id?: string
+          payment_date?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_notes?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           paynow_poll_url?: string | null
           paynow_reference?: string | null
           proof_of_payment_url?: string | null
           receipt_number?: string | null
           receipt_url?: string | null
+          reference_number?: string | null
           rejection_reason?: string | null
+          student_id?: string | null
           subscription_id?: string | null
           transaction_id?: string | null
           updated_at?: string
@@ -2821,30 +2989,42 @@ export type Database = {
           academic_year: string
           amount_due: number | null
           amount_paid: number | null
+          boarding_status: string | null
           id: string
+          invoice_id: string | null
           registered_at: string
+          registered_by: string | null
           status: string | null
           student_id: string | null
+          subjects: string[] | null
           term: string
         }
         Insert: {
           academic_year: string
           amount_due?: number | null
           amount_paid?: number | null
+          boarding_status?: string | null
           id?: string
+          invoice_id?: string | null
           registered_at?: string
+          registered_by?: string | null
           status?: string | null
           student_id?: string | null
+          subjects?: string[] | null
           term: string
         }
         Update: {
           academic_year?: string
           amount_due?: number | null
           amount_paid?: number | null
+          boarding_status?: string | null
           id?: string
+          invoice_id?: string | null
           registered_at?: string
+          registered_by?: string | null
           status?: string | null
           student_id?: string | null
+          subjects?: string[] | null
           term?: string
         }
         Relationships: [

@@ -34,10 +34,19 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   useEffect(() => {
     if (studentClassId && studentId) {
       fetchAll();
+      // Realtime: refresh when teacher publishes new assessments/results for this class
+      const ch = supabase
+        .channel(`stu-assess-${studentId}-${Math.random().toString(36).slice(2,7)}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "assessments", filter: `class_id=eq.${studentClassId}` }, fetchAll)
+        .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results", filter: `student_id=eq.${studentId}` }, fetchAll)
+        .on("postgres_changes", { event: "*", schema: "public", table: "homework", filter: `class_id=eq.${studentClassId}` }, fetchAll)
+        .subscribe();
+      return () => { supabase.removeChannel(ch); };
     } else {
       setLoading(false);
     }
   }, [studentClassId, studentId]);
+
 
   const fetchAll = async () => {
     setLoading(true);
