@@ -140,9 +140,10 @@ export default function AssessmentsTab({ userId, classes, subjects, students }: 
   const classStudents = selectedAssessment
     ? students.filter(s => {
         const cls = classes.find(c => c.id === selectedAssessment.class_id);
-        return cls ? s.form === cls.form_level : false;
+        return cls ? s.form === cls.level : false;
       })
     : [];
+
 
   const currentStudent = classStudents[gradingStudentIdx];
   const currentResult = currentStudent ? results.find(r => r.student_id === currentStudent.id) : null;
