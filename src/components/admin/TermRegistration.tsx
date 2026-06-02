@@ -274,15 +274,18 @@ export default function TermRegistration() {
           student_id: student.id,
           academic_year: academicYear,
           term: term,
+          status: "registered",
           subjects: subjects,
           boarding_status: bStatus,
           registered_by: user?.id || null,
           invoice_id: invoiceId,
+          amount_due: 0,
+          amount_paid: 0,
         });
 
         // Allocate student to class
-        const matchClass = dbClasses.find(c => c.form_level === student.form && (!student.stream || c.stream === student.stream))
-          || dbClasses.find(c => c.form_level === student.form);
+        const matchClass = dbClasses.find(c => c.level === student.form && (!student.stream || c.stream === student.stream))
+          || dbClasses.find(c => c.level === student.form);
         if (matchClass) {
           const { data: existingSc } = await supabase.from("student_classes").select("id").eq("student_id", student.id).eq("class_id", matchClass.id).maybeSingle();
           if (!existingSc) {
@@ -290,9 +293,10 @@ export default function TermRegistration() {
           }
           const { data: existingEnr } = await supabase.from("enrollments").select("id").eq("student_id", student.id).eq("academic_year", academicYear).maybeSingle();
           if (!existingEnr) {
-            await supabase.from("enrollments").insert({ student_id: student.id, class_id: matchClass.id, academic_year: academicYear, enrollment_date: new Date().toISOString().split("T")[0] });
+            await supabase.from("enrollments").insert({ student_id: student.id, class_id: matchClass.id, academic_year: academicYear });
           }
         }
+
 
         successCount++;
       } catch {
