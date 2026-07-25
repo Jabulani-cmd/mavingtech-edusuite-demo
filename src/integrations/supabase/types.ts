@@ -1603,6 +1603,7 @@ export type Database = {
           created_at: string
           currency: string | null
           due_date: string | null
+          fee_structure_id: string | null
           id: string
           invoice_number: string | null
           notes: string | null
@@ -1622,6 +1623,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           due_date?: string | null
+          fee_structure_id?: string | null
           id?: string
           invoice_number?: string | null
           notes?: string | null
@@ -1641,6 +1643,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           due_date?: string | null
+          fee_structure_id?: string | null
           id?: string
           invoice_number?: string | null
           notes?: string | null
@@ -1654,6 +1657,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "invoices_fee_structure_id_fkey"
+            columns: ["fee_structure_id"]
+            isOneToOne: false
+            referencedRelation: "fee_structures"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoices_student_id_fkey"
             columns: ["student_id"]
@@ -3532,6 +3542,10 @@ export type Database = {
       }
     }
     Functions: {
+      build_invoice_for_student: {
+        Args: { _student_id: string }
+        Returns: string
+      }
       delete_student_cascade: {
         Args: { _student_id: string }
         Returns: undefined
