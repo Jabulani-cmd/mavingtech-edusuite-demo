@@ -211,7 +211,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="text-right font-mono">R {fmt(actualPaid)}</span>
                         <span className="text-muted-foreground">Balance:</span>
                         <span className={`text-right font-mono ${balance < 0 ? "text-green-600" : ""}`}>
-                          {balance < 0 ? `+$${fmt(Math.abs(balance))} credit` : `$${fmt(balance)}`}
+                          {balance < 0 ? `+R ${fmt(Math.abs(balance))} credit` : `R ${fmt(balance)}`}
                         </span>
                       </div>
                     </CardContent>
