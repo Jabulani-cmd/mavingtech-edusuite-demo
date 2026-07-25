@@ -1047,26 +1047,45 @@ function TabContentInner(props: TabContentProps) {
 
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
-          <CardContent className="p-4 flex items-center gap-4">
+          <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
             <DollarSign className={`h-8 w-8 ${feeBalance > 0 ? "text-red-600" : "text-emerald-600"}`} />
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-2xl font-bold">
                 {feeBalance > 0
-                  ? `$${feeBalance.toFixed(2)} owing`
+                  ? `${formatZAR(feeBalance)} owing`
                   : feeBalance < 0
-                    ? `$${Math.abs(feeBalance).toFixed(2)} credit`
-                    : "$0.00"}
+                    ? `${formatZAR(Math.abs(feeBalance))} credit`
+                    : formatZAR(0)}
               </p>
               <p className="text-sm text-muted-foreground">
                 {feeBalance > 0 ? "Outstanding Balance" : feeBalance < 0 ? "Credit Balance" : "No Outstanding Balance"}
-                {feeBalance !== 0 && ` (R ${usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: R {totalInvoiced.toFixed(2)} (R {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: R 
-                {totalPaidAll.toFixed(2)}
+                Total Invoiced: {formatZAR(totalInvoiced)} · Total Paid: {formatZAR(totalPaidAll)}
               </p>
-              <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
             </div>
+            {feeBalance > 0 && (() => {
+              const owing = invoices
+                .map((inv: any) => {
+                  const paid = childPayments
+                    .filter((p: any) => p.invoice_id === inv.id)
+                    .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0);
+                  return { inv, bal: Number(inv.total_usd || 0) - paid };
+                })
+                .filter((x) => x.bal > 0.001)
+                .sort((a, b) => new Date(a.inv.due_date || a.inv.created_at).getTime() - new Date(b.inv.due_date || b.inv.created_at).getTime());
+              const target = owing[0];
+              if (!target) return null;
+              return (
+                <Button
+                  size="lg"
+                  className="bg-teal-600 hover:bg-teal-700"
+                  onClick={() => setPayInvoice(target.inv)}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" /> Pay Now
+                </Button>
+              );
+            })()}
           </CardContent>
         </Card>
 
