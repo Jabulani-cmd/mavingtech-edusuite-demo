@@ -53,6 +53,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
 import PrintableSection from "@/components/shared/PrintableSection";
+import PayInvoiceDialog from "@/components/finance/PayInvoiceDialog";
+import { formatZAR } from "@/lib/currency";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
