@@ -18,6 +18,8 @@ interface Props {
   className?: string;
   /** Render without an outer Card wrapper (just the action bar + body). */
   bare?: boolean;
+  /** Hide the top View / Print / Download action bar. */
+  hideActions?: boolean;
 }
 
 export default function PrintableSection({ title, subtitle, children, fileName, className, bare }: Props) {
