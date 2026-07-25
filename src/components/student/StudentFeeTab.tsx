@@ -173,9 +173,8 @@ export default function StudentFeeTab({ studentId }: Props) {
               {balanceUsd < 0 ? "Credit Balance" : balanceUsd > 0 ? "Outstanding Balance" : "No Balance"}
             </p>
             <p className="text-xs text-muted-foreground mt-1 break-words">
-              Invoiced: R {fmt(totalInvoicedUsd)} (R {fmt(usdToZig(totalInvoicedUsd))}) · Paid: R {fmt(totalPaidUsd)} (R {fmt(usdToZig(totalPaidUsd))})
+              Invoiced: R {fmt(totalInvoicedUsd)} · Paid: R {fmt(totalPaidUsd)}
             </p>
-            <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
           </div>
         </CardContent>
       </Card>
@@ -212,7 +211,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="text-right font-mono">R {fmt(actualPaid)}</span>
                         <span className="text-muted-foreground">Balance:</span>
                         <span className={`text-right font-mono ${balance < 0 ? "text-green-600" : ""}`}>
-                          {balance < 0 ? `+$${fmt(Math.abs(balance))} credit` : `$${fmt(balance)}`}
+                          {balance < 0 ? `+R ${fmt(Math.abs(balance))} credit` : `R ${fmt(balance)}`}
                         </span>
                       </div>
                     </CardContent>
@@ -247,9 +246,9 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right">R {fmt(actualPaid)}</TableCell>
                         <TableCell className="text-right">
                           {balance < 0 ? (
-                            <span className="text-green-600">+${fmt(Math.abs(balance))} credit</span>
+                            <span className="text-green-600">+R {fmt(Math.abs(balance))} credit</span>
                           ) : (
-                            `$${fmt(balance)}`
+                            `R ${fmt(balance)}`
                           )}
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>

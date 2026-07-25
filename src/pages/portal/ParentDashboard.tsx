@@ -53,6 +53,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
 import PrintableSection from "@/components/shared/PrintableSection";
+import PayInvoiceDialog from "@/components/finance/PayInvoiceDialog";
+import { formatZAR } from "@/lib/currency";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
@@ -649,6 +651,7 @@ function TabContentInner(props: TabContentProps) {
   const isMobile = useIsMobile();
   const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
   const [feeSearch, setFeeSearch] = useState("");
+  const [payInvoice, setPayInvoice] = useState<any | null>(null);
 
   if (!child) return null;
 
@@ -1044,26 +1047,45 @@ function TabContentInner(props: TabContentProps) {
 
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
-          <CardContent className="p-4 flex items-center gap-4">
+          <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
             <DollarSign className={`h-8 w-8 ${feeBalance > 0 ? "text-red-600" : "text-emerald-600"}`} />
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-2xl font-bold">
                 {feeBalance > 0
-                  ? `$${feeBalance.toFixed(2)} owing`
+                  ? `${formatZAR(feeBalance)} owing`
                   : feeBalance < 0
-                    ? `$${Math.abs(feeBalance).toFixed(2)} credit`
-                    : "$0.00"}
+                    ? `${formatZAR(Math.abs(feeBalance))} credit`
+                    : formatZAR(0)}
               </p>
               <p className="text-sm text-muted-foreground">
                 {feeBalance > 0 ? "Outstanding Balance" : feeBalance < 0 ? "Credit Balance" : "No Outstanding Balance"}
-                {feeBalance !== 0 && ` (R ${usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: R {totalInvoiced.toFixed(2)} (R {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: R 
-                {totalPaidAll.toFixed(2)}
+                Total Invoiced: {formatZAR(totalInvoiced)} · Total Paid: {formatZAR(totalPaidAll)}
               </p>
-              <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
             </div>
+            {feeBalance > 0 && (() => {
+              const owing = invoices
+                .map((inv: any) => {
+                  const paid = childPayments
+                    .filter((p: any) => p.invoice_id === inv.id)
+                    .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0);
+                  return { inv, bal: Number(inv.total_usd || 0) - paid };
+                })
+                .filter((x) => x.bal > 0.001)
+                .sort((a, b) => new Date(a.inv.due_date || a.inv.created_at).getTime() - new Date(b.inv.due_date || b.inv.created_at).getTime());
+              const target = owing[0];
+              if (!target) return null;
+              return (
+                <Button
+                  size="lg"
+                  className="bg-teal-600 hover:bg-teal-700"
+                  onClick={() => setPayInvoice(target.inv)}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" /> Pay Now
+                </Button>
+              );
+            })()}
           </CardContent>
         </Card>
 
@@ -1156,27 +1178,29 @@ function TabContentInner(props: TabContentProps) {
 
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                           <span className="text-muted-foreground">Total:</span>
-                          <span className="text-right font-mono">R {Number(inv.total_usd || 0).toFixed(2)}</span>
-
-                          <span className="text-muted-foreground">ZiG:</span>
-                          <span className="text-right font-mono text-muted-foreground">
-                            R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
-                          </span>
+                          <span className="text-right font-mono">{formatZAR(inv.total_usd)}</span>
 
                           <span className="text-muted-foreground">Paid:</span>
-                          <span className="text-right font-mono text-emerald-600">R {paid.toFixed(2)}</span>
+                          <span className="text-right font-mono text-emerald-600">{formatZAR(paid)}</span>
 
                           <span className="text-muted-foreground">Balance:</span>
                           <span
                             className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
                           >
                             {bal < 0
-                              ? `+$${Math.abs(bal).toFixed(2)} credit`
-                              : bal > 0
-                                ? `$${bal.toFixed(2)}`
-                                : "$0.00"}
+                              ? `+${formatZAR(Math.abs(bal))} credit`
+                              : formatZAR(bal)}
                           </span>
                         </div>
+                        {bal > 0.001 && (
+                          <Button
+                            size="sm"
+                            className="w-full mt-2 bg-teal-600 hover:bg-teal-700"
+                            onClick={() => setPayInvoice(inv)}
+                          >
+                            <CreditCard className="w-3 h-3 mr-1" /> Pay {formatZAR(bal)}
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   );
@@ -1194,6 +1218,7 @@ function TabContentInner(props: TabContentProps) {
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Balance</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Status</th>
                       <th className="px-3 py-2 text-center font-medium text-muted-foreground">Document</th>
+                      <th className="px-3 py-2 text-center font-medium text-muted-foreground">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1208,22 +1233,12 @@ function TabContentInner(props: TabContentProps) {
                           <td className="px-3 py-2 text-muted-foreground">
                             {inv.term} {inv.academic_year}
                           </td>
-                          <td className="px-3 py-2 text-center">
-                            R {Number(inv.total_usd || 0).toFixed(2)}
-                            <br />
-                            <span className="text-xs text-muted-foreground">
-                              R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2 text-center text-emerald-600">R {paid.toFixed(2)}</td>
+                          <td className="px-3 py-2 text-center font-mono">{formatZAR(inv.total_usd)}</td>
+                          <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(paid)}</td>
                           <td
-                            className={`px-3 py-2 text-center font-bold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
+                            className={`px-3 py-2 text-center font-bold font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
                           >
-                            {bal < 0 ? `+$${Math.abs(bal).toFixed(2)}` : bal > 0 ? `$${bal.toFixed(2)}` : "$0.00"}
-                            <br />
-                            <span className="text-xs font-normal text-muted-foreground">
-                              R {usdToZig(Math.abs(bal)).toFixed(2)}
-                            </span>
+                            {bal < 0 ? `+${formatZAR(Math.abs(bal))}` : formatZAR(bal)}
                           </td>
                           <td className="px-3 py-2 text-center">
                             <Badge
@@ -1255,6 +1270,15 @@ function TabContentInner(props: TabContentProps) {
                               }}
                             />
                           </td>
+                          <td className="px-3 py-2 text-center">
+                            {bal > 0.001 ? (
+                              <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={() => setPayInvoice(inv)}>
+                                <CreditCard className="w-3 h-3 mr-1" /> Pay
+                              </Button>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}
@@ -1274,6 +1298,26 @@ function TabContentInner(props: TabContentProps) {
           dateFilter={feeDateFilter}
           searchTerm={feeSearch}
         />
+
+        {payInvoice && (
+          <PayInvoiceDialog
+            open={!!payInvoice}
+            onOpenChange={(o) => !o && setPayInvoice(null)}
+            invoice={payInvoice}
+            student={{ id: child.id, full_name: child.full_name, admission_number: child.admission_number }}
+            outstanding={Math.max(
+              0,
+              Number(payInvoice.total_usd || 0) -
+                childPayments
+                  .filter((p: any) => p.invoice_id === payInvoice.id)
+                  .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0),
+            )}
+            onPaid={() => {
+              setPayInvoice(null);
+              fetchChildData(child.id);
+            }}
+          />
+        )}
       </motion.div>
     );
   }
@@ -1410,10 +1454,8 @@ function ParentPaymentHistory({
                   </p>
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
-                    <span className="text-muted-foreground">USD:</span>
-                    <span className="text-right font-mono text-emerald-600">R {Number(p.amount_usd).toFixed(2)}</span>
-                    <span className="text-muted-foreground">ZiG:</span>
-                    <span className="text-right font-mono">{Number(p.amount_zig).toFixed(2)}</span>
+                    <span className="text-muted-foreground">Amount:</span>
+                    <span className="text-right font-mono text-emerald-600">{formatZAR(p.amount_usd)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -1426,8 +1468,7 @@ function ParentPaymentHistory({
                 <tr className="border-b bg-muted/50">
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Receipt</th>
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Date</th>
-                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">USD</th>
-                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">ZiG</th>
+                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">Amount</th>
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Method</th>
                   <th className="px-3 py-2 text-center font-medium text-muted-foreground">Receipt</th>
                 </tr>
@@ -1437,8 +1478,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600">R {Number(p.amount_usd).toFixed(2)}</td>
-                    <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(p.amount_usd)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
                       <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
