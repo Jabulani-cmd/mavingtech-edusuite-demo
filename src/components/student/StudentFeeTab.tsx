@@ -246,9 +246,9 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right">R {fmt(actualPaid)}</TableCell>
                         <TableCell className="text-right">
                           {balance < 0 ? (
-                            <span className="text-green-600">+${fmt(Math.abs(balance))} credit</span>
+                            <span className="text-green-600">+R {fmt(Math.abs(balance))} credit</span>
                           ) : (
-                            `$${fmt(balance)}`
+                            `R ${fmt(balance)}`
                           )}
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>
