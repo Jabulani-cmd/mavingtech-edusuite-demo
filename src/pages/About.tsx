@@ -11,9 +11,9 @@ const fadeUp = {
 };
 
 const alumni = [
-  { name: "Dr. Tendai Moyo", role: "Surgeon, Parirenyatwa Hospital", year: "Class of 1998" },
-  { name: "Nothando Dube", role: "Software Engineer, Google", year: "Class of 2005" },
-  { name: "Kudzai Chirwa", role: "Diplomat, United Nations", year: "Class of 2001" },
+  { name: "Dr. Sipho Zulu", role: "Surgeon, Inkosi Albert Luthuli Hospital", year: "Class of 1998" },
+  { name: "Nokuthula Ndlovu", role: "Software Engineer, Google", year: "Class of 2005" },
+  { name: "Mandla Khumalo", role: "Diplomat, United Nations", year: "Class of 2001" },
 ];
 
 export default function About() {
