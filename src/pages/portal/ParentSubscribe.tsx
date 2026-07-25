@@ -19,13 +19,17 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { downloadSubscriptionReceipt } from "@/lib/receiptPdf";
 import { formatZAR } from "@/lib/currency";
 
-type Step = "plans" | "method" | "card" | "eft" | "gateway" | "success" | "failed";
+type Step = "plans" | "method" | "card" | "eft" | "gateway" | "qr" | "success" | "failed";
 
 const METHOD_LABEL: Record<string, string> = {
   card: "Card (Visa / Mastercard)",
   eft: "Instant EFT",
   bank_transfer: "Bank Transfer / Manual EFT",
+  snapscan: "SnapScan",
+  zapper: "Zapper",
 };
+
+type Outcome = "auto" | "approve" | "insufficient" | "declined";
 
 // Mock SecurePay SA test cards — a card number ending in an odd digit fails.
 function isTestCardApproved(number: string) {
@@ -55,7 +59,7 @@ export default function ParentSubscribe() {
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
-  const [forceOutcome, setForceOutcome] = useState<"auto" | "approve" | "decline">("auto");
+  const [forceOutcome, setForceOutcome] = useState<Outcome>("auto");
 
   const [proof, setProof] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -95,7 +99,14 @@ export default function ParentSubscribe() {
     setMethod(m); setError(null);
     if (m === "card") setStep("card");
     else if (m === "eft") setStep("gateway");
+    else if (m === "snapscan" || m === "zapper") setStep("qr");
     else setStep("eft");
+  }
+
+  function outcomeReason(o: Outcome): string {
+    if (o === "insufficient") return "Payment Declined — Insufficient Funds. Please use a different card or method.";
+    if (o === "declined") return "Transaction Failed — Card Declined by your bank. Please try again or use another method.";
+    return "Your bank declined the transaction. Please try a different card or use Instant EFT.";
   }
 
   async function processCard() {
@@ -107,17 +118,18 @@ export default function ParentSubscribe() {
     setError(null);
     setProcessing(true);
 
-    // Simulate SecurePay SA processing delay
     await new Promise((r) => setTimeout(r, 2200));
 
-    const approved = forceOutcome === "approve" ? true
-                    : forceOutcome === "decline" ? false
-                    : isTestCardApproved(cleanNum);
+    const approved =
+      forceOutcome === "approve" ? true
+      : forceOutcome === "insufficient" || forceOutcome === "declined" ? false
+      : isTestCardApproved(cleanNum);
 
     if (approved) {
       await finalize(true);
     } else {
-      setFailureReason("Your bank declined the transaction. Please try a different card or use Instant EFT.");
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
       setProcessing(false);
       setStep("failed");
     }
@@ -126,13 +138,42 @@ export default function ParentSubscribe() {
   async function processEftGateway() {
     setProcessing(true);
     await new Promise((r) => setTimeout(r, 2500));
-    const approved = forceOutcome !== "decline";
+    const approved = forceOutcome === "approve" || forceOutcome === "auto";
     if (approved) await finalize(true);
     else {
-      setFailureReason("Your bank did not authorise the EFT payment.");
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
       setProcessing(false);
       setStep("failed");
     }
+  }
+
+  async function processQrGateway() {
+    setProcessing(true);
+    await new Promise((r) => setTimeout(r, 2500));
+    const approved = forceOutcome === "approve" || forceOutcome === "auto";
+    if (approved) await finalize(true);
+    else {
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
+      setProcessing(false);
+      setStep("failed");
+    }
+  }
+
+  async function recordFailedAttempt() {
+    try {
+      const txId = "SPS-" + Date.now().toString(36).toUpperCase();
+      await supabase.from("payments").insert({
+        parent_id: user.id,
+        amount: plan.amount_usd,
+        currency: "ZAR",
+        payment_method: method,
+        transaction_id: txId,
+        receipt_number: null,
+        payment_status: forceOutcome === "insufficient" ? "declined_insufficient" : "declined",
+      });
+    } catch {}
   }
 
   async function submitBankTransfer() {
@@ -257,8 +298,11 @@ export default function ParentSubscribe() {
           {step === "gateway" && (
             <GatewayView plan={plan} processing={processing} onStart={processEftGateway} forceOutcome={forceOutcome} setForceOutcome={setForceOutcome} />
           )}
+          {step === "qr" && (
+            <QrView plan={plan} method={method} processing={processing} onConfirm={processQrGateway} forceOutcome={forceOutcome} setForceOutcome={setForceOutcome} />
+          )}
           {step === "failed" && (
-            <FailedView reason={failureReason} onRetry={() => setStep(method === "card" ? "card" : "gateway")} onChangeMethod={() => setStep("method")} />
+            <FailedView reason={failureReason} onRetry={() => setStep(method === "card" ? "card" : method === "snapscan" || method === "zapper" ? "qr" : "gateway")} onChangeMethod={() => setStep("method")} />
           )}
           {step === "success" && completed && (
             <SuccessView
@@ -321,10 +365,46 @@ function PlansView({ plans, onPick }: any) {
   );
 }
 
+function DemoBadge() {
+  return (
+    <Badge variant="outline" className="border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30">
+      Demo Mode — no real money processed
+    </Badge>
+  );
+}
+
+function OutcomeSelect({ value, onChange, includeAuto = true }: { value: Outcome; onChange: (v: Outcome) => void; includeAuto?: boolean }) {
+  const opts: { v: Outcome; label: string }[] = [
+    ...(includeAuto ? [{ v: "auto" as Outcome, label: "Auto (based on card)" }] : []),
+    { v: "approve", label: "Success" },
+    { v: "insufficient", label: "Insufficient Funds" },
+    { v: "declined", label: "Card Declined" },
+  ];
+  return (
+    <div className="rounded-md border border-dashed border-amber-400/50 bg-amber-50/40 dark:bg-amber-950/20 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <Label className="text-xs font-semibold">Simulate outcome</Label>
+        <DemoBadge />
+      </div>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as Outcome)}
+        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+      >
+        {opts.map((o) => (
+          <option key={o.v} value={o.v}>{o.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function MethodView({ plan, onPick }: any) {
   const methods = [
     { id: "card", label: "Card Payment", icon: CreditCard, note: "Visa / Mastercard — SecurePay SA" },
     { id: "eft", label: "Instant EFT", icon: Building2, note: "FNB, Standard Bank, ABSA, Nedbank, Capitec" },
+    { id: "snapscan", label: "SnapScan", icon: CreditCard, note: "Scan QR with the SnapScan app" },
+    { id: "zapper", label: "Zapper", icon: CreditCard, note: "Scan QR with the Zapper app" },
     { id: "bank_transfer", label: "Bank Transfer", icon: Building2, note: "Manual EFT — upload proof of payment" },
   ];
   return (
@@ -341,7 +421,10 @@ function MethodView({ plan, onPick }: any) {
         </div>
       </Card>
 
-      <h3 className="font-semibold text-lg mb-3">Choose a payment method</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-lg">Choose a payment method</h3>
+        <DemoBadge />
+      </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {methods.map((m) => (
           <button key={m.id} onClick={() => onPick(m.id)}
@@ -390,16 +473,8 @@ function CardView({ plan, cardNumber, setCardNumber, cardName, setCardName, card
               </div>
             </div>
 
-            <div className="rounded-md border border-dashed p-3 mt-2">
-              <Label className="text-xs">Demo outcome (test only)</Label>
-              <div className="flex gap-2 mt-2">
-                {(["auto", "approve", "decline"] as const).map(o => (
-                  <Button key={o} type="button" size="sm" variant={forceOutcome === o ? "default" : "outline"} onClick={() => setForceOutcome(o)}>
-                    {o === "auto" ? "Auto (card ending even = approve)" : o.charAt(0).toUpperCase() + o.slice(1)}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} />
+
 
             {error && (
               <div className="text-xs text-destructive flex items-center gap-1">
@@ -437,15 +512,8 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
         </p>
 
         {!processing && (
-          <div className="rounded-md border border-dashed p-3 mb-4 text-left">
-            <Label className="text-xs">Demo outcome</Label>
-            <div className="flex gap-2 mt-2 justify-center">
-              {(["approve", "decline"] as const).map(o => (
-                <Button key={o} type="button" size="sm" variant={forceOutcome === o ? "default" : "outline"} onClick={() => setForceOutcome(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </Button>
-              ))}
-            </div>
+          <div className="text-left mb-4">
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} includeAuto={false} />
           </div>
         )}
 
@@ -456,6 +524,52 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
           </div>
         ) : (
           <Button size="lg" className="w-full" onClick={onStart}>Continue to Bank</Button>
+        )}
+      </Card>
+    </motion.div>
+  );
+}
+
+function QrView({ plan, method, processing, onConfirm, forceOutcome, setForceOutcome }: any) {
+  const brand = method === "snapscan" ? "SnapScan" : "Zapper";
+  const brandColor = method === "snapscan" ? "from-sky-500 to-blue-600" : "from-emerald-500 to-teal-600";
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto">
+      <Card className="p-6 text-center">
+        <div className={`inline-block bg-gradient-to-br ${brandColor} text-white text-xs font-bold px-3 py-1 rounded-full mb-3`}>
+          {brand}
+        </div>
+        <h3 className="font-semibold text-lg">SecurePay SA — {brand}</h3>
+        <p className="text-sm text-muted-foreground mt-1 mb-4">
+          Open your {brand} app and scan the QR code to pay {formatZAR(plan.amount_usd)}.
+        </p>
+
+        {/* Simulated QR code */}
+        <div className="mx-auto my-4 h-48 w-48 rounded-lg border-4 border-foreground p-3 bg-white">
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage:
+                "repeating-conic-gradient(#0f172a 0% 25%, #ffffff 0% 50%)",
+              backgroundSize: "16px 16px",
+            }}
+            aria-label={`${brand} QR code (demo)`}
+          />
+        </div>
+
+        {!processing && (
+          <div className="text-left mb-4">
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} includeAuto={false} />
+          </div>
+        )}
+
+        {processing ? (
+          <div className="py-3">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" />
+            <div className="text-sm mt-2">Waiting for {brand} confirmation…</div>
+          </div>
+        ) : (
+          <Button size="lg" className="w-full" onClick={onConfirm}>I have scanned & paid</Button>
         )}
       </Card>
     </motion.div>

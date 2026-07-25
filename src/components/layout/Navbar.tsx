@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import LanguageToggle from "@/components/LanguageToggle";
 
 interface NavItem {
   label: string;
@@ -11,44 +13,47 @@ interface NavItem {
   children?: { label: string; path: string }[];
 }
 
-const navLinks: NavItem[] = [
-  { label: "Home", path: "/" },
-  {
-    label: "About",
-    path: "/about",
-    children: [
-      { label: "News", path: "/news" },
-      { label: "School Projects", path: "/school-projects" },
-      { label: "Facilities", path: "/facilities" },
-      { label: "Boarding", path: "/boarding" },
-    ],
-  },
-  {
-    label: "Academics",
-    path: "/academics",
-    children: [{ label: "Downloads", path: "/downloads" }],
-  },
-  {
-    label: "Admissions",
-    path: "/admissions",
-    children: [{ label: "Fees", path: "/fees" }],
-  },
-  {
-    label: "Activities",
-    path: "/sports-culture",
-    children: [
-      { label: "School Life", path: "/school-life" },
-      { label: "Awards & Prize-Giving", path: "/awards" },
-    ],
-  },
-  {
-    label: "Staff",
-    path: "/staff",
-    children: [{ label: "Vacancies", path: "/vacancies" }],
-  },
-  { label: "Alumni", path: "/alumni" },
-  { label: "Contact", path: "/contact" },
-];
+function useNavLinks(): NavItem[] {
+  const { t } = useTranslation();
+  return [
+    { label: t("nav.home"), path: "/" },
+    {
+      label: t("nav.about"),
+      path: "/about",
+      children: [
+        { label: t("nav.news"), path: "/news" },
+        { label: t("nav.projects"), path: "/school-projects" },
+        { label: t("nav.facilities"), path: "/facilities" },
+        { label: t("nav.boarding"), path: "/boarding" },
+      ],
+    },
+    {
+      label: t("nav.academics"),
+      path: "/academics",
+      children: [{ label: t("nav.downloads"), path: "/downloads" }],
+    },
+    {
+      label: t("nav.admissions"),
+      path: "/admissions",
+      children: [{ label: t("nav.fees"), path: "/fees" }],
+    },
+    {
+      label: t("nav.activities"),
+      path: "/sports-culture",
+      children: [
+        { label: t("nav.schoolLife"), path: "/school-life" },
+        { label: t("nav.awards"), path: "/awards" },
+      ],
+    },
+    {
+      label: t("nav.staff"),
+      path: "/staff",
+      children: [{ label: t("nav.vacancies"), path: "/vacancies" }],
+    },
+    { label: t("nav.alumni"), path: "/alumni" },
+    { label: t("nav.contact"), path: "/contact" },
+  ];
+}
 
 function DesktopDropdown({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
@@ -161,6 +166,9 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
+  const navLinks = useNavLinks();
+
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -201,18 +209,19 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Right side: portal */}
+        {/* Right side: portal + language */}
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <Link to="/login" className="hidden sm:block">
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Portal Login
+              {t("nav.portalLogin")}
             </Button>
           </Link>
 
           <button
             className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={t("nav.menu")}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -246,7 +255,7 @@ export default function Navbar() {
               )}
               <Link to="/login" onClick={() => setMobileOpen(false)} className="mt-3">
                 <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  Portal Login
+                  {t("nav.portalLogin")}
                 </Button>
               </Link>
             </div>

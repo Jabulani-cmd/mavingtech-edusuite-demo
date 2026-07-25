@@ -37,17 +37,35 @@ export const saIdSchema = z
 export const zimNationalIdRegex = saIdRegex;
 export const zimNationalIdSchema = saIdSchema;
 
-export const SA_PROVINCES = [
-  "Eastern Cape",
-  "Free State",
-  "Gauteng",
-  "KwaZulu-Natal",
-  "Limpopo",
-  "Mpumalanga",
-  "Northern Cape",
-  "North West",
-  "Western Cape",
-] as const;
+// App is scoped to KwaZulu-Natal and Gauteng only.
+export const SA_PROVINCES = ["KwaZulu-Natal", "Gauteng"] as const;
+
+export const SA_CITIES_BY_PROVINCE: Record<(typeof SA_PROVINCES)[number], string[]> = {
+  "KwaZulu-Natal": [
+    "Durban",
+    "Pietermaritzburg",
+    "Richards Bay",
+    "Empangeni",
+    "Mandeni",
+    "Stanger (KwaDukuza)",
+    "Newcastle",
+    "Ladysmith",
+    "Umhlanga",
+    "Pinetown",
+  ],
+  Gauteng: [
+    "Johannesburg",
+    "Pretoria",
+    "Soweto",
+    "Sandton",
+    "Centurion",
+    "Midrand",
+    "Benoni",
+    "Kempton Park",
+  ],
+};
+
+export const SA_CITIES = Object.values(SA_CITIES_BY_PROVINCE).flat();
 
 export const studentFormSchema = z.object({
   admission_number: z.string().optional().default(""),
