@@ -449,7 +449,7 @@ function TabContent({
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         {renderLocked("study materials",
-          <PrintableSection title="Study Materials" fileName="study-materials" bare>
+          <PrintableSection title="Study Materials" fileName="study-materials" bare hideActions>
             <StudentMaterialsTab studentClassId={studentClassId} />
           </PrintableSection>
         )}
