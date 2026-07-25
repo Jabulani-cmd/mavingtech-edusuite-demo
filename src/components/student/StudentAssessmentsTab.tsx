@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { ClipboardList, Clock, CheckCircle2, Upload, FileText, Eye, Download, ExternalLink } from "lucide-react";
+import { ClipboardList, Clock, CheckCircle2, Upload, Eye, Sparkles, Timer, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format, isPast, differenceInDays } from "date-fns";
 
 interface Props {
-  studentId: string | null; // student table ID
+  studentId: string | null;
   studentClassId: string | null;
   userId: string;
 }
@@ -26,43 +26,38 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
   const [showSubmit, setShowSubmit] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
   const [submitComment, setSubmitComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [submitFile, setSubmitFile] = useState<File | null>(null);
 
+  // Quiz state
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const timerRef = useRef<any>(null);
+
   useEffect(() => {
-    if (studentClassId && studentId) {
-      fetchAll();
-      // Realtime: refresh when teacher publishes new assessments/results for this class
-      const ch = supabase
-        .channel(`stu-assess-${studentId}-${Math.random().toString(36).slice(2,7)}`)
-        .on("postgres_changes", { event: "*", schema: "public", table: "assessments", filter: `class_id=eq.${studentClassId}` }, fetchAll)
-        .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results", filter: `student_id=eq.${studentId}` }, fetchAll)
-        .on("postgres_changes", { event: "*", schema: "public", table: "homework", filter: `class_id=eq.${studentClassId}` }, fetchAll)
-        .subscribe();
-      return () => { supabase.removeChannel(ch); };
-    } else {
-      setLoading(false);
-    }
+    if (studentClassId && studentId) fetchAll();
+    else setLoading(false);
   }, [studentClassId, studentId]);
 
+  useEffect(() => {
+    // Realtime results
+    if (!studentId) return;
+    const ch = supabase.channel(`student-assess-${studentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results", filter: `student_id=eq.${studentId}` }, () => fetchAll())
+      .on("postgres_changes", { event: "*", schema: "public", table: "assessments" }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [studentId]);
 
   const fetchAll = async () => {
     setLoading(true);
     const [{ data: assess }, { data: subs }, { data: res }] = await Promise.all([
-      supabase
-        .from("assessments")
-        .select("*, subjects(name), classes(name)")
-        .eq("is_published", true)
-        .eq("class_id", studentClassId!)
-        .order("due_date", { ascending: true }),
+      supabase.from("assessments").select("*, subjects(name), classes(name)").eq("is_published", true).eq("class_id", studentClassId!).order("due_date", { ascending: true }),
       supabase.from("assessment_submissions").select("*").eq("student_id", studentId!),
-      supabase
-        .from("assessment_results")
-        .select("*, assessments(title, max_marks, subjects(name))")
-        .eq("student_id", studentId!)
-        .eq("is_published", true),
+      supabase.from("assessment_results").select("*, assessments(title, max_marks, subjects(name), questions)").eq("student_id", studentId!).eq("is_published", true),
     ]);
     setAssessments(assess || []);
     setSubmissions(subs || []);
@@ -70,28 +65,97 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
     setLoading(false);
   };
 
-  const getSubmission = (assessmentId: string) => submissions.find((s) => s.assessment_id === assessmentId);
-  const getResult = (assessmentId: string) => results.find((r) => r.assessment_id === assessmentId);
+  const getSubmission = (id: string) => submissions.find(s => s.assessment_id === id);
+  const getResult = (id: string) => results.find(r => r.assessment_id === id);
+  const hasQuestions = (a: any) => Array.isArray(a?.questions) && a.questions.length > 0;
 
-  const upcoming = assessments.filter((a) => a.due_date && !isPast(new Date(a.due_date)) && !getResult(a.id));
-  const pastDue = assessments.filter(
-    (a) => a.due_date && isPast(new Date(a.due_date)) && !getSubmission(a.id) && !getResult(a.id),
-  );
-  const completed = assessments.filter((a) => getResult(a.id) || getSubmission(a.id));
+  const upcoming = assessments.filter(a => a.due_date && !isPast(new Date(a.due_date)) && !getResult(a.id) && !getSubmission(a.id));
+  const pastDue = assessments.filter(a => a.due_date && isPast(new Date(a.due_date)) && !getSubmission(a.id) && !getResult(a.id));
+  const completed = assessments.filter(a => getResult(a.id) || getSubmission(a.id));
 
-  const handleSubmit = async () => {
+  const openQuiz = (a: any) => {
+    setSelectedAssessment(a);
+    setAnswers({});
+    setShowQuiz(true);
+    if (a.time_limit_minutes) {
+      setSecondsLeft(a.time_limit_minutes * 60);
+    } else {
+      setSecondsLeft(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!showQuiz || secondsLeft === null) return;
+    if (secondsLeft <= 0) { submitQuiz(true); return; }
+    timerRef.current = setTimeout(() => setSecondsLeft(s => (s ?? 0) - 1), 1000);
+    return () => clearTimeout(timerRef.current);
+  }, [showQuiz, secondsLeft]);
+
+  const submitQuiz = async (auto = false) => {
     if (!selectedAssessment || !studentId) return;
     setSubmitting(true);
 
+    const qs = selectedAssessment.questions || [];
+    let obtained = 0;
+    const totalMarks = selectedAssessment.max_marks || qs.reduce((s: number, q: any) => s + (q.marks || 1), 0);
+    qs.forEach((q: any) => {
+      if (answers[q.id] === q.correct_index) obtained += (q.marks || 1);
+    });
+    const percentage = totalMarks > 0 ? (obtained / totalMarks) * 100 : 0;
+    const passMark = selectedAssessment.pass_mark || 50;
+    const grade = percentage >= 80 ? "A" : percentage >= 70 ? "B" : percentage >= 60 ? "C" : percentage >= passMark ? "D" : "F";
+
+    const { data: sub, error: subErr } = await supabase.from("assessment_submissions").insert({
+      assessment_id: selectedAssessment.id,
+      student_id: studentId,
+      answers,
+      auto_marked: true,
+      status: "submitted",
+      submission_date: new Date().toISOString(),
+    }).select().single();
+
+    if (subErr) {
+      toast({ title: "Submit failed", description: subErr.message, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+
+    const feedback = qs.map((q: any, i: number) => {
+      const chosen = answers[q.id];
+      const correct = chosen === q.correct_index;
+      return `Q${i + 1}: ${correct ? "✓ Correct" : `✗ Your answer: ${q.options[chosen] ?? "—"} | Correct: ${q.options[q.correct_index]}`}${q.explanation ? ` — ${q.explanation}` : ""}`;
+    }).join("\n");
+
+    await supabase.from("assessment_results").insert({
+      assessment_id: selectedAssessment.id,
+      student_id: studentId,
+      marks_obtained: obtained,
+      percentage,
+      grade,
+      teacher_feedback: feedback,
+      is_published: true,
+      graded_by: userId,
+      graded_date: new Date().toISOString(),
+    });
+
+    setSubmitting(false);
+    setShowQuiz(false);
+    toast({
+      title: auto ? "Time's up — auto submitted!" : "Submitted & auto-marked",
+      description: `${obtained}/${totalMarks} (${percentage.toFixed(0)}%) — ${grade}`,
+    });
+    fetchAll();
+  };
+
+  const handleFileSubmit = async () => {
+    if (!selectedAssessment || !studentId) return;
+    setSubmitting(true);
     let fileUrl: string | null = null;
     if (submitFile) {
       const path = `submissions/${studentId}/${Date.now()}-${submitFile.name}`;
       const { error } = await supabase.storage.from("school-media").upload(path, submitFile);
-      if (!error) {
-        fileUrl = supabase.storage.from("school-media").getPublicUrl(path).data.publicUrl;
-      }
+      if (!error) fileUrl = supabase.storage.from("school-media").getPublicUrl(path).data.publicUrl;
     }
-
     const { error } = await supabase.from("assessment_submissions").insert({
       assessment_id: selectedAssessment.id,
       student_id: studentId,
@@ -100,42 +164,22 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
       status: "submitted",
       submission_date: new Date().toISOString(),
     });
-
-    if (error) {
-      toast({ title: "Error submitting", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Assignment submitted!" });
-      setShowSubmit(false);
-      setSubmitComment("");
-      setSubmitFile(null);
-      fetchAll();
-    }
+    if (error) toast({ title: "Error submitting", description: error.message, variant: "destructive" });
+    else { toast({ title: "Assignment submitted!" }); setShowSubmit(false); setSubmitComment(""); setSubmitFile(null); fetchAll(); }
     setSubmitting(false);
   };
 
-  const gradeColor = (grade: string) => {
-    if (grade === "A") return "text-green-600";
-    if (grade === "B") return "text-blue-600";
-    if (grade === "C") return "text-yellow-600";
-    return "text-muted-foreground";
-  };
+  const gradeColor = (g: string) => g === "A" ? "text-green-600" : g === "B" ? "text-blue-600" : g === "C" ? "text-yellow-600" : "text-muted-foreground";
+  const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
-        ))}
-      </div>
-    );
-  }
+  if (loading) return <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />)}</div>;
 
-  const renderAssessmentCard = (a: any, showDue = true) => {
+  const renderCard = (a: any, showDue = true) => {
     const sub = getSubmission(a.id);
     const res = getResult(a.id);
     const daysLeft = a.due_date ? differenceInDays(new Date(a.due_date), new Date()) : null;
     const isOverdue = a.due_date && isPast(new Date(a.due_date));
-    const hasFile = a.file_url && a.file_url.trim() !== "";
+    const isQuiz = hasQuestions(a);
 
     return (
       <Card key={a.id} className={isOverdue && !sub && !res ? "border-destructive/30" : ""}>
@@ -143,83 +187,39 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                {hasFile && <FileText className="h-4 w-4 text-muted-foreground shrink-0" />}
                 <p className="text-sm font-medium">{a.title}</p>
-                <Badge variant="outline" className="text-[10px]">
-                  {a.assessment_type}
-                </Badge>
+                <Badge variant="outline" className="text-[10px]">{a.assessment_type}</Badge>
+                {isQuiz && <Badge className="text-[10px] bg-primary/10 text-primary border-primary/30"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI Quiz</Badge>}
               </div>
               <p className="text-[11px] text-muted-foreground mt-0.5">{a.subjects?.name}</p>
               {showDue && a.due_date && (
                 <div className="flex items-center gap-1 mt-1">
                   <Clock className="h-3 w-3 text-muted-foreground" />
-                  <span
-                    className={`text-[11px] ${isOverdue ? "text-destructive font-medium" : "text-muted-foreground"}`}
-                  >
-                    {isOverdue
-                      ? "Overdue"
-                      : daysLeft === 0
-                        ? "Due today"
-                        : daysLeft === 1
-                          ? "Due tomorrow"
-                          : `${daysLeft} days left`}
-                    {" · "}
-                    {format(new Date(a.due_date), "MMM d")}
+                  <span className={`text-[11px] ${isOverdue ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                    {isOverdue ? "Overdue" : daysLeft === 0 ? "Due today" : daysLeft === 1 ? "Due tomorrow" : `${daysLeft} days left`} · {format(new Date(a.due_date), "MMM d")}
                   </span>
+                  {isQuiz && a.time_limit_minutes && <span className="text-[11px] text-muted-foreground">· {a.time_limit_minutes} min</span>}
                 </div>
               )}
               {res && (
                 <div className="flex items-center gap-2 mt-1">
-                  <span className={`text-sm font-bold ${gradeColor(res.grade || "")}`}>
-                    {res.marks_obtained}/{a.max_marks} ({res.grade})
-                  </span>
+                  <span className={`text-sm font-bold ${gradeColor(res.grade || "")}`}>{res.marks_obtained}/{a.max_marks} ({res.grade})</span>
                 </div>
               )}
             </div>
             <div className="flex flex-col gap-1">
-              {hasFile && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-xs h-7"
-                    onClick={() => window.open(a.file_url, "_blank")}
-                  >
-                    <ExternalLink className="h-3 w-3 mr-1" /> Open
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-xs h-7"
-                    onClick={() => window.open(a.file_url, "_blank")}
-                  >
-                    <Download className="h-3 w-3 mr-1" /> Download
-                  </Button>
-                </>
+              {!sub && !res && isQuiz && (
+                <Button size="sm" className="text-xs h-7" onClick={() => openQuiz(a)}>
+                  <Sparkles className="h-3 w-3 mr-1" /> Start Quiz
+                </Button>
               )}
-              {!sub && !res && a.assessment_type === "assignment" && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs h-7"
-                  onClick={() => {
-                    setSelectedAssessment(a);
-                    setShowSubmit(true);
-                  }}
-                >
+              {!sub && !res && !isQuiz && a.assessment_type === "assignment" && (
+                <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => { setSelectedAssessment(a); setShowSubmit(true); }}>
                   <Upload className="h-3 w-3 mr-1" /> Submit
                 </Button>
               )}
               {res && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-xs h-7"
-                  onClick={() => {
-                    setSelectedAssessment(a);
-                    setShowResult(true);
-                  }}
-                >
+                <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => { setSelectedAssessment(a); setShowResult(true); }}>
                   <Eye className="h-3 w-3 mr-1" /> Result
                 </Button>
               )}
@@ -237,109 +237,103 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
     <div className="space-y-4">
       <Tabs defaultValue="upcoming">
         <TabsList className="w-full">
-          <TabsTrigger value="upcoming" className="flex-1 text-xs">
-            Upcoming ({upcoming.length})
-          </TabsTrigger>
-          <TabsTrigger value="pastdue" className="flex-1 text-xs">
-            Past Due ({pastDue.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed" className="flex-1 text-xs">
-            Completed ({completed.length})
-          </TabsTrigger>
+          <TabsTrigger value="upcoming" className="flex-1 text-xs">Upcoming ({upcoming.length})</TabsTrigger>
+          <TabsTrigger value="pastdue" className="flex-1 text-xs">Past Due ({pastDue.length})</TabsTrigger>
+          <TabsTrigger value="completed" className="flex-1 text-xs">Completed ({completed.length})</TabsTrigger>
         </TabsList>
-
         <TabsContent value="upcoming" className="space-y-2 mt-3">
-          {upcoming.length === 0 ? (
-            <EmptyState
-              icon={<CheckCircle2 className="h-10 w-10" />}
-              text="No upcoming assessments"
-              sub="You're all caught up!"
-            />
-          ) : (
-            upcoming.map((a) => renderAssessmentCard(a))
-          )}
+          {upcoming.length === 0 ? <Empty text="No upcoming assessments" /> : upcoming.map(a => renderCard(a))}
         </TabsContent>
-
         <TabsContent value="pastdue" className="space-y-2 mt-3">
-          {pastDue.length === 0 ? (
-            <EmptyState
-              icon={<CheckCircle2 className="h-10 w-10" />}
-              text="No overdue assessments"
-              sub="Great job staying on track!"
-            />
-          ) : (
-            pastDue.map((a) => renderAssessmentCard(a))
-          )}
+          {pastDue.length === 0 ? <Empty text="No overdue assessments" /> : pastDue.map(a => renderCard(a))}
         </TabsContent>
-
         <TabsContent value="completed" className="space-y-2 mt-3">
-          {completed.length === 0 ? (
-            <EmptyState
-              icon={<ClipboardList className="h-10 w-10" />}
-              text="No completed assessments yet"
-              sub="Results will appear here after grading."
-            />
-          ) : (
-            completed.map((a) => renderAssessmentCard(a, false))
-          )}
+          {completed.length === 0 ? <Empty text="No completed assessments yet" /> : completed.map(a => renderCard(a, false))}
         </TabsContent>
       </Tabs>
 
-      {/* Submit Dialog */}
+      {/* Quiz Dialog */}
+      <Dialog open={showQuiz} onOpenChange={(v) => { if (!v && !submitting) { if (!confirm("Exit quiz? Your progress will be lost.")) return; } setShowQuiz(v); }}>
+        <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span className="text-base">{selectedAssessment?.title}</span>
+              {secondsLeft !== null && (
+                <Badge variant={secondsLeft < 60 ? "destructive" : "outline"} className="ml-2">
+                  <Timer className="h-3 w-3 mr-1" /> {fmtTime(secondsLeft)}
+                </Badge>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedAssessment?.instructions && (
+            <p className="text-xs text-muted-foreground bg-muted p-2 rounded">{selectedAssessment.instructions}</p>
+          )}
+          <div className="space-y-4">
+            {(selectedAssessment?.questions || []).map((q: any, i: number) => (
+              <Card key={q.id}>
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-sm font-medium">Q{i + 1}. {q.question}</p>
+                  <div className="space-y-2">
+                    {q.options.map((opt: string, oi: number) => (
+                      <button
+                        key={oi}
+                        onClick={() => setAnswers(a => ({ ...a, [q.id]: oi }))}
+                        className={`w-full text-left p-2.5 rounded-lg border text-sm transition-colors ${
+                          answers[q.id] === oi ? "border-primary bg-primary/5 font-medium" : "border-muted hover:border-primary/30"
+                        }`}
+                      >
+                        <span className="inline-block w-6 font-medium">{String.fromCharCode(65 + oi)}.</span> {opt}
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            <div className="sticky bottom-0 bg-background pt-2 flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                Answered {Object.keys(answers).length} / {selectedAssessment?.questions?.length || 0}
+              </p>
+              <Button onClick={() => submitQuiz(false)} disabled={submitting}>
+                {submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Marking...</> : "Submit Quiz"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* File Submit */}
       <Dialog open={showSubmit} onOpenChange={setShowSubmit}>
         <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base">Submit: {selectedAssessment?.title}</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle className="text-base">Submit: {selectedAssessment?.title}</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            {selectedAssessment?.instructions && (
-              <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">{selectedAssessment.instructions}</p>
-            )}
+            {selectedAssessment?.instructions && <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">{selectedAssessment.instructions}</p>}
             <div>
               <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
                 <Upload className="h-3 w-3 mr-1" /> {submitFile ? submitFile.name : "Attach File"}
               </Button>
-              <input
-                ref={fileRef}
-                type="file"
-                className="hidden"
-                onChange={(e) => setSubmitFile(e.target.files?.[0] || null)}
-              />
+              <input ref={fileRef} type="file" className="hidden" onChange={e => setSubmitFile(e.target.files?.[0] || null)} />
             </div>
-            <Textarea
-              placeholder="Add comments (optional)..."
-              value={submitComment}
-              onChange={(e) => setSubmitComment(e.target.value)}
-              rows={3}
-            />
-            <Button onClick={handleSubmit} disabled={submitting} className="w-full">
-              {submitting ? "Submitting..." : "Submit Assignment"}
-            </Button>
+            <Textarea placeholder="Add comments (optional)..." value={submitComment} onChange={e => setSubmitComment(e.target.value)} rows={3} />
+            <Button onClick={handleFileSubmit} disabled={submitting} className="w-full">{submitting ? "Submitting..." : "Submit Assignment"}</Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Result Dialog */}
       <Dialog open={showResult} onOpenChange={setShowResult}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base">Results: {selectedAssessment?.title}</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle className="text-base">Results: {selectedAssessment?.title}</DialogTitle></DialogHeader>
           {selectedResult && (
             <div className="space-y-4">
               <div className="text-center py-4">
-                <p className={`text-4xl font-bold ${gradeColor(selectedResult.grade || "")}`}>
-                  {selectedResult.grade || "—"}
-                </p>
-                <p className="text-lg font-medium mt-1">
-                  {selectedResult.marks_obtained} / {selectedAssessment?.max_marks}
-                </p>
+                <p className={`text-4xl font-bold ${gradeColor(selectedResult.grade || "")}`}>{selectedResult.grade || "—"}</p>
+                <p className="text-lg font-medium mt-1">{selectedResult.marks_obtained} / {selectedAssessment?.max_marks}</p>
                 <p className="text-sm text-muted-foreground">{selectedResult.percentage?.toFixed(1)}%</p>
               </div>
               {selectedResult.teacher_feedback && (
                 <div className="bg-muted p-3 rounded-lg">
-                  <p className="text-xs font-medium text-muted-foreground mb-1">Teacher Feedback</p>
-                  <p className="text-sm">{selectedResult.teacher_feedback}</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Feedback</p>
+                  <pre className="text-xs whitespace-pre-wrap font-sans">{selectedResult.teacher_feedback}</pre>
                 </div>
               )}
             </div>
@@ -350,14 +344,11 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   );
 }
 
-function EmptyState({ icon, text, sub }: { icon: React.ReactNode; text: string; sub: string }) {
+function Empty({ text }: { text: string }) {
   return (
-    <Card>
-      <CardContent className="py-10 text-center">
-        <div className="mx-auto mb-3 text-muted-foreground/40">{icon}</div>
-        <p className="text-sm font-medium text-muted-foreground">{text}</p>
-        <p className="text-xs text-muted-foreground mt-1">{sub}</p>
-      </CardContent>
-    </Card>
+    <Card><CardContent className="py-10 text-center">
+      <ClipboardList className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
+      <p className="text-sm font-medium text-muted-foreground">{text}</p>
+    </CardContent></Card>
   );
 }
