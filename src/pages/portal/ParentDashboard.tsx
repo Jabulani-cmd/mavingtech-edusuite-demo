@@ -1233,22 +1233,12 @@ function TabContentInner(props: TabContentProps) {
                           <td className="px-3 py-2 text-muted-foreground">
                             {inv.term} {inv.academic_year}
                           </td>
-                          <td className="px-3 py-2 text-center">
-                            R {Number(inv.total_usd || 0).toFixed(2)}
-                            <br />
-                            <span className="text-xs text-muted-foreground">
-                              R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2 text-center text-emerald-600">R {paid.toFixed(2)}</td>
+                          <td className="px-3 py-2 text-center font-mono">{formatZAR(inv.total_usd)}</td>
+                          <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(paid)}</td>
                           <td
-                            className={`px-3 py-2 text-center font-bold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
+                            className={`px-3 py-2 text-center font-bold font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
                           >
-                            {bal < 0 ? `+$${Math.abs(bal).toFixed(2)}` : bal > 0 ? `$${bal.toFixed(2)}` : "$0.00"}
-                            <br />
-                            <span className="text-xs font-normal text-muted-foreground">
-                              R {usdToZig(Math.abs(bal)).toFixed(2)}
-                            </span>
+                            {bal < 0 ? `+${formatZAR(Math.abs(bal))}` : formatZAR(bal)}
                           </td>
                           <td className="px-3 py-2 text-center">
                             <Badge
@@ -1279,6 +1269,15 @@ function TabContentInner(props: TabContentProps) {
                                 subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
                               }}
                             />
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {bal > 0.001 ? (
+                              <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={() => setPayInvoice(inv)}>
+                                <CreditCard className="w-3 h-3 mr-1" /> Pay
+                              </Button>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
                           </td>
                         </tr>
                       );
