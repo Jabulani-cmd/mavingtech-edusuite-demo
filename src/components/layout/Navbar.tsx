@@ -50,7 +50,6 @@ function useNavLinks(): NavItem[] {
       path: "/staff",
       children: [{ label: t("nav.vacancies"), path: "/vacancies" }],
     },
-    { label: t("nav.alumni"), path: "/alumni" },
     { label: t("nav.contact"), path: "/contact" },
   ];
 }
