@@ -36,8 +36,14 @@ export default function StudentFeeTab({ studentId }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (studentId) fetchData();
-    else setLoading(false);
+    if (!studentId) { setLoading(false); return; }
+    fetchData();
+    const ch = supabase
+      .channel(`student-fees-${studentId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "payments", filter: `student_id=eq.${studentId}` }, () => fetchData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "invoices", filter: `student_id=eq.${studentId}` }, () => fetchData())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [studentId]);
 
   const fetchData = async () => {
