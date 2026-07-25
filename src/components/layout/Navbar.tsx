@@ -166,6 +166,9 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
+  const navLinks = useNavLinks();
+
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -206,18 +209,19 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Right side: portal */}
+        {/* Right side: portal + language */}
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <Link to="/login" className="hidden sm:block">
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Portal Login
+              {t("nav.portalLogin")}
             </Button>
           </Link>
 
           <button
             className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={t("nav.menu")}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -251,7 +255,7 @@ export default function Navbar() {
               )}
               <Link to="/login" onClick={() => setMobileOpen(false)} className="mt-3">
                 <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  Portal Login
+                  {t("nav.portalLogin")}
                 </Button>
               </Link>
             </div>
