@@ -145,12 +145,12 @@ const seedRooms: Room[] = [
 ];
 
 const seedTeachers: Teacher[] = [
-  { id: "t-1", name: "Mr. T. Ncube", email: "ncube@mavingtech.com", employeeNumber: "MHS-S00001", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-1", "sub-9"], qualifiedGrades: [8, 9, 10] },
-  { id: "t-2", name: "Mrs. R. Moyo", email: "moyo@mavingtech.com", employeeNumber: "MHS-S00002", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Morning", qualifiedSubjects: ["sub-2", "sub-7"], qualifiedGrades: [8, 9, 10, 11] },
-  { id: "t-3", name: "Mr. S. Dube", email: "dube@mavingtech.com", employeeNumber: "MHS-S00003", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-3", "sub-5"], qualifiedGrades: [8, 9, 10] },
-  { id: "t-4", name: "Ms. P. Chirwa", email: "chirwa@mavingtech.com", employeeNumber: "MHS-S00004", employmentType: "Part-time", maxPeriodsPerWeek: 16, preferredTime: "Afternoon", qualifiedSubjects: ["sub-6", "sub-10"], qualifiedGrades: [9, 10] },
-  { id: "t-5", name: "Mr. K. Banda", email: "banda@mavingtech.com", employeeNumber: "MHS-S00005", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-4", "sub-7"], qualifiedGrades: [8, 9, 10, 11] },
-  { id: "t-6", name: "Mrs. L. Mguni", email: "mguni@mavingtech.com", employeeNumber: "MHS-S00006", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Morning", qualifiedSubjects: ["sub-8"], qualifiedGrades: [8, 9, 10, 11] },
+  { id: "t-1", name: "Mr. T. Zulu", email: "zulu@mavingtech.com", employeeNumber: "MHS-S00001", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-1", "sub-9"], qualifiedGrades: [8, 9, 10] },
+  { id: "t-2", name: "Mrs. N. Khumalo", email: "khumalo@mavingtech.com", employeeNumber: "MHS-S00002", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Morning", qualifiedSubjects: ["sub-2", "sub-7"], qualifiedGrades: [8, 9, 10, 11] },
+  { id: "t-3", name: "Mr. S. Mthembu", email: "mthembu@mavingtech.com", employeeNumber: "MHS-S00003", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-3", "sub-5"], qualifiedGrades: [8, 9, 10] },
+  { id: "t-4", name: "Ms. Z. Ndlovu", email: "ndlovu@mavingtech.com", employeeNumber: "MHS-S00004", employmentType: "Part-time", maxPeriodsPerWeek: 16, preferredTime: "Afternoon", qualifiedSubjects: ["sub-6", "sub-10"], qualifiedGrades: [9, 10] },
+  { id: "t-5", name: "Mr. B. Dlamini", email: "dlamini@mavingtech.com", employeeNumber: "MHS-S00005", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Both", qualifiedSubjects: ["sub-4", "sub-7"], qualifiedGrades: [8, 9, 10, 11] },
+  { id: "t-6", name: "Mrs. L. Mkhize", email: "mkhize@mavingtech.com", employeeNumber: "MHS-S00006", employmentType: "Full-time", maxPeriodsPerWeek: 28, preferredTime: "Morning", qualifiedSubjects: ["sub-8"], qualifiedGrades: [8, 9, 10, 11] },
 ];
 
 const seedClasses: SchoolClass[] = [

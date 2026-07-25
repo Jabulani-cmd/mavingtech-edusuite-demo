@@ -87,7 +87,7 @@ This memo serves to formally communicate updates regarding **${topic}**. Please 
 Your cooperation in ensuring a smooth rollout is greatly appreciated.
 
 Yours sincerely,
-**Mr. F.J. Moyo**
+**Mr. S.M. Zulu**
 Director`;
 
     case "grading":
