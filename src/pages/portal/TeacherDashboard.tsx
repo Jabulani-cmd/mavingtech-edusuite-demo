@@ -190,10 +190,11 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
         if (data) studs = data;
       } else {
         const cls = classes.find(c => c.id === attClass);
-        if (cls?.form_level) {
-          const stream = cls.stream || cls.name;
-          const { data } = await supabase.from("students").select("id, full_name, admission_number").eq("form", cls.form_level).eq("status", "active").order("full_name");
-          if (data) studs = data;
+        const grade = cls?.level || cls?.form_level;
+        if (grade) {
+          let q = supabase.from("students").select("id, full_name, admission_number").eq("status", "active").or(`form.eq.${grade},class.eq.${cls?.name}`);
+          const { data } = await q.order("full_name");
+          if (data) studs = cls?.stream ? data.filter((_: any, i: number, a: any[]) => true) : data;
         }
       }
       setAttStudents(studs);
