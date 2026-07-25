@@ -77,27 +77,26 @@ export default function ParentSubscribe() {
       setBank(b);
 
       if (user) {
-        // Try the newer link table first, then fall back to the legacy parent_students table.
-        const [{ data: linkKids }, { data: legacyKids }] = await Promise.all([
-          supabase
-            .from("parent_student_links")
-            .select("student_id, students:student_id(id, full_name, form, stream, admission_number)")
-            .eq("parent_id", user.id),
-          supabase
-            .from("parent_students")
-            .select("student_id, students:student_id(id, full_name, form, stream, admission_number)")
-            .eq("parent_id", user.id),
+        // No FK relationship exists between parent_students/parent_student_links and students,
+        // so PostgREST embeds return null. Fetch student IDs first, then load the student rows.
+        const [{ data: linkRows }, { data: legacyRows }] = await Promise.all([
+          supabase.from("parent_student_links").select("student_id").eq("parent_id", user.id),
+          supabase.from("parent_students").select("student_id").eq("parent_id", user.id),
         ]);
+        const ids = Array.from(new Set([
+          ...(linkRows || []).map((r: any) => r.student_id),
+          ...(legacyRows || []).map((r: any) => r.student_id),
+        ].filter(Boolean)));
 
-        const linkList = (linkKids || []).map((k: any) => k.students).filter(Boolean);
-        const legacyList = (legacyKids || []).map((k: any) => k.students).filter(Boolean);
-        const list = linkList.length ? linkList : legacyList;
-
-        if (!list.length) {
-          // No linked child yet — keep the list empty so the UI can prompt to link one.
+        if (!ids.length) {
           setChildren([]);
           setSelectedChild(null);
         } else {
+          const { data: kids } = await supabase
+            .from("students")
+            .select("id, full_name, form, stream, admission_number")
+            .in("id", ids);
+          const list = kids || [];
           setChildren(list);
           setSelectedChild(list[0]?.id || null);
         }
