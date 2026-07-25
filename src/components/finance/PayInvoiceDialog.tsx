@@ -132,9 +132,15 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
       toast({ title: "Payment successful", description: `Receipt ${receiptNumber}` });
       onPaid?.();
     } catch (e: any) {
-      setError(e.message || "Failed to record payment.");
+      // Real backend/schema error — do NOT show as a gateway decline.
+      console.error("[PayInvoiceDialog] Failed to record payment:", e);
+      setFailReason("Something went wrong processing your payment. Please try again later.");
       setStep("failed");
-      setFailReason(e.message || "Could not save payment record.");
+      toast({
+        title: "Payment could not be processed",
+        description: "A system error occurred. Your card was not charged.",
+        variant: "destructive",
+      });
     } finally {
       setProcessing(false);
     }
