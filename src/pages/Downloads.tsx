@@ -1,21 +1,15 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const categoryLabels: Record<string, string> = {
-  fees: "Fees & Finance",
-  forms: "Forms & Applications",
-  policies: "Policies",
-  vacancies: "Vacancies",
-  general: "General",
-};
-
 export default function Downloads() {
+  const { t } = useTranslation();
   const [downloads, setDownloads] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
 
@@ -27,15 +21,16 @@ export default function Downloads() {
     fetch();
   }, []);
 
+  const categoryLabel = (c: string) => c === "all" ? t("common.all") : t(`downloads.categories.${c}`, { defaultValue: c });
   const filtered = filter === "all" ? downloads : downloads.filter(d => d.category === filter);
-  const categories = ["all", ...new Set(downloads.map(d => d.category))];
+  const categories = ["all", ...Array.from(new Set(downloads.map(d => d.category)))];
 
   return (
     <Layout>
       <section className="bg-secondary py-16">
         <div className="container">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
-            Downloads
+            {t("downloads.title")}
           </motion.h1>
         </div>
       </section>
@@ -45,7 +40,7 @@ export default function Downloads() {
           <div className="mb-8 flex flex-wrap gap-2">
             {categories.map(c => (
               <Button key={c} variant={filter === c ? "default" : "outline"} size="sm" onClick={() => setFilter(c)}>
-                {c === "all" ? "All" : categoryLabels[c] || c}
+                {categoryLabel(c)}
               </Button>
             ))}
           </div>
@@ -62,7 +57,7 @@ export default function Downloads() {
                       <div className="flex-1">
                         <h3 className="font-heading font-semibold">{d.title}</h3>
                         {d.description && <p className="mt-1 text-sm text-muted-foreground">{d.description}</p>}
-                        <span className="mt-1 inline-block text-xs text-accent">{categoryLabels[d.category] || d.category}</span>
+                        <span className="mt-1 inline-block text-xs text-accent">{categoryLabel(d.category)}</span>
                       </div>
                       <a href={d.file_url} target="_blank" rel="noopener noreferrer">
                         <Button variant="ghost" size="icon"><Download className="h-4 w-4" /></Button>
@@ -73,7 +68,7 @@ export default function Downloads() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground italic">No documents available for download yet.</p>
+            <p className="text-center text-muted-foreground italic">{t("downloads.empty")}</p>
           )}
         </div>
       </section>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,14 +9,11 @@ import { Download, Briefcase } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Vacancies() {
+  const { t } = useTranslation();
   const [docs, setDocs] = useState<any[]>([]);
 
   useEffect(() => {
-    supabase
-      .from("downloads")
-      .select("*")
-      .eq("category", "vacancies")
-      .order("created_at", { ascending: false })
+    supabase.from("downloads").select("*").eq("category", "vacancies").order("created_at", { ascending: false })
       .then(({ data }) => { if (data) setDocs(data); });
   }, []);
 
@@ -24,20 +22,16 @@ export default function Vacancies() {
       <section className="bg-secondary py-16">
         <div className="container">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
-            Vacancies
+            {t("vacancies.title")}
           </motion.h1>
         </div>
       </section>
 
       <section className="py-16">
         <div className="container max-w-4xl">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-8 text-center text-lg text-muted-foreground"
-          >
-            View current job openings and career opportunities at MavingTech High School.
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="mb-8 text-center text-lg text-muted-foreground">
+            {t("vacancies.intro")}
           </motion.p>
 
           {docs.length > 0 ? (
@@ -62,7 +56,7 @@ export default function Vacancies() {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground italic py-8">No vacancies currently available. Please check back later.</p>
+            <p className="text-center text-muted-foreground italic py-8">{t("vacancies.empty")}</p>
           )}
         </div>
       </section>
