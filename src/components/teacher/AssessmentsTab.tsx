@@ -17,6 +17,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { Sparkles } from "lucide-react";
+import AIAssessmentCreator from "./AIAssessmentCreator";
 
 const assessmentTypes = ["test", "exam", "assignment", "quiz", "project"];
 
@@ -42,6 +44,7 @@ export default function AssessmentsTab({ userId, classes, subjects, students }: 
   const [assessments, setAssessments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [aiCreating, setAiCreating] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<any | null>(null);
   const [gradingStudentIdx, setGradingStudentIdx] = useState(0);
   const [results, setResults] = useState<any[]>([]);
@@ -418,8 +421,22 @@ export default function AssessmentsTab({ userId, classes, subjects, students }: 
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setCreating(true)}><Plus className="mr-1 h-4 w-4" /> Create Assessment</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setAiCreating(true)}>
+            <Sparkles className="mr-1 h-4 w-4 text-primary" /> Create with AI
+          </Button>
+          <Button onClick={() => setCreating(true)}><Plus className="mr-1 h-4 w-4" /> Create Assessment</Button>
+        </div>
       </div>
+
+      <AIAssessmentCreator
+        open={aiCreating}
+        onOpenChange={setAiCreating}
+        userId={userId}
+        classes={classes}
+        subjects={subjects}
+        onPublished={fetchAssessments}
+      />
 
       {/* Create Dialog */}
       <Dialog open={creating} onOpenChange={setCreating}>

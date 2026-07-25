@@ -239,26 +239,38 @@ export type Database = {
       }
       assessment_submissions: {
         Row: {
+          answers: Json | null
           assessment_id: string | null
+          auto_marked: boolean | null
           id: string
           notes: string | null
+          status: string | null
           student_id: string | null
+          submission_date: string | null
           submission_url: string | null
           submitted_at: string
         }
         Insert: {
+          answers?: Json | null
           assessment_id?: string | null
+          auto_marked?: boolean | null
           id?: string
           notes?: string | null
+          status?: string | null
           student_id?: string | null
+          submission_date?: string | null
           submission_url?: string | null
           submitted_at?: string
         }
         Update: {
+          answers?: Json | null
           assessment_id?: string | null
+          auto_marked?: boolean | null
           id?: string
           notes?: string | null
+          status?: string | null
           student_id?: string | null
+          submission_date?: string | null
           submission_url?: string | null
           submitted_at?: string
         }
@@ -293,9 +305,12 @@ export type Database = {
           instructions: string | null
           is_published: boolean
           max_marks: number | null
+          pass_mark: number | null
+          questions: Json | null
           stream: string | null
           subject_id: string | null
           teacher_id: string | null
+          time_limit_minutes: number | null
           title: string
           total_marks: number | null
         }
@@ -312,9 +327,12 @@ export type Database = {
           instructions?: string | null
           is_published?: boolean
           max_marks?: number | null
+          pass_mark?: number | null
+          questions?: Json | null
           stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
+          time_limit_minutes?: number | null
           title: string
           total_marks?: number | null
         }
@@ -331,9 +349,12 @@ export type Database = {
           instructions?: string | null
           is_published?: boolean
           max_marks?: number | null
+          pass_mark?: number | null
+          questions?: Json | null
           stream?: string | null
           subject_id?: string | null
           teacher_id?: string | null
+          time_limit_minutes?: number | null
           title?: string
           total_marks?: number | null
         }
