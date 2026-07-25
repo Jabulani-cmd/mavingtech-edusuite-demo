@@ -2716,42 +2716,57 @@ export type Database = {
           created_at: string
           description: string | null
           download_count: number
+          expiry_date: string | null
+          file_name: string | null
+          file_size: number | null
           file_url: string | null
           id: string
           is_published: boolean
           link_url: string | null
           material_type: string
           subject_id: string | null
+          tags: string[] | null
           teacher_id: string | null
           title: string
+          updated_at: string
         }
         Insert: {
           class_id?: string | null
           created_at?: string
           description?: string | null
           download_count?: number
+          expiry_date?: string | null
+          file_name?: string | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
           is_published?: boolean
           link_url?: string | null
           material_type?: string
           subject_id?: string | null
+          tags?: string[] | null
           teacher_id?: string | null
           title: string
+          updated_at?: string
         }
         Update: {
           class_id?: string | null
           created_at?: string
           description?: string | null
           download_count?: number
+          expiry_date?: string | null
+          file_name?: string | null
+          file_size?: number | null
           file_url?: string | null
           id?: string
           is_published?: boolean
           link_url?: string | null
           material_type?: string
           subject_id?: string | null
+          tags?: string[] | null
           teacher_id?: string | null
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
