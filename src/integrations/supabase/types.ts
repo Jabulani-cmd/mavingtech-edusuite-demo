@@ -3573,6 +3573,10 @@ export type Database = {
       }
       is_finance_admin: { Args: { _uid: string }; Returns: boolean }
       is_school_admin: { Args: { _uid: string }; Returns: boolean }
+      recalculate_invoice_payment_totals: {
+        Args: { _invoice_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
