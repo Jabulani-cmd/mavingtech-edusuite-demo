@@ -473,16 +473,8 @@ function CardView({ plan, cardNumber, setCardNumber, cardName, setCardName, card
               </div>
             </div>
 
-            <div className="rounded-md border border-dashed p-3 mt-2">
-              <Label className="text-xs">Demo outcome (test only)</Label>
-              <div className="flex gap-2 mt-2">
-                {(["auto", "approve", "decline"] as const).map(o => (
-                  <Button key={o} type="button" size="sm" variant={forceOutcome === o ? "default" : "outline"} onClick={() => setForceOutcome(o)}>
-                    {o === "auto" ? "Auto (card ending even = approve)" : o.charAt(0).toUpperCase() + o.slice(1)}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} />
+
 
             {error && (
               <div className="text-xs text-destructive flex items-center gap-1">
