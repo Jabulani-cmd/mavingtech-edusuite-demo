@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import LanguageToggle from "@/components/LanguageToggle";
 
 interface NavItem {
   label: string;
