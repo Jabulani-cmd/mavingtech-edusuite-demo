@@ -92,9 +92,9 @@ const ROOM_DEFS: Array<{ name: string; type: RoomType; capacity: number }> = [
 ];
 
 // Representative South African name pools (multi-cultural).
-const SA_FIRST_M = ["Sipho","Thabo","Bongani","Lwazi","Kagiso","Karabo","Mandla","Sizwe","Tebogo","Andile","Ayanda","Katlego","Musa","Themba","Lungile","Johan","Pieter","Ryan","Kyle","Riaan","Ahmed","Yusuf","Rashid","Devan","Priyen","Deon"];
-const SA_FIRST_F = ["Nomvula","Thandi","Zanele","Naledi","Refilwe","Palesa","Amahle","Lerato","Ntombi","Nokuthula","Boitumelo","Dineo","Tumi","Anika","Ayesha","Fatima","Sarah","Chantel","Michelle","Ashleigh","Kavitha","Priya","Mary","Nadia"];
-const SA_SURNAMES = ["Nkosi","Dlamini","Mokoena","Mahlangu","Naidoo","Pillay","Van der Merwe","Botha","Pretorius","Zulu","Khumalo","Mabaso","Mthembu","Ndlovu","Cele","Sithole","Nortje","Fourie","Hendricks","Adams","Isaacs","Cloete","Mokgatle","Motlhabi","Mokwena","Ramaphosa","Sisulu","Rossouw"];
+const SA_FIRST_M = ["Sipho","Bongani","Mandla","Sizwe","Themba","Musa","Andile","Ayanda","Lwazi","Sifiso","Sanele","Nkosinathi","Njabulo","Mfundo","Mthobisi","Zweli","Menzi","Bhekani","Sabelo","Siyabonga","Thulani","Nhlanhla","Xolani","Lindani","Mpho","Vusi"];
+const SA_FIRST_F = ["Nomvula","Thandi","Zanele","Nokuthula","Nomsa","Ntombi","Sibongile","Sindisiwe","Nonhlanhla","Busisiwe","Zinhle","Londiwe","Nokwanda","Slindile","Philisiwe","Thembeka","Nomthandazo","Bongiwe","Fikile","Nozipho","Lungile","Nomfundo","Thulisile","Snenhlanhla"];
+const SA_SURNAMES = ["Zulu","Ndlovu","Khumalo","Dlamini","Mthembu","Ngcobo","Buthelezi","Nkosi","Mkhize","Cele","Sithole","Zwane","Hlongwane","Mabaso","Zondi","Gumede","Mnguni","Shabalala","Ngema","Ntuli","Xaba","Mhlongo","Nzuza","Mchunu","Madlala","Shezi","Mtshali","Mazibuko","Nxumalo","Biyela"];
 
 function pick<T>(arr: T[], i: number): T { return arr[i % arr.length]; }
 
