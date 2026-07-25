@@ -277,12 +277,27 @@ export default function ParentSubscribe() {
             <Sparkles className="w-3 h-3 mr-1" /> Parent Portal Access
           </Badge>
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-            Unlock access for <span className="text-teal-600">{childName}</span>
+            {children.length === 0 ? (
+              <>Unlock access for <span className="text-teal-600">your child</span></>
+            ) : (
+              <>Unlock access for <span className="text-teal-600">{childName}</span></>
+            )}
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Choose a plan to give your family full access to the timetable, results, lesson plans, attendance, and direct teacher messaging.
           </p>
         </div>
+
+        {children.length === 0 && step === "plans" && (
+          <Card className="max-w-xl mx-auto mb-8 p-6 text-center border-amber-200 bg-amber-50/40 dark:bg-amber-950/20">
+            <AlertCircle className="w-10 h-10 mx-auto text-amber-600 mb-3" />
+            <h3 className="text-lg font-semibold mb-2">Link a student first</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Before you can subscribe, link a student to your parent account using their admission number.
+            </p>
+            <Button onClick={() => nav("/portal/parent")}>Go to Parent Dashboard</Button>
+          </Card>
+        )}
 
         {children.length > 1 && step === "plans" && (
           <div className="flex flex-wrap gap-2 justify-center mb-6">
