@@ -365,10 +365,46 @@ function PlansView({ plans, onPick }: any) {
   );
 }
 
+function DemoBadge() {
+  return (
+    <Badge variant="outline" className="border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30">
+      Demo Mode — no real money processed
+    </Badge>
+  );
+}
+
+function OutcomeSelect({ value, onChange, includeAuto = true }: { value: Outcome; onChange: (v: Outcome) => void; includeAuto?: boolean }) {
+  const opts: { v: Outcome; label: string }[] = [
+    ...(includeAuto ? [{ v: "auto" as Outcome, label: "Auto (based on card)" }] : []),
+    { v: "approve", label: "Success" },
+    { v: "insufficient", label: "Insufficient Funds" },
+    { v: "declined", label: "Card Declined" },
+  ];
+  return (
+    <div className="rounded-md border border-dashed border-amber-400/50 bg-amber-50/40 dark:bg-amber-950/20 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <Label className="text-xs font-semibold">Simulate outcome</Label>
+        <DemoBadge />
+      </div>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as Outcome)}
+        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+      >
+        {opts.map((o) => (
+          <option key={o.v} value={o.v}>{o.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function MethodView({ plan, onPick }: any) {
   const methods = [
     { id: "card", label: "Card Payment", icon: CreditCard, note: "Visa / Mastercard — SecurePay SA" },
     { id: "eft", label: "Instant EFT", icon: Building2, note: "FNB, Standard Bank, ABSA, Nedbank, Capitec" },
+    { id: "snapscan", label: "SnapScan", icon: CreditCard, note: "Scan QR with the SnapScan app" },
+    { id: "zapper", label: "Zapper", icon: CreditCard, note: "Scan QR with the Zapper app" },
     { id: "bank_transfer", label: "Bank Transfer", icon: Building2, note: "Manual EFT — upload proof of payment" },
   ];
   return (
@@ -385,7 +421,10 @@ function MethodView({ plan, onPick }: any) {
         </div>
       </Card>
 
-      <h3 className="font-semibold text-lg mb-3">Choose a payment method</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-lg">Choose a payment method</h3>
+        <DemoBadge />
+      </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {methods.map((m) => (
           <button key={m.id} onClick={() => onPick(m.id)}
