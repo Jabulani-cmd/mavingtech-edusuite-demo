@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, CalendarIcon, Send, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
@@ -24,21 +25,20 @@ import { useToast } from "@/hooks/use-toast";
 import hero from "@/assets/hero-students-5.jpg";
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  email: z.string().trim().email("Invalid email").max(255),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
   subject: z.string().trim().max(200).optional(),
-  message: z.string().trim().min(1, "Message is required").max(2000),
+  message: z.string().trim().min(1).max(2000),
 });
-
 const appointmentSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  email: z.string().trim().email("Invalid email").max(255),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
   phone: z.string().trim().max(20).optional(),
-  authority: z.string().min(1, "Please select an authority"),
+  authority: z.string().min(1),
   department: z.string().optional(),
-  preferred_date: z.date({ required_error: "Please select a date" }),
-  preferred_time: z.string().min(1, "Please select a time"),
-  reason: z.string().trim().min(1, "Please provide a reason").max(1000),
+  preferred_date: z.date(),
+  preferred_time: z.string().min(1),
+  reason: z.string().trim().min(1).max(1000),
 });
 
 type ContactForm = z.infer<typeof contactSchema>;
@@ -63,6 +63,7 @@ const timeSlots = [
 ];
 
 export default function Contact() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") === "appointment" ? "appointment" : "contact";
@@ -73,7 +74,6 @@ export default function Contact() {
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", email: "", subject: "", message: "" },
   });
-
   const appointmentForm = useForm<AppointmentForm>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: { name: "", email: "", phone: "", authority: "", department: "", reason: "", preferred_time: "" },
@@ -81,70 +81,43 @@ export default function Contact() {
 
   const onContactSubmit = async (data: ContactForm) => {
     const { error } = await supabase.from("contact_messages").insert({
-      name: data.name,
-      email: data.email,
-      subject: data.subject || null,
-      message: data.message,
+      name: data.name, email: data.email, subject: data.subject || null, message: data.message,
     });
-    if (error) {
-      toast({ title: "Error", description: "Failed to send message. Please try again.", variant: "destructive" });
-    } else {
-      setContactSent(true);
-      contactForm.reset();
-    }
+    if (error) toast({ title: t("common.error"), variant: "destructive" });
+    else { setContactSent(true); contactForm.reset(); }
   };
 
   const onAppointmentSubmit = async (data: AppointmentForm) => {
     const { error } = await supabase.from("appointments" as any).insert({
-      name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      authority: data.authority,
-      department: data.department || null,
+      name: data.name, email: data.email, phone: data.phone || null,
+      authority: data.authority, department: data.department || null,
       preferred_date: format(data.preferred_date, "yyyy-MM-dd"),
-      preferred_time: data.preferred_time,
-      reason: data.reason,
+      preferred_time: data.preferred_time, reason: data.reason,
     } as any);
-    if (error) {
-      toast({ title: "Error", description: "Failed to submit appointment request. Please try again.", variant: "destructive" });
-    } else {
-      setAppointmentSent(true);
-      appointmentForm.reset();
-    }
+    if (error) toast({ title: t("common.error"), variant: "destructive" });
+    else { setAppointmentSent(true); appointmentForm.reset(); }
   };
 
   return (
     <Layout>
-      <PageHero
-        eyebrow="Get in Touch"
-        title="Contact Us"
-        subtitle="We'd love to hear from you. Reach out with questions or book an appointment with our school authorities."
-        image={hero}
-      />
+      <PageHero eyebrow={t("contact.eyebrow")} title={t("contact.title")} subtitle={t("contact.subtitle")} image={hero} />
 
-      {/* Contact Info Cards */}
       <section className="py-20 md:py-24">
         <div className="container">
           <div className="mb-14 text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">How to Reach Us</span>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">Our Details</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("contact.detailsEyebrow")}</span>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">{t("contact.detailsTitle")}</h2>
             <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: MapPin, title: "Address", text: "MavingTech High School, Cape Town, South Africa" },
-              { icon: Phone, title: "Phone", text: "+263 29 2XXXXXX" },
-              { icon: Mail, title: "Email", text: "info@mavingtech.com" },
-              { icon: Clock, title: "Office Hours", text: "Mon – Fri: 07:30 – 15:30" },
+              { icon: MapPin, title: t("contact.cards.address"), text: t("contact.cards.addressText") },
+              { icon: Phone, title: t("contact.cards.phone"), text: "+27 31 000 0000" },
+              { icon: Mail, title: t("contact.cards.email"), text: "info@mavingtech.com" },
+              { icon: Clock, title: t("contact.cards.hours"), text: t("contact.cards.hoursText") },
             ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="rounded-lg bg-card p-6 text-center shadow-sm ring-1 ring-border/60"
-              >
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="rounded-lg bg-card p-6 text-center shadow-sm ring-1 ring-border/60">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <item.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -156,53 +129,49 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Forms */}
       <section className="bg-muted/40 py-20 md:py-28">
         <div className="container max-w-4xl">
           <div className="mb-10 text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">We're Listening</span>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">Send a Message or Book a Visit</h2>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("contact.formsEyebrow")}</span>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">{t("contact.formsTitle")}</h2>
             <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
           </div>
           <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="contact">Send a Message</TabsTrigger>
-              <TabsTrigger value="appointment">Book an Appointment</TabsTrigger>
+              <TabsTrigger value="contact">{t("contact.tabs.message")}</TabsTrigger>
+              <TabsTrigger value="appointment">{t("contact.tabs.appointment")}</TabsTrigger>
             </TabsList>
 
-            {/* Contact Form */}
             <TabsContent value="contact">
               <Card className="border-none shadow-maroon">
-                <CardHeader>
-                  <CardTitle className="font-heading">Send Us a Message</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle className="font-heading">{t("contact.message.cardTitle")}</CardTitle></CardHeader>
                 <CardContent>
                   {contactSent ? (
                     <div className="flex flex-col items-center gap-4 py-12 text-center">
                       <CheckCircle className="h-16 w-16 text-secondary" />
-                      <h3 className="font-heading text-xl font-semibold">Message Sent!</h3>
-                      <p className="text-muted-foreground">Thank you for reaching out. We'll respond as soon as possible.</p>
-                      <Button onClick={() => setContactSent(false)} variant="outline">Send Another</Button>
+                      <h3 className="font-heading text-xl font-semibold">{t("contact.message.sent")}</h3>
+                      <p className="text-muted-foreground">{t("contact.message.sentBody")}</p>
+                      <Button onClick={() => setContactSent(false)} variant="outline">{t("common.sendAnother")}</Button>
                     </div>
                   ) : (
                     <Form {...contactForm}>
                       <form onSubmit={contactForm.handleSubmit(onContactSubmit)} className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           <FormField control={contactForm.control} name="name" render={({ field }) => (
-                            <FormItem><FormLabel>Full Name *</FormLabel><FormControl><Input placeholder="Your name" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>{t("contact.message.fullName")} *</FormLabel><FormControl><Input placeholder={t("contact.message.namePlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                           <FormField control={contactForm.control} name="email" render={({ field }) => (
-                            <FormItem><FormLabel>Email *</FormLabel><FormControl><Input type="email" placeholder="your@email.com" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>{t("contact.message.email")} *</FormLabel><FormControl><Input type="email" placeholder={t("contact.message.emailPlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                         </div>
                         <FormField control={contactForm.control} name="subject" render={({ field }) => (
-                          <FormItem><FormLabel>Subject</FormLabel><FormControl><Input placeholder="What is this about?" {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t("contact.message.subject")}</FormLabel><FormControl><Input placeholder={t("contact.message.subjectPlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={contactForm.control} name="message" render={({ field }) => (
-                          <FormItem><FormLabel>Message *</FormLabel><FormControl><Textarea placeholder="Write your message..." className="min-h-[120px]" {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t("contact.message.message")} *</FormLabel><FormControl><Textarea placeholder={t("contact.message.messagePlaceholder")} className="min-h-[120px]" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <Button type="submit" disabled={contactForm.formState.isSubmitting} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                          <Send className="mr-2 h-4 w-4" /> {contactForm.formState.isSubmitting ? "Sending..." : "Send Message"}
+                          <Send className="mr-2 h-4 w-4" /> {contactForm.formState.isSubmitting ? t("common.sending") : t("contact.message.send")}
                         </Button>
                       </form>
                     </Form>
@@ -211,41 +180,40 @@ export default function Contact() {
               </Card>
             </TabsContent>
 
-            {/* Appointment Form */}
             <TabsContent value="appointment">
               <Card className="border-none shadow-maroon">
                 <CardHeader>
-                  <CardTitle className="font-heading">Book an Appointment</CardTitle>
-                  <p className="text-sm text-muted-foreground">Schedule a meeting with school authorities. We will confirm your appointment via email.</p>
+                  <CardTitle className="font-heading">{t("contact.appointment.cardTitle")}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{t("contact.appointment.cardSubtitle")}</p>
                 </CardHeader>
                 <CardContent>
                   {appointmentSent ? (
                     <div className="flex flex-col items-center gap-4 py-12 text-center">
                       <CheckCircle className="h-16 w-16 text-secondary" />
-                      <h3 className="font-heading text-xl font-semibold">Appointment Request Submitted!</h3>
-                      <p className="text-muted-foreground">We'll review your request and confirm via email. Please allow 1-2 business days.</p>
-                      <Button onClick={() => setAppointmentSent(false)} variant="outline">Book Another</Button>
+                      <h3 className="font-heading text-xl font-semibold">{t("contact.appointment.submitted")}</h3>
+                      <p className="text-muted-foreground">{t("contact.appointment.submittedBody")}</p>
+                      <Button onClick={() => setAppointmentSent(false)} variant="outline">{t("common.bookAnother")}</Button>
                     </div>
                   ) : (
                     <Form {...appointmentForm}>
                       <form onSubmit={appointmentForm.handleSubmit(onAppointmentSubmit)} className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           <FormField control={appointmentForm.control} name="name" render={({ field }) => (
-                            <FormItem><FormLabel>Full Name *</FormLabel><FormControl><Input placeholder="Your name" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>{t("contact.message.fullName")} *</FormLabel><FormControl><Input placeholder={t("contact.message.namePlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                           <FormField control={appointmentForm.control} name="email" render={({ field }) => (
-                            <FormItem><FormLabel>Email *</FormLabel><FormControl><Input type="email" placeholder="your@email.com" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>{t("contact.message.email")} *</FormLabel><FormControl><Input type="email" placeholder={t("contact.message.emailPlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                         </div>
                         <FormField control={appointmentForm.control} name="phone" render={({ field }) => (
-                          <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="+263..." {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t("contact.appointment.phone")}</FormLabel><FormControl><Input placeholder="+27..." {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <div className="grid gap-4 sm:grid-cols-2">
                           <FormField control={appointmentForm.control} name="authority" render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Who would you like to see? *</FormLabel>
+                              <FormLabel>{t("contact.appointment.authority")} *</FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl><SelectTrigger><SelectValue placeholder="Select authority" /></SelectTrigger></FormControl>
+                                <FormControl><SelectTrigger><SelectValue placeholder={t("contact.appointment.authorityPlaceholder")} /></SelectTrigger></FormControl>
                                 <SelectContent>
                                   {authorities.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
                                 </SelectContent>
@@ -254,31 +222,26 @@ export default function Contact() {
                             </FormItem>
                           )} />
                           <FormField control={appointmentForm.control} name="department" render={({ field }) => (
-                            <FormItem><FormLabel>Department (optional)</FormLabel><FormControl><Input placeholder="e.g. Sciences, Admin" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>{t("contact.appointment.department")}</FormLabel><FormControl><Input placeholder={t("contact.appointment.departmentPlaceholder")} {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
                           <FormField control={appointmentForm.control} name="preferred_date" render={({ field }) => (
                             <FormItem className="flex flex-col">
-                              <FormLabel>Preferred Date *</FormLabel>
+                              <FormLabel>{t("contact.appointment.date")} *</FormLabel>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <FormControl>
                                     <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                      {field.value ? format(field.value, "PPP") : <span>{t("contact.appointment.pickDate")}</span>}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
+                                  <Calendar mode="single" selected={field.value} onSelect={field.onChange}
                                     disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
-                                    initialFocus
-                                    className={cn("p-3 pointer-events-auto")}
-                                  />
+                                    initialFocus className={cn("p-3 pointer-events-auto")} />
                                 </PopoverContent>
                               </Popover>
                               <FormMessage />
@@ -286,11 +249,11 @@ export default function Contact() {
                           )} />
                           <FormField control={appointmentForm.control} name="preferred_time" render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Preferred Time *</FormLabel>
+                              <FormLabel>{t("contact.appointment.time")} *</FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl><SelectTrigger><SelectValue placeholder="Select time slot" /></SelectTrigger></FormControl>
+                                <FormControl><SelectTrigger><SelectValue placeholder={t("contact.appointment.timePlaceholder")} /></SelectTrigger></FormControl>
                                 <SelectContent>
-                                  {timeSlots.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                                  {timeSlots.map((tSlot) => <SelectItem key={tSlot} value={tSlot}>{tSlot}</SelectItem>)}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -298,10 +261,10 @@ export default function Contact() {
                           )} />
                         </div>
                         <FormField control={appointmentForm.control} name="reason" render={({ field }) => (
-                          <FormItem><FormLabel>Reason for Visit *</FormLabel><FormControl><Textarea placeholder="Briefly describe the purpose of your visit..." className="min-h-[100px]" {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t("contact.appointment.reason")} *</FormLabel><FormControl><Textarea placeholder={t("contact.appointment.reasonPlaceholder")} className="min-h-[100px]" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <Button type="submit" disabled={appointmentForm.formState.isSubmitting} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                          <CalendarIcon className="mr-2 h-4 w-4" /> {appointmentForm.formState.isSubmitting ? "Submitting..." : "Request Appointment"}
+                          <CalendarIcon className="mr-2 h-4 w-4" /> {appointmentForm.formState.isSubmitting ? t("common.submitting") : t("contact.appointment.request")}
                         </Button>
                       </form>
                     </Form>

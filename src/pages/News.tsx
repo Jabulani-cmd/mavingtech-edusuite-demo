@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
+
 
 const newsItems = [
   {
@@ -35,6 +37,7 @@ const newsItems = [
 ];
 
 export default function News() {
+  const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selected = newsItems.find((n) => n.id === selectedId);
 
@@ -43,7 +46,7 @@ export default function News() {
       <section className="bg-secondary py-16">
         <div className="container">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
-            News & Announcements
+            {t("news.title")}
           </motion.h1>
         </div>
       </section>
@@ -54,7 +57,7 @@ export default function News() {
             {selected ? (
               <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <Button variant="ghost" onClick={() => setSelectedId(null)} className="mb-6 text-primary">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to News
+                  <ArrowLeft className="mr-2 h-4 w-4" /> {t("news.back")}
                 </Button>
                 <article>
                   <span className="flex items-center gap-2 text-sm text-accent font-semibold">

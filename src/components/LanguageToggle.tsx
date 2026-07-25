@@ -1,55 +1,70 @@
 import { useTranslation } from "react-i18next";
-import { Languages } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SUPPORTED_LANGUAGES } from "@/i18n";
+import { Globe } from "lucide-react";
+import { SUPPORTED_LANGUAGES, type LangCode } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 interface Props {
-  variant?: "default" | "compact";
   className?: string;
+  /** Compact hides the globe icon and shrinks paddings. */
+  compact?: boolean;
 }
 
-export default function LanguageToggle({ variant = "default", className }: Props) {
+/**
+ * Clear EN | ZU pill switch with a globe icon. The active language is
+ * highlighted; clicking the other option changes the language instantly
+ * across the whole app (react-i18next re-renders every consumer).
+ */
+export default function LanguageToggle({ className, compact = false }: Props) {
   const { i18n, t } = useTranslation();
-  const current = SUPPORTED_LANGUAGES.find((l) => i18n.resolvedLanguage?.startsWith(l.code)) ?? SUPPORTED_LANGUAGES[0];
+  const current: LangCode =
+    (SUPPORTED_LANGUAGES.find((l) => i18n.resolvedLanguage?.startsWith(l.code))?.code as LangCode) ??
+    "en";
+
+  const change = (code: LangCode) => {
+    if (code === current) return;
+    i18n.changeLanguage(code);
+    try {
+      localStorage.setItem("mavingtech.lang", code);
+    } catch {}
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size={variant === "compact" ? "icon" : "sm"}
-          className={className}
-          aria-label={t("common.language")}
-        >
-          <Languages className="h-4 w-4" />
-          {variant === "default" && (
-            <span className="ml-1 text-xs font-semibold tracking-wide">{current.short}</span>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[8rem]">
-        {SUPPORTED_LANGUAGES.map((l) => (
-          <DropdownMenuItem
-            key={l.code}
-            onSelect={() => {
-              i18n.changeLanguage(l.code);
-              try {
-                localStorage.setItem("mavingtech.lang", l.code);
-              } catch {}
-            }}
-            className={l.code === current.code ? "font-semibold text-primary" : ""}
-          >
-            <span className="mr-2 text-xs font-mono opacity-70">{l.short}</span>
-            {l.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div
+      role="group"
+      aria-label={t("common.language")}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border border-border bg-background/95 shadow-sm",
+        compact ? "px-1.5 py-0.5" : "px-2 py-1",
+        className,
+      )}
+    >
+      {!compact && (
+        <Globe className="ml-1 h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+      )}
+      <div className="flex items-center rounded-full bg-muted/60 p-0.5" role="tablist">
+        {SUPPORTED_LANGUAGES.map((l) => {
+          const active = l.code === current;
+          return (
+            <button
+              key={l.code}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              aria-label={l.label}
+              title={l.label}
+              onClick={() => change(l.code as LangCode)}
+              className={cn(
+                "min-w-[2.25rem] rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide transition-colors",
+                active
+                  ? "bg-primary text-primary-foreground shadow"
+                  : "text-foreground/70 hover:text-foreground",
+              )}
+            >
+              {l.short}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }

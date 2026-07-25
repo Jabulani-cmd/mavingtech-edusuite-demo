@@ -10,7 +10,7 @@ export default function AuthenticatedLayout({ children }: { children: ReactNode 
     <>
       {children}
       {user && <MessagingPanel />}
-      <div className="fixed bottom-4 left-4 z-40 rounded-full border border-border bg-background/95 shadow-lg backdrop-blur">
+      <div className="fixed bottom-4 left-4 z-40">
         <LanguageToggle />
       </div>
     </>

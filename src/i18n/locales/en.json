@@ -30,10 +30,20 @@
     "success": "Success",
     "error": "Error",
     "required": "Required",
-    "language": "Language",
+    "language": "Change language",
     "logout": "Log out",
     "login": "Log in",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "learnMore": "Learn more",
+    "applyNow": "Apply Now",
+    "readMore": "Read more",
+    "comingSoon": "Coming soon",
+    "noData": "No data available",
+    "all": "All",
+    "sending": "Sending...",
+    "submitting": "Submitting...",
+    "sendAnother": "Send Another",
+    "bookAnother": "Book Another"
   },
   "nav": {
     "home": "Home",
@@ -54,7 +64,8 @@
     "alumni": "Alumni",
     "contact": "Contact",
     "portalLogin": "Portal Login",
-    "menu": "Menu"
+    "menu": "Menu",
+    "sportsCulture": "Sports & Culture"
   },
   "auth": {
     "signIn": "Sign in",
@@ -71,6 +82,24 @@
     "province": "Province",
     "city": "City / Town",
     "idNumber": "SA ID Number (13 digits)"
+  },
+  "login": {
+    "title": "Portal Login",
+    "tagline": "Empowering Your Business Through Technology",
+    "subtitle": "Access your MavingTech portal",
+    "emailPlaceholder": "you@mavingtech.com",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In",
+    "demoNote": "First-time demo? Provision the admin account, then sign in. Inside the admin dashboard use \"Load Demo Data\" to provision all teacher, student & parent logins.",
+    "provisioning": "Provisioning…",
+    "provisionAdmin": "Provision demo admin (admin@schooldemo.com)",
+    "forgot": "Forgot your password?",
+    "parentPrompt": "Parent?",
+    "registerHere": "Register here",
+    "studentTeacherNote": "Students & teachers: credentials provided by admin",
+    "backHome": "Back to Home",
+    "loginFailed": "Login failed",
+    "loginSuccess": "Logged in successfully!"
   },
   "portal": {
     "dashboard": "Dashboard",
@@ -142,6 +171,317 @@
   },
   "brand": {
     "schoolName": "MavingTech High School",
+    "schoolShort": "MavingTech",
+    "schoolSuffix": "High School",
     "tagline": "Excellence in South African Education"
+  },
+  "home": {
+    "hero": {
+      "title": "Welcome to MavingTech High School",
+      "subtitle": "Where young African minds are nurtured into confident leaders, innovators and changemakers of tomorrow.",
+      "cta": "Our Academics"
+    },
+    "learning": {
+      "title": "Learning Begins With Us",
+      "p1": "At MavingTech High School, we offer a supportive and inspiring environment for young African minds to learn, grow and thrive. Our passion for education goes beyond outstanding academic results — we build confident, creative thinkers prepared for a global future.",
+      "p2": "From Grade 8 through NSC (Grade 12) / Matric, our students walk out with the character, discipline and skills to make their mark in the world.",
+      "cta": "Know More About Us"
+    },
+    "stats": {
+      "enrollments": "Current Enrollments",
+      "staff": "Qualified Staff",
+      "clubs": "Clubs & Activities",
+      "ptfa": "Active PTFA Members"
+    },
+    "director": {
+      "eyebrow": "Message from the Principal",
+      "title": "From the Principal's Desk",
+      "quote": "At MavingTech High School, we believe every learner carries a unique gift. Our calling is to nurture that gift through discipline, faith, hard work and a love for knowledge — so that each of our students rises to become a leader of integrity and purpose.",
+      "body": "Welcome to our school community. Together with our dedicated teachers, supportive parents and ambitious students, we are building a school where academic excellence walks hand in hand with strong character. We are proud of who our learners are becoming, and we invite you to be part of this journey.",
+      "signature": "Mr. F.J. Moyo",
+      "signatureRole": "— Principal, MavingTech High School"
+    },
+    "curriculum": {
+      "eyebrow": "Programmes of Study",
+      "title": "Curriculum Overview",
+      "intro": "MavingTech aims at offering all our students a broad and balanced curriculum that provides rewarding and stimulating activities to prepare them for the best social and cultural life.",
+      "cs": { "title": "Computer Science", "desc": "Hands-on experience with the latest programming languages and technology." },
+      "math": { "title": "Mathematics", "desc": "Building strong analytical foundations through engaging, real-world problem solving." },
+      "lit": { "title": "Literature & Languages", "desc": "Cultivating expression, comprehension and a lifelong love of reading and writing." },
+      "sci": { "title": "Sciences", "desc": "Inquiry-led learning in physics, chemistry and biology with modern lab facilities." },
+      "arts": { "title": "Visual Arts", "desc": "Creative studios where students explore drawing, painting, design and craft." },
+      "perf": { "title": "Performing Arts", "desc": "Music, drama and dance programmes that build confidence and collaboration." }
+    },
+    "activities": {
+      "eyebrow": "Beyond the Classroom",
+      "title": "Activities",
+      "sports": "Sports",
+      "music": "Music",
+      "arts": "Arts & Crafts",
+      "clubs": "Clubs"
+    },
+    "news": {
+      "eyebrow": "Latest Updates",
+      "title": "News & Announcements"
+    },
+    "cta": {
+      "title": "Begin Your Journey With Us",
+      "desc": "Join a community committed to academic excellence, character, and innovation. Admissions are open.",
+      "button": "Apply Now"
+    }
+  },
+  "about": {
+    "eyebrow": "Our Story",
+    "title": "About MavingTech",
+    "subtitle": "Nearly a century of nurturing young African minds into confident leaders, innovators and changemakers.",
+    "heritage": "Heritage",
+    "historyTitle": "Our History",
+    "history1": "MavingTech High School, a prestigious government boys' school in Cape Town, South Africa, was founded in January 1927 as the Cape Town Technical School, making it the first technical school in what was then Southern Rhodesia.",
+    "history2": "The school achieved high school status in 1931 and, in a significant move, relocated to its current site on Matopos Road opposite the South Africa International Trade Fair grounds in 1953. In honour of its long-serving founder, who led the institution for two decades, the school was renamed MavingTech Technical High School on 19 August 1961, and was finally shortened to MavingTech High School in 1974.",
+    "history3": "Today, with an enrolment of over 800 students, it continues a legacy of academic and sporting excellence encapsulated in its motto, Empowering Your Business Through Technology.",
+    "stats": {
+      "students": "Students Enrolled",
+      "passRate": "NSC (Grade 10–11) Pass Rate",
+      "alumni": "Alumni Worldwide"
+    },
+    "values": {
+      "eyebrow": "What We Stand For",
+      "title": "Our Values",
+      "excellence": { "title": "Excellence", "desc": "Striving for the highest standards in every endeavour — academic, sporting and personal." },
+      "integrity": { "title": "Integrity", "desc": "Honesty, discipline and accountability sit at the heart of our community." },
+      "innovation": { "title": "Innovation", "desc": "Curiosity and creativity that prepare our students for a fast-changing world." }
+    },
+    "alumni": {
+      "eyebrow": "Where Our Graduates Are",
+      "title": "Notable Alumni"
+    }
+  },
+  "academics": {
+    "eyebrow": "Learning & Excellence",
+    "title": "Academics",
+    "subtitle": "A broad, balanced curriculum spanning CAPS and IEB streams — designed to prepare every learner for a global future.",
+    "programmesEyebrow": "Programmes of Study",
+    "programmesTitle": "Our Curriculum",
+    "intro": "MavingTech offers both the CAPS and IEB (CIE) examination streams, giving students the flexibility to pursue local or international qualifications at Ordinary and Advanced Level.",
+    "tabs": { "curriculum": "Curriculum", "results": "Results & Achievements" },
+    "subjects": {
+      "math": { "name": "Mathematics", "desc": "Pure & Applied Mathematics, Statistics" },
+      "sciences": { "name": "Sciences", "desc": "Physics, Chemistry, Biology, Combined Science" },
+      "languages": { "name": "Languages", "desc": "English, isiZulu, Afrikaans, French" },
+      "humanities": { "name": "Humanities", "desc": "History, Geography, Divinity, Literature" },
+      "technical": { "name": "Technical", "desc": "Computer Science, Accounting, Commerce" },
+      "arts": { "name": "Arts", "desc": "Art, Music, Drama, Fashion & Fabrics" }
+    },
+    "results": {
+      "title": "Academic Achievements",
+      "body": "Our students consistently perform among the top in the province and nationally, with several students earning distinctions every session.",
+      "year": "Year", "level": "Level", "passRate": "Pass Rate", "distinctions": "Distinctions"
+    }
+  },
+  "admissions": {
+    "eyebrow": "Join Our Community",
+    "title": "Admissions",
+    "subtitle": "Join the MavingTech family. We welcome students who are eager to learn, grow and contribute to our vibrant community.",
+    "processEyebrow": "How to Apply",
+    "processTitle": "Admission Process",
+    "steps": {
+      "apply": { "title": "Submit Application", "desc": "Complete the online form with student and parent details." },
+      "assess": { "title": "Entrance Assessment", "desc": "Shortlisted applicants are invited for an assessment." },
+      "interview": { "title": "Interview", "desc": "Meet with the admissions team and tour the campus." },
+      "accept": { "title": "Acceptance", "desc": "Successful candidates receive an offer letter." }
+    },
+    "stepLabel": "Step",
+    "form": {
+      "eyebrow": "Begin Your Journey",
+      "title": "Online Application",
+      "received": "Application Received!",
+      "receivedBody": "Thank you for applying to MavingTech High School. We will contact you within 5 business days.",
+      "submittedToast": "Application Submitted!",
+      "submittedToastDesc": "We will be in touch shortly.",
+      "firstName": "Student First Name",
+      "lastName": "Student Last Name",
+      "dob": "Date of Birth",
+      "grade": "Applying for Grade",
+      "gradePlaceholder": "Select grade",
+      "prevSchool": "Previous School",
+      "parentName": "Parent/Guardian Name",
+      "parentPhone": "Parent Phone",
+      "parentEmail": "Parent Email",
+      "notes": "Additional Notes",
+      "submit": "Submit Application"
+    }
+  },
+  "staff": {
+    "title": "Our Staff",
+    "groupCaption": "MavingTech High School Staff",
+    "empty": "Staff directory coming soon.",
+    "categories": {
+      "leadership": "School Leadership",
+      "teaching": "Teaching Staff",
+      "admin": "Administrative Staff",
+      "general": "General Staff"
+    }
+  },
+  "contact": {
+    "eyebrow": "Get in Touch",
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you. Reach out with questions or book an appointment with our school authorities.",
+    "detailsEyebrow": "How to Reach Us",
+    "detailsTitle": "Our Details",
+    "cards": {
+      "address": "Address", "addressText": "MavingTech High School, Cape Town, South Africa",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Office Hours", "hoursText": "Mon – Fri: 07:30 – 15:30"
+    },
+    "formsEyebrow": "We're Listening",
+    "formsTitle": "Send a Message or Book a Visit",
+    "tabs": { "message": "Send a Message", "appointment": "Book an Appointment" },
+    "message": {
+      "cardTitle": "Send Us a Message",
+      "sent": "Message Sent!",
+      "sentBody": "Thank you for reaching out. We'll respond as soon as possible.",
+      "fullName": "Full Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "What is this about?",
+      "message": "Message",
+      "messagePlaceholder": "Write your message...",
+      "send": "Send Message"
+    },
+    "appointment": {
+      "cardTitle": "Book an Appointment",
+      "cardSubtitle": "Schedule a meeting with school authorities. We will confirm your appointment via email.",
+      "submitted": "Appointment Request Submitted!",
+      "submittedBody": "We'll review your request and confirm via email. Please allow 1-2 business days.",
+      "phone": "Phone Number",
+      "authority": "Who would you like to see?",
+      "authorityPlaceholder": "Select authority",
+      "department": "Department (optional)",
+      "departmentPlaceholder": "e.g. Sciences, Admin",
+      "date": "Preferred Date",
+      "pickDate": "Pick a date",
+      "time": "Preferred Time",
+      "timePlaceholder": "Select time slot",
+      "reason": "Reason for Visit",
+      "reasonPlaceholder": "Briefly describe the purpose of your visit...",
+      "request": "Request Appointment"
+    }
+  },
+  "news": {
+    "title": "News & Announcements",
+    "back": "Back to News"
+  },
+  "fees": {
+    "title": "School Fees",
+    "intro": "Download the latest fee schedules, payment information, and financial documents below.",
+    "payOnline": "Pay Fees Online",
+    "empty": "Fee documents will be available soon."
+  },
+  "facilities": {
+    "title": "Our Facilities",
+    "intro": "MavingTech High School is a boys-only boarding school providing excellent facilities to support academic excellence, sporting achievement, and holistic development. Our campus features modern classrooms, well-equipped laboratories, expansive sports grounds, a comprehensive library, ICT facilities, and comfortable boarding accommodation.",
+    "empty": "Facility images coming soon.",
+    "lifeTitle": "Life at MavingTech",
+    "types": {
+      "boarding": "Boarding Facilities",
+      "classrooms": "Classrooms",
+      "sports": "Sports Facilities",
+      "labs": "Laboratories",
+      "library": "Library",
+      "clubs": "Clubs & Societies",
+      "ict": "ICT & Computer Labs",
+      "dining": "Dining Hall",
+      "assembly": "Assembly & Chapel",
+      "general": "General"
+    }
+  },
+  "schoolLife": {
+    "title": "School Life",
+    "tabs": {
+      "sports": "Sports",
+      "clubs": "Clubs & Activities",
+      "sdc": "SDC",
+      "pt": "Parent-Teacher",
+      "gallery": "Gallery"
+    },
+    "sdc": {
+      "title": "School Development Committee (SDC)",
+      "body": "The SDC represents the interests of parents, staff and the community, working alongside the school administration to ensure a thriving learning environment.",
+      "empty": "No SDC meetings scheduled at this time.",
+      "badge": "SDC Meeting"
+    },
+    "pt": {
+      "title": "Parent-Teacher Meetings",
+      "body": "Regular meetings between parents and teachers to discuss student progress and development.",
+      "empty": "No parent-teacher meetings scheduled at this time.",
+      "badge": "Parent-Teacher"
+    },
+    "galleryEmpty": "Gallery images coming soon."
+  },
+  "boarding": {
+    "title": "Boarding",
+    "subtitle": "A home away from home — our boarding facilities provide a safe, nurturing environment where learners thrive academically and socially.",
+    "features": {
+      "accommodation": { "title": "Comfortable Accommodation", "desc": "Modern dormitories with supervised living spaces for boys and girls." },
+      "safety": { "title": "Safety & Security", "desc": "24-hour security with trained house parents and matrons on duty." },
+      "meals": { "title": "Nutritious Meals", "desc": "Three balanced meals daily prepared by our dedicated kitchen staff." },
+      "study": { "title": "Structured Study Time", "desc": "Supervised evening prep sessions to support academic excellence." },
+      "community": { "title": "Community Living", "desc": "Building lifelong friendships and developing social skills." },
+      "pastoral": { "title": "Pastoral Care", "desc": "Emotional and spiritual support from dedicated house staff." }
+    }
+  },
+  "alumni": {
+    "title": "Notable Alumni",
+    "subtitle": "MavingTech graduates making an impact across the world."
+  },
+  "vacancies": {
+    "title": "Vacancies",
+    "intro": "View current job openings and career opportunities at MavingTech High School.",
+    "empty": "No vacancies currently available. Please check back later."
+  },
+  "downloads": {
+    "title": "Downloads",
+    "empty": "No documents available for download yet.",
+    "categories": {
+      "fees": "Fees & Finance",
+      "forms": "Forms & Applications",
+      "policies": "Policies",
+      "vacancies": "Vacancies",
+      "general": "General"
+    }
+  },
+  "awards": {
+    "title": "Awards & Prize-Giving",
+    "subtitle": "Celebrating excellence and achievement at MavingTech High School",
+    "galleryTitle": "Prize-Giving & Awards Gallery",
+    "recipientsTitle": "Award Recipients",
+    "empty": "No awards have been published yet.",
+    "studentName": "Student Name",
+    "award": "Award",
+    "year": "Year"
+  },
+  "projectsPage": {
+    "title": "School Projects",
+    "subtitle": "Discover the innovative projects our students and staff are working on.",
+    "empty": "No projects to display at this time.",
+    "donate": "Donate"
+  },
+  "sportsCulture": {
+    "title": "Sports & Culture",
+    "subtitle": "Developing well-rounded individuals through sport, arts, and cultural activities.",
+    "tabs": { "sports": "Sports", "culture": "Clubs & Culture" }
+  },
+  "footer": {
+    "affiliations": "Affiliated With",
+    "moe": "Ministry of Primary & Secondary Education",
+    "description": "We are an early learning academy focused on social-emotional development and early literacy and numeracy. Our students walk out with the character and confidence to make their mark.",
+    "quickLinks": "Quick Links",
+    "programs": "Programs",
+    "contact": "Contact",
+    "aboutUs": "About Us",
+    "rights": "All rights reserved."
   }
 }

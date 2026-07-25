@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -9,14 +10,15 @@ const alumni = [
 ];
 
 export default function Alumni() {
+  const { t } = useTranslation();
   return (
     <Layout>
       <section className="bg-secondary py-16">
         <div className="container">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
-            Notable Alumni
+            {t("alumni.title")}
           </motion.h1>
-          <p className="mt-2 text-secondary-foreground/70">MavingTech graduates making an impact across the world.</p>
+          <p className="mt-2 text-secondary-foreground/70">{t("alumni.subtitle")}</p>
         </div>
       </section>
 
