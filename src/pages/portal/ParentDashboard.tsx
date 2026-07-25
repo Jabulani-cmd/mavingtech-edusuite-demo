@@ -716,15 +716,15 @@ function TabContentInner(props: TabContentProps) {
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setActiveTab("fees")}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
-                <DollarSign className="h-5 w-5 text-red-600" />
+                <span className="text-lg font-bold text-red-600">R</span>
               </div>
               <div>
                 <p className={`text-lg font-bold ${feeBalance > 0 ? "text-red-700" : "text-emerald-700"}`}>
                   {feeBalance > 0
-                    ? `$${feeBalance.toFixed(2)}`
+                    ? `${formatZAR(feeBalance)}`
                     : feeBalance < 0
-                      ? `$${Math.abs(feeBalance).toFixed(2)} credit`
-                      : "$0.00"}
+                      ? `${formatZAR(Math.abs(feeBalance))} credit`
+                      : formatZAR(0)}
                 </p>
                 <p className="text-[11px] text-muted-foreground">
                   {feeBalance > 0 ? "Fee Balance" : feeBalance < 0 ? "Credit Balance" : "Fees Settled"}
