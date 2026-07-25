@@ -298,8 +298,11 @@ export default function ParentSubscribe() {
           {step === "gateway" && (
             <GatewayView plan={plan} processing={processing} onStart={processEftGateway} forceOutcome={forceOutcome} setForceOutcome={setForceOutcome} />
           )}
+          {step === "qr" && (
+            <QrView plan={plan} method={method} processing={processing} onConfirm={processQrGateway} forceOutcome={forceOutcome} setForceOutcome={setForceOutcome} />
+          )}
           {step === "failed" && (
-            <FailedView reason={failureReason} onRetry={() => setStep(method === "card" ? "card" : "gateway")} onChangeMethod={() => setStep("method")} />
+            <FailedView reason={failureReason} onRetry={() => setStep(method === "card" ? "card" : method === "snapscan" || method === "zapper" ? "qr" : "gateway")} onChangeMethod={() => setStep("method")} />
           )}
           {step === "success" && completed && (
             <SuccessView
