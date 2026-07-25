@@ -8,18 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import { incomeExpenditureActions } from "@/lib/finance/documentActions";
 
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: any): string => { const v=Number(n); return `R ${new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function IncomeExpenditureReport() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth(); // 0-indexed
-  const { rate, usdToZig } = useExchangeRate();
+  const rate = 1;
+  const usdToZig = (v: number) => v;
 
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
@@ -208,8 +208,8 @@ export default function IncomeExpenditureReport() {
               <TrendingUp className="h-4 w-4 text-green-700" />
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Income</p>
             </div>
-            <p className="text-xl font-bold font-mono text-green-700">USD {fmt(totalIncomeUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(totalIncomeZig)}</p>
+            <p className="text-xl font-bold font-mono text-green-700">{fmt(totalIncomeUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmt(totalIncomeZig)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -218,8 +218,8 @@ export default function IncomeExpenditureReport() {
               <TrendingDown className="h-4 w-4 text-destructive" />
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Expenses</p>
             </div>
-            <p className="text-xl font-bold font-mono text-destructive">USD {fmt(totalOutUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(totalOutZig)}</p>
+            <p className="text-xl font-bold font-mono text-destructive">{fmt(totalOutUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmt(totalOutZig)}</p>
           </CardContent>
         </Card>
         <Card className={netUsd >= 0 ? "bg-green-50/50 border-green-200" : "bg-destructive/5 border-destructive/30"}>
@@ -228,8 +228,8 @@ export default function IncomeExpenditureReport() {
               <BarChart3 className="h-4 w-4" />
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Net</p>
             </div>
-            <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700" : "text-destructive"}`}>USD {fmt(netUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(netZig)}</p>
+            <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700" : "text-destructive"}`}>{fmt(netUsd)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmt(netZig)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -252,7 +252,7 @@ export default function IncomeExpenditureReport() {
               {expenseByCategory.map(([cat, totals]) => (
                 <div key={cat} className="flex items-center justify-between text-sm border-b pb-1">
                   <span><Badge variant="outline">{cat}</Badge></span>
-                  <span className="font-mono">USD {fmt(totals.usd)} / ZiG {fmt(totals.zig)}</span>
+                  <span className="font-mono">{fmt(totals.usd)} / {fmt(totals.zig)}</span>
                 </div>
               ))}
             </div>
@@ -264,7 +264,7 @@ export default function IncomeExpenditureReport() {
       <Card>
         <CardHeader>
           <CardTitle className="font-heading text-green-700">Income — {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
-          <CardDescription>{searchedPayments.length} payment(s) totalling USD {fmt(totalIncomeUsd)}</CardDescription>
+          <CardDescription>{searchedPayments.length} payment(s) totalling {fmt(totalIncomeUsd)}</CardDescription>
         </CardHeader>
         <CardContent>
           {searchedPayments.length === 0 ? (
@@ -278,8 +278,7 @@ export default function IncomeExpenditureReport() {
                     <TableHead>Receipt #</TableHead>
                     <TableHead>Student</TableHead>
                     <TableHead>Method</TableHead>
-                    <TableHead className="text-right">USD</TableHead>
-                    <TableHead className="text-right">ZiG</TableHead>
+                    <TableHead className="text-right">Amount (R)</TableHead>
                     <TableHead>Reference</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -291,7 +290,6 @@ export default function IncomeExpenditureReport() {
                       <TableCell>{p.students?.full_name || "—"}</TableCell>
                       <TableCell>{p.payment_method}</TableCell>
                       <TableCell className="text-right font-mono text-green-700">{fmt(p.amount_usd)}</TableCell>
-                      <TableCell className="text-right font-mono">{fmt(p.amount_zig)}</TableCell>
                       <TableCell className="text-xs">{p.reference_number || "—"}</TableCell>
                     </TableRow>
                   ))}
@@ -306,7 +304,7 @@ export default function IncomeExpenditureReport() {
       <Card>
         <CardHeader>
           <CardTitle className="font-heading text-destructive">Expenditure — {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
-          <CardDescription>{searchedExpenses.length} expense(s) + {searchedSupplierPayments.length} supplier payment(s) totalling USD {fmt(totalOutUsd)}</CardDescription>
+          <CardDescription>{searchedExpenses.length} expense(s) + {searchedSupplierPayments.length} supplier payment(s) totalling {fmt(totalOutUsd)}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {searchedExpenses.length === 0 && searchedSupplierPayments.length === 0 ? (
@@ -323,8 +321,7 @@ export default function IncomeExpenditureReport() {
                         <TableHead>Category</TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead>Method</TableHead>
-                        <TableHead className="text-right">USD</TableHead>
-                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead className="text-right">Amount (R)</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -335,7 +332,6 @@ export default function IncomeExpenditureReport() {
                           <TableCell className="max-w-[250px] truncate">{e.description}</TableCell>
                           <TableCell>{e.payment_method}</TableCell>
                           <TableCell className="text-right font-mono text-destructive">{fmt(e.amount_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(e.amount_zig)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -352,8 +348,7 @@ export default function IncomeExpenditureReport() {
                         <TableHead>Date</TableHead>
                         <TableHead>Supplier</TableHead>
                         <TableHead>Method</TableHead>
-                        <TableHead className="text-right">USD</TableHead>
-                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead className="text-right">Amount (R)</TableHead>
                         <TableHead>Reference</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -364,7 +359,6 @@ export default function IncomeExpenditureReport() {
                           <TableCell>{sp.supplier_invoices?.supplier_name || "—"}</TableCell>
                           <TableCell>{sp.payment_method}</TableCell>
                           <TableCell className="text-right font-mono text-destructive">{fmt(sp.amount_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(sp.amount_zig)}</TableCell>
                           <TableCell className="text-xs">{sp.reference_number || "—"}</TableCell>
                         </TableRow>
                       ))}

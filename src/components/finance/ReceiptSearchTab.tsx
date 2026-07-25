@@ -10,13 +10,12 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { openPrintWindow } from "@/lib/finance/print";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
 export default function ReceiptSearchTab() {
   const { toast } = useToast();
-  const { usdToZig } = useExchangeRate();
+  const usdToZig = (v: number) => v;
   const [searchTerm, setSearchTerm] = useState("");
   const [receipts, setReceipts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -167,10 +166,9 @@ export default function ReceiptSearchTab() {
                   <TableHead>Date</TableHead>
                   <TableHead>Student</TableHead>
                   <TableHead>Adm #</TableHead>
-                  <TableHead>Form</TableHead>
+                  <TableHead>Grade</TableHead>
                   <TableHead>Invoice</TableHead>
-                  <TableHead className="text-right">Amount USD</TableHead>
-                  <TableHead className="text-right">Amount ZiG</TableHead>
+                  <TableHead className="text-right">Amount (R)</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>

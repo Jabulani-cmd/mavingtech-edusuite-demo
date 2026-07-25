@@ -72,8 +72,6 @@ import {
 import { safeHtml } from "@/lib/utils";
 import BankReconciliation from "@/components/admin/BankReconciliation";
 import IncomeExpenditureReport from "@/components/admin/IncomeExpenditureReport";
-import ExchangeRateCard from "@/components/finance/ExchangeRateCard";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 
 const formOptions = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 const termOptions = ["Term 1", "Term 2", "Term 3"];
@@ -101,7 +99,10 @@ const restrictionTypes = [
 ];
 
 // ── helpers ──
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: any): string => {
+  const v = Number(n);
+  return `R ${new Intl.NumberFormat("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
+};
 const genInvoiceNum = () =>
   `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0")}`;
 const genReceiptNum = () =>
@@ -124,7 +125,8 @@ function statusBadge(status: string) {
 export default function FinanceManagement() {
   const { toast } = useToast();
   const { user, role } = useAuth();
-  const { rate, usdToZig } = useExchangeRate();
+  const rate = 1;
+  const usdToZig = (v: number) => v;
   const toNumber = (value: any) => {
     const n = Number(value);
     return Number.isFinite(n) ? n : 0;
@@ -858,14 +860,14 @@ export default function FinanceManagement() {
       <p>Student: <strong>${safeHtml(stmtStudent.full_name)}</strong> | Adm #: <strong>${safeHtml(stmtStudent.admission_number)}</strong> | Form: <strong>${safeHtml(stmtStudent.form)}</strong></p>
       <p>Date: ${new Date().toLocaleDateString()}</p>
       <h2>Invoices</h2>
-       table<thead> th<th>Invoice #</th><th>Term</th><th>Year</th><th class="right">Total USD</th><th class="right">Total ZiG</th><th class="right">Paid USD</th><th class="right">Paid ZiG</th><th>Status</th> </thead>
+       table<thead> th<th>Invoice #</th><th>Term</th><th>Year</th><th class="right">Total (R)</th><th class="right">Paid (R)</th><th>Status</th> </thead>
       <tbody>
-      ${stmtInvoices.map((i) => `     <tr><td class="mono">${safeHtml(i.invoice_number)}</td><td>${safeHtml(i.term)}</td><td>${safeHtml(i.academic_year)}</td><td class="right mono">${fmt(parseFloat(i.total_usd))}</td><td class="right mono">${fmt(parseFloat(i.total_zig))}</td><td class="right mono">${fmt(parseFloat(i.paid_usd))}</td><td class="right mono">${fmt(parseFloat(i.paid_zig))}</td><td>${safeHtml(i.status)}</td></tr>`).join("")}
+      ${stmtInvoices.map((i) => `     <tr><td class="mono">${safeHtml(i.invoice_number)}</td><td>${safeHtml(i.term)}</td><td>${safeHtml(i.academic_year)}</td><td class="right mono">${fmt(parseFloat(i.total_usd))}</td><td class="right mono">${fmt(parseFloat(i.paid_usd))}</td><td>${safeHtml(i.status)}</td></tr>`).join("")}
       </tbody>   </table>
       <h2>Payments</h2>
-       table<thead>   <tr><th>Receipt #</th><th>Date</th><th>Invoice</th><th class="right">USD</th><th class="right">ZiG</th><th>Method</th></tr> </thead>
+       table<thead>   <tr><th>Receipt #</th><th>Date</th><th>Invoice</th><th class="right">Amount (R)</th><th>Method</th></tr> </thead>
       <tbody>
-      ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">${fmt(parseFloat(p.amount_usd))}</td><td class="right mono">${fmt(parseFloat(p.amount_zig))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
+      ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">${fmt(parseFloat(p.amount_usd))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
       </tbody>   </table>
       <div class="summary">
         <p><strong>Total Invoiced:</strong>  ZAR ${fmt(totalInvoicedUsd)} / R ${fmt(totalInvoicedZig)}</p>
@@ -891,10 +893,10 @@ export default function FinanceManagement() {
       @media print{body{padding:15px}}</style></head><body>
       <h1>MavingTech High School — Debtors List</h1>
       <p>Date: ${new Date().toLocaleDateString()} | Filter: ${debtorsFormFilter === "all" ? "All Forms" : debtorsFormFilter} | Total: ${filtered.length} student(s)</p>
-       table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Form</th><th>Invoice</th><th>Term</th><th class="right">Owed USD</th><th class="right">Owed ZiG</th><th>Status</th></tr> </thead>
+       table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Grade</th><th>Invoice</th><th>Term</th><th class="right">Owed (R)</th><th>Status</th></tr> </thead>
       <tbody>
-      ${filtered.map((d, i) => `     <tr><td>${i + 1}</td><td>${safeHtml(d.students?.full_name || "—")}</td><td>${safeHtml(d.students?.admission_number || "—")}</td><td>${safeHtml(d.students?.form || "—")}</td><td class="mono">${safeHtml(d.invoice_number)}</td><td>${safeHtml(d.term)}</td><td class="right mono red">${fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td><td class="right mono red">${fmt(parseFloat(d.total_zig) - parseFloat(d.paid_zig))}</td><td>${statusBadge(d.status)}</td></tr>`).join("")}
-      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">USD ${fmt(totalUsd)}</td><td class="right mono red">R ${fmt(totalZig)}</td><td></td></tr>
+      ${filtered.map((d, i) => `     <tr><td>${i + 1}</td><td>${safeHtml(d.students?.full_name || "—")}</td><td>${safeHtml(d.students?.admission_number || "—")}</td><td>${safeHtml(d.students?.form || "—")}</td><td class="mono">${safeHtml(d.invoice_number)}</td><td>${safeHtml(d.term)}</td><td class="right mono red">${fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td><td>${statusBadge(d.status)}</td></tr>`).join("")}
+      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">${fmt(totalUsd)}</td><td></td></tr>
       </tbody>   </table>
       </body></html>`);
     printWindow.document.close();
@@ -1609,7 +1611,7 @@ export default function FinanceManagement() {
             color: "text-amber-600",
           },
           {
-            label: "Net Income (ZAR)",
+            label: "Net Income",
             usd: totalCollectedUsd - totalExpensesUsd,
             zig: totalCollectedZig - totalExpensesZig,
             icon: BarChart3,
@@ -1622,17 +1624,12 @@ export default function FinanceManagement() {
                 <c.icon className={`h-5 w-5 ${c.color}`} />
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{c.label}</span>
               </div>
-              <p className="text-lg font-bold">USD {fmt(c.usd)}</p>
-              <p className="text-sm text-muted-foreground">R {fmt(c.zig)}</p>
+              <p className="text-lg font-bold">{fmt(c.usd)}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Exchange Rate */}
-      <div className="max-w-md">
-        <ExchangeRateCard />
-      </div>
 
       <Tabs defaultValue="fee-structures" className="space-y-4">
         <TabsList className="flex-wrap">
@@ -1680,7 +1677,7 @@ export default function FinanceManagement() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="font-heading">Fee Structures</CardTitle>
-                <CardDescription>Define fees per form, term, and boarding status</CardDescription>
+                <CardDescription>Define fees per grade and term</CardDescription>
               </div>
               <Button onClick={openAddFee} className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 <Plus className="mr-1 h-4 w-4" /> Add Fee
@@ -1698,11 +1695,10 @@ export default function FinanceManagement() {
                       <TableRow>
                         <TableHead>Year</TableHead>
                         <TableHead>Term</TableHead>
-                        <TableHead>Form</TableHead>
+                        <TableHead>Grade</TableHead>
                         <TableHead>Type</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead className="text-right">USD</TableHead>
-                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead className="text-right">Amount (R)</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -1715,7 +1711,6 @@ export default function FinanceManagement() {
                           <TableCell>{fee.boarding_status === "boarding" ? "Boarding" : "Day"}</TableCell>
                           <TableCell className="max-w-[200px] truncate">{fee.description || "—"}</TableCell>
                           <TableCell className="text-right font-mono">{fmt(fee.amount_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(fee.amount_zig)}</TableCell>
                           <TableCell>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => openEditFee(fee)}>
@@ -1825,13 +1820,11 @@ export default function FinanceManagement() {
                       <TableRow>
                         <TableHead>Invoice #</TableHead>
                         <TableHead>Student</TableHead>
-                        <TableHead>Form</TableHead>
+                        <TableHead>Grade</TableHead>
                         <TableHead>Term</TableHead>
                         <TableHead>Due Date</TableHead>
-                        <TableHead className="text-right">Total USD</TableHead>
-                        <TableHead className="text-right">Total ZiG</TableHead>
-                        <TableHead className="text-right">Paid USD</TableHead>
-                        <TableHead className="text-right">Paid ZiG</TableHead>
+                        <TableHead className="text-right">Total (R)</TableHead>
+                        <TableHead className="text-right">Paid (R)</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="text-right">Balance Due</TableHead>
                         {isFinanceOrAdmin && <TableHead>Actions</TableHead>}
@@ -1848,9 +1841,7 @@ export default function FinanceManagement() {
                             {inv.due_date ? new Date(inv.due_date).toLocaleDateString() : "Not set"}
                           </TableCell>
                           <TableCell className="text-right font-mono">{fmt(inv.total_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(inv.total_zig)}</TableCell>
                           <TableCell className="text-right font-mono">{fmt(inv.paid_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(inv.paid_zig)}</TableCell>
                           <TableCell>{statusBadge(inv.status)}</TableCell>
                           <TableCell className="text-right font-mono">
                             {(() => {
@@ -1982,8 +1973,7 @@ export default function FinanceManagement() {
                         <TableHead>Date</TableHead>
                         <TableHead>Student</TableHead>
                         <TableHead>Invoice</TableHead>
-                        <TableHead className="text-right">USD</TableHead>
-                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead className="text-right">Amount (R)</TableHead>
                         <TableHead>Method</TableHead>
                         <TableHead>Ref</TableHead>
                         {isFinanceOrAdmin && <TableHead>Actions</TableHead>}
@@ -1997,7 +1987,6 @@ export default function FinanceManagement() {
                           <TableCell>{pay.students?.full_name || "—"}</TableCell>
                           <TableCell className="font-mono text-xs">{pay.invoices?.invoice_number || "—"}</TableCell>
                           <TableCell className="text-right font-mono">{fmt(pay.amount_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(pay.amount_zig)}</TableCell>
                           <TableCell>{pay.payment_method}</TableCell>
                           <TableCell className="text-xs">{pay.reference_number || "—"}</TableCell>
                           {isFinanceOrAdmin && (
@@ -2043,7 +2032,7 @@ export default function FinanceManagement() {
               <Card className="border-destructive/30 bg-destructive/5">
                 <CardContent className="p-5">
                   <p className="text-xs text-destructive font-medium uppercase tracking-wider">Total Outstanding</p>
-                  <p className="text-xl font-bold text-destructive">USD {fmt(totalOwedUsd)}</p>
+                  <p className="text-xl font-bold text-destructive">{fmt(totalOwedUsd)}</p>
                   <p className="text-sm text-destructive/80">R {fmt(totalOwedZig)}</p>
                 </CardContent>
               </Card>
@@ -2107,11 +2096,10 @@ export default function FinanceManagement() {
                             <TableHead>#</TableHead>
                             <TableHead>Student</TableHead>
                             <TableHead>Adm #</TableHead>
-                            <TableHead>Form</TableHead>
+                            <TableHead>Grade</TableHead>
                             <TableHead>Invoice</TableHead>
                             <TableHead>Term</TableHead>
-                            <TableHead className="text-right">Owed USD</TableHead>
-                            <TableHead className="text-right">Owed ZiG</TableHead>
+                            <TableHead className="text-right">Owed (R)</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
@@ -2127,9 +2115,6 @@ export default function FinanceManagement() {
                               <TableCell>{d.term}</TableCell>
                               <TableCell className="text-right font-mono text-destructive">
                                 {fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}
-                              </TableCell>
-                              <TableCell className="text-right font-mono text-destructive">
-                                {fmt(parseFloat(d.total_zig) - parseFloat(d.paid_zig))}
                               </TableCell>
                               <TableCell>{statusBadge(d.status)}</TableCell>
                               <TableCell className="text-right">
@@ -2222,12 +2207,12 @@ export default function FinanceManagement() {
                     <div className="grid gap-4 sm:grid-cols-3">
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Deposits</p>
-                        <p className="text-xl font-bold font-mono text-green-700">USD {fmt(depositsUsd)}</p>
+                        <p className="text-xl font-bold font-mono text-green-700">{fmt(depositsUsd)}</p>
                         <p className="text-sm font-mono text-muted-foreground">R {fmt(depositsZig)}</p>
                       </div>
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Withdrawals</p>
-                        <p className="text-xl font-bold font-mono text-destructive">USD {fmt(withdrawalsUsd)}</p>
+                        <p className="text-xl font-bold font-mono text-destructive">{fmt(withdrawalsUsd)}</p>
                         <p className="text-sm font-mono text-muted-foreground">R {fmt(withdrawalsZig)}</p>
                       </div>
                       <div
@@ -2252,8 +2237,7 @@ export default function FinanceManagement() {
                               <TableHead>Date</TableHead>
                               <TableHead>Type</TableHead>
                               <TableHead>Description</TableHead>
-                              <TableHead className="text-right">USD</TableHead>
-                              <TableHead className="text-right">ZiG</TableHead>
+                              <TableHead className="text-right">Amount (R)</TableHead>
                               <TableHead>Reference</TableHead>
                               <TableHead>Actions</TableHead>
                             </TableRow>
@@ -2281,7 +2265,6 @@ export default function FinanceManagement() {
                                   {pc.transaction_type === "deposit" ? "+" : "-"}
                                   {fmt(pc.amount_usd)}
                                 </TableCell>
-                                <TableCell className="text-right font-mono">{fmt(pc.amount_zig)}</TableCell>
                                 <TableCell className="text-xs">{pc.reference_number || "—"}</TableCell>
                                 <TableCell>
                                   <Button variant="ghost" size="icon" onClick={() => deletePettyCash(pc.id)}>
@@ -2366,8 +2349,8 @@ export default function FinanceManagement() {
                           <TableHead>Date</TableHead>
                           <TableHead>Due Date</TableHead>
                           <TableHead>Description</TableHead>
-                          <TableHead className="text-right">Amount USD</TableHead>
-                          <TableHead className="text-right">Paid USD</TableHead>
+                          <TableHead className="text-right">Amount (R)</TableHead>
+                          <TableHead className="text-right">Paid (R)</TableHead>
                           <TableHead className="text-right">Balance</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Actions</TableHead>
@@ -2441,8 +2424,7 @@ export default function FinanceManagement() {
                           <TableHead>Invoice #</TableHead>
                           <TableHead>Method</TableHead>
                           <TableHead>Reference</TableHead>
-                          <TableHead className="text-right">Amount USD</TableHead>
-                          <TableHead className="text-right">Amount ZiG</TableHead>
+                          <TableHead className="text-right">Amount (R)</TableHead>
                           <TableHead>Notes</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -2457,7 +2439,6 @@ export default function FinanceManagement() {
                             <TableCell>{sp.payment_method}</TableCell>
                             <TableCell className="font-mono text-xs">{sp.reference_number || "—"}</TableCell>
                             <TableCell className="text-right font-mono">{fmt(sp.amount_usd)}</TableCell>
-                            <TableCell className="text-right font-mono">{fmt(sp.amount_zig)}</TableCell>
                             <TableCell className="max-w-[200px] truncate">{sp.notes || "—"}</TableCell>
                           </TableRow>
                         ))}
@@ -2570,14 +2551,14 @@ export default function FinanceManagement() {
                         <Card>
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Invoiced</p>
-                            <p className="font-bold font-mono">USD {fmt(tInvUsd)}</p>
+                            <p className="font-bold font-mono">{fmt(tInvUsd)}</p>
                             <p className="text-sm text-muted-foreground font-mono">R {fmt(tInvZig)}</p>
                           </CardContent>
                         </Card>
                         <Card>
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Paid</p>
-                            <p className="font-bold font-mono text-green-700">USD {fmt(tPaidUsd)}</p>
+                            <p className="font-bold font-mono text-green-700">{fmt(tPaidUsd)}</p>
                             <p className="text-sm text-muted-foreground font-mono">R {fmt(tPaidZig)}</p>
                           </CardContent>
                         </Card>
@@ -2615,10 +2596,8 @@ export default function FinanceManagement() {
                               <TableHead>Invoice #</TableHead>
                               <TableHead>Term</TableHead>
                               <TableHead>Year</TableHead>
-                              <TableHead className="text-right">Total USD</TableHead>
-                              <TableHead className="text-right">Total ZiG</TableHead>
-                              <TableHead className="text-right">Paid USD</TableHead>
-                              <TableHead className="text-right">Paid ZiG</TableHead>
+                              <TableHead className="text-right">Total (R)</TableHead>
+                              <TableHead className="text-right">Paid (R)</TableHead>
                               <TableHead>Status</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -2629,9 +2608,7 @@ export default function FinanceManagement() {
                                 <TableCell>{i.term}</TableCell>
                                 <TableCell>{i.academic_year}</TableCell>
                                 <TableCell className="text-right font-mono">{fmt(parseFloat(i.total_usd))}</TableCell>
-                                <TableCell className="text-right font-mono">{fmt(parseFloat(i.total_zig))}</TableCell>
                                 <TableCell className="text-right font-mono">{fmt(parseFloat(i.paid_usd))}</TableCell>
-                                <TableCell className="text-right font-mono">{fmt(parseFloat(i.paid_zig))}</TableCell>
                                 <TableCell>{statusBadge(i.status)}</TableCell>
                               </TableRow>
                             ))}
@@ -2653,8 +2630,7 @@ export default function FinanceManagement() {
                               <TableHead>Receipt #</TableHead>
                               <TableHead>Date</TableHead>
                               <TableHead>Invoice</TableHead>
-                              <TableHead className="text-right">USD</TableHead>
-                              <TableHead className="text-right">ZiG</TableHead>
+                              <TableHead className="text-right">Amount (R)</TableHead>
                               <TableHead>Method</TableHead>
                               <TableHead>Ref</TableHead>
                             </TableRow>
@@ -2666,7 +2642,6 @@ export default function FinanceManagement() {
                                 <TableCell>{p.payment_date}</TableCell>
                                 <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
                                 <TableCell className="text-right font-mono">{fmt(parseFloat(p.amount_usd))}</TableCell>
-                                <TableCell className="text-right font-mono">{fmt(parseFloat(p.amount_zig))}</TableCell>
                                 <TableCell>{p.payment_method}</TableCell>
                                 <TableCell className="text-xs">{p.reference_number || "—"}</TableCell>
                               </TableRow>
@@ -2754,8 +2729,7 @@ export default function FinanceManagement() {
                         <TableHead>Date</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead className="text-right">USD</TableHead>
-                        <TableHead className="text-right">ZiG</TableHead>
+                        <TableHead className="text-right">Amount (R)</TableHead>
                         <TableHead>Method</TableHead>
                         <TableHead className="text-center">Document</TableHead>
                         <TableHead>Actions</TableHead>
@@ -2770,7 +2744,6 @@ export default function FinanceManagement() {
                           </TableCell>
                           <TableCell className="max-w-[250px] truncate">{exp.description}</TableCell>
                           <TableCell className="text-right font-mono">{fmt(exp.amount_usd)}</TableCell>
-                          <TableCell className="text-right font-mono">{fmt(exp.amount_zig)}</TableCell>
                           <TableCell>{exp.payment_method}</TableCell>
                           <TableCell className="text-center">
                             <DocActionButtons
@@ -2874,15 +2847,15 @@ export default function FinanceManagement() {
                 </div>
                 <div className="border-t pt-4 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Income (ZiG)</span>
+                    <span className="text-sm">Income (R)</span>
                     <span className="font-mono font-bold text-green-700">R {fmt(totalCollectedZig)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Expenses (ZiG)</span>
+                    <span className="text-sm">Expenses (R)</span>
                     <span className="font-mono font-bold text-red-600">R {fmt(totalExpensesZig)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
-                    <span className="text-sm font-semibold">Net (ZiG)</span>
+                    <span className="text-sm font-semibold">Net (R)</span>
                     <span
                       className={`font-mono font-bold ${totalCollectedZig - totalExpensesZig >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
@@ -2913,7 +2886,7 @@ export default function FinanceManagement() {
                           <div className="flex justify-between text-sm mb-1">
                             <span>{term}</span>
                             <span className="font-mono">
-                              {pct.toFixed(1)}% collected (USD {fmt(paidUsd)} / {fmt(totalUsd)})
+                              {pct.toFixed(1)}% collected ({fmt(paidUsd)} / {fmt(totalUsd)})
                             </span>
                           </div>
                           <div className="h-3 rounded-full bg-muted overflow-hidden">
@@ -2939,7 +2912,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingFee ? "Edit Fee Structure" : "Add Fee Structure"}</DialogTitle>
-            <DialogDescription>Define the fee amounts in both  ZAR and ZiG.</DialogDescription>
+            <DialogDescription>Enter the fee amount in South African Rand (R).</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-3">
@@ -2969,7 +2942,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Form</Label>
+                <Label>Grade</Label>
                 <Select value={feeForm.form} onValueChange={(v) => setFeeForm((p) => ({ ...p, form: v }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -3012,23 +2985,12 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Amount (ZAR)</Label>
+                <Label>Amount (R)</Label>
                 <Input
                   type="number"
                   step="0.01"
                   value={feeForm.amount_usd}
                   onChange={(e) => setFeeForm((p) => ({ ...p, amount_usd: e.target.value, amount_zig: autoZig(e.target.value) }))}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Amount (ZiG) <span className="text-xs text-muted-foreground">auto</span></Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={feeForm.amount_zig}
-                  readOnly
-                  className="bg-muted"
                   placeholder="0.00"
                 />
               </div>
@@ -3244,7 +3206,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Record Payment</DialogTitle>
-            <DialogDescription>Record a payment with split USD/R support.</DialogDescription>
+            <DialogDescription>Record a payment with in Rand (R).</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="space-y-2">
@@ -3292,7 +3254,7 @@ export default function FinanceManagement() {
                       return (
                         <SelectItem key={inv.id} value={inv.id}>
                           {inv.invoice_number} —{" "}
-                          {balUsd < 0 ? `+USD ${fmt(Math.abs(balUsd))} credit` : `USD ${fmt(balUsd)} owing`} /{" "}
+                          {balUsd < 0 ? `+${fmt(Math.abs(balUsd))} credit` : `${fmt(balUsd)} owing`} /{" "}
                           {balZig < 0 ? `+R ${fmt(Math.abs(balZig))} credit` : `R ${fmt(balZig)} owing`}
                         </SelectItem>
                       );
@@ -3311,7 +3273,7 @@ export default function FinanceManagement() {
             )}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Amount USD</Label>
+                <Label>Amount (R)</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3784,7 +3746,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount USD</Label>
+                <Label>Amount (R)</Label>
                 <Input
                   type="number"
                   step="0.01"
