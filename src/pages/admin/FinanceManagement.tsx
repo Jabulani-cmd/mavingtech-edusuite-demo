@@ -125,7 +125,8 @@ function statusBadge(status: string) {
 export default function FinanceManagement() {
   const { toast } = useToast();
   const { user, role } = useAuth();
-  const { rate, usdToZig } = useExchangeRate();
+  const rate = 1;
+  const usdToZig = (v: number) => v;
   const toNumber = (value: any) => {
     const n = Number(value);
     return Number.isFinite(n) ? n : 0;
