@@ -1059,7 +1059,7 @@ function TabContentInner(props: TabContentProps) {
                 {feeBalance !== 0 && ` (R {usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: R {totalInvoiced.toFixed(2)} (R {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: $
+                Total Invoiced: R {totalInvoiced.toFixed(2)} (R {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: R 
                 {totalPaidAll.toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
