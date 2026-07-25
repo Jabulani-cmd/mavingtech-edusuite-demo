@@ -43,7 +43,7 @@ describe("Student Form Schema", () => {
   const validStudent = {
     admission_number: "GHS2026/001",
     full_name: "Tatenda Moyo",
-    form: "Form 1",
+    form: "Grade 8",
     date_of_birth: "2010-05-15",
     gender: "Male",
     guardian_name: "Mr. Moyo",
@@ -104,7 +104,7 @@ describe("Student Form Schema", () => {
   it("rejects missing required fields", () => {
     const result = studentFormSchema.safeParse({
       full_name: "Tatenda Moyo",
-      form: "Form 1",
+      form: "Grade 8",
     });
     expect(result.success).toBe(false);
   });

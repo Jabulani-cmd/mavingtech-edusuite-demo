@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FileText, Loader2, RefreshCw, CheckCircle, Send, Eye } from "lucide-react";
 import { format } from "date-fns";
 
-const formOptions = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
+const formOptions = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 
 function zimGrade(mark: number): string {
@@ -59,7 +59,7 @@ export default function TermReportsTab() {
   const [students, setStudents] = useState<Student[]>([]);
   
   // Filters
-  const [filterForm, setFilterForm] = useState("Form 1");
+  const [filterForm, setFilterForm] = useState("Grade 8");
   const [filterTerm, setFilterTerm] = useState("Term 1");
   const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
   

@@ -110,7 +110,7 @@ export default function Admissions() {
                     <Select required>
                       <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
                       <SelectContent>
-                        {["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"].map(g => (
+                        {["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"].map(g => (
                           <SelectItem key={g} value={g}>{g}</SelectItem>
                         ))}
                       </SelectContent>

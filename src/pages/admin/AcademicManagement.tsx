@@ -23,7 +23,7 @@ import ExamTimetableTab from "@/components/admin/ExamTimetableTab";
 import TermReportsTab from "@/components/admin/TermReportsTab";
 import TeacherClassAssignment from "@/components/admin/TeacherClassAssignment";
 
-const formOptions = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
+const formOptions = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 const streamOptions = ["A", "B", "C", "D"];
 const deptOptions = ["Mathematics", "Sciences", "Languages", "Humanities", "Technical", "Arts", "Sports", "Commerce"];
@@ -102,7 +102,7 @@ export default function AcademicManagement() {
   // Dialogs
   const [classDialogOpen, setClassDialogOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<any>(null);
-  const [classForm, setClassForm] = useState({ name: "", form_level: "Form 1", stream: "", class_teacher_id: "", room: "", capacity: "40" });
+  const [classForm, setClassForm] = useState({ name: "", form_level: "Grade 8", stream: "", class_teacher_id: "", room: "", capacity: "40" });
 
   const [subjectDialogOpen, setSubjectDialogOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any>(null);
@@ -135,7 +135,7 @@ export default function AcademicManagement() {
 
   const [examDialogOpen, setExamDialogOpen] = useState(false);
   const [editingExam, setEditingExam] = useState<any>(null);
-  const [examForm, setExamForm] = useState({ name: "", exam_type: "end_of_term", form_level: "Form 1", term: "Term 1", academic_year: "2026", start_date: "", end_date: "", subject_ids: [] as string[] });
+  const [examForm, setExamForm] = useState({ name: "", exam_type: "end_of_term", form_level: "Grade 8", term: "Term 1", academic_year: "2026", start_date: "", end_date: "", subject_ids: [] as string[] });
 
   const [marksExam, setMarksExam] = useState("");
   const [marksSubject, setMarksSubject] = useState("");
@@ -189,12 +189,12 @@ export default function AcademicManagement() {
   // ═══ CLASS CRUD ═══
   function openAddClass() {
     setEditingClass(null);
-    setClassForm({ name: "", form_level: "Form 1", stream: "", class_teacher_id: "", room: "", capacity: "40" });
+    setClassForm({ name: "", form_level: "Grade 8", stream: "", class_teacher_id: "", room: "", capacity: "40" });
     setClassDialogOpen(true);
   }
   function openEditClass(c: any) {
     setEditingClass(c);
-    setClassForm({ name: c.name, form_level: c.form_level || "Form 1", stream: c.stream || "", class_teacher_id: c.class_teacher_id || "", room: c.room || "", capacity: String(c.capacity || 40) });
+    setClassForm({ name: c.name, form_level: c.form_level || "Grade 8", stream: c.stream || "", class_teacher_id: c.class_teacher_id || "", room: c.room || "", capacity: String(c.capacity || 40) });
     setClassDialogOpen(true);
   }
   async function saveClass() {
@@ -410,7 +410,7 @@ export default function AcademicManagement() {
   // ═══ EXAM CRUD ═══
   function openAddExam() {
     setEditingExam(null);
-    setExamForm({ name: "", exam_type: "end_of_term", form_level: "Form 1", term: "Term 1", academic_year: "2026", start_date: "", end_date: "", subject_ids: [] });
+    setExamForm({ name: "", exam_type: "end_of_term", form_level: "Grade 8", term: "Term 1", academic_year: "2026", start_date: "", end_date: "", subject_ids: [] });
     setExamDialogOpen(true);
   }
   function openEditExam(e: any) {
@@ -1013,7 +1013,7 @@ export default function AcademicManagement() {
           <DialogHeader><DialogTitle>{editingClass ? "Edit Class" : "Add Class"}</DialogTitle><DialogDescription>Class details</DialogDescription></DialogHeader>
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Name</Label><Input value={classForm.name} onChange={e => setClassForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Form 1A" /></div>
+              <div className="space-y-2"><Label>Name</Label><Input value={classForm.name} onChange={e => setClassForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Grade 8A" /></div>
               <div className="space-y-2"><Label>Form Level</Label>
                 <Select value={classForm.form_level} onValueChange={v => setClassForm(p => ({ ...p, form_level: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>

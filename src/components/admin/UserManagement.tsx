@@ -107,7 +107,7 @@ const departmentOptions = [
   "Sports",
   "Administration",
 ];
-const gradeOptions = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
+const gradeOptions = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 const subjectsList = [
   "Mathematics",
   "English",
@@ -898,7 +898,7 @@ export default function UserManagement() {
             {form.portal_role === "student" && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Form / Grade</Label>
+                  <Label>Grade</Label>
                   <Select value={form.grade} onValueChange={(v) => setForm((p) => ({ ...p, grade: v }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select" />

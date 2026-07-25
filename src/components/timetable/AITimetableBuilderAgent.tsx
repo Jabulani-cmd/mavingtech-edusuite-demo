@@ -81,7 +81,7 @@ export default function AITimetableBuilderAgent() {
       case "structure": {
         const summary = formGroups.map(([g, cs]) =>
           `• Form ${g}: ${cs.map(c => c.name).join(", ")}`).join("\n");
-        agentSay(`**Step 1 — School structure.**\nFrom your records I see:\n${summary}\n\nIs this correct? Reply **yes** to confirm, or describe any missing form/stream (e.g. _"add Form 4D"_).`);
+        agentSay(`**Step 1 — School structure.**\nFrom your records I see:\n${summary}\n\nIs this correct? Reply **yes** to confirm, or describe any missing form/stream (e.g. _"add Grade 11D"_).`);
         break;
       }
       case "class_sizes": {

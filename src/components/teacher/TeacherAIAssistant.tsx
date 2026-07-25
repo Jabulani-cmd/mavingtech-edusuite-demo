@@ -40,7 +40,7 @@ function buildDemoReply(task: string, model: string, prompt: string): string {
       return header +
 `## Lesson Plan: ${topic}
 
-**Form / Grade:** Form 3  |  **Duration:** 40 minutes
+**Grade:** Grade 10  |  **Duration:** 40 minutes
 
 ### 1. Learning Objectives
 By the end of this lesson, learners should be able to:
@@ -128,7 +128,7 @@ MavingTech Business Solutions Demo School`;
 - Switch models from the dropdown and try asking for lesson plans, memos, feedback or parent emails.
 
 Try selecting **Lesson planning** and asking:
-> "Plan a 40-minute Form 2 English lesson on persuasive writing."`;
+> "Plan a 40-minute Grade 9 English lesson on persuasive writing."`;
   }
 }
 
@@ -231,7 +231,7 @@ export default function TeacherAIAssistant() {
           {messages.length === 0 && !streaming && (
             <div className="text-center text-muted-foreground text-sm py-12">
               <Bot className="h-10 w-10 mx-auto mb-2 opacity-40" />
-              Start a conversation. Try: <em>"Plan a 40-min Form 3 lesson on photosynthesis"</em>.
+              Start a conversation. Try: <em>"Plan a 40-min Grade 10 lesson on photosynthesis"</em>.
             </div>
           )}
           <div className="space-y-3">

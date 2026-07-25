@@ -156,7 +156,7 @@ export default function Home() {
               At MavingTech High School, we offer a supportive and inspiring environment for young African minds to learn, grow and thrive. Our passion for education goes beyond outstanding academic results — we build confident, creative thinkers prepared for a global future.
             </p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              From Form 1 through NSC (Grade 12) / Matric, our students walk out with the character, discipline and skills to make their mark in the world.
+              From Grade 8 through NSC (Grade 12) / Matric, our students walk out with the character, discipline and skills to make their mark in the world.
             </p>
 
             <Link to="/about" className="mt-8 inline-block">

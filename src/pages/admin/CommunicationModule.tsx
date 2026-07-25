@@ -50,7 +50,7 @@ const channelOptions = [
   { value: "email", label: "Email", icon: Mail },
   { value: "notification", label: "In-App Notification", icon: Bell },
 ];
-const formLevels = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
+const formLevels = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 
 const defaultTemplates = [
   { name: "Fee Reminder", category: "fee_reminder", template_text: "Dear Parent/Guardian of {{student_name}}, this is a reminder that fees of ${{balance}} for {{term}} are due by {{due_date}}. Please make payment at your earliest convenience. MavingTech High School.", variables: ["student_name", "balance", "term", "due_date"] },
