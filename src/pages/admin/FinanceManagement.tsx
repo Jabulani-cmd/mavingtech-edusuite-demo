@@ -895,7 +895,7 @@ export default function FinanceManagement() {
        table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Grade</th><th>Invoice</th><th>Term</th><th class="right">Owed (R)</th><th>Status</th></tr> </thead>
       <tbody>
       ${filtered.map((d, i) => `     <tr><td>${i + 1}</td><td>${safeHtml(d.students?.full_name || "—")}</td><td>${safeHtml(d.students?.admission_number || "—")}</td><td>${safeHtml(d.students?.form || "—")}</td><td class="mono">${safeHtml(d.invoice_number)}</td><td>${safeHtml(d.term)}</td><td class="right mono red">${fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td><td>${statusBadge(d.status)}</td></tr>`).join("")}
-      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">${fmt(totalUsd)}</td><td class="right mono red">R ${fmt(totalZig)}</td><td></td></tr>
+      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">${fmt(totalUsd)}</td><td></td></tr>
       </tbody>   </table>
       </body></html>`);
     printWindow.document.close();
@@ -1679,7 +1679,7 @@ export default function FinanceManagement() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="font-heading">Fee Structures</CardTitle>
-                <CardDescription>Define fees per grade, term, and boarding status</CardDescription>
+                <CardDescription>Define fees per grade and term</CardDescription>
               </div>
               <Button onClick={openAddFee} className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 <Plus className="mr-1 h-4 w-4" /> Add Fee
@@ -2987,7 +2987,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Amount (ZAR)</Label>
+                <Label>Amount (R)</Label>
                 <Input
                   type="number"
                   step="0.01"
