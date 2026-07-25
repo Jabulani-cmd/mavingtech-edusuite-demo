@@ -173,9 +173,8 @@ export default function StudentFeeTab({ studentId }: Props) {
               {balanceUsd < 0 ? "Credit Balance" : balanceUsd > 0 ? "Outstanding Balance" : "No Balance"}
             </p>
             <p className="text-xs text-muted-foreground mt-1 break-words">
-              Invoiced: R {fmt(totalInvoicedUsd)} (R {fmt(usdToZig(totalInvoicedUsd))}) · Paid: R {fmt(totalPaidUsd)} (R {fmt(usdToZig(totalPaidUsd))})
+              Invoiced: R {fmt(totalInvoicedUsd)} · Paid: R {fmt(totalPaidUsd)}
             </p>
-            <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
           </div>
         </CardContent>
       </Card>
