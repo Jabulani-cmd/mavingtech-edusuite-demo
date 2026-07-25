@@ -651,6 +651,7 @@ function TabContentInner(props: TabContentProps) {
   const isMobile = useIsMobile();
   const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
   const [feeSearch, setFeeSearch] = useState("");
+  const [payInvoice, setPayInvoice] = useState<any | null>(null);
 
   if (!child) return null;
 
