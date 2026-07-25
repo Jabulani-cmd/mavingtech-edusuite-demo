@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Video, Link as LinkIcon, Presentation, Download, Search, ExternalLink } from "lucide-react";
+import { FileText, Video, Link as LinkIcon, Presentation, Download, Search, Eye, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
