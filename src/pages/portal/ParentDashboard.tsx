@@ -1048,7 +1048,7 @@ function TabContentInner(props: TabContentProps) {
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
           <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-            <DollarSign className={`h-8 w-8 ${feeBalance > 0 ? "text-red-600" : "text-emerald-600"}`} />
+            <span className={`flex h-10 w-10 items-center justify-center rounded-full text-xl font-bold ${feeBalance > 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>R</span>
             <div className="flex-1 min-w-0">
               <p className="text-2xl font-bold">
                 {feeBalance > 0
