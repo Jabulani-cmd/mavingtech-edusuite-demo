@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Video, Link as LinkIcon, Presentation, Download, Search, ExternalLink } from "lucide-react";
+import { FileText, Video, Link as LinkIcon, Presentation, Download, Search, Eye, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
@@ -60,11 +60,46 @@ export default function StudentMaterialsTab({ studentClassId }: Props) {
     return matchSearch && matchSubject;
   });
 
-  const handleDownload = (m: any) => {
-    const url = m.file_url || m.link_url;
-    if (url) window.open(url, "_blank");
-    // Increment download count
+  const bumpCount = (m: any) => {
     supabase.from("study_materials").update({ download_count: (m.download_count || 0) + 1 }).eq("id", m.id).then();
+  };
+
+  const openView = (m: any) => {
+    const url = m.file_url || m.link_url;
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+    bumpCount(m);
+  };
+
+  const openPrint = (m: any) => {
+    const url = m.file_url || m.link_url;
+    if (!url) return;
+    const w = window.open(url, "_blank");
+    if (w) {
+      // Give the browser a moment to load the file, then trigger print
+      setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 1200);
+    }
+    bumpCount(m);
+  };
+
+  const handleDownload = async (m: any) => {
+    const url = m.file_url || m.link_url;
+    if (!url) return;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const ext = (url.split(".").pop() || "").split("?")[0];
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${m.title}${ext ? "." + ext : ""}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    } catch {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+    bumpCount(m);
   };
 
   if (loading) {
@@ -140,26 +175,16 @@ export default function StudentMaterialsTab({ studentClassId }: Props) {
                     )}
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9"
-                      title="Open / View"
-                      onClick={() => {
-                        const url = m.file_url || m.link_url;
-                        if (url) window.open(url, "_blank");
-                      }}
-                    >
-                      <ExternalLink className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-9 w-9" title="View" onClick={() => openView(m)}>
+                      <Eye className="h-4 w-4" />
                     </Button>
                     {m.material_type !== "link" && m.file_url && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9"
-                        title="Download"
-                        onClick={() => handleDownload(m)}
-                      >
+                      <Button variant="ghost" size="icon" className="h-9 w-9" title="Print" onClick={() => openPrint(m)}>
+                        <Printer className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {m.material_type !== "link" && m.file_url && (
+                      <Button variant="ghost" size="icon" className="h-9 w-9" title="Download" onClick={() => handleDownload(m)}>
                         <Download className="h-4 w-4" />
                       </Button>
                     )}
