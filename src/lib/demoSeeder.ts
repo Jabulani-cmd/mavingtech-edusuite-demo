@@ -1,5 +1,6 @@
 // @ts-nocheck
-// Demo data seeder — generates a complete realistic Zimbabwean school dataset.
+// Demo data seeder — generates a complete realistic South African high school dataset
+// (Grades 8–12, CAPS curriculum, ZAR fees, +27 phone numbers).
 import type {
   Teacher, Subject, Room, SchoolClass, Allocation, TimetableSlot, RoomType,
 } from "@/contexts/AllocationContext";
@@ -10,7 +11,8 @@ export interface DemoStudent {
   dob: string;
   gender: "Male" | "Female";
   admissionNumber: string;
-  form: number;
+  grade: number;          // 8–12
+  form: number;           // legacy alias === grade (kept for backwards compat with existing UI)
   stream: "A" | "B";
   classId: string;
   email: string;
@@ -38,15 +40,13 @@ export interface DemoSeed {
   parents: DemoParent[];
 }
 
-// --- Period schedule per the spec (07:30–15:30, 8x45min, break after P3, lunch after P5) ---
+// SA-style school day (07:30–14:15), 8×45min periods, break after P3, lunch after P5.
 export const DEMO_PERIODS = [
   { period: 1, start: "07:30", end: "08:15" },
   { period: 2, start: "08:15", end: "09:00" },
   { period: 3, start: "09:00", end: "09:45" },
-  // 15-min break
   { period: 4, start: "10:00", end: "10:45" },
   { period: 5, start: "10:45", end: "11:30" },
-  // 30-min lunch
   { period: 6, start: "12:00", end: "12:45" },
   { period: 7, start: "12:45", end: "13:30" },
   { period: 8, start: "13:30", end: "14:15" },
@@ -59,22 +59,24 @@ const PALETTE = [
   "hsl(100 60% 45%)","hsl(340 70% 55%)","hsl(50 80% 50%)",
 ];
 
-const SUBJECT_DEFS: Array<{ name: string; allowed: RoomType[]; forms: number[]; periodsPerWeek: number }> = [
-  { name: "Mathematics",       allowed: ["Regular"],       forms: [1,2,3,4,5,6], periodsPerWeek: 6 },
-  { name: "English Language",  allowed: ["Regular"],       forms: [1,2,3,4,5,6], periodsPerWeek: 6 },
-  { name: "Shona",             allowed: ["Regular"],       forms: [1,2,3,4],     periodsPerWeek: 4 },
-  { name: "History",           allowed: ["Regular"],       forms: [1,2,3,4,5,6], periodsPerWeek: 3 },
-  { name: "Geography",         allowed: ["Regular"],       forms: [1,2,3,4,5,6], periodsPerWeek: 3 },
-  { name: "Combined Science",  allowed: ["Lab"],           forms: [1,2],         periodsPerWeek: 5 },
-  { name: "Physics",           allowed: ["Lab"],           forms: [3,4,5,6],     periodsPerWeek: 4 },
-  { name: "Chemistry",         allowed: ["Lab"],           forms: [3,4,5,6],     periodsPerWeek: 4 },
-  { name: "Biology",           allowed: ["Lab"],           forms: [3,4,5,6],     periodsPerWeek: 4 },
-  { name: "Computer Science",  allowed: ["Computer Room"], forms: [1,2,3,4,5,6], periodsPerWeek: 3 },
-  { name: "Physical Education",allowed: ["Hall","Sports Field"], forms: [1,2,3,4], periodsPerWeek: 2 },
-  { name: "Art and Design",    allowed: ["Regular"],       forms: [1,2,3,4],     periodsPerWeek: 2 },
-  { name: "Agriculture",       allowed: ["Regular"],       forms: [1,2,3,4,5,6], periodsPerWeek: 3 },
-  { name: "Business Studies",  allowed: ["Regular"],       forms: [3,4,5,6],     periodsPerWeek: 3 },
-  { name: "Accounts",          allowed: ["Regular"],       forms: [3,4,5,6],     periodsPerWeek: 3 },
+// CAPS-aligned subject catalogue (SA high school, Grades 8–12).
+const SUBJECT_DEFS: Array<{ name: string; allowed: RoomType[]; grades: number[]; periodsPerWeek: number }> = [
+  { name: "Mathematics",            allowed: ["Regular"],                    grades: [8,9,10,11,12], periodsPerWeek: 6 },
+  { name: "English Home Language",  allowed: ["Regular"],                    grades: [8,9,10,11,12], periodsPerWeek: 5 },
+  { name: "Afrikaans FAL",          allowed: ["Regular"],                    grades: [8,9,10,11,12], periodsPerWeek: 4 },
+  { name: "Life Orientation",       allowed: ["Regular"],                    grades: [8,9,10,11,12], periodsPerWeek: 2 },
+  { name: "Natural Sciences",       allowed: ["Lab"],                        grades: [8,9],          periodsPerWeek: 4 },
+  { name: "Physical Sciences",      allowed: ["Lab"],                        grades: [10,11,12],     periodsPerWeek: 5 },
+  { name: "Life Sciences",          allowed: ["Lab"],                        grades: [10,11,12],     periodsPerWeek: 4 },
+  { name: "Social Sciences",        allowed: ["Regular"],                    grades: [8,9],          periodsPerWeek: 3 },
+  { name: "History",                allowed: ["Regular"],                    grades: [10,11,12],     periodsPerWeek: 3 },
+  { name: "Geography",              allowed: ["Regular"],                    grades: [10,11,12],     periodsPerWeek: 3 },
+  { name: "Economic & Management Sciences", allowed: ["Regular"],            grades: [8,9],          periodsPerWeek: 3 },
+  { name: "Accounting",             allowed: ["Regular"],                    grades: [10,11,12],     periodsPerWeek: 4 },
+  { name: "Business Studies",       allowed: ["Regular"],                    grades: [10,11,12],     periodsPerWeek: 3 },
+  { name: "Computer Applications Technology", allowed: ["Computer Room"],    grades: [8,9,10,11,12], periodsPerWeek: 3 },
+  { name: "Physical Education",     allowed: ["Hall","Sports Field"],        grades: [8,9,10,11,12], periodsPerWeek: 2 },
+  { name: "Creative Arts",          allowed: ["Regular"],                    grades: [8,9],          periodsPerWeek: 2 },
 ];
 
 const ROOM_DEFS: Array<{ name: string; type: RoomType; capacity: number }> = [
@@ -83,24 +85,22 @@ const ROOM_DEFS: Array<{ name: string; type: RoomType; capacity: number }> = [
   { name: "Science Lab B",    type: "Lab",           capacity: 32 },
   { name: "Computer Lab",     type: "Computer Room", capacity: 30 },
   { name: "Art Room",         type: "Regular",       capacity: 28 },
-  { name: "Agriculture Room", type: "Regular",       capacity: 30 },
+  { name: "Life Sciences Room", type: "Regular",     capacity: 30 },
   { name: "School Hall",      type: "Hall",          capacity: 250 },
   { name: "Sports Field",     type: "Sports Field",  capacity: 200 },
   { name: "Library",          type: "Library",       capacity: 60 },
 ];
 
-const ZW_FIRST_M = ["Tendai","Tatenda","Tafadzwa","Tinashe","Takudzwa","Munashe","Farai","Kudzai","Nyasha","Tawanda","Simba","Panashe","Tanaka","Anesu","Rutendo","Tapiwa","Brian","Blessing","Knowledge","Trust","Norman","Wisdom","Tonderai","Tichaona","Tonderai"];
-const ZW_FIRST_F = ["Chipo","Rumbidzai","Tariro","Vimbai","Ruvarashe","Anesu","Rutendo","Tendai","Mukundwa","Nyasha","Tariro","Yeukai","Ropafadzo","Kundai","Rufaro","Tatenda","Shamiso","Tanaka","Tinotenda","Munyaradzi","Memory","Charity","Faith","Patience","Precious"];
-const ZW_SURNAMES = ["Moyo","Ncube","Dube","Sibanda","Mhlanga","Mguni","Banda","Chirwa","Mpofu","Nyathi","Ndlovu","Mthembu","Chitsa","Mutasa","Chikomba","Chigumira","Chinamasa","Marufu","Madziva","Gumbo","Hove","Mafa","Zvavamwe","Zhou","Mberi","Nyoni","Tshuma","Khumalo","Mlilo","Sithole","Mavhunga","Chidziva","Marufu"];
+// Representative South African name pools (multi-cultural).
+const SA_FIRST_M = ["Sipho","Thabo","Bongani","Lwazi","Kagiso","Karabo","Mandla","Sizwe","Tebogo","Andile","Ayanda","Katlego","Musa","Themba","Lungile","Johan","Pieter","Ryan","Kyle","Riaan","Ahmed","Yusuf","Rashid","Devan","Priyen","Deon"];
+const SA_FIRST_F = ["Nomvula","Thandi","Zanele","Naledi","Refilwe","Palesa","Amahle","Lerato","Ntombi","Nokuthula","Boitumelo","Dineo","Tumi","Anika","Ayesha","Fatima","Sarah","Chantel","Michelle","Ashleigh","Kavitha","Priya","Mary","Nadia"];
+const SA_SURNAMES = ["Nkosi","Dlamini","Mokoena","Mahlangu","Naidoo","Pillay","Van der Merwe","Botha","Pretorius","Zulu","Khumalo","Mabaso","Mthembu","Ndlovu","Cele","Sithole","Nortje","Fourie","Hendricks","Adams","Isaacs","Cloete","Mokgatle","Motlhabi","Mokwena","Ramaphosa","Sisulu","Rossouw"];
 
 function pick<T>(arr: T[], i: number): T { return arr[i % arr.length]; }
-function rand(seed: number) { return ((seed * 9301 + 49297) % 233280) / 233280; }
 
 export function generateDemoSeed(): DemoSeed {
-  // ---- Rooms ----
   const rooms: Room[] = ROOM_DEFS.map((r, i) => ({ id: `rm-${i + 1}`, ...r }));
 
-  // ---- Subjects ----
   const subjects: Subject[] = SUBJECT_DEFS.map((s, i) => ({
     id: `sub-${i + 1}`,
     name: s.name,
@@ -108,49 +108,44 @@ export function generateDemoSeed(): DemoSeed {
     allowedRoomTypes: s.allowed,
   }));
 
-  // ---- Teachers (20) ----
-  // Emails follow demo credential doc: <first>.<surname>@schooldemo.com / Teacher@2025
+  // ---- Teachers (20) — SA names, @schooldemo.com / Teacher@2025 ----
   const teachers: Teacher[] = [];
   for (let i = 0; i < 20; i++) {
     const isFemale = i % 2 === 0;
-    const first = isFemale ? pick(ZW_FIRST_F, i + 3) : pick(ZW_FIRST_M, i + 1);
-    const surname = pick(ZW_SURNAMES, i * 3 + 1);
+    const first = isFemale ? pick(SA_FIRST_F, i + 3) : pick(SA_FIRST_M, i + 1);
+    const surname = pick(SA_SURNAMES, i * 3 + 1);
     const title = isFemale ? (i % 4 === 0 ? "Ms." : "Mrs.") : "Mr.";
     teachers.push({
       id: `t-${i + 1}`,
       name: `${title} ${first} ${surname}`,
-      email: `${first.toLowerCase()}.${surname.toLowerCase()}@schooldemo.com`,
+      email: `${first.toLowerCase().replace(/\s/g,"")}.${surname.toLowerCase().replace(/\s/g,"")}@schooldemo.com`,
       employeeNumber: `T${String(i + 1).padStart(3, "0")}`,
       employmentType: i % 7 === 0 ? "Part-time" : "Full-time",
       maxPeriodsPerWeek: i % 7 === 0 ? 18 : 30,
       preferredTime: "Both",
       qualifiedSubjects: [],
-      qualifiedGrades: [1, 2, 3, 4, 5, 6],
+      qualifiedGrades: [8, 9, 10, 11, 12],
     });
   }
-  // Assign each subject to 1-2 teachers, round-robin so every subject is covered.
   subjects.forEach((sub, si) => {
     const t1 = teachers[si % teachers.length];
     const t2 = teachers[(si + 7) % teachers.length];
     if (!t1.qualifiedSubjects.includes(sub.id)) t1.qualifiedSubjects.push(sub.id);
     if (!t2.qualifiedSubjects.includes(sub.id)) t2.qualifiedSubjects.push(sub.id);
   });
-  // Make sure every teacher has at least one subject.
   teachers.forEach((t, i) => {
-    if (t.qualifiedSubjects.length === 0) {
-      t.qualifiedSubjects.push(subjects[i % subjects.length].id);
-    }
+    if (t.qualifiedSubjects.length === 0) t.qualifiedSubjects.push(subjects[i % subjects.length].id);
   });
 
-  // ---- Classes (Form 1A..6B = 12) ----
+  // ---- Classes: Grade 8A..12B = 10 classes ----
   const classes: SchoolClass[] = [];
-  for (let form = 1; form <= 6; form++) {
+  for (let grade = 8; grade <= 12; grade++) {
     for (const stream of ["A", "B"] as const) {
-      const id = `c-${form}${stream}`;
-      const classTeacher = teachers[(form * 2 + (stream === "A" ? 0 : 1)) % teachers.length];
+      const id = `c-${grade}${stream}`;
+      const classTeacher = teachers[((grade - 8) * 2 + (stream === "A" ? 0 : 1)) % teachers.length];
       const applicableSubjects = SUBJECT_DEFS
         .map((s, idx) => ({ s, id: `sub-${idx + 1}` }))
-        .filter(({ s }) => s.forms.includes(form))
+        .filter(({ s }) => s.grades.includes(grade))
         .map(({ s, id: sid }) => ({
           subjectId: sid,
           periodsPerWeek: s.periodsPerWeek,
@@ -158,8 +153,8 @@ export function generateDemoSeed(): DemoSeed {
         }));
       classes.push({
         id,
-        name: `Form ${form}${stream}`,
-        gradeLevel: form + 7, // Form 1 = grade 8 conceptually
+        name: `Grade ${grade}${stream}`,
+        gradeLevel: grade,
         stream,
         studentCount: 15,
         classTeacherId: classTeacher.id,
@@ -168,28 +163,31 @@ export function generateDemoSeed(): DemoSeed {
     }
   }
 
-  // ---- Students (180) ----
+  // ---- Students (10 classes × 15 = 150) ----
   const students: DemoStudent[] = [];
   let sIdx = 0;
   for (const c of classes) {
     for (let n = 0; n < 15; n++) {
       const female = sIdx % 2 === 0;
-      const first = female ? pick(ZW_FIRST_F, sIdx + 5) : pick(ZW_FIRST_M, sIdx + 9);
-      const surname = pick(ZW_SURNAMES, sIdx * 7 + 11);
-      const form = parseInt(c.name.replace(/\D/g, ""), 10);
-      const age = 12 + form; // Form 1 ≈ 13 yrs
+      const first = female ? pick(SA_FIRST_F, sIdx + 5) : pick(SA_FIRST_M, sIdx + 9);
+      const surname = pick(SA_SURNAMES, sIdx * 7 + 11);
+      const grade = c.gradeLevel;
+      const age = 5 + grade;                    // Grade 8 ≈ 13 yrs
       const birthYear = new Date().getFullYear() - age;
       const month = ((sIdx * 3) % 12) + 1;
       const day = ((sIdx * 7) % 27) + 1;
       const admissionNumber = `STU${String(sIdx + 1).padStart(4, "0")}`;
-      const email = `${first.toLowerCase()}.${surname.toLowerCase()}${sIdx + 1}@student.schooldemo.com`;
+      const cleanFirst = first.toLowerCase().replace(/\s/g, "");
+      const cleanSurn = surname.toLowerCase().replace(/\s/g, "");
+      const email = `${cleanFirst}.${cleanSurn}${sIdx + 1}@student.schooldemo.com`;
       students.push({
         id: `st-${sIdx + 1}`,
         fullName: `${first} ${surname}`,
         dob: `${birthYear}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`,
         gender: female ? "Female" : "Male",
         admissionNumber,
-        form,
+        grade,
+        form: grade,          // legacy alias
         stream: c.stream as "A" | "B",
         classId: c.id,
         email,
@@ -199,21 +197,22 @@ export function generateDemoSeed(): DemoSeed {
     }
   }
 
-  // ---- Parents (2 per student = 360) ----
-  // Emails: <first>.<surname>p<parentIdx>.<studentNum>@parent.schooldemo.com / Parent@2025
+  // ---- Parents (2 per student) ----
   const parents: DemoParent[] = [];
   students.forEach((stu, i) => {
     const surname = stu.fullName.split(" ").slice(-1)[0];
-    const father = pick(ZW_FIRST_M, i + 4);
-    const mother = pick(ZW_FIRST_F, i + 6);
+    const father = pick(SA_FIRST_M, i + 4);
+    const mother = pick(SA_FIRST_F, i + 6);
     const studentNum = i + 1;
+    const cleanSurn = surname.toLowerCase().replace(/\s/g, "");
+    // SA mobile numbers: +27 6X/7X/8X ...
     parents.push({
       id: `p-${i * 2 + 1}`,
       studentId: stu.id,
       fullName: `${father} ${surname}`,
       relationship: "Father",
-      phone: `+263 77${String(1000000 + i).slice(0, 7)}`,
-      email: `${father.toLowerCase()}.${surname.toLowerCase()}p1.${studentNum}@parent.schooldemo.com`,
+      phone: `+27 82 ${String(1000000 + i).slice(1, 4)} ${String(1000000 + i).slice(4, 8)}`,
+      email: `${father.toLowerCase()}.${cleanSurn}p1.${studentNum}@parent.schooldemo.com`,
       password: "Parent@2025",
     });
     parents.push({
@@ -221,13 +220,13 @@ export function generateDemoSeed(): DemoSeed {
       studentId: stu.id,
       fullName: `${mother} ${surname}`,
       relationship: "Mother",
-      phone: `+263 78${String(2000000 + i).slice(0, 7)}`,
-      email: `${mother.toLowerCase()}.${surname.toLowerCase()}p2.${studentNum}@parent.schooldemo.com`,
+      phone: `+27 83 ${String(2000000 + i).slice(1, 4)} ${String(2000000 + i).slice(4, 8)}`,
+      email: `${mother.toLowerCase()}.${cleanSurn}p2.${studentNum}@parent.schooldemo.com`,
       password: "Parent@2025",
     });
   });
 
-  // ---- Allocations (class × subject → teacher) ----
+  // ---- Allocations ----
   const allocations: Allocation[] = [];
   for (const c of classes) {
     for (const cs of c.subjects) {
@@ -243,8 +242,7 @@ export function generateDemoSeed(): DemoSeed {
     }
   }
 
-  // ---- Timetable slots (5 days × 8 periods × 12 classes = 480) ----
-  // Constraint solver: avoid teacher/room double-booking, honour room type, fill every slot.
+  // ---- Timetable slots ----
   const slots: TimetableSlot[] = [];
   for (const c of classes) {
     for (let day = 0; day < 5; day++) {
@@ -252,10 +250,8 @@ export function generateDemoSeed(): DemoSeed {
         slots.push({
           id: `s-${c.id}-${day}-${p.period}`,
           classId: c.id,
-          day,
-          period: p.period,
-          startTime: p.start,
-          endTime: p.end,
+          day, period: p.period,
+          startTime: p.start, endTime: p.end,
         });
       }
     }
@@ -263,12 +259,9 @@ export function generateDemoSeed(): DemoSeed {
 
   const teacherBusy = new Set<string>();
   const roomBusy = new Set<string>();
-
-  // Sort placements by tightest constraint first (fewest allowed rooms).
   const placements = allocations.flatMap(a => {
     const sub = subjects.find(s => s.id === a.subjectId)!;
-    const constraint = sub.allowedRoomTypes.length;
-    return Array(a.periodsPerWeek).fill(null).map(() => ({ alloc: a, constraint, sub }));
+    return Array(a.periodsPerWeek).fill(null).map(() => ({ alloc: a, constraint: sub.allowedRoomTypes.length, sub }));
   }).sort((x, y) => x.constraint - y.constraint);
 
   for (const { alloc, sub } of placements) {
@@ -290,13 +283,7 @@ export function generateDemoSeed(): DemoSeed {
     }
   }
 
-  // FILL guarantee: any remaining empty slot gets a Study Hall in a free Regular room with the class teacher.
-  const studyHall: Subject = {
-    id: "sub-study",
-    name: "Study Hall",
-    color: "hsl(220 15% 60%)",
-    allowedRoomTypes: ["Regular", "Library", "Hall"],
-  };
+  const studyHall: Subject = { id: "sub-study", name: "Study Hall", color: "hsl(220 15% 60%)", allowedRoomTypes: ["Regular","Library","Hall"] };
   let injectedStudy = false;
   for (const slot of slots) {
     if (slot.subjectId) continue;
@@ -304,23 +291,17 @@ export function generateDemoSeed(): DemoSeed {
     const cls = classes.find(c => c.id === slot.classId)!;
     const teacherId = cls.classTeacherId ?? teachers[0].id;
     const tKey = `${slot.day}-${slot.period}-${teacherId}`;
-    // Even if class teacher is busy, we still assign — Study Hall is supervised by available teacher.
     const altTeacher = teacherBusy.has(tKey)
       ? (teachers.find(t => !teacherBusy.has(`${slot.day}-${slot.period}-${t.id}`)) ?? teachers[0])
       : (teachers.find(t => t.id === teacherId) ?? teachers[0]);
-    const room = rooms.find(r =>
-      ["Regular", "Library", "Hall"].includes(r.type) &&
-      !roomBusy.has(`${slot.day}-${slot.period}-${r.id}`)
-    ) ?? rooms[0];
+    const room = rooms.find(r => ["Regular","Library","Hall"].includes(r.type) && !roomBusy.has(`${slot.day}-${slot.period}-${r.id}`)) ?? rooms[0];
     slot.subjectId = studyHall.id;
     slot.teacherId = altTeacher.id;
     slot.roomId = room.id;
     teacherBusy.add(`${slot.day}-${slot.period}-${altTeacher.id}`);
     roomBusy.add(`${slot.day}-${slot.period}-${room.id}`);
   }
-  if (injectedStudy && !subjects.find(s => s.id === studyHall.id)) {
-    subjects.push(studyHall);
-  }
+  if (injectedStudy && !subjects.find(s => s.id === studyHall.id)) subjects.push(studyHall);
 
   return { teachers, subjects, rooms, classes, allocations, slots, students, parents };
 }
