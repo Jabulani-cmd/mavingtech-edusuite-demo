@@ -19,13 +19,17 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { downloadSubscriptionReceipt } from "@/lib/receiptPdf";
 import { formatZAR } from "@/lib/currency";
 
-type Step = "plans" | "method" | "card" | "eft" | "gateway" | "success" | "failed";
+type Step = "plans" | "method" | "card" | "eft" | "gateway" | "qr" | "success" | "failed";
 
 const METHOD_LABEL: Record<string, string> = {
   card: "Card (Visa / Mastercard)",
   eft: "Instant EFT",
   bank_transfer: "Bank Transfer / Manual EFT",
+  snapscan: "SnapScan",
+  zapper: "Zapper",
 };
+
+type Outcome = "auto" | "approve" | "insufficient" | "declined";
 
 // Mock SecurePay SA test cards — a card number ending in an odd digit fails.
 function isTestCardApproved(number: string) {
@@ -55,7 +59,7 @@ export default function ParentSubscribe() {
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
-  const [forceOutcome, setForceOutcome] = useState<"auto" | "approve" | "decline">("auto");
+  const [forceOutcome, setForceOutcome] = useState<Outcome>("auto");
 
   const [proof, setProof] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -95,7 +99,14 @@ export default function ParentSubscribe() {
     setMethod(m); setError(null);
     if (m === "card") setStep("card");
     else if (m === "eft") setStep("gateway");
+    else if (m === "snapscan" || m === "zapper") setStep("qr");
     else setStep("eft");
+  }
+
+  function outcomeReason(o: Outcome): string {
+    if (o === "insufficient") return "Payment Declined — Insufficient Funds. Please use a different card or method.";
+    if (o === "declined") return "Transaction Failed — Card Declined by your bank. Please try again or use another method.";
+    return "Your bank declined the transaction. Please try a different card or use Instant EFT.";
   }
 
   async function processCard() {
@@ -107,17 +118,18 @@ export default function ParentSubscribe() {
     setError(null);
     setProcessing(true);
 
-    // Simulate SecurePay SA processing delay
     await new Promise((r) => setTimeout(r, 2200));
 
-    const approved = forceOutcome === "approve" ? true
-                    : forceOutcome === "decline" ? false
-                    : isTestCardApproved(cleanNum);
+    const approved =
+      forceOutcome === "approve" ? true
+      : forceOutcome === "insufficient" || forceOutcome === "declined" ? false
+      : isTestCardApproved(cleanNum);
 
     if (approved) {
       await finalize(true);
     } else {
-      setFailureReason("Your bank declined the transaction. Please try a different card or use Instant EFT.");
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
       setProcessing(false);
       setStep("failed");
     }
@@ -126,13 +138,42 @@ export default function ParentSubscribe() {
   async function processEftGateway() {
     setProcessing(true);
     await new Promise((r) => setTimeout(r, 2500));
-    const approved = forceOutcome !== "decline";
+    const approved = forceOutcome === "approve" || forceOutcome === "auto";
     if (approved) await finalize(true);
     else {
-      setFailureReason("Your bank did not authorise the EFT payment.");
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
       setProcessing(false);
       setStep("failed");
     }
+  }
+
+  async function processQrGateway() {
+    setProcessing(true);
+    await new Promise((r) => setTimeout(r, 2500));
+    const approved = forceOutcome === "approve" || forceOutcome === "auto";
+    if (approved) await finalize(true);
+    else {
+      await recordFailedAttempt();
+      setFailureReason(outcomeReason(forceOutcome));
+      setProcessing(false);
+      setStep("failed");
+    }
+  }
+
+  async function recordFailedAttempt() {
+    try {
+      const txId = "SPS-" + Date.now().toString(36).toUpperCase();
+      await supabase.from("payments").insert({
+        parent_id: user.id,
+        amount: plan.amount_usd,
+        currency: "ZAR",
+        payment_method: method,
+        transaction_id: txId,
+        receipt_number: null,
+        payment_status: forceOutcome === "insufficient" ? "declined_insufficient" : "declined",
+      });
+    } catch {}
   }
 
   async function submitBankTransfer() {
