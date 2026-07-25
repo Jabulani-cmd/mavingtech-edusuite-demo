@@ -699,7 +699,22 @@ export type Database = {
           name?: string
           stream?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "classes_class_teacher_id_fkey"
+            columns: ["class_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_class_teacher_id_fkey"
+            columns: ["class_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "staff_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       communication_logs: {
         Row: {
