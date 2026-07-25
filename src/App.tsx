@@ -111,27 +111,27 @@ const App = () => (
             } />
             <Route path="/portal/parent-teacher" element={
               <ProtectedRoute allowedRoles={["parent"]}>
-                <AuthenticatedLayout><ParentDashboard /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentDashboard /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent" element={
               <ProtectedRoute allowedRoles={["parent"]}>
-                <AuthenticatedLayout><ParentDashboard /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentDashboard /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent/subscribe" element={
               <ProtectedRoute allowedRoles={["parent", "admin"]}>
-                <AuthenticatedLayout><ParentSubscribe /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentSubscribe /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent/payments" element={
               <ProtectedRoute allowedRoles={["parent", "admin"]}>
-                <AuthenticatedLayout><ParentPaymentHistory /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentPaymentHistory /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/parent/billing" element={
               <ProtectedRoute allowedRoles={["parent", "admin"]}>
-                <AuthenticatedLayout><ParentBilling /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentBilling /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="/portal/admin/payments" element={
