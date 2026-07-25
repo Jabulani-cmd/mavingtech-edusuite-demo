@@ -196,7 +196,7 @@ const App = () => (
             } />
             <Route path="/portal/parent/timetable" element={
               <ProtectedRoute allowedRoles={["parent"]}>
-                <AuthenticatedLayout><ParentChildTimetable /></AuthenticatedLayout>
+                <AuthenticatedLayout><ParentPortalTranslator><ParentChildTimetable /></ParentPortalTranslator></AuthenticatedLayout>
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
