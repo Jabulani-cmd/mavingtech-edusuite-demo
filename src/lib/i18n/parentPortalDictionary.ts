@@ -113,7 +113,6 @@ export const PARENT_PORTAL_DICTIONARY: Record<string, string> = {
   "Credit Balance": "Ibhalansi Yekhredithi",
   "Fees Settled": "Izimali Ezikhokhiwe",
   "Fee Balance": "Ibhalansi Yezimali",
-  "Current plan": "Uhlelo lwamanjelothola",
   "Current plan": "Uhlelo lwamanje",
   "All payments": "Zonke izinkokhelo",
   "View all": "Buka konke",
