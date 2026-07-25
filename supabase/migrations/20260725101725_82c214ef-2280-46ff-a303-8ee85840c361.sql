@@ -1,0 +1,1 @@
+UPDATE public.subscription_plans SET amount_usd = 30.00 WHERE plan_type = 'monthly'; UPDATE public.subscription_plans SET amount_usd = 80.00 WHERE plan_type = 'term';

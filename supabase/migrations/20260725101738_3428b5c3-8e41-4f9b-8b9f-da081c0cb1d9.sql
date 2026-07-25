@@ -1,0 +1,1 @@
+UPDATE public.subscription_plans SET description = 'Full Parent + Student portal access for one academic term. Save R10.' WHERE plan_type = 'term';
