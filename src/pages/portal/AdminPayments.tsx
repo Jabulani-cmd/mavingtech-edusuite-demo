@@ -156,7 +156,7 @@ export default function AdminPayments() {
     const base = s.access_end ? new Date(s.access_end) : new Date();
     const end = new Date(Math.max(base.getTime(), Date.now()) + days * 86_400_000);
     await supabase.from("subscriptions").update({ status: "active", access_end: end.toISOString() }).eq("id", subId);
-    toast({ title: `Extended by R {days} days` });
+    toast({ title: `Extended by ${days} days` });
     refresh();
   }
 
@@ -166,7 +166,7 @@ export default function AdminPayments() {
       const { data, error } = await supabase.functions.invoke("ai-parent-message", {
         body: {
           intent: "payment_reminder",
-          context: `There are R {expiredCount + subs.filter(s => s.status === "pending").length} unpaid families. Write a warm, brief reminder to renew portal subscription at MavingTech Business Solutions. Mention plans start at $10/month or $25/term.`,
+          context: `There are ${expiredCount + subs.filter(s => s.status === "pending").length} unpaid families. Write a warm, brief reminder to renew portal subscription at MavingTech Business Solutions. Mention plans start at $10/month or $25/term.`,
         },
       });
       if (error) throw error;
@@ -193,7 +193,7 @@ export default function AdminPayments() {
       created_by: user?.id,
     }));
     await supabase.from("payment_reminders").insert(rows);
-    toast({ title: `Reminders sent to R {rows.length} families` });
+    toast({ title: `Reminders sent to ${rows.length} families` });
     setAiOpen(false);
   }
 
@@ -432,7 +432,7 @@ function Metric({ icon: Icon, label, value, tint }: any) {
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
       <Card>
         <CardContent className="p-4">
-          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br R {tint} text-white flex items-center justify-center mb-2`}>
+          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${tint} text-white flex items-center justify-center mb-2`}>
             <Icon className="w-5 h-5" />
           </div>
           <div className="text-xs text-muted-foreground">{label}</div>
