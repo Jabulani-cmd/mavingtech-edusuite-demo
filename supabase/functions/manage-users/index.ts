@@ -725,7 +725,7 @@ Deno.serve(async (req) => {
       }
 
       // Canonical school email (always derived from admission number)
-      const studentEmail = `${admission_number.toLowerCase()}@mbsmavingtech.ac.zw`;
+      const studentEmail = `${admission_number.toLowerCase()}@mbsmavingtech.ac.za`;
       const tempPassword = `${admission_number}@Mbs2026`;
 
       // List auth users once and reuse for both student + parent dedupe
