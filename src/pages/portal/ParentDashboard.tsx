@@ -1468,8 +1468,7 @@ function ParentPaymentHistory({
                 <tr className="border-b bg-muted/50">
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Receipt</th>
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Date</th>
-                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">USD</th>
-                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">ZiG</th>
+                  <th className="px-3 py-2 text-center font-medium text-muted-foreground">Amount</th>
                   <th className="px-3 py-2 text-left font-medium text-muted-foreground">Method</th>
                   <th className="px-3 py-2 text-center font-medium text-muted-foreground">Receipt</th>
                 </tr>
@@ -1479,8 +1478,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600">R {Number(p.amount_usd).toFixed(2)}</td>
-                    <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(p.amount_usd)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
                       <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
