@@ -25,7 +25,9 @@ export default function LanguageToggle({ className, compact = false }: Props) {
     i18n.changeLanguage(code);
     try {
       localStorage.setItem("mavingtech.lang", code);
-    } catch {}
+    } catch {
+      // Language still changes immediately even if storage is unavailable.
+    }
   };
 
   return (
