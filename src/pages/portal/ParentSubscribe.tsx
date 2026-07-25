@@ -520,15 +520,8 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
         </p>
 
         {!processing && (
-          <div className="rounded-md border border-dashed p-3 mb-4 text-left">
-            <Label className="text-xs">Demo outcome</Label>
-            <div className="flex gap-2 mt-2 justify-center">
-              {(["approve", "decline"] as const).map(o => (
-                <Button key={o} type="button" size="sm" variant={forceOutcome === o ? "default" : "outline"} onClick={() => setForceOutcome(o)}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </Button>
-              ))}
-            </div>
+          <div className="text-left mb-4">
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} includeAuto={false} />
           </div>
         )}
 
@@ -539,6 +532,52 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
           </div>
         ) : (
           <Button size="lg" className="w-full" onClick={onStart}>Continue to Bank</Button>
+        )}
+      </Card>
+    </motion.div>
+  );
+}
+
+function QrView({ plan, method, processing, onConfirm, forceOutcome, setForceOutcome }: any) {
+  const brand = method === "snapscan" ? "SnapScan" : "Zapper";
+  const brandColor = method === "snapscan" ? "from-sky-500 to-blue-600" : "from-emerald-500 to-teal-600";
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto">
+      <Card className="p-6 text-center">
+        <div className={`inline-block bg-gradient-to-br ${brandColor} text-white text-xs font-bold px-3 py-1 rounded-full mb-3`}>
+          {brand}
+        </div>
+        <h3 className="font-semibold text-lg">SecurePay SA — {brand}</h3>
+        <p className="text-sm text-muted-foreground mt-1 mb-4">
+          Open your {brand} app and scan the QR code to pay {formatZAR(plan.amount_usd)}.
+        </p>
+
+        {/* Simulated QR code */}
+        <div className="mx-auto my-4 h-48 w-48 rounded-lg border-4 border-foreground p-3 bg-white">
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage:
+                "repeating-conic-gradient(#0f172a 0% 25%, #ffffff 0% 50%)",
+              backgroundSize: "16px 16px",
+            }}
+            aria-label={`${brand} QR code (demo)`}
+          />
+        </div>
+
+        {!processing && (
+          <div className="text-left mb-4">
+            <OutcomeSelect value={forceOutcome} onChange={setForceOutcome} includeAuto={false} />
+          </div>
+        )}
+
+        {processing ? (
+          <div className="py-3">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" />
+            <div className="text-sm mt-2">Waiting for {brand} confirmation…</div>
+          </div>
+        ) : (
+          <Button size="lg" className="w-full" onClick={onConfirm}>I have scanned & paid</Button>
         )}
       </Card>
     </motion.div>
