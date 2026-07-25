@@ -21,10 +21,10 @@ const subjects = [
 ];
 
 const results = [
-  { year: "2025", level: "O-Level", rate: "95%", distinctions: 142 },
-  { year: "2025", level: "A-Level", rate: "89%", distinctions: 67 },
-  { year: "2024", level: "O-Level", rate: "93%", distinctions: 128 },
-  { year: "2024", level: "A-Level", rate: "87%", distinctions: 58 },
+  { year: "2025", level: "NSC (Grade 10–11)", rate: "95%", distinctions: 142 },
+  { year: "2025", level: "NSC (Grade 12) / Matric", rate: "89%", distinctions: 67 },
+  { year: "2024", level: "NSC (Grade 10–11)", rate: "93%", distinctions: 128 },
+  { year: "2024", level: "NSC (Grade 12) / Matric", rate: "87%", distinctions: 58 },
 ];
 
 export default function Academics() {
@@ -33,7 +33,7 @@ export default function Academics() {
       <PageHero
         eyebrow="Learning & Excellence"
         title="Academics"
-        subtitle="A broad, balanced curriculum spanning ZIMSEC and Cambridge streams — designed to prepare every learner for a global future."
+        subtitle="A broad, balanced curriculum spanning CAPS and IEB streams — designed to prepare every learner for a global future."
         image={hero}
       />
 
@@ -55,7 +55,7 @@ export default function Academics() {
               transition={{ delay: 0.1 }}
               className="leading-relaxed text-muted-foreground"
             >
-              MavingTech offers both the ZIMSEC and Cambridge (CIE) examination streams, giving students the flexibility to pursue local or international qualifications at Ordinary and Advanced Level.
+              MavingTech offers both the CAPS and IEB (CIE) examination streams, giving students the flexibility to pursue local or international qualifications at Ordinary and Advanced Level.
             </motion.p>
           </div>
 

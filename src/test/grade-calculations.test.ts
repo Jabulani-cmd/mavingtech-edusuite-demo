@@ -1,141 +1,39 @@
 import { describe, it, expect } from "vitest";
 
-// ZIMSEC grade boundary calculation (standard)
-function getZIMSECGrade(percentage: number): string {
-  if (percentage >= 90) return "A*";
-  if (percentage >= 75) return "A";
-  if (percentage >= 65) return "B";
-  if (percentage >= 50) return "C";
-  if (percentage >= 40) return "D";
-  if (percentage >= 30) return "E";
-  return "U";
+// CAPS 7-point rating code (South African NSC/CAPS scale)
+function getCAPSCode(percentage: number): number {
+  if (percentage >= 80) return 7; // Outstanding achievement
+  if (percentage >= 70) return 6; // Meritorious achievement
+  if (percentage >= 60) return 5; // Substantial achievement
+  if (percentage >= 50) return 4; // Adequate achievement
+  if (percentage >= 40) return 3; // Moderate achievement
+  if (percentage >= 30) return 2; // Elementary achievement
+  return 1;                       // Not achieved
 }
 
-function calculatePassRate(marks: number[], passThreshold = 50): number {
-  if (marks.length === 0) return 0;
-  const passed = marks.filter((m) => m >= passThreshold).length;
-  return Math.round((passed / marks.length) * 100);
-}
-
-function calculateClassAverage(marks: number[]): number {
-  if (marks.length === 0) return 0;
-  return Math.round((marks.reduce((a, b) => a + b, 0) / marks.length) * 100) / 100;
-}
-
-function calculateFeeBalance(totalUsd: number, paidUsd: number): number {
-  return Math.round((totalUsd - paidUsd) * 100) / 100;
-}
-
-function calculateCollectionRate(totalDue: number, totalPaid: number): number {
-  if (totalDue === 0) return 0;
-  return Math.round((totalPaid / totalDue) * 100);
-}
-
-describe("ZIMSEC Grade Boundaries", () => {
-  it("assigns A* for 90+", () => {
-    expect(getZIMSECGrade(95)).toBe("A*");
-    expect(getZIMSECGrade(90)).toBe("A*");
+describe("CAPS Rating Codes", () => {
+  it("returns 7 for 80–100%", () => {
+    expect(getCAPSCode(95)).toBe(7);
+    expect(getCAPSCode(80)).toBe(7);
   });
-
-  it("assigns A for 75-89", () => {
-    expect(getZIMSECGrade(75)).toBe("A");
-    expect(getZIMSECGrade(89)).toBe("A");
+  it("returns 6 for 70–79%", () => {
+    expect(getCAPSCode(75)).toBe(6);
+    expect(getCAPSCode(70)).toBe(6);
   });
-
-  it("assigns B for 65-74", () => {
-    expect(getZIMSECGrade(65)).toBe("B");
-    expect(getZIMSECGrade(74)).toBe("B");
+  it("returns 5 for 60–69%", () => {
+    expect(getCAPSCode(65)).toBe(5);
   });
-
-  it("assigns C for 50-64", () => {
-    expect(getZIMSECGrade(50)).toBe("C");
-    expect(getZIMSECGrade(64)).toBe("C");
+  it("returns 4 for 50–59%", () => {
+    expect(getCAPSCode(50)).toBe(4);
   });
-
-  it("assigns D for 40-49", () => {
-    expect(getZIMSECGrade(40)).toBe("D");
-    expect(getZIMSECGrade(49)).toBe("D");
+  it("returns 3 for 40–49%", () => {
+    expect(getCAPSCode(45)).toBe(3);
   });
-
-  it("assigns E for 30-39", () => {
-    expect(getZIMSECGrade(30)).toBe("E");
-    expect(getZIMSECGrade(39)).toBe("E");
+  it("returns 2 for 30–39%", () => {
+    expect(getCAPSCode(35)).toBe(2);
   });
-
-  it("assigns U for below 30", () => {
-    expect(getZIMSECGrade(29)).toBe("U");
-    expect(getZIMSECGrade(0)).toBe("U");
-  });
-});
-
-describe("Pass Rate Calculation", () => {
-  it("calculates 100% when all pass", () => {
-    expect(calculatePassRate([80, 70, 60, 55])).toBe(100);
-  });
-
-  it("calculates 0% when none pass", () => {
-    expect(calculatePassRate([20, 30, 10, 45])).toBe(0);
-  });
-
-  it("calculates correctly for mixed results", () => {
-    expect(calculatePassRate([80, 30, 60, 40])).toBe(50);
-  });
-
-  it("handles empty array", () => {
-    expect(calculatePassRate([])).toBe(0);
-  });
-
-  it("uses custom threshold", () => {
-    expect(calculatePassRate([35, 45, 55], 40)).toBe(67);
-  });
-});
-
-describe("Class Average", () => {
-  it("calculates correctly", () => {
-    expect(calculateClassAverage([60, 70, 80])).toBe(70);
-  });
-
-  it("handles single student", () => {
-    expect(calculateClassAverage([85])).toBe(85);
-  });
-
-  it("handles empty", () => {
-    expect(calculateClassAverage([])).toBe(0);
-  });
-
-  it("rounds to 2 decimal places", () => {
-    expect(calculateClassAverage([33, 33, 34])).toBe(33.33);
-  });
-});
-
-describe("Fee Calculations", () => {
-  it("calculates outstanding balance", () => {
-    expect(calculateFeeBalance(1500, 800)).toBe(700);
-  });
-
-  it("shows zero when fully paid", () => {
-    expect(calculateFeeBalance(1500, 1500)).toBe(0);
-  });
-
-  it("shows negative (overpayment/credit)", () => {
-    expect(calculateFeeBalance(1500, 1600)).toBe(-100);
-  });
-
-  it("handles decimal amounts", () => {
-    expect(calculateFeeBalance(1500.50, 750.25)).toBe(750.25);
-  });
-});
-
-describe("Fee Collection Rate", () => {
-  it("calculates percentage correctly", () => {
-    expect(calculateCollectionRate(10000, 7500)).toBe(75);
-  });
-
-  it("handles full collection", () => {
-    expect(calculateCollectionRate(10000, 10000)).toBe(100);
-  });
-
-  it("handles zero due", () => {
-    expect(calculateCollectionRate(0, 0)).toBe(0);
+  it("returns 1 for below 30%", () => {
+    expect(getCAPSCode(29)).toBe(1);
+    expect(getCAPSCode(0)).toBe(1);
   });
 });

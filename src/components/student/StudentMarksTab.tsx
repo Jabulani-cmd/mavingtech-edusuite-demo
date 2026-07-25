@@ -10,7 +10,7 @@ interface Props {
   studentId: string | null;
 }
 
-function getZIMSECGrade(mark: number): string {
+function getCAPSGrade(mark: number): string {
   if (mark >= 90) return "A*";
   if (mark >= 80) return "A";
   if (mark >= 70) return "B";
@@ -102,7 +102,7 @@ export default function StudentMarksTab({ studentId }: Props) {
                 </thead>
                 <tbody>
                   {filtered.map(m => {
-                    const grade = getZIMSECGrade(m.mark);
+                    const grade = getCAPSGrade(m.mark);
                     return (
                       <tr key={m.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                         <td className="px-3 py-3 font-medium">{m.subjects?.name || "—"}</td>

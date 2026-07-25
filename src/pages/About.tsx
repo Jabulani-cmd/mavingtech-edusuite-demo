@@ -11,7 +11,7 @@ const fadeUp = {
 
 const stats = [
   { icon: Users, value: "800+", label: "Students Enrolled" },
-  { icon: Award, value: "95%", label: "O-Level Pass Rate" },
+  { icon: Award, value: "95%", label: "NSC (Grade 10–11) Pass Rate" },
   { icon: Globe, value: "10,000+", label: "Alumni Worldwide" },
 ];
 
@@ -61,10 +61,10 @@ export default function About() {
             className="lg:col-span-3 space-y-5 leading-relaxed text-muted-foreground"
           >
             <p>
-              MavingTech High School, a prestigious government boys' school in Bulawayo, Zimbabwe, was founded in January 1927 as the Bulawayo Technical School, making it the first technical school in what was then Southern Rhodesia.
+              MavingTech High School, a prestigious government boys' school in Cape Town, South Africa, was founded in January 1927 as the Cape Town Technical School, making it the first technical school in what was then Southern Rhodesia.
             </p>
             <p>
-              The school achieved high school status in 1931 and, in a significant move, relocated to its current site on Matopos Road opposite the Zimbabwe International Trade Fair grounds in 1953. In honour of its long-serving founder, who led the institution for two decades, the school was renamed MavingTech Technical High School on 19 August 1961, and was finally shortened to MavingTech High School in 1974.
+              The school achieved high school status in 1931 and, in a significant move, relocated to its current site on Matopos Road opposite the South Africa International Trade Fair grounds in 1953. In honour of its long-serving founder, who led the institution for two decades, the school was renamed MavingTech Technical High School on 19 August 1961, and was finally shortened to MavingTech High School in 1974.
             </p>
             <p>
               Today, with an enrolment of over 800 students, it continues a legacy of academic and sporting excellence encapsulated in its motto, <em>Empowering Your Business Through Technology</em>.

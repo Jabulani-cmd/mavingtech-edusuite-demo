@@ -1,15 +1,15 @@
 // @ts-nocheck
-// Simple HTML→print-window receipt generator, consistent with existing
-// finance/pdf helpers. Opens a printable PDF view in a new tab.
+// Simple HTML→print-window receipt generator (ZAR).
 import { openPrintWindow } from "@/lib/finance/print";
 import { SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
+import { formatZAR, CITY, COUNTRY } from "@/lib/currency";
 
 interface ReceiptData {
   receiptNumber: string;
   parentName: string;
   studentName: string;
   amount: number;
-  currency: string;
+  currency?: string;        // ignored — always ZAR
   method: string;
   transactionId: string;
   plan: string;
@@ -19,7 +19,7 @@ interface ReceiptData {
 }
 
 const fmt = (d: Date | string) =>
-  new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+  new Date(d).toLocaleString("en-ZA", { dateStyle: "medium", timeStyle: "short" });
 
 export function buildSubscriptionReceiptHtml(r: ReceiptData) {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -49,25 +49,24 @@ export function buildSubscriptionReceiptHtml(r: ReceiptData) {
     </div>
   </div>
 
-
   <h2 style="margin:0 0 4px;">Receipt #${r.receiptNumber}</h2>
   <div style="color:#64748b;font-size:13px;margin-bottom:18px;">Issued ${fmt(r.date)}</div>
 
   <table>
     <tr><td>Parent</td><td>${r.parentName}</td></tr>
-    <tr><td>Student</td><td>${r.studentName}</td></tr>
+    <tr><td>Learner</td><td>${r.studentName}</td></tr>
     <tr><td>Plan</td><td>${r.plan}</td></tr>
     <tr><td>Payment Method</td><td>${r.method}</td></tr>
     <tr><td>Transaction ID</td><td>${r.transactionId}</td></tr>
     <tr><td>Access Period</td><td>${fmt(r.accessStart)} → ${fmt(r.accessEnd)}</td></tr>
   </table>
 
-  <div class="total">Total Paid: ${r.currency} ${r.amount.toFixed(2)}</div>
+  <div class="total">Total Paid: ${formatZAR(r.amount)}</div>
   <div class="stamp">PAID</div>
 
   <div class="footer">
     Thank you for supporting your child's learning journey.<br/>
-    MavingTech Business Solutions · Harare, Zimbabwe · info@mavingtech.com
+    MavingTech Business Solutions · ${CITY}, ${COUNTRY} · info@mavingtech.com
   </div>
   </body></html>`;
 }

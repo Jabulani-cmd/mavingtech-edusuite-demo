@@ -35,7 +35,7 @@ interface ResultRow {
   class_size: number | null;
 }
 
-function getZIMSECGrade(mark: number): string {
+function getCAPSGrade(mark: number): string {
   if (mark >= 90) return "A*";
   if (mark >= 80) return "A";
   if (mark >= 70) return "B";
@@ -130,7 +130,7 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
       return {
         id: r.id,
         mark: r.mark,
-        grade: r.grade || getZIMSECGrade(r.mark),
+        grade: r.grade || getCAPSGrade(r.mark),
         teacher_comment: r.teacher_comment,
         subject_name: r.subjects?.name || "Unknown",
         subject_code: r.subjects?.code || null,
@@ -168,7 +168,7 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
   const selectedExam = exams.find((e) => e.id === selectedExamId);
   const totalMarks = results.reduce((sum, r) => sum + r.mark, 0);
   const avgMark = results.length > 0 ? Math.round(totalMarks / results.length) : 0;
-  const avgGrade = getZIMSECGrade(avgMark);
+  const avgGrade = getCAPSGrade(avgMark);
   const bestSubject = results.length > 0 ? results[0] : null;
 
   return (
@@ -255,7 +255,7 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
                 subject_name: r.subject_name,
                 subject_code: r.subject_code,
                 mark: r.mark,
-                grade: r.grade || getZIMSECGrade(r.mark),
+                grade: r.grade || getCAPSGrade(r.mark),
                 teacher_comment: r.teacher_comment,
                 class_rank: r.class_rank,
                 class_size: r.class_size,

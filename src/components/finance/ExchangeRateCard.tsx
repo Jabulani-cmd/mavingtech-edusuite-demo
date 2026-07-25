@@ -38,7 +38,7 @@ export default function ExchangeRateCard() {
     }
     setSaving(true);
     await updateRate(parsed);
-    toast({ title: "Exchange Rate Updated", description: `1 USD = ${parsed} ZiG` });
+    toast({ title: "Exchange Rate Updated", description: `1  ZAR = ${parsed} ZiG` });
     setEditing(false);
     setSaving(false);
     // Reset converter
@@ -69,7 +69,7 @@ export default function ExchangeRateCard() {
         <div className="flex items-center justify-between rounded-lg border bg-muted/50 px-4 py-3">
           <div>
             <p className="text-xs text-muted-foreground">Current Rate</p>
-            <p className="text-lg font-bold">1 USD = {rate.toLocaleString()} ZiG</p>
+            <p className="text-lg font-bold">1  ZAR = {rate.toLocaleString()} ZiG</p>
           </div>
           {!editing && (
             <Button size="sm" variant="outline" onClick={() => { setEditing(true); setNewRate(String(rate)); }}>
@@ -81,7 +81,7 @@ export default function ExchangeRateCard() {
         {/* Edit rate */}
         {editing && (
           <div className="space-y-2 rounded-lg border p-3">
-            <Label className="text-xs">New Exchange Rate (1 USD = ? ZiG)</Label>
+            <Label className="text-xs">New Exchange Rate (1  ZAR = ? ZiG)</Label>
             <div className="flex gap-2">
               <Input
                 type="number"

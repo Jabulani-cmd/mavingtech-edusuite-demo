@@ -472,7 +472,7 @@ export default function BoardingManagement() {
                 <SelectTrigger className="w-[140px]"><SelectValue placeholder="Form" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Forms</SelectItem>
-                  {["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                  {["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Button variant="outline" size="sm" onClick={exportBoarders}><Download className="mr-1 h-4 w-4" /> Export</Button>

@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 
-const formOptions = ["Form 1", "Form 2", "Form 3", "Form 4", "Lower 6", "Upper 6"];
+const formOptions = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
 const streamOptions = ["A", "B", "C", "D", "Arts", "Sciences", "Commercials"];
 const genderOptions = ["Male", "Female"];
 
@@ -51,7 +51,7 @@ type ClassOption = { id: string; name: string; form_level: string | null; stream
 const emptyForm = {
   full_name: "",
   date_of_birth: "",
-  form: "Form 1",
+  form: "Grade 8",
   stream: "",
   subject_combination: "",
   gender: "",

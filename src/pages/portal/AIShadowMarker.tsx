@@ -50,7 +50,7 @@ interface Submission {
 const SAMPLE_PENDING: Submission[] = [
   {
     id: "s1",
-    studentName: "Tafadzwa Ncube — Form 4B",
+    studentName: "Tafadzwa Ncube — Grade 11B",
     type: "essay",
     subject: "English Literature",
     aiGrade: 72,
@@ -75,7 +75,7 @@ const SAMPLE_PENDING: Submission[] = [
   },
   {
     id: "s2",
-    studentName: "Rumbidzai Sibanda — Form 3A",
+    studentName: "Rumbidzai Sibanda — Grade 10A",
     type: "mcq",
     subject: "Combined Science",
     aiGrade: 80,

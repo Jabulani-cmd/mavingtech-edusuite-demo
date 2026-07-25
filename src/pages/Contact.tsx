@@ -132,7 +132,7 @@ export default function Contact() {
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: MapPin, title: "Address", text: "MavingTech High School, Bulawayo, Zimbabwe" },
+              { icon: MapPin, title: "Address", text: "MavingTech High School, Cape Town, South Africa" },
               { icon: Phone, title: "Phone", text: "+263 29 2XXXXXX" },
               { icon: Mail, title: "Email", text: "info@mavingtech.com" },
               { icon: Clock, title: "Office Hours", text: "Mon – Fri: 07:30 – 15:30" },

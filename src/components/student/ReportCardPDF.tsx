@@ -199,7 +199,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
   </div>
 
   <div class="grading-key">
-    <h3>ZIMSEC Grading Key</h3>
+    <h3>CAPS Grading Key</h3>
     <div class="grading-key-grid">
       <span class="grading-key-item"><strong>A*</strong> 90-100</span>
       <span class="grading-key-item"><strong>A</strong> 80-89</span>
@@ -218,7 +218,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
   </div>
 
   <div class="footer">
-    <p>MavingTech High School · P.O. Box 123, Mazowe, Zimbabwe · Tel: +263 XXX XXXX</p>
+    <p>MavingTech High School · P.O. Box 123, Mazowe, South Africa · Tel: +263 XXX XXXX</p>
     <p>Generated on ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
   </div>
 </div>
