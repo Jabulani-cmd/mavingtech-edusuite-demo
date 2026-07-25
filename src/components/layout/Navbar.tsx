@@ -13,44 +13,47 @@ interface NavItem {
   children?: { label: string; path: string }[];
 }
 
-const navLinks: NavItem[] = [
-  { label: "Home", path: "/" },
-  {
-    label: "About",
-    path: "/about",
-    children: [
-      { label: "News", path: "/news" },
-      { label: "School Projects", path: "/school-projects" },
-      { label: "Facilities", path: "/facilities" },
-      { label: "Boarding", path: "/boarding" },
-    ],
-  },
-  {
-    label: "Academics",
-    path: "/academics",
-    children: [{ label: "Downloads", path: "/downloads" }],
-  },
-  {
-    label: "Admissions",
-    path: "/admissions",
-    children: [{ label: "Fees", path: "/fees" }],
-  },
-  {
-    label: "Activities",
-    path: "/sports-culture",
-    children: [
-      { label: "School Life", path: "/school-life" },
-      { label: "Awards & Prize-Giving", path: "/awards" },
-    ],
-  },
-  {
-    label: "Staff",
-    path: "/staff",
-    children: [{ label: "Vacancies", path: "/vacancies" }],
-  },
-  { label: "Alumni", path: "/alumni" },
-  { label: "Contact", path: "/contact" },
-];
+function useNavLinks(): NavItem[] {
+  const { t } = useTranslation();
+  return [
+    { label: t("nav.home"), path: "/" },
+    {
+      label: t("nav.about"),
+      path: "/about",
+      children: [
+        { label: t("nav.news"), path: "/news" },
+        { label: t("nav.projects"), path: "/school-projects" },
+        { label: t("nav.facilities"), path: "/facilities" },
+        { label: t("nav.boarding"), path: "/boarding" },
+      ],
+    },
+    {
+      label: t("nav.academics"),
+      path: "/academics",
+      children: [{ label: t("nav.downloads"), path: "/downloads" }],
+    },
+    {
+      label: t("nav.admissions"),
+      path: "/admissions",
+      children: [{ label: t("nav.fees"), path: "/fees" }],
+    },
+    {
+      label: t("nav.activities"),
+      path: "/sports-culture",
+      children: [
+        { label: t("nav.schoolLife"), path: "/school-life" },
+        { label: t("nav.awards"), path: "/awards" },
+      ],
+    },
+    {
+      label: t("nav.staff"),
+      path: "/staff",
+      children: [{ label: t("nav.vacancies"), path: "/vacancies" }],
+    },
+    { label: t("nav.alumni"), path: "/alumni" },
+    { label: t("nav.contact"), path: "/contact" },
+  ];
+}
 
 function DesktopDropdown({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
