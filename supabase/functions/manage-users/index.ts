@@ -925,7 +925,7 @@ Deno.serve(async (req) => {
         generatedEmail = useEmail;
       } else {
         const nameParts = full_name.toLowerCase().replace(/[^a-z\s]/g, "").trim().split(/\s+/);
-        generatedEmail = `${nameParts.join(".")}@giffordhigh.ac.zw`;
+        generatedEmail = `${nameParts.join(".")}@mbsmavingtech.ac.za`;
       }
 
       // Generate temporary password
