@@ -2118,6 +2118,7 @@ export type Database = {
           proof_of_payment_url: string | null
           receipt_number: string | null
           receipt_url: string | null
+          recorded_by: string | null
           reference_number: string | null
           rejection_reason: string | null
           student_id: string | null
@@ -2148,6 +2149,7 @@ export type Database = {
           proof_of_payment_url?: string | null
           receipt_number?: string | null
           receipt_url?: string | null
+          recorded_by?: string | null
           reference_number?: string | null
           rejection_reason?: string | null
           student_id?: string | null
@@ -2178,6 +2180,7 @@ export type Database = {
           proof_of_payment_url?: string | null
           receipt_number?: string | null
           receipt_url?: string | null
+          recorded_by?: string | null
           reference_number?: string | null
           rejection_reason?: string | null
           student_id?: string | null
