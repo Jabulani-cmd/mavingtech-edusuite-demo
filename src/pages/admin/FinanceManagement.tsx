@@ -99,7 +99,10 @@ const restrictionTypes = [
 ];
 
 // ── helpers ──
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: any): string => {
+  const v = Number(n);
+  return `R ${new Intl.NumberFormat("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
+};
 const genInvoiceNum = () =>
   `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0")}`;
 const genReceiptNum = () =>
