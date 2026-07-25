@@ -1298,6 +1298,26 @@ function TabContentInner(props: TabContentProps) {
           dateFilter={feeDateFilter}
           searchTerm={feeSearch}
         />
+
+        {payInvoice && (
+          <PayInvoiceDialog
+            open={!!payInvoice}
+            onOpenChange={(o) => !o && setPayInvoice(null)}
+            invoice={payInvoice}
+            student={{ id: child.id, full_name: child.full_name, admission_number: child.admission_number }}
+            outstanding={Math.max(
+              0,
+              Number(payInvoice.total_usd || 0) -
+                childPayments
+                  .filter((p: any) => p.invoice_id === payInvoice.id)
+                  .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0),
+            )}
+            onPaid={() => {
+              setPayInvoice(null);
+              fetchChildData(child.id);
+            }}
+          />
+        )}
       </motion.div>
     );
   }
