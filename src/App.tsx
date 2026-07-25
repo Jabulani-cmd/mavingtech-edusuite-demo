@@ -18,6 +18,7 @@ import PortalAccessGate from "@/components/subscription/PortalAccessGate";
 import ScrollToTop from "@/components/ScrollToTop";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
+import ParentPortalTranslator from "@/components/parent/ParentPortalTranslator";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Academics from "./pages/Academics";
