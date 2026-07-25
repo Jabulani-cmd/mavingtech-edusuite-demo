@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Mail, Phone, MapPin, Twitter, Facebook, Instagram, MessageCircle } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
-import dbeLogo from "@/assets/dbe-logo.png.asset.json";
-import kznLogo from "@/assets/kzn-education-logo.jpg.asset.json";
-import umalusiLogo from "@/assets/umalusi-logo.png.asset.json";
+import dbeLogo from "@/assets/dbe-logo.png";
+import kznLogo from "@/assets/kzn-education-logo.jpg";
+import umalusiLogo from "@/assets/umalusi-logo.png";
 
 export default function Footer() {
   const { t } = useTranslation();
