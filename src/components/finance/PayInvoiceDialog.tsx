@@ -112,6 +112,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         receipt_number: receiptNumber,
         invoice_id: invoice.id,
         student_id: student.id,
+        parent_id: user?.id || null,
         amount_usd: payAmount,
         amount_zig: 0,
         payment_method: method,
@@ -122,10 +123,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
       });
       if (payErr) throw payErr;
 
-      const newPaid = Number(invoice.paid_usd || 0) + payAmount;
-      const total = Number(invoice.total_usd || 0);
-      const newStatus = newPaid >= total - 0.001 ? "paid" : newPaid > 0 ? "partial" : "unpaid";
-      await supabase.from("invoices").update({ paid_usd: newPaid, status: newStatus }).eq("id", invoice.id);
+      // Invoice paid_usd/status is updated automatically by DB trigger.
 
       setReceipt(receiptNumber);
       setStep("success");
