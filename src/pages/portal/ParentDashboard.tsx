@@ -48,7 +48,6 @@ import DocActionButtons from "@/components/finance/DocActionButtons";
 import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import { invoiceActions, receiptActions, statementActions } from "@/lib/finance/documentActions";
 import StudentMarksTab from "@/components/student/StudentMarksTab";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useIsMobile } from "@/hooks/use-mobile";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
@@ -118,7 +117,6 @@ function getGradeColor(grade: string): string {
 export default function ParentDashboard() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
-  const { rate, usdToZig } = useExchangeRate();
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [children, setChildren] = useState<ChildInfo[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
@@ -275,7 +273,7 @@ export default function ParentDashboard() {
       : 0;
 
   const totalInvoiced = invoices.reduce((sum, inv) => sum + Number(inv.total_usd || 0), 0);
-  const totalPaidAll = childPayments.reduce((sum, p) => sum + Number(p.amount_usd || 0), 0);
+  const totalPaidAll = invoices.reduce((sum, inv) => sum + Number(inv.paid_usd || inv.amount_paid || 0), 0);
   const feeBalance = totalInvoiced - totalPaidAll; // positive = owing, negative = credit
 
   const avgMark =
@@ -383,8 +381,6 @@ export default function ParentDashboard() {
             rankings={rankings}
             avgMark={avgMark}
             announcements={announcements}
-            rate={rate}
-            usdToZig={usdToZig}
           />
         </main>
       </div>
@@ -436,8 +432,6 @@ export default function ParentDashboard() {
             rankings={rankings}
             avgMark={avgMark}
             announcements={announcements}
-            rate={rate}
-            usdToZig={usdToZig}
           />
         </main>
       </div>
@@ -603,8 +597,6 @@ interface TabContentProps {
   rankings: any;
   avgMark: number;
   announcements: any[];
-  rate: number;
-  usdToZig: (usd: number) => number;
 }
 
 const FEATURE_LABELS: Record<string, string> = {
@@ -645,8 +637,6 @@ function TabContentInner(props: TabContentProps) {
     rankings,
     avgMark,
     announcements,
-    rate,
-    usdToZig,
   } = props;
   const isMobile = useIsMobile();
   const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
@@ -1067,9 +1057,7 @@ function TabContentInner(props: TabContentProps) {
             {feeBalance > 0 && (() => {
               const owing = invoices
                 .map((inv: any) => {
-                  const paid = childPayments
-                    .filter((p: any) => p.invoice_id === inv.id)
-                    .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0);
+                  const paid = Number(inv.paid_usd || inv.amount_paid || 0);
                   return { inv, bal: Number(inv.total_usd || 0) - paid };
                 })
                 .filter((x) => x.bal > 0.001)
@@ -1133,9 +1121,7 @@ function TabContentInner(props: TabContentProps) {
             ) : isMobile ? (
               <div className="space-y-2">
                 {fInv.map((inv: any) => {
-                  const paid = childPayments
-                    .filter((p: any) => p.invoice_id === inv.id)
-                    .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
+                  const paid = Number(inv.paid_usd || inv.amount_paid || 0);
                   const bal = Number(inv.total_usd || 0) - paid;
 
                   return (
@@ -1223,9 +1209,7 @@ function TabContentInner(props: TabContentProps) {
                   </thead>
                   <tbody>
                     {fInv.map((inv: any) => {
-                      const paid = childPayments
-                        .filter((p: any) => p.invoice_id === inv.id)
-                        .reduce((sum: number, p: any) => sum + Number(p.amount_usd || 0), 0);
+                      const paid = Number(inv.paid_usd || inv.amount_paid || 0);
                       const bal = Number(inv.total_usd || 0) - paid;
                       return (
                         <tr key={inv.id} className="border-b last:border-0">
@@ -1295,6 +1279,7 @@ function TabContentInner(props: TabContentProps) {
           childName={child.full_name}
           admissionNumber={child.admission_number}
           form={child.form}
+          refreshKey={`${childPayments.length}-${invoices.map((inv: any) => `${inv.id}:${inv.paid_usd}:${inv.status}`).join("|")}`}
           dateFilter={feeDateFilter}
           searchTerm={feeSearch}
         />
@@ -1308,9 +1293,7 @@ function TabContentInner(props: TabContentProps) {
             outstanding={Math.max(
               0,
               Number(payInvoice.total_usd || 0) -
-                childPayments
-                  .filter((p: any) => p.invoice_id === payInvoice.id)
-                  .reduce((s: number, p: any) => s + Number(p.amount_usd || 0), 0),
+                Number(payInvoice.paid_usd || payInvoice.amount_paid || 0),
             )}
             onPaid={() => {
               setPayInvoice(null);
@@ -1371,6 +1354,7 @@ function ParentPaymentHistory({
   childName,
   admissionNumber,
   form,
+  refreshKey,
   dateFilter,
   searchTerm,
 }: {
@@ -1378,6 +1362,7 @@ function ParentPaymentHistory({
   childName: string;
   admissionNumber: string;
   form: string;
+  refreshKey?: string;
   dateFilter?: FinanceDateFilter;
   searchTerm?: string;
 }) {
@@ -1388,7 +1373,6 @@ function ParentPaymentHistory({
   useEffect(() => {
     let active = true;
     fetchPayments();
-    supabase.removeAllChannels();
     const channel = supabase
       .channel(`parent-pay-hist-${childId}-${Date.now()}`)
       .on(
@@ -1403,7 +1387,7 @@ function ParentPaymentHistory({
       active = false;
       supabase.removeChannel(channel);
     };
-  }, [childId]);
+  }, [childId, refreshKey]);
 
   async function fetchPayments() {
     const { data } = await supabase
