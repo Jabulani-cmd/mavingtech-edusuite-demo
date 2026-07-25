@@ -1629,9 +1629,6 @@ export default function FinanceManagement() {
         ))}
       </div>
 
-      {/* Exchange Rate */}
-      <div className="max-w-md">
-      </div>
 
       <Tabs defaultValue="fee-structures" className="space-y-4">
         <TabsList className="flex-wrap">
