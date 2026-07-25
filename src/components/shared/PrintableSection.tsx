@@ -22,7 +22,7 @@ interface Props {
   hideActions?: boolean;
 }
 
-export default function PrintableSection({ title, subtitle, children, fileName, className, bare }: Props) {
+export default function PrintableSection({ title, subtitle, children, fileName, className, bare, hideActions }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const buildHtml = () => {
@@ -32,7 +32,7 @@ export default function PrintableSection({ title, subtitle, children, fileName, 
 
   const fname = safeFileName(fileName || title);
 
-  const actions = (
+  const actions = hideActions ? null : (
     <div className="inline-flex items-center gap-1 print:hidden" data-print-hide>
       <Button variant="outline" size="sm" onClick={() => openViewWindow(buildHtml())} title="View">
         <Eye className="mr-1 h-4 w-4" /> View
