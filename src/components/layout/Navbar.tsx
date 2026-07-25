@@ -59,6 +59,7 @@ function DesktopDropdown({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const children = item.children ?? [];
 
   const isActive =
     location.pathname === item.path ||
@@ -77,7 +78,7 @@ function DesktopDropdown({ item }: { item: NavItem }) {
     >
       <Link
         to={item.path}
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+        className={`flex items-center gap-1 whitespace-nowrap px-2 py-2 text-xs font-medium leading-none transition-colors hover:text-primary 2xl:px-3 2xl:text-sm ${
           isActive ? "text-primary" : "text-foreground/80"
         }`}
       >
@@ -91,14 +92,14 @@ function DesktopDropdown({ item }: { item: NavItem }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-md border border-border bg-popover p-1 shadow-lg"
+            className="absolute left-0 top-full z-50 mt-1 min-w-[220px] rounded-md border border-border bg-popover p-1 shadow-lg"
           >
-            {item.children!.map((child) => (
+            {children.map((child) => (
               <Link
                 key={child.path}
                 to={child.path}
                 onClick={() => setOpen(false)}
-                className={`block rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-primary ${
+                className={`block whitespace-nowrap rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-primary ${
                   location.pathname === child.path ? "font-semibold text-primary" : "text-foreground/80"
                 }`}
               >
@@ -115,6 +116,7 @@ function DesktopDropdown({ item }: { item: NavItem }) {
 function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const children = item.children ?? [];
 
   return (
     <div className="border-b border-border/60">
@@ -144,7 +146,7 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden bg-muted/40 pl-4"
           >
-            {item.children!.map((child) => (
+            {children.map((child) => (
               <Link
                 key={child.path}
                 to={child.path}
@@ -172,26 +174,26 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container flex items-center justify-between py-3">
+      <div className="container flex items-center justify-between gap-4 py-3">
         {/* Logo left */}
-        <Link to="/" className="flex items-center gap-5 min-w-0 flex-shrink-0">
+        <Link to="/" className="flex min-w-0 flex-shrink-0 items-center gap-4 2xl:gap-5">
           <img
             src={schoolLogo}
             alt="MavingTech High School"
-            className="h-[7.5rem] w-[7.5rem] flex-shrink-0 object-contain md:h-[9rem] md:w-[9rem]"
+            className="h-[7.5rem] w-[7.5rem] flex-shrink-0 object-contain xl:h-[8rem] xl:w-[8rem] 2xl:h-[9rem] 2xl:w-[9rem]"
           />
           <div className="hidden flex-col leading-tight sm:flex">
-            <span className="font-heading text-2xl font-extrabold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+            <span className="font-heading text-2xl font-extrabold tracking-tight text-foreground md:text-4xl 2xl:text-5xl">
               MavingTech
             </span>
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary md:text-base lg:text-lg">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary md:text-base 2xl:text-lg">
               High School
             </span>
           </div>
         </Link>
 
         {/* Desktop nav center */}
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden min-w-0 flex-1 items-center justify-center gap-0 xl:flex 2xl:gap-1">
           {navLinks.map((item) =>
             item.children ? (
               <DesktopDropdown key={item.path} item={item} />
@@ -199,7 +201,7 @@ export default function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+                className={`whitespace-nowrap px-2 py-2 text-xs font-medium leading-none transition-colors hover:text-primary 2xl:px-3 2xl:text-sm ${
                   location.pathname === item.path ? "text-primary" : "text-foreground/80"
                 }`}
               >
@@ -210,16 +212,16 @@ export default function Navbar() {
         </div>
 
         {/* Right side: portal + language */}
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
+        <div className="flex shrink-0 items-center gap-2">
+          <LanguageToggle className="shrink-0" />
           <Link to="/login" className="hidden sm:block">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button size="sm" className="whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90">
               {t("nav.portalLogin")}
             </Button>
           </Link>
 
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted xl:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={t("nav.menu")}
           >
@@ -234,7 +236,7 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border bg-background lg:hidden"
+            className="overflow-hidden border-t border-border bg-background xl:hidden"
           >
             <div className="container flex flex-col py-2">
               {navLinks.map((item) =>
