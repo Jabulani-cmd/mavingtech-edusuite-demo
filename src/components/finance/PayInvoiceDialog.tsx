@@ -10,7 +10,6 @@ import {
   CreditCard, Building2, Lock, Loader2, Check, X, AlertCircle, ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatZAR } from "@/lib/currency";
 
@@ -34,7 +33,6 @@ const METHOD_LABEL: Record<string, string> = {
 };
 
 export default function PayInvoiceDialog({ open, onOpenChange, invoice, student, outstanding, onPaid }: Props) {
-  const { user } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState<Step>("amount");
   const [amount, setAmount] = useState<string>("");
@@ -112,13 +110,14 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         receipt_number: receiptNumber,
         invoice_id: invoice.id,
         student_id: student.id,
-        parent_id: user?.id || null,
+        amount: payAmount,
+        currency: "ZAR",
         amount_usd: payAmount,
         amount_zig: 0,
         payment_method: method,
+        payment_status: "paid",
         reference_number: txId,
         payment_date: new Date().toISOString().slice(0, 10),
-        recorded_by: user?.id || null,
         notes: `SecurePay SA (${METHOD_LABEL[method]}) — parent portal`,
       });
       if (payErr) throw payErr;
