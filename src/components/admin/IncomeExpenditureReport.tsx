@@ -18,7 +18,8 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 export default function IncomeExpenditureReport() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth(); // 0-indexed
-  const { rate, usdToZig } = useExchangeRate();
+  const rate = 1;
+  const usdToZig = (v: number) => v;
 
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
