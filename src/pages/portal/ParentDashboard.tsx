@@ -1454,10 +1454,8 @@ function ParentPaymentHistory({
                   </p>
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
-                    <span className="text-muted-foreground">USD:</span>
-                    <span className="text-right font-mono text-emerald-600">R {Number(p.amount_usd).toFixed(2)}</span>
-                    <span className="text-muted-foreground">ZiG:</span>
-                    <span className="text-right font-mono">{Number(p.amount_zig).toFixed(2)}</span>
+                    <span className="text-muted-foreground">Amount:</span>
+                    <span className="text-right font-mono text-emerald-600">{formatZAR(p.amount_usd)}</span>
                   </div>
                 </CardContent>
               </Card>
