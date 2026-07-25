@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Mail, Phone, MapPin, Twitter, Facebook, Instagram, MessageCircle } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import moeLogo from "@/assets/ministry-of-education-logo.png";
@@ -6,13 +7,13 @@ import cambridgeLogo from "@/assets/cambridge-logo.png";
 import zimsecLogo from "@/assets/zimsec-logo.png";
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
-      {/* Affiliations strip on white */}
       <div className="bg-background py-14 border-t border-border">
         <div className="container">
           <p className="mb-10 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Affiliated With
+            {t("footer.affiliations")}
           </p>
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-around gap-x-16 gap-y-10">
             <div className="flex flex-col items-center gap-3">
@@ -20,9 +21,9 @@ export default function Footer() {
               <span className="text-xs font-medium text-muted-foreground">IEB</span>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <img src={moeLogo} alt="Ministry of Education" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <img src={moeLogo} alt="Ministry" className="h-28 w-28 object-contain md:h-32 md:w-32" />
               <span className="max-w-[180px] text-center text-xs font-medium leading-tight text-muted-foreground">
-                Ministry of Primary &amp; Secondary Education
+                {t("footer.moe")}
               </span>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -38,51 +39,41 @@ export default function Footer() {
           <div>
             <div className="mb-4 flex items-center gap-3">
               <img src={schoolLogo} alt="MavingTech" className="h-[6rem] w-[6rem] object-contain" />
-              <span className="font-heading text-xl font-bold">MavingTech High School</span>
+              <span className="font-heading text-xl font-bold">{t("brand.schoolName")}</span>
             </div>
-            <p className="text-sm leading-relaxed text-white/70">
-              We are an early learning academy focused on social-emotional development and early literacy and numeracy. Our students walk out with the character and confidence to make their mark.
-            </p>
+            <p className="text-sm leading-relaxed text-white/70">{t("footer.description")}</p>
             <div className="mt-5 flex items-center gap-3">
-              <a href="#" aria-label="Twitter" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a href="#" aria-label="Facebook" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a href="#" aria-label="Instagram" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="https://wa.me/263000000000" aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary">
-                <MessageCircle className="h-4 w-4" />
-              </a>
+              <a href="#" aria-label="Twitter" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Twitter className="h-4 w-4" /></a>
+              <a href="#" aria-label="Facebook" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Facebook className="h-4 w-4" /></a>
+              <a href="#" aria-label="Instagram" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Instagram className="h-4 w-4" /></a>
+              <a href="https://wa.me/27000000000" aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><MessageCircle className="h-4 w-4" /></a>
             </div>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">Quick Links</h4>
+            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.quickLinks")}</h4>
             <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link to="/about" className="transition-colors hover:text-primary">About Us</Link></li>
-              <li><Link to="/academics" className="transition-colors hover:text-primary">Academics</Link></li>
-              <li><Link to="/admissions" className="transition-colors hover:text-primary">Admissions</Link></li>
-              <li><Link to="/school-life" className="transition-colors hover:text-primary">School Life</Link></li>
-              <li><Link to="/news" className="transition-colors hover:text-primary">News</Link></li>
+              <li><Link to="/about" className="transition-colors hover:text-primary">{t("footer.aboutUs")}</Link></li>
+              <li><Link to="/academics" className="transition-colors hover:text-primary">{t("nav.academics")}</Link></li>
+              <li><Link to="/admissions" className="transition-colors hover:text-primary">{t("nav.admissions")}</Link></li>
+              <li><Link to="/school-life" className="transition-colors hover:text-primary">{t("nav.schoolLife")}</Link></li>
+              <li><Link to="/news" className="transition-colors hover:text-primary">{t("nav.news")}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">Programs</h4>
+            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.programs")}</h4>
             <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link to="/sports-culture" className="transition-colors hover:text-primary">Sports &amp; Culture</Link></li>
-              <li><Link to="/awards" className="transition-colors hover:text-primary">Awards</Link></li>
-              <li><Link to="/facilities" className="transition-colors hover:text-primary">Facilities</Link></li>
-              <li><Link to="/boarding" className="transition-colors hover:text-primary">Boarding</Link></li>
-              <li><Link to="/fees" className="transition-colors hover:text-primary">Fees</Link></li>
+              <li><Link to="/sports-culture" className="transition-colors hover:text-primary">{t("nav.sportsCulture")}</Link></li>
+              <li><Link to="/awards" className="transition-colors hover:text-primary">{t("nav.awards")}</Link></li>
+              <li><Link to="/facilities" className="transition-colors hover:text-primary">{t("nav.facilities")}</Link></li>
+              <li><Link to="/boarding" className="transition-colors hover:text-primary">{t("nav.boarding")}</Link></li>
+              <li><Link to="/fees" className="transition-colors hover:text-primary">{t("nav.fees")}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">Contact</h4>
+            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.contact")}</h4>
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
@@ -90,7 +81,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <span>+263 29 XXXXXXX</span>
+                <span>+27 31 000 0000</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
@@ -101,7 +92,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/50">
-          <p>© {new Date().getFullYear()} MavingTech High School. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {t("brand.schoolName")}. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>
