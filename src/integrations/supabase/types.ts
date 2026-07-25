@@ -3568,6 +3568,10 @@ export type Database = {
         | "bank_transfer"
         | "visa_mastercard"
         | "manual"
+        | "card"
+        | "eft"
+        | "snapscan"
+        | "zapper"
       payment_status:
         | "pending"
         | "paid"
@@ -3737,6 +3741,10 @@ export const Constants = {
         "bank_transfer",
         "visa_mastercard",
         "manual",
+        "card",
+        "eft",
+        "snapscan",
+        "zapper",
       ],
       payment_status: [
         "pending",
