@@ -381,6 +381,7 @@ export default function ParentDashboard() {
             rankings={rankings}
             avgMark={avgMark}
             announcements={announcements}
+            refreshChildData={fetchChildData}
           />
         </main>
       </div>
@@ -432,6 +433,7 @@ export default function ParentDashboard() {
             rankings={rankings}
             avgMark={avgMark}
             announcements={announcements}
+            refreshChildData={fetchChildData}
           />
         </main>
       </div>
@@ -597,6 +599,7 @@ interface TabContentProps {
   rankings: any;
   avgMark: number;
   announcements: any[];
+  refreshChildData: (studentId: string) => void;
 }
 
 const FEATURE_LABELS: Record<string, string> = {
@@ -637,6 +640,7 @@ function TabContentInner(props: TabContentProps) {
     rankings,
     avgMark,
     announcements,
+    refreshChildData,
   } = props;
   const isMobile = useIsMobile();
   const [feeDateFilter, setFeeDateFilter] = useState<FinanceDateFilter>(emptyDateFilter());
@@ -1296,8 +1300,8 @@ function TabContentInner(props: TabContentProps) {
                 Number(payInvoice.paid_usd || payInvoice.amount_paid || 0),
             )}
             onPaid={() => {
-              setPayInvoice(null);
-              fetchChildData(child.id);
+              refreshChildData(child.id);
+              window.setTimeout(() => refreshChildData(child.id), 500);
             }}
           />
         )}
@@ -1439,7 +1443,7 @@ function ParentPaymentHistory({
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                     <span className="text-muted-foreground">Amount:</span>
-                    <span className="text-right font-mono text-emerald-600">{formatZAR(p.amount_usd)}</span>
+                    <span className="text-right font-mono text-emerald-600">{formatZAR(p.amount_usd || p.amount || 0)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -1462,7 +1466,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(p.amount_usd)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(p.amount_usd || p.amount || 0)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
                       <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />
