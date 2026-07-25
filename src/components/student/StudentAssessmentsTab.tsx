@@ -43,9 +43,10 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   }, [studentClassId, studentId]);
 
   useEffect(() => {
-    // Realtime results
+    // Realtime results — unique topic per mount to avoid re-subscribing a cached channel
     if (!studentId) return;
-    const ch = supabase.channel(`student-assess-${studentId}`)
+    const topic = `student-assess-${studentId}-${Math.random().toString(36).slice(2, 10)}`;
+    const ch = supabase.channel(topic)
       .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results", filter: `student_id=eq.${studentId}` }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "assessments" }, () => fetchAll())
       .subscribe();
