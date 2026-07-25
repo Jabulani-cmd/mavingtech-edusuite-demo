@@ -332,7 +332,7 @@ export default function ParentDashboard() {
         <aside className="sticky top-14 h-[calc(100vh-56px)] w-56 border-r bg-card p-4 space-y-1">
           {tabs.map((item) => {
             const Icon = item.icon;
-            const cls = `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+            const cls = `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors R ${
               activeTab === item.id
                 ? "bg-secondary text-secondary-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -400,7 +400,7 @@ export default function ParentDashboard() {
           {/* Tab pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {tabs.map((t) => {
-              const cls = `rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+              const cls = `rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors R ${
                 activeTab === t.id
                   ? "bg-secondary text-secondary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -463,7 +463,7 @@ function LinkChildDialog({ onLinked }: { onLinked: () => void }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer R ${session?.access_token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
@@ -666,7 +666,7 @@ function TabContentInner(props: TabContentProps) {
         <PublishedTimetableWidget
           title={`${child.full_name?.split(" ")[0]}'s Timetable`}
           mode="class"
-          filterValue={`${child.form || ""} ${child.stream || ""}`.trim()}
+          filterValue={`${child.form || ""} R ${child.stream || ""}`.trim()}
           compact
         />
 
@@ -716,7 +716,7 @@ function TabContentInner(props: TabContentProps) {
                 <DollarSign className="h-5 w-5 text-red-600" />
               </div>
               <div>
-                <p className={`text-lg font-bold ${feeBalance > 0 ? "text-red-700" : "text-emerald-700"}`}>
+                <p className={`text-lg font-bold R ${feeBalance > 0 ? "text-red-700" : "text-emerald-700"}`}>
                   {feeBalance > 0
                     ? `$${feeBalance.toFixed(2)}`
                     : feeBalance < 0
@@ -773,7 +773,7 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Exam Results — ${child.full_name}`} subtitle={selectedExam ? `${selectedExam.name} — ${selectedExam.term} ${selectedExam.academic_year}` : (child.form || "")} fileName={`exam-results-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Exam Results — R ${child.full_name}`} subtitle={selectedExam ? `${selectedExam.name} — R ${selectedExam.term} R ${selectedExam.academic_year}` : (child.form || "")} fileName={`exam-results-${child.admission_number || child.full_name}`} bare>
 
 
         {exams.length === 0 ? (
@@ -813,7 +813,7 @@ function TabContentInner(props: TabContentProps) {
                     <CardContent className="p-3 text-center">
                       <TrendingUp className="mx-auto mb-1 h-5 w-5 text-secondary" />
                       <p className="text-lg font-bold text-secondary">{avgMark}%</p>
-                      <Badge className={`mt-1 text-[10px] ${getGradeColor(avgGrade)}`} variant="outline">
+                      <Badge className={`mt-1 text-[10px] R ${getGradeColor(avgGrade)}`} variant="outline">
                         {avgGrade}
                       </Badge>
                     </CardContent>
@@ -823,7 +823,7 @@ function TabContentInner(props: TabContentProps) {
                       <Trophy className="mx-auto mb-1 h-5 w-5 text-amber-600" />
                       <p className="text-lg font-bold text-amber-700">{overallRank ? overallRank.rank : "—"}</p>
                       <p className="text-[10px] text-muted-foreground">
-                        {overallRank ? `of ${overallRank.total}` : "Rank"}
+                        {overallRank ? `of R ${overallRank.total}` : "Rank"}
                       </p>
                     </CardContent>
                   </Card>
@@ -870,7 +870,7 @@ function TabContentInner(props: TabContentProps) {
                                 </td>
                                 <td className="px-3 py-3 text-center font-bold">{r.mark}%</td>
                                 <td className="px-3 py-3 text-center">
-                                  <Badge className={`text-xs ${getGradeColor(grade)}`} variant="outline">
+                                  <Badge className={`text-xs R ${getGradeColor(grade)}`} variant="outline">
                                     {grade}
                                   </Badge>
                                 </td>
@@ -892,7 +892,7 @@ function TabContentInner(props: TabContentProps) {
                             <td className="px-3 py-2.5">Average</td>
                             <td className="px-3 py-2.5 text-center font-bold">{avgMark}%</td>
                             <td className="px-3 py-2.5 text-center">
-                              <Badge className={`text-xs ${getGradeColor(avgGrade)}`} variant="outline">
+                              <Badge className={`text-xs R ${getGradeColor(avgGrade)}`} variant="outline">
                                 {avgGrade}
                               </Badge>
                             </td>
@@ -924,7 +924,7 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "marks") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Marks — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`marks-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Marks — R ${child.full_name}`} subtitle={`Admission R ${child.admission_number || ""}`} fileName={`marks-${child.admission_number || child.full_name}`} bare>
           <StudentMarksTab studentId={child.id} studentClassId={null} userId="" />
         </PrintableSection>
       </motion.div>
@@ -939,7 +939,7 @@ function TabContentInner(props: TabContentProps) {
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Attendance — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`attendance-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Attendance — R ${child.full_name}`} subtitle={`Admission R ${child.admission_number || ""}`} fileName={`attendance-${child.admission_number || child.full_name}`} bare>
 
 
         {/* Summary */}
@@ -1045,7 +1045,7 @@ function TabContentInner(props: TabContentProps) {
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
           <CardContent className="p-4 flex items-center gap-4">
-            <DollarSign className={`h-8 w-8 ${feeBalance > 0 ? "text-red-600" : "text-emerald-600"}`} />
+            <DollarSign className={`h-8 w-8 R ${feeBalance > 0 ? "text-red-600" : "text-emerald-600"}`} />
             <div>
               <p className="text-2xl font-bold">
                 {feeBalance > 0
@@ -1056,13 +1056,13 @@ function TabContentInner(props: TabContentProps) {
               </p>
               <p className="text-sm text-muted-foreground">
                 {feeBalance > 0 ? "Outstanding Balance" : feeBalance < 0 ? "Credit Balance" : "No Outstanding Balance"}
-                {feeBalance !== 0 && ` (ZiG ${usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
+                {feeBalance !== 0 && ` (R R ${usdToZig(Math.abs(feeBalance)).toFixed(2)})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: ${totalInvoiced.toFixed(2)} (ZiG {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: $
+                Total Invoiced: R R ${totalInvoiced.toFixed(2)} (R {usdToZig(totalInvoiced).toFixed(2)}) · Total Paid: $
                 {totalPaidAll.toFixed(2)}
               </p>
-              <p className="text-xs text-muted-foreground">Rate: 1 USD = {rate} ZiG</p>
+              <p className="text-xs text-muted-foreground">Rate: 1  ZAR = {rate} ZiG</p>
             </div>
           </CardContent>
         </Card>
@@ -1093,7 +1093,7 @@ function TabContentInner(props: TabContentProps) {
             email={{
               documentLabel: "Student Statement",
               filename: `statement-${(child.full_name || "student").replace(/\s+/g, "-").toLowerCase()}`,
-              subject: `Statement of Account — ${child.full_name}`,
+              subject: `Statement of Account — R ${child.full_name}`,
             }}
           />
         )}
@@ -1145,7 +1145,7 @@ function TabContentInner(props: TabContentProps) {
                               email={{
                                 documentLabel: "Invoice",
                                 filename: `invoice-${inv.invoice_number}`,
-                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                                subject: `Invoice R ${inv.invoice_number} — R ${child.full_name}`,
                               }}
                             />
                           </div>
@@ -1156,19 +1156,19 @@ function TabContentInner(props: TabContentProps) {
 
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                           <span className="text-muted-foreground">Total:</span>
-                          <span className="text-right font-mono">${Number(inv.total_usd || 0).toFixed(2)}</span>
+                          <span className="text-right font-mono">R R ${Number(inv.total_usd || 0).toFixed(2)}</span>
 
                           <span className="text-muted-foreground">ZiG:</span>
                           <span className="text-right font-mono text-muted-foreground">
-                            ZiG {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
+                            R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
                           </span>
 
                           <span className="text-muted-foreground">Paid:</span>
-                          <span className="text-right font-mono text-emerald-600">${paid.toFixed(2)}</span>
+                          <span className="text-right font-mono text-emerald-600">R R ${paid.toFixed(2)}</span>
 
                           <span className="text-muted-foreground">Balance:</span>
                           <span
-                            className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
+                            className={`text-right font-mono R ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
                           >
                             {bal < 0
                               ? `+$${Math.abs(bal).toFixed(2)} credit`
@@ -1209,20 +1209,20 @@ function TabContentInner(props: TabContentProps) {
                             {inv.term} {inv.academic_year}
                           </td>
                           <td className="px-3 py-2 text-center">
-                            ${Number(inv.total_usd || 0).toFixed(2)}
+                            R ${Number(inv.total_usd || 0).toFixed(2)}
                             <br />
                             <span className="text-xs text-muted-foreground">
-                              ZiG {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
+                              R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-center text-emerald-600">${paid.toFixed(2)}</td>
+                          <td className="px-3 py-2 text-center text-emerald-600">R R ${paid.toFixed(2)}</td>
                           <td
-                            className={`px-3 py-2 text-center font-bold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
+                            className={`px-3 py-2 text-center font-bold R ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
                           >
                             {bal < 0 ? `+$${Math.abs(bal).toFixed(2)}` : bal > 0 ? `$${bal.toFixed(2)}` : "$0.00"}
                             <br />
                             <span className="text-xs font-normal text-muted-foreground">
-                              ZiG {usdToZig(Math.abs(bal)).toFixed(2)}
+                              R {usdToZig(Math.abs(bal)).toFixed(2)}
                             </span>
                           </td>
                           <td className="px-3 py-2 text-center">
@@ -1251,7 +1251,7 @@ function TabContentInner(props: TabContentProps) {
                               email={{
                                 documentLabel: "Invoice",
                                 filename: `invoice-${inv.invoice_number}`,
-                                subject: `Invoice ${inv.invoice_number} — ${child.full_name}`,
+                                subject: `Invoice R ${inv.invoice_number} — R ${child.full_name}`,
                               }}
                             />
                           </td>
@@ -1292,7 +1292,7 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Class Timetable — ${child.full_name}`} subtitle={`${child.form || ""} ${child.stream || ""}`.trim()} fileName={`class-timetable-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Class Timetable — R ${child.full_name}`} subtitle={`${child.form || ""} R ${child.stream || ""}`.trim()} fileName={`class-timetable-${child.admission_number || child.full_name}`} bare>
           <StudentTimetableTab studentClassId={childClassId} studentId={child.id} />
         </PrintableSection>
       </motion.div>
@@ -1302,7 +1302,7 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "exam-timetable") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Exam Timetable — ${child.full_name}`} subtitle={child.form || ""} fileName={`exam-timetable-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Exam Timetable — R ${child.full_name}`} subtitle={child.form || ""} fileName={`exam-timetable-${child.admission_number || child.full_name}`} bare>
           <StudentExamTimetableTab studentId={child.id} formLevel={child.form} />
         </PrintableSection>
       </motion.div>
@@ -1312,7 +1312,7 @@ function TabContentInner(props: TabContentProps) {
   if (activeTab === "reports") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-        <PrintableSection title={`Term Reports — ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`term-reports-${child.admission_number || child.full_name}`} bare>
+        <PrintableSection title={`Term Reports — R ${child.full_name}`} subtitle={`Admission R ${child.admission_number || ""}`} fileName={`term-reports-${child.admission_number || child.full_name}`} bare>
           <StudentTermReportsTab />
         </PrintableSection>
       </motion.div>
@@ -1383,7 +1383,7 @@ function ParentPaymentHistory({
   const emailFor = (p: any) => ({
     documentLabel: "Receipt",
     filename: `receipt-${p.receipt_number}`,
-    subject: `Official Receipt ${p.receipt_number} — ${childName}`,
+    subject: `Official Receipt R ${p.receipt_number} — R ${childName}`,
   });
 
   if (loading) return <div className="h-20 animate-pulse rounded-lg bg-muted" />;
@@ -1411,7 +1411,7 @@ function ParentPaymentHistory({
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                     <span className="text-muted-foreground">USD:</span>
-                    <span className="text-right font-mono text-emerald-600">${Number(p.amount_usd).toFixed(2)}</span>
+                    <span className="text-right font-mono text-emerald-600">R R ${Number(p.amount_usd).toFixed(2)}</span>
                     <span className="text-muted-foreground">ZiG:</span>
                     <span className="text-right font-mono">{Number(p.amount_zig).toFixed(2)}</span>
                   </div>
@@ -1437,7 +1437,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600">${Number(p.amount_usd).toFixed(2)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600">R R ${Number(p.amount_usd).toFixed(2)}</td>
                     <td className="px-3 py-2 text-center">{Number(p.amount_zig).toFixed(2)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">

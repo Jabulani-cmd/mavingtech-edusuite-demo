@@ -868,9 +868,9 @@ export default function FinanceManagement() {
       ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">${fmt(parseFloat(p.amount_usd))}</td><td class="right mono">${fmt(parseFloat(p.amount_zig))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
       </tbody>   </table>
       <div class="summary">
-        <p><strong>Total Invoiced:</strong> USD ${fmt(totalInvoicedUsd)} / ZiG ${fmt(totalInvoicedZig)}</p>
-        <p><strong>Total Paid:</strong> USD ${fmt(totalPaidUsd)} / ZiG ${fmt(totalPaidZig)}</p>
-        <p class="${totalInvoicedUsd - totalPaidUsd > 0 ? "red" : "green"}"><strong>${totalInvoicedUsd - totalPaidUsd < 0 ? "Credit Balance" : "Balance"}:</strong> USD ${totalInvoicedUsd - totalPaidUsd < 0 ? "+" + fmt(Math.abs(totalInvoicedUsd - totalPaidUsd)) : fmt(totalInvoicedUsd - totalPaidUsd)} / ZiG ${totalInvoicedZig - totalPaidZig < 0 ? "+" + fmt(Math.abs(totalInvoicedZig - totalPaidZig)) : fmt(totalInvoicedZig - totalPaidZig)}</p>
+        <p><strong>Total Invoiced:</strong>  ZAR ${fmt(totalInvoicedUsd)} / R ${fmt(totalInvoicedZig)}</p>
+        <p><strong>Total Paid:</strong>  ZAR ${fmt(totalPaidUsd)} / R ${fmt(totalPaidZig)}</p>
+        <p class="${totalInvoicedUsd - totalPaidUsd > 0 ? "red" : "green"}"><strong>${totalInvoicedUsd - totalPaidUsd < 0 ? "Credit Balance" : "Balance"}:</strong>  ZAR ${totalInvoicedUsd - totalPaidUsd < 0 ? "+" + fmt(Math.abs(totalInvoicedUsd - totalPaidUsd)) : fmt(totalInvoicedUsd - totalPaidUsd)} / R ${totalInvoicedZig - totalPaidZig < 0 ? "+" + fmt(Math.abs(totalInvoicedZig - totalPaidZig)) : fmt(totalInvoicedZig - totalPaidZig)}</p>
       </div>
       </body></html>`);
     printWindow.document.close();
@@ -894,7 +894,7 @@ export default function FinanceManagement() {
        table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Form</th><th>Invoice</th><th>Term</th><th class="right">Owed USD</th><th class="right">Owed ZiG</th><th>Status</th></tr> </thead>
       <tbody>
       ${filtered.map((d, i) => `     <tr><td>${i + 1}</td><td>${safeHtml(d.students?.full_name || "—")}</td><td>${safeHtml(d.students?.admission_number || "—")}</td><td>${safeHtml(d.students?.form || "—")}</td><td class="mono">${safeHtml(d.invoice_number)}</td><td>${safeHtml(d.term)}</td><td class="right mono red">${fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td><td class="right mono red">${fmt(parseFloat(d.total_zig) - parseFloat(d.paid_zig))}</td><td>${statusBadge(d.status)}</td></tr>`).join("")}
-      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">USD ${fmt(totalUsd)}</td><td class="right mono red">ZiG ${fmt(totalZig)}</td><td></td></tr>
+      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">USD ${fmt(totalUsd)}</td><td class="right mono red">R ${fmt(totalZig)}</td><td></td></tr>
       </tbody>   </table>
       </body></html>`);
     printWindow.document.close();
@@ -1609,7 +1609,7 @@ export default function FinanceManagement() {
             color: "text-amber-600",
           },
           {
-            label: "Net Income (USD)",
+            label: "Net Income (ZAR)",
             usd: totalCollectedUsd - totalExpensesUsd,
             zig: totalCollectedZig - totalExpensesZig,
             icon: BarChart3,
@@ -1623,7 +1623,7 @@ export default function FinanceManagement() {
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{c.label}</span>
               </div>
               <p className="text-lg font-bold">USD {fmt(c.usd)}</p>
-              <p className="text-sm text-muted-foreground">ZiG {fmt(c.zig)}</p>
+              <p className="text-sm text-muted-foreground">R {fmt(c.zig)}</p>
             </CardContent>
           </Card>
         ))}
@@ -2044,7 +2044,7 @@ export default function FinanceManagement() {
                 <CardContent className="p-5">
                   <p className="text-xs text-destructive font-medium uppercase tracking-wider">Total Outstanding</p>
                   <p className="text-xl font-bold text-destructive">USD {fmt(totalOwedUsd)}</p>
-                  <p className="text-sm text-destructive/80">ZiG {fmt(totalOwedZig)}</p>
+                  <p className="text-sm text-destructive/80">R {fmt(totalOwedZig)}</p>
                 </CardContent>
               </Card>
               <Card className="border-amber-300/50 bg-amber-50/50">
@@ -2223,12 +2223,12 @@ export default function FinanceManagement() {
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Deposits</p>
                         <p className="text-xl font-bold font-mono text-green-700">USD {fmt(depositsUsd)}</p>
-                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(depositsZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">R {fmt(depositsZig)}</p>
                       </div>
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Withdrawals</p>
                         <p className="text-xl font-bold font-mono text-destructive">USD {fmt(withdrawalsUsd)}</p>
-                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(withdrawalsZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">R {fmt(withdrawalsZig)}</p>
                       </div>
                       <div
                         className={`rounded-lg border p-4 ${balUsd >= 0 ? "bg-green-50/50 border-green-200" : "bg-destructive/5 border-destructive/30"}`}
@@ -2237,9 +2237,9 @@ export default function FinanceManagement() {
                         <p
                           className={`text-xl font-bold font-mono ${balUsd >= 0 ? "text-green-700" : "text-destructive"}`}
                         >
-                          USD {fmt(balUsd)}
+                           ZAR {fmt(balUsd)}
                         </p>
-                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(balZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">R {fmt(balZig)}</p>
                       </div>
                     </div>
                     {pettyCash.length === 0 ? (
@@ -2311,7 +2311,7 @@ export default function FinanceManagement() {
                     Total Owed to Suppliers
                   </p>
                   <p className="text-xl font-bold text-destructive">
-                    USD {fmt(supplierInvoices.reduce((s, si) => s + (Number(si.amount_usd) - Number(si.paid_usd)), 0))}
+                     ZAR {fmt(supplierInvoices.reduce((s, si) => s + (Number(si.amount_usd) - Number(si.paid_usd)), 0))}
                   </p>
                 </CardContent>
               </Card>
@@ -2571,14 +2571,14 @@ export default function FinanceManagement() {
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Invoiced</p>
                             <p className="font-bold font-mono">USD {fmt(tInvUsd)}</p>
-                            <p className="text-sm text-muted-foreground font-mono">ZiG {fmt(tInvZig)}</p>
+                            <p className="text-sm text-muted-foreground font-mono">R {fmt(tInvZig)}</p>
                           </CardContent>
                         </Card>
                         <Card>
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Paid</p>
                             <p className="font-bold font-mono text-green-700">USD {fmt(tPaidUsd)}</p>
-                            <p className="text-sm text-muted-foreground font-mono">ZiG {fmt(tPaidZig)}</p>
+                            <p className="text-sm text-muted-foreground font-mono">R {fmt(tPaidZig)}</p>
                           </CardContent>
                         </Card>
                         <Card
@@ -2591,10 +2591,10 @@ export default function FinanceManagement() {
                             <p
                               className={`font-bold font-mono ${isCredit ? "text-green-700" : balUsd > 0 ? "text-destructive" : "text-muted-foreground"}`}
                             >
-                              USD {isCredit ? fmt(Math.abs(balUsd)) : fmt(balUsd)}
+                               ZAR {isCredit ? fmt(Math.abs(balUsd)) : fmt(balUsd)}
                             </p>
                             <p className="text-sm text-muted-foreground font-mono">
-                              ZiG {balZig < 0 ? fmt(Math.abs(balZig)) : fmt(balZig)}
+                              R {balZig < 0 ? fmt(Math.abs(balZig)) : fmt(balZig)}
                             </p>
                             {isCredit && <span className="text-xs text-green-600">(credit)</span>}
                           </CardContent>
@@ -2725,8 +2725,8 @@ export default function FinanceManagement() {
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/30 px-3 py-2 text-xs">
                 <span className="text-muted-foreground">
                   Showing <strong>{filteredExpenses.length}</strong> of {expenses.length} · Total
-                  USD <strong className="text-destructive">${fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_usd || 0), 0))}</strong>
-                  &nbsp;·&nbsp; ZiG <strong>{fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_zig || 0), 0))}</strong>
+                   ZAR <strong className="text-destructive">${fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_usd || 0), 0))}</strong>
+                  &nbsp;·&nbsp; R <strong>{fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_zig || 0), 0))}</strong>
                 </span>
                 <DocActionButtons
                   labels
@@ -2821,12 +2821,12 @@ export default function FinanceManagement() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-lg border p-4">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total USD Collected</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total  ZAR Collected</p>
                     <p className="text-2xl font-bold text-green-700">${fmt(totalCollectedUsd)}</p>
                   </div>
                   <div className="rounded-lg border p-4">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total ZiG Collected</p>
-                    <p className="text-2xl font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total R Collected</p>
+                    <p className="text-2xl font-bold text-green-700">R {fmt(totalCollectedZig)}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -2840,7 +2840,7 @@ export default function FinanceManagement() {
                       <div key={method} className="flex items-center justify-between text-sm border-b pb-1">
                         <span>{method}</span>
                         <span className="font-mono">
-                          USD {fmt(mUsd)} / ZiG {fmt(mZig)}
+                           ZAR {fmt(mUsd)} / R {fmt(mZig)}
                         </span>
                       </div>
                     );
@@ -2856,15 +2856,15 @@ export default function FinanceManagement() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Income (USD)</span>
+                    <span className="text-sm">Income (ZAR)</span>
                     <span className="font-mono font-bold text-green-700">${fmt(totalCollectedUsd)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Expenses (USD)</span>
+                    <span className="text-sm">Expenses (ZAR)</span>
                     <span className="font-mono font-bold text-red-600">${fmt(totalExpensesUsd)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
-                    <span className="text-sm font-semibold">Net (USD)</span>
+                    <span className="text-sm font-semibold">Net (ZAR)</span>
                     <span
                       className={`font-mono font-bold ${totalCollectedUsd - totalExpensesUsd >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
@@ -2875,18 +2875,18 @@ export default function FinanceManagement() {
                 <div className="border-t pt-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Income (ZiG)</span>
-                    <span className="font-mono font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</span>
+                    <span className="font-mono font-bold text-green-700">R {fmt(totalCollectedZig)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expenses (ZiG)</span>
-                    <span className="font-mono font-bold text-red-600">ZiG {fmt(totalExpensesZig)}</span>
+                    <span className="font-mono font-bold text-red-600">R {fmt(totalExpensesZig)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
                     <span className="text-sm font-semibold">Net (ZiG)</span>
                     <span
                       className={`font-mono font-bold ${totalCollectedZig - totalExpensesZig >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
-                      ZiG {fmt(totalCollectedZig - totalExpensesZig)}
+                      R {fmt(totalCollectedZig - totalExpensesZig)}
                     </span>
                   </div>
                 </div>
@@ -2939,7 +2939,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingFee ? "Edit Fee Structure" : "Add Fee Structure"}</DialogTitle>
-            <DialogDescription>Define the fee amounts in both USD and ZiG.</DialogDescription>
+            <DialogDescription>Define the fee amounts in both  ZAR and ZiG.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-3">
@@ -3012,7 +3012,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Amount (USD)</Label>
+                <Label>Amount (ZAR)</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3205,7 +3205,7 @@ export default function FinanceManagement() {
                   {availableFeeStructures.map((fs) => (
                     <SelectItem key={fs.id} value={fs.id}>
                       {fs.description || `${fs.form} - ${fs.boarding_status === "boarding" ? "Boarding" : "Day"} Fees`}{" "}
-                      – USD {fs.amount_usd} / ZiG {fs.amount_zig}
+                      –  ZAR {fs.amount_usd} / R {fs.amount_zig}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -3244,7 +3244,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Record Payment</DialogTitle>
-            <DialogDescription>Record a payment with split USD/ZiG support.</DialogDescription>
+            <DialogDescription>Record a payment with split USD/R support.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="space-y-2">
@@ -3293,7 +3293,7 @@ export default function FinanceManagement() {
                         <SelectItem key={inv.id} value={inv.id}>
                           {inv.invoice_number} —{" "}
                           {balUsd < 0 ? `+USD ${fmt(Math.abs(balUsd))} credit` : `USD ${fmt(balUsd)} owing`} /{" "}
-                          {balZig < 0 ? `+ZiG ${fmt(Math.abs(balZig))} credit` : `ZiG ${fmt(balZig)} owing`}
+                          {balZig < 0 ? `+R ${fmt(Math.abs(balZig))} credit` : `R ${fmt(balZig)} owing`}
                         </SelectItem>
                       );
                     })}
@@ -3321,7 +3321,7 @@ export default function FinanceManagement() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
+                <Label>Amount R <span className="text-xs text-muted-foreground">auto</span></Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3455,7 +3455,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount USD *</Label>
+                <Label>Amount  ZAR *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3464,7 +3464,7 @@ export default function FinanceManagement() {
                 />
               </div>
               <div className="space-y-1">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
+                <Label>Amount R <span className="text-xs text-muted-foreground">auto</span></Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3504,7 +3504,7 @@ export default function FinanceManagement() {
             <DialogTitle>Record Supplier Payment</DialogTitle>
             <DialogDescription>
               {spInvoice
-                ? `Payment for ${spInvoice.supplier_name} — Invoice #${spInvoice.invoice_number} (Balance: USD ${fmt(Number(spInvoice.amount_usd) - Number(spInvoice.paid_usd))})`
+                ? `Payment for ${spInvoice.supplier_name} — Invoice #${spInvoice.invoice_number} (Balance:  ZAR ${fmt(Number(spInvoice.amount_usd) - Number(spInvoice.paid_usd))})`
                 : "Select an unpaid supplier invoice and record a payment."}
             </DialogDescription>
           </DialogHeader>
@@ -3526,7 +3526,7 @@ export default function FinanceManagement() {
                       .filter((si) => si.status !== "paid")
                       .map((si) => (
                         <SelectItem key={si.id} value={si.id}>
-                          {si.supplier_name} — #{si.invoice_number} (Bal: USD $
+                          {si.supplier_name} — #{si.invoice_number} (Bal:  ZAR $
                           {fmt(Number(si.amount_usd) - Number(si.paid_usd))})
                         </SelectItem>
                       ))}
@@ -3564,7 +3564,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount USD *</Label>
+                <Label>Amount  ZAR *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3573,7 +3573,7 @@ export default function FinanceManagement() {
                 />
               </div>
               <div className="space-y-1">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
+                <Label>Amount R <span className="text-xs text-muted-foreground">auto</span></Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3682,7 +3682,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount USD *</Label>
+                <Label>Amount  ZAR *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3691,7 +3691,7 @@ export default function FinanceManagement() {
                 />
               </div>
               <div className="space-y-1">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
+                <Label>Amount R <span className="text-xs text-muted-foreground">auto</span></Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3793,7 +3793,7 @@ export default function FinanceManagement() {
                 />
               </div>
               <div className="space-y-1">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
+                <Label>Amount R <span className="text-xs text-muted-foreground">auto</span></Label>
                 <Input
                   type="number"
                   step="0.01"
