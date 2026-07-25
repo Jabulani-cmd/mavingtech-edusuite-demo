@@ -1178,27 +1178,29 @@ function TabContentInner(props: TabContentProps) {
 
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                           <span className="text-muted-foreground">Total:</span>
-                          <span className="text-right font-mono">R {Number(inv.total_usd || 0).toFixed(2)}</span>
-
-                          <span className="text-muted-foreground">ZiG:</span>
-                          <span className="text-right font-mono text-muted-foreground">
-                            R {usdToZig(Number(inv.total_usd || 0)).toFixed(2)}
-                          </span>
+                          <span className="text-right font-mono">{formatZAR(inv.total_usd)}</span>
 
                           <span className="text-muted-foreground">Paid:</span>
-                          <span className="text-right font-mono text-emerald-600">R {paid.toFixed(2)}</span>
+                          <span className="text-right font-mono text-emerald-600">{formatZAR(paid)}</span>
 
                           <span className="text-muted-foreground">Balance:</span>
                           <span
                             className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
                           >
                             {bal < 0
-                              ? `+$${Math.abs(bal).toFixed(2)} credit`
-                              : bal > 0
-                                ? `$${bal.toFixed(2)}`
-                                : "$0.00"}
+                              ? `+${formatZAR(Math.abs(bal))} credit`
+                              : formatZAR(bal)}
                           </span>
                         </div>
+                        {bal > 0.001 && (
+                          <Button
+                            size="sm"
+                            className="w-full mt-2 bg-teal-600 hover:bg-teal-700"
+                            onClick={() => setPayInvoice(inv)}
+                          >
+                            <CreditCard className="w-3 h-3 mr-1" /> Pay {formatZAR(bal)}
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   );
