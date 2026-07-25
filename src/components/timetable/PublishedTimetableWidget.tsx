@@ -83,7 +83,7 @@ export default function PublishedTimetableWidget({
   }, [defSlots]);
 
   const filteredSlots = useMemo(() => {
-    if (mode === "teacher" && filter) return defSlots.filter((s) => s.teacher_name === filter);
+    if (mode === "teacher" && filter && filter !== "__all__") return defSlots.filter((s) => s.teacher_name === filter);
     return defSlots;
   }, [defSlots, mode, filter]);
 
