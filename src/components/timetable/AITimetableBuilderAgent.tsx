@@ -110,7 +110,7 @@ export default function AITimetableBuilderAgent() {
           const subs = t.qualifiedSubjects.map(id => ctx.subjects.find(s => s.id === id)?.name).filter(Boolean).join(", ");
           return `• ${t.name} — ${t.employmentType}, max ${t.maxPeriodsPerWeek} p/wk, prefers ${t.preferredTime}, teaches ${subs}`;
         }).join("\n");
-        agentSay(`**Step 5 — Teacher availability.**\n${lines}\n\nAll teachers assumed available Mon–Fri unless you specify otherwise. Reply **yes** or note restrictions (e.g. _"Mrs Moyo unavailable Friday"_).`);
+        agentSay(`**Step 5 — Teacher availability.**\n${lines}\n\nAll teachers assumed available Mon–Fri unless you specify otherwise. Reply **yes** or note restrictions (e.g. _"Mrs Khumalo unavailable Friday"_).`);
         break;
       }
       case "venues": {
@@ -144,7 +144,7 @@ export default function AITimetableBuilderAgent() {
       } else {
         msg += `\nNo unfilled slots.`;
       }
-      msg += `\n\nReview the grid below. Send corrections in plain text — for example:\n• _"Move Grade 10C Mathematics to Wednesday Period 3"_\n• _"Replace Mr. Ncube with Mrs. Moyo for all Friday slots"_\n\nWhen you're happy, click **Approve & Publish**.`;
+      msg += `\n\nReview the grid below. Send corrections in plain text — for example:\n• _"Move Grade 10C Mathematics to Wednesday Period 3"_\n• _"Replace Mr. Zulu with Mrs. Khumalo for all Friday slots"_\n\nWhen you're happy, click **Approve & Publish**.`;
       push("agent", msg);
       setThinking(false);
     }, 1400);
