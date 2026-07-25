@@ -77,22 +77,38 @@ export default function ParentSubscribe() {
       setBank(b);
 
       if (user) {
-        const { data: kids } = await supabase
-          .from("parent_student_links")
-          .select("student_id, students:student_id(id, full_name, form, stream, admission_number)")
-          .eq("parent_id", user.id);
-        const list = (kids || []).map((k: any) => k.students).filter(Boolean);
-        if (!list.length) list.push({ id: user.id, full_name: user.email?.split("@")[0] || "Your child", form: "—" });
-        setChildren(list);
-        setSelectedChild(list[0]?.id || null);
+        // Try the newer link table first, then fall back to the legacy parent_students table.
+        const [{ data: linkKids }, { data: legacyKids }] = await Promise.all([
+          supabase
+            .from("parent_student_links")
+            .select("student_id, students:student_id(id, full_name, form, stream, admission_number)")
+            .eq("parent_id", user.id),
+          supabase
+            .from("parent_students")
+            .select("student_id, students:student_id(id, full_name, form, stream, admission_number)")
+            .eq("parent_id", user.id),
+        ]);
+
+        const linkList = (linkKids || []).map((k: any) => k.students).filter(Boolean);
+        const legacyList = (legacyKids || []).map((k: any) => k.students).filter(Boolean);
+        const list = linkList.length ? linkList : legacyList;
+
+        if (!list.length) {
+          // No linked child yet — keep the list empty so the UI can prompt to link one.
+          setChildren([]);
+          setSelectedChild(null);
+        } else {
+          setChildren(list);
+          setSelectedChild(list[0]?.id || null);
+        }
       }
     })();
   }, [user]);
 
-  const childName = useMemo(
-    () => children.find((c) => c.id === selectedChild)?.full_name || "your child",
-    [children, selectedChild],
-  );
+  const childName = useMemo(() => {
+    const found = children.find((c) => c.id === selectedChild);
+    return found?.full_name || "your child";
+  }, [children, selectedChild]);
 
   function pickPlan(p: any) { setPlan(p); setStep("method"); }
   function pickMethod(m: string) {
