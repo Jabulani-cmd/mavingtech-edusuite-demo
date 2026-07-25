@@ -97,7 +97,7 @@ export default function ParentPaymentHistory() {
                     <TableRow key={p.id}>
                       <TableCell className="whitespace-nowrap">{new Date(p.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>{p.subscriptions?.subscription_plans?.name || p.subscriptions?.plan_type || "—"}</TableCell>
-                      <TableCell>R R ${Number(p.amount).toFixed(2)} {p.currency}</TableCell>
+                      <TableCell>R ${Number(p.amount).toFixed(2)} {p.currency}</TableCell>
                       <TableCell className="capitalize">{p.payment_method.replace("_", " ")}</TableCell>
                       <TableCell><Badge className={s.cls}><s.icon className="w-3 h-3 mr-1" />{s.label}</Badge></TableCell>
                       <TableCell>

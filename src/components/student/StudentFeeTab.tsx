@@ -173,9 +173,9 @@ export default function StudentFeeTab({ studentId }: Props) {
               {balanceUsd < 0 ? "Credit Balance" : balanceUsd > 0 ? "Outstanding Balance" : "No Balance"}
             </p>
             <p className="text-xs text-muted-foreground mt-1 break-words">
-              Invoiced: R R ${fmt(totalInvoicedUsd)} (R {fmt(usdToZig(totalInvoicedUsd))}) · Paid: R R ${fmt(totalPaidUsd)} (R {fmt(usdToZig(totalPaidUsd))})
+              Invoiced: R ${fmt(totalInvoicedUsd)} (R {fmt(usdToZig(totalInvoicedUsd))}) · Paid: R ${fmt(totalPaidUsd)} (R {fmt(usdToZig(totalPaidUsd))})
             </p>
-            <p className="text-xs text-muted-foreground">Rate: 1  ZAR = {rate} ZiG</p>
+            <p className="text-xs text-muted-foreground">Rate: 1 ZAR (ZAR-native, no conversion)</p>
           </div>
         </CardContent>
       </Card>
@@ -207,9 +207,9 @@ export default function StudentFeeTab({ studentId }: Props) {
                       <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                         <span className="text-muted-foreground">Total:</span>
-                        <span className="text-right font-mono">R R ${fmt(inv.total_usd)}</span>
+                        <span className="text-right font-mono">R ${fmt(inv.total_usd)}</span>
                         <span className="text-muted-foreground">Paid:</span>
-                        <span className="text-right font-mono">R R ${fmt(actualPaid)}</span>
+                        <span className="text-right font-mono">R ${fmt(actualPaid)}</span>
                         <span className="text-muted-foreground">Balance:</span>
                         <span className={`text-right font-mono R ${balance < 0 ? "text-green-600" : ""}`}>
                           {balance < 0 ? `+$${fmt(Math.abs(balance))} credit` : `$${fmt(balance)}`}
@@ -243,8 +243,8 @@ export default function StudentFeeTab({ studentId }: Props) {
                       <TableRow key={inv.id}>
                         <TableCell className="font-mono text-xs">{inv.invoice_number}</TableCell>
                         <TableCell>{inv.term} {inv.academic_year}</TableCell>
-                        <TableCell className="text-right">R R ${fmt(inv.total_usd)}</TableCell>
-                        <TableCell className="text-right">R R ${fmt(actualPaid)}</TableCell>
+                        <TableCell className="text-right">R ${fmt(inv.total_usd)}</TableCell>
+                        <TableCell className="text-right">R ${fmt(actualPaid)}</TableCell>
                         <TableCell className="text-right">
                           {balance < 0 ? (
                             <span className="text-green-600">+${fmt(Math.abs(balance))} credit</span>
@@ -290,7 +290,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                       )}
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                         <span className="text-muted-foreground">USD:</span>
-                        <span className="text-right font-mono font-medium">R R ${fmt(p.amount_usd)}</span>
+                        <span className="text-right font-mono font-medium">R ${fmt(p.amount_usd)}</span>
                         <span className="text-muted-foreground">ZiG:</span>
                         <span className="text-right font-mono text-muted-foreground">R {fmt(p.amount_zig)}</span>
                       </div>
@@ -318,7 +318,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
                         <TableCell>{format(new Date(p.payment_date), "dd MMM yyyy")}</TableCell>
                         <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
-                        <TableCell className="text-right font-mono">R R ${fmt(p.amount_usd)}</TableCell>
+                        <TableCell className="text-right font-mono">R ${fmt(p.amount_usd)}</TableCell>
                         <TableCell className="text-right font-mono">R {fmt(p.amount_zig)}</TableCell>
                         <TableCell>{p.payment_method}</TableCell>
                         <TableCell className="text-center">

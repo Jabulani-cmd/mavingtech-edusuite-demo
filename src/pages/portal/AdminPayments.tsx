@@ -336,7 +336,7 @@ export default function AdminPayments() {
                     {filtered.map((s) => (
                       <TableRow key={s.id}>
                         <TableCell>{s.subscription_plans?.name || s.plan_type}</TableCell>
-                        <TableCell>R R ${Number(s.amount_usd).toFixed(2)}</TableCell>
+                        <TableCell>R ${Number(s.amount_usd).toFixed(2)}</TableCell>
                         <TableCell className="capitalize">{(s.payment_method || "—").replace("_", " ")}</TableCell>
                         <TableCell><Badge className="capitalize">{s.status}</Badge></TableCell>
                         <TableCell>{s.access_end ? new Date(s.access_end).toLocaleDateString() : "—"}</TableCell>
@@ -362,7 +362,7 @@ export default function AdminPayments() {
                 {payments.filter((p) => p.payment_status === "awaiting_verification").map((p) => (
                   <div key={p.id} className="flex items-center justify-between border rounded-lg p-4 mb-2">
                     <div>
-                      <div className="font-semibold">R R ${Number(p.amount).toFixed(2)} · {p.payment_method}</div>
+                      <div className="font-semibold">R ${Number(p.amount).toFixed(2)} · {p.payment_method}</div>
                       <div className="text-xs text-muted-foreground">Parent {p.parent_id.slice(0, 8)} · {new Date(p.created_at).toLocaleString()}</div>
                       {p.proof_of_payment_url && <a href={p.proof_of_payment_url} className="text-xs text-blue-600 underline" target="_blank" rel="noreferrer">View proof</a>}
                     </div>
