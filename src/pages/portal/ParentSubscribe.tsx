@@ -110,7 +110,13 @@ export default function ParentSubscribe() {
     return found?.full_name || "your child";
   }, [children, selectedChild]);
 
-  function pickPlan(p: any) { setPlan(p); setStep("method"); }
+  function pickPlan(p: any) {
+    if (!selectedChild) {
+      toast({ title: "Link a student first", description: "Please link a student to your account before choosing a plan.", variant: "destructive" });
+      return;
+    }
+    setPlan(p); setStep("method");
+  }
   function pickMethod(m: string) {
     setMethod(m); setError(null);
     if (m === "card") setStep("card");
