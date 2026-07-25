@@ -10,7 +10,6 @@ import {
   CreditCard, Building2, Lock, Loader2, Check, X, AlertCircle, ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatZAR } from "@/lib/currency";
 
@@ -34,7 +33,6 @@ const METHOD_LABEL: Record<string, string> = {
 };
 
 export default function PayInvoiceDialog({ open, onOpenChange, invoice, student, outstanding, onPaid }: Props) {
-  const { user } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState<Step>("amount");
   const [amount, setAmount] = useState<string>("");
