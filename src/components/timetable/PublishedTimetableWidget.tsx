@@ -83,7 +83,7 @@ export default function PublishedTimetableWidget({
   }, [defSlots]);
 
   const filteredSlots = useMemo(() => {
-    if (mode === "teacher" && filter) return defSlots.filter((s) => s.teacher_name === filter);
+    if (mode === "teacher" && filter && filter !== "__all__") return defSlots.filter((s) => s.teacher_name === filter);
     return defSlots;
   }, [defSlots, mode, filter]);
 
@@ -165,12 +165,12 @@ export default function PublishedTimetableWidget({
               </SelectContent>
             </Select>
             {mode === "teacher" && (
-              <Select value={filter} onValueChange={setFilter}>
+              <Select value={filter || "__all__"} onValueChange={(v) => setFilter(v === "__all__" ? "" : v)}>
                 <SelectTrigger className="h-8 w-[160px] text-xs">
                   <SelectValue placeholder="All teachers" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="" className="text-xs">
+                  <SelectItem value="__all__" className="text-xs">
                     All teachers
                   </SelectItem>
                   {teachers.map((t) => (
