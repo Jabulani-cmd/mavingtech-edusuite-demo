@@ -320,16 +320,11 @@ export default function BankReconciliation() {
               <Label>Description *</Label>
               <Input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Bank statement description" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label>Amount (R)</Label>
-                <Input type="number" step="0.01" value={form.amount_usd} onChange={e => setForm(p => ({ ...p, amount_usd: e.target.value, amount_zig: autoZig(e.target.value) }))} />
-              </div>
-              <div className="space-y-1">
-                <Label>Amount ZiG <span className="text-xs text-muted-foreground">auto</span></Label>
-                <Input type="number" step="0.01" value={form.amount_zig} readOnly className="bg-muted" />
-              </div>
+            <div className="space-y-1">
+              <Label>Amount (R)</Label>
+              <Input type="number" step="0.01" value={form.amount_usd} onChange={e => setForm(p => ({ ...p, amount_usd: e.target.value, amount_zig: e.target.value }))} />
             </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>Bank Name</Label>
