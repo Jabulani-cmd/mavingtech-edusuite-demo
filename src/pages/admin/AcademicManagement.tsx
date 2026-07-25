@@ -32,7 +32,7 @@ const examTypes = [
   { value: "mid_term", label: "Mid-Term" },
   { value: "end_of_term", label: "End of Term" },
   { value: "mock", label: "Mock Exam" },
-  { value: "zimsec", label: "ZIMSEC" },
+  { value: "zimsec", label: "CAPS" },
 ];
 const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const timeSlots = [
@@ -62,7 +62,7 @@ const sportsActivityOptions = [
   "Music Club", "Science Club", "Art Club", "Computer Club", "Scouts", "Cadets",
 ];
 
-// ZIMSEC grading
+// CAPS grading
 function zimGrade(mark: number): string {
   if (mark >= 90) return "A*";
   if (mark >= 80) return "A";
@@ -885,7 +885,7 @@ export default function AcademicManagement() {
           <Card>
             <CardHeader>
               <CardTitle className="font-heading">Marks Entry</CardTitle>
-              <CardDescription>Enter marks per exam and subject (ZIMSEC grading auto-applied)</CardDescription>
+              <CardDescription>Enter marks per exam and subject (CAPS grading auto-applied)</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-3 flex-wrap">

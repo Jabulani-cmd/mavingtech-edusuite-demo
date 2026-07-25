@@ -25,7 +25,7 @@ const newsItems = [
   {
     id: 4, title: "Science Olympiad Team Wins Silver", date: "Feb 10, 2026",
     excerpt: "Our science team placed second at the National Science Olympiad.",
-    body: "Congratulations to our Science Olympiad team for winning the silver medal at the 2026 National Science Olympiad held in Harare. The team of six students, led by Mr. Ncube, competed against 48 schools from across Zimbabwe. Special mention goes to Tendai Mutasa (Upper 6) who was individually recognised as the top chemistry contestant.",
+    body: "Congratulations to our Science Olympiad team for winning the silver medal at the 2026 National Science Olympiad held in Johannesburg. The team of six students, led by Mr. Ncube, competed against 48 schools from across South Africa. Special mention goes to Tendai Mutasa (Upper 6) who was individually recognised as the top chemistry contestant.",
   },
   {
     id: 5, title: "New Computer Lab Inauguration", date: "Jan 20, 2026",

@@ -876,14 +876,14 @@ export default function StaffManagementFull() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>NSSA Number</Label>
+                  <Label>UIF Number</Label>
                   <Input
                     value={formData.nssa_number || ""}
                     onChange={(e) => updateField("nssa_number", e.target.value)}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>PAYE Number</Label>
+                  <Label>SARS PAYE Number</Label>
                   <Input
                     value={formData.paye_number || ""}
                     onChange={(e) => updateField("paye_number", e.target.value)}
@@ -1007,8 +1007,8 @@ export default function StaffManagementFull() {
                     {[
                       ["Employment Date", selectedStaff.employment_date],
                       ["Qualifications", selectedStaff.qualifications],
-                      ["NSSA Number", selectedStaff.nssa_number],
-                      ["PAYE Number", selectedStaff.paye_number],
+                      ["UIF Number", selectedStaff.nssa_number],
+                      ["SARS PAYE Number", selectedStaff.paye_number],
                       ["Bank Details", selectedStaff.bank_details],
                     ].map(([label, value]) => (
                       <div key={label as string}>

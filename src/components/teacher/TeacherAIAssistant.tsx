@@ -45,7 +45,7 @@ function buildDemoReply(task: string, model: string, prompt: string): string {
 ### 1. Learning Objectives
 By the end of this lesson, learners should be able to:
 - Define the key concepts related to *${topic}*.
-- Apply the concepts to a real-world Zimbabwean context.
+- Apply the concepts to a real-world South African context.
 - Evaluate at least two worked examples.
 
 ### 2. Materials

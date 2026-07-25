@@ -9,14 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
+import { formatZAR } from "@/lib/currency";
 import { format } from "date-fns";
 
 export default function ParentBilling() {
   const nav = useNavigate();
   const { user } = useAuth();
   const sub = useSubscription();
-  const { rate } = useExchangeRate();
   const [plans, setPlans] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
 
@@ -116,12 +115,9 @@ export default function ParentBilling() {
                       {current && <Badge className="bg-emerald-100 text-emerald-700">Current</Badge>}
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">
-                      <span className="text-3xl font-bold">${Number(p.amount_usd).toFixed(0)}</span>
+                      <span className="text-3xl font-bold">{formatZAR(p.amount_usd, { decimals: false })}</span>
                       <span className="text-muted-foreground text-sm">/ {p.plan_type === "monthly" ? "month" : "term"}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      ~ZWG {(Number(p.amount_usd) * rate).toLocaleString("en-ZW", { maximumFractionDigits: 0 })}
-                    </p>
                     {p.description && <p className="text-sm mt-3">{p.description}</p>}
                     <ul className="mt-4 space-y-1.5">
                       {(p.features || []).slice(0, 6).map((f: string) => (
@@ -179,7 +175,7 @@ export default function ParentBilling() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <div className="font-semibold">${Number(p.amount).toFixed(2)}</div>
+                        <div className="font-semibold">{formatZAR(p.amount)}</div>
                         <div className="text-xs">
                           <Badge variant={p.payment_status === "paid" ? "default" : "outline"} className={
                             p.payment_status === "paid" ? "bg-emerald-100 text-emerald-700 border-emerald-300" :

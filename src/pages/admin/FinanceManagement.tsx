@@ -81,7 +81,7 @@ const boardingOptions = [
   { value: "day", label: "Day Scholar" },
   { value: "boarding", label: "Boarding" },
 ];
-const paymentMethods = ["Cash", "EcoCash", "OneMoney", "Bank Transfer", "ZIPIT", "Swipe"];
+const paymentMethods = ["Cash", "SnapScan", "Zapper", "Bank Transfer", "EFT", "Swipe"];
 const expenseCategories = [
   "Salaries",
   "Utilities",

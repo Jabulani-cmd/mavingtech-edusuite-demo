@@ -1346,14 +1346,14 @@ export default function UserManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>NSSA Number</Label>
+                      <Label>UIF Number</Label>
                       <Input
                         value={editForm.nssa_number}
                         onChange={(e) => setEditForm((p) => ({ ...p, nssa_number: e.target.value }))}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>PAYE Number</Label>
+                      <Label>SARS PAYE Number</Label>
                       <Input
                         value={editForm.paye_number}
                         onChange={(e) => setEditForm((p) => ({ ...p, paye_number: e.target.value }))}

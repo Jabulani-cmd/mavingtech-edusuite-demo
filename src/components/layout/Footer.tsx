@@ -16,8 +16,8 @@ export default function Footer() {
           </p>
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-around gap-x-16 gap-y-10">
             <div className="flex flex-col items-center gap-3">
-              <img src={cambridgeLogo} alt="Cambridge" className="h-28 w-28 object-contain md:h-32 md:w-32" />
-              <span className="text-xs font-medium text-muted-foreground">Cambridge</span>
+              <img src={cambridgeLogo} alt="IEB" className="h-28 w-28 object-contain md:h-32 md:w-32" />
+              <span className="text-xs font-medium text-muted-foreground">IEB</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <img src={moeLogo} alt="Ministry of Education" className="h-28 w-28 object-contain md:h-32 md:w-32" />
@@ -26,8 +26,8 @@ export default function Footer() {
               </span>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <img src={zimsecLogo} alt="ZIMSEC" className="h-32 w-32 object-contain md:h-40 md:w-40" />
-              <span className="text-xs font-medium text-muted-foreground">ZIMSEC</span>
+              <img src={zimsecLogo} alt="CAPS" className="h-32 w-32 object-contain md:h-40 md:w-40" />
+              <span className="text-xs font-medium text-muted-foreground">CAPS</span>
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>Harare, Zimbabwe</span>
+                <span>Johannesburg, South Africa</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />

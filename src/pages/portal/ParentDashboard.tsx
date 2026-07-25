@@ -82,7 +82,7 @@ interface ChildInfo {
   status: string;
 }
 
-function getZIMSECGrade(mark: number): string {
+function getCAPSGrade(mark: number): string {
   if (mark >= 90) return "A*";
   if (mark >= 80) return "A";
   if (mark >= 70) return "B";
@@ -769,7 +769,7 @@ function TabContentInner(props: TabContentProps) {
     const selectedExam = exams.find((e) => e.id === selectedExamId);
     const subjectRankings = rankings?.subject_rankings || {};
     const overallRank = rankings?.overall_rank ? { rank: rankings.overall_rank, total: rankings.total_students } : null;
-    const avgGrade = getZIMSECGrade(avgMark);
+    const avgGrade = getCAPSGrade(avgMark);
 
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -856,7 +856,7 @@ function TabContentInner(props: TabContentProps) {
                         </thead>
                         <tbody>
                           {examResults.map((r: any) => {
-                            const grade = r.grade || getZIMSECGrade(r.mark);
+                            const grade = r.grade || getCAPSGrade(r.mark);
                             const sr = subjectRankings[r.subject_id] || {};
                             return (
                               <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30">

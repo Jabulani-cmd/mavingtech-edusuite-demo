@@ -381,7 +381,7 @@ export default function DemoDataSeederPanel() {
               {seeded && <Badge className="bg-green-600 hover:bg-green-700"><CheckCircle2 className="h-3 w-3 mr-1" />Loaded</Badge>}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              One-click populate the entire system with realistic Zimbabwean school data — students, parents,
+              One-click populate the entire system with realistic South African school data — students, parents,
               teachers, subjects, classes, venues and a complete weekly timetable.
             </p>
           </div>
