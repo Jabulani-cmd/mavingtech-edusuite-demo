@@ -14,14 +14,13 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Search, CheckCircle, AlertTriangle, Loader2, Printer } from "lucide-react";
-import { useExchangeRate } from "@/hooks/useExchangeRate";
 
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
 export default function BankReconciliation() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { rate, usdToZig } = useExchangeRate();
+  const rate = 1; const usdToZig = (v: number) => v;
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
       const usd = Number(usdValue);
@@ -147,9 +146,9 @@ export default function BankReconciliation() {
     if (!printWin) return;
     printWin.document.write(`<html><head><title>Bank Reconciliation</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;font-size:12px}th{background:#f5f5f5}.right{text-align:right}.credit{color:green}.debit{color:red}</style></head><body>`);
     printWin.document.write(`<h2>Bank Reconciliation Report</h2><p>Generated: ${new Date().toLocaleDateString()}</p>`);
-    printWin.document.write(`<p>Credits: USD ${fmt(totalCreditsUsd)} | Debits: USD ${fmt(totalDebitsUsd)} | Net: USD ${fmt(totalCreditsUsd - totalDebitsUsd)}</p>`);
+    printWin.document.write(`<p>Credits: ${fmt(totalCreditsUsd)} | Debits: ${fmt(totalDebitsUsd)} | Net: ${fmt(totalCreditsUsd - totalDebitsUsd)}</p>`);
     printWin.document.write(`<p>Reconciled: ${reconciledCount} | Unreconciled: ${unreconciledCount} | Disputed: ${disputedCount}</p>`);
-    printWin.document.write(`<table><tr><th>Date</th><th>Description</th><th>Ref</th><th>Bank</th><th>Type</th><th class="right">USD</th><th>Status</th></tr>`);
+    printWin.document.write(`<table><tr><th>Date</th><th>Description</th><th>Ref</th><th>Bank</th><th>Type</th><th class="right">Amount (R)</th><th>Status</th></tr>`);
     filtered.forEach(tx => {
       printWin.document.write(`<tr><td>${safeHtml(tx.transaction_date)}</td><td>${safeHtml(tx.description)}</td><td>${safeHtml(tx.reference_number || "—")}</td><td>${safeHtml(tx.bank_name || "—")}</td><td>${safeHtml(tx.transaction_type)}</td><td class="right ${tx.transaction_type}">${tx.transaction_type === "credit" ? "+" : "-"}${fmt(tx.amount_usd)}</td><td>${safeHtml(tx.reconciliation_status)}</td></tr>`);
     });
@@ -167,20 +166,20 @@ export default function BankReconciliation() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Credits</p>
-            <p className="text-xl font-bold font-mono text-green-700">USD {fmt(totalCreditsUsd)}</p>
+            <p className="text-xl font-bold font-mono text-green-700">{fmt(totalCreditsUsd)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Debits</p>
-            <p className="text-xl font-bold font-mono text-destructive">USD {fmt(totalDebitsUsd)}</p>
+            <p className="text-xl font-bold font-mono text-destructive">{fmt(totalDebitsUsd)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Net Balance</p>
             <p className={`text-xl font-bold font-mono ${totalCreditsUsd - totalDebitsUsd >= 0 ? "text-green-700" : "text-destructive"}`}>
-              USD {fmt(totalCreditsUsd - totalDebitsUsd)}
+              {fmt(totalCreditsUsd - totalDebitsUsd)}
             </p>
           </CardContent>
         </Card>
@@ -248,8 +247,7 @@ export default function BankReconciliation() {
                     <TableHead>Reference</TableHead>
                     <TableHead>Bank</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead className="text-right">USD</TableHead>
-                    <TableHead className="text-right">ZiG</TableHead>
+                    <TableHead className="text-right">Amount (R)</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -269,7 +267,6 @@ export default function BankReconciliation() {
                       <TableCell className={`text-right font-mono ${tx.transaction_type === "credit" ? "text-green-700" : "text-destructive"}`}>
                         {tx.transaction_type === "credit" ? "+" : "-"}{fmt(tx.amount_usd)}
                       </TableCell>
-                      <TableCell className="text-right font-mono">{fmt(tx.amount_zig)}</TableCell>
                       <TableCell>{statusBadge(tx.reconciliation_status)}</TableCell>
                       <TableCell>
                         <div className="flex gap-1">
@@ -325,7 +322,7 @@ export default function BankReconciliation() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount USD</Label>
+                <Label>Amount (R)</Label>
                 <Input type="number" step="0.01" value={form.amount_usd} onChange={e => setForm(p => ({ ...p, amount_usd: e.target.value, amount_zig: autoZig(e.target.value) }))} />
               </div>
               <div className="space-y-1">
