@@ -131,11 +131,83 @@ export default function ReceiptSearchTab() {
     openPrintWindow(receiptHtml);
   };
 
+  const downloadReceipt = async (payment: any) => {
+    if (payment.receipt_url) {
+      // Prefer the stored PDF file
+      window.open(payment.receipt_url, "_blank");
+      return;
+    }
+    const html = buildReceiptHtml({
+      logoUrl: SCHOOL_LOGO_URL,
+      receiptNumber: payment.receipt_number,
+      paymentDate: payment.payment_date,
+      student: {
+        fullName: payment.students?.full_name || "—",
+        admissionNumber: payment.students?.admission_number || "—",
+        form: payment.students?.form || "—",
+      },
+      invoiceNumber: payment.invoices?.invoice_number,
+      amounts: { usd: payment.amount_usd, zig: payment.amount_zig },
+      paymentMethod: payment.payment_method,
+      referenceNumber: payment.reference_number,
+    });
+    await downloadHtmlDocument(html, `Receipt-${payment.receipt_number}.pdf`);
+  };
+
+  const [backfilling, setBackfilling] = useState(false);
+  const backfillMissing = async () => {
+    setBackfilling(true);
+    try {
+      const { data, error } = await supabase
+        .from("payments")
+        .select(`id, receipt_number, payment_date, payment_method, reference_number, amount_usd, amount, receipt_url, payment_status,
+                 students:student_id (full_name, admission_number, form),
+                 invoices:invoice_id (invoice_number)`)
+        .eq("payment_status", "paid")
+        .is("receipt_url", null);
+      if (error) throw error;
+      const targets = (data || []).filter((p: any) => isInstantMethod(p.payment_method) && p.receipt_number);
+      let ok = 0;
+      for (const p of targets) {
+        const url = await generateAndStoreReceipt({
+          paymentId: p.id,
+          receiptNumber: p.receipt_number,
+          paymentDate: p.payment_date,
+          paymentMethod: p.payment_method,
+          referenceNumber: p.reference_number,
+          amount: Number(p.amount_usd || p.amount || 0),
+          student: {
+            fullName: p.students?.full_name || "—",
+            admissionNumber: p.students?.admission_number || "—",
+            form: p.students?.form || null,
+          },
+          invoiceNumber: p.invoices?.invoice_number,
+          autoVerify: true,
+        });
+        if (url) ok += 1;
+      }
+      toast({ title: "Backfill complete", description: `${ok} of ${targets.length} receipts generated.` });
+      searchReceipts();
+    } catch (e: any) {
+      toast({ title: "Backfill failed", description: e.message, variant: "destructive" });
+    } finally {
+      setBackfilling(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading">Receipt Search</CardTitle>
-        <CardDescription>Search by student name, admission number, receipt number, or invoice number.</CardDescription>
+        <div className="flex items-start justify-between gap-2 flex-wrap">
+          <div>
+            <CardTitle className="font-heading">Receipt Search</CardTitle>
+            <CardDescription>Search by student name, admission number, receipt number, or invoice number.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={backfillMissing} disabled={backfilling}>
+            {backfilling ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-1 h-4 w-4" />}
+            Backfill missing receipts
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
@@ -168,10 +240,10 @@ export default function ReceiptSearchTab() {
                   <TableHead>Date</TableHead>
                   <TableHead>Student</TableHead>
                   <TableHead>Adm #</TableHead>
-                  <TableHead>Grade</TableHead>
                   <TableHead>Invoice</TableHead>
                   <TableHead className="text-right">Amount (R)</TableHead>
                   <TableHead>Method</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -182,18 +254,31 @@ export default function ReceiptSearchTab() {
                     <TableCell>{format(new Date(p.payment_date), "dd MMM yyyy")}</TableCell>
                     <TableCell>{p.students?.full_name}</TableCell>
                     <TableCell>{p.students?.admission_number}</TableCell>
-                    <TableCell>{p.students?.form}</TableCell>
                     <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
                     <TableCell className="text-right font-mono">R {fmt(p.amount_usd)}</TableCell>
-                    <TableCell className="text-right font-mono">R {fmt(usdToZig(Number(p.amount_usd || 0)))}</TableCell>
                     <TableCell>{p.payment_method}</TableCell>
                     <TableCell>
+                      {p.verified_at ? (
+                        <Badge variant="outline" className="border-emerald-500 text-emerald-700 bg-emerald-50">Verified</Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-amber-500 text-amber-700 bg-amber-50">Pending</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <div className="flex gap-1">
+                        {p.receipt_url && (
+                          <Button variant="ghost" size="icon" asChild title="Open saved PDF">
+                            <a href={p.receipt_url} target="_blank" rel="noreferrer"><FileText className="h-4 w-4" /></a>
+                          </Button>
+                        )}
                         <Button variant="ghost" size="icon" onClick={() => viewReceipt(p)} title="View Receipt">
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon" onClick={() => printReceipt(p)} title="Print Receipt">
                           <Printer className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => downloadReceipt(p)} title="Download Receipt PDF">
+                          <Download className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
