@@ -533,7 +533,22 @@ export default function StaffManagementFull() {
   };
 
   const updateField = (key: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [key]: value };
+      // Auto-generate portal email from full name for new staff when
+      // the admin has not manually entered an email yet.
+      if (
+        key === "full_name" &&
+        !editingId &&
+        (!prev.email || prev.email.endsWith(`@${STAFF_EMAIL_DOMAIN}`))
+      ) {
+        next.email = buildStaffEmail(
+          value || "",
+          staff.map((s) => s.email || "").filter(Boolean),
+        );
+      }
+      return next;
+    });
     if (errors[key])
       setErrors((prev) => {
         const n = { ...prev };
