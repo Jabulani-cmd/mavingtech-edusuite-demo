@@ -838,7 +838,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.emergency_contact || ""}
                     onChange={(e) => updateField("emergency_contact", e.target.value)}
-                    placeholder="07XXXXXXXX"
+                    placeholder="e.g. 0821234567 or +27821234567"
                   />
                   {errors.emergency_contact && <p className="text-xs text-destructive">{errors.emergency_contact}</p>}
                 </div>
