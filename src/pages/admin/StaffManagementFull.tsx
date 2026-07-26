@@ -352,6 +352,14 @@ export default function StaffManagementFull() {
       }
       toast({ title: "Staff member updated!" });
     } else {
+      // Ensure a portal email exists — auto-generate from full name if the
+      // admin didn't provide one.
+      if (!payload.email) {
+        payload.email = buildStaffEmail(
+          payload.full_name || "",
+          staff.map((s) => s.email || "").filter(Boolean),
+        );
+      }
       // Let the edge function handle both auth user creation AND staff record insertion
       // to avoid duplicate staff records
       try {
