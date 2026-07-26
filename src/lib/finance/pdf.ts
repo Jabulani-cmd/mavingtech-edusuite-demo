@@ -164,18 +164,14 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
   const motto = input.motto || SCHOOL_MOTTO;
   const logoUrl = input.logoDataUrl || SCHOOL_LOGO_URL;
 
-  const totalUsd = Number(input.totals.total_usd || 0);
-  const totalZig = Number(input.totals.total_zig || 0);
-  const paidUsd = Number(input.totals.paid_usd || 0);
-  const paidZig = Number(input.totals.paid_zig || 0);
-  const rawBalUsd = totalUsd - paidUsd;
-  const rawBalZig = totalZig - paidZig;
+  const total = Number(input.totals.total_usd || 0);
+  const paid = Number(input.totals.paid_usd || 0);
+  const rawBal = total - paid;
 
   const itemRows = input.items.map(it => `
     <tr>
       <td>${safe(it.description)}</td>
-      <td class="right mono">${Number(it.amount_usd || 0).toFixed(2)}</td>
-      <td class="right mono">${Number(it.amount_zig || 0).toFixed(2)}</td>
+      <td class="right mono">${formatZAR(it.amount_usd || 0)}</td>
     </tr>`).join("");
 
   return `<!doctype html>
@@ -199,12 +195,12 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
     .muted { color: #444; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .right { text-align: right; }
-    .divider { border-top: 2px solid #800000; margin: 14px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 14px 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; font-size: 11px; }
-    th { background: #800000; color: #fff; }
+    th { background: #0d9488; color: #fff; }
     .totals { margin-top: 14px; font-size: 12px; }
-    .totals .balance { font-size: 14px; font-weight: bold; margin-top: 8px; border-top: 2px solid #800000; padding-top: 8px; }
+    .totals .balance { font-size: 14px; font-weight: bold; margin-top: 8px; border-top: 2px solid #0d9488; padding-top: 8px; }
     .footer { margin-top: 24px; font-size: 9px; color: #888; text-align: center; }
     @media print { body { padding: 12px; } }
   </style>
@@ -231,25 +227,26 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
     <div>
       <div><strong>Student:</strong> ${safe(input.student.fullName)}</div>
       <div><strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span></div>
-      ${input.student.form ? `<div><strong>Form:</strong> ${safe(input.student.form)}</div>` : ""}
+      ${input.student.form ? `<div><strong>Grade:</strong> ${safe(input.student.form)}</div>` : ""}
     </div>
     <div class="right">
       <div><strong>Term:</strong> ${safe(input.term)} | <strong>Year:</strong> ${safe(input.academicYear)}</div>
-      <div><strong>Due Date:</strong> ${input.dueDate ? new Date(input.dueDate).toLocaleDateString() : "—"}</div>
-      <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+      <div><strong>Due Date:</strong> ${input.dueDate ? new Date(input.dueDate).toLocaleDateString("en-ZA") : "—"}</div>
+      <div><strong>Date:</strong> ${new Date().toLocaleDateString("en-ZA")}</div>
     </div>
   </div>
 
   <table>
-    <thead><tr><th>Description</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${itemRows || "<tr><td colspan='3'>No items</td></tr>"}</tbody>
+    <thead><tr><th>Description</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${itemRows || "<tr><td colspan='2'>No items</td></tr>"}</tbody>
   </table>
 
   <div class="totals">
-    <div><strong>Total:</strong> USD ${totalUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${totalZig.toFixed(2)}</div>
-    <div><strong>Paid:</strong> USD ${paidUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${paidZig.toFixed(2)}</div>
-    <div class="balance">${rawBalUsd < 0 ? `Credit Balance: USD +${Math.abs(rawBalUsd).toFixed(2)} &nbsp;|&nbsp; ZiG +${Math.abs(rawBalZig).toFixed(2)}` : `Balance Due: USD ${rawBalUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${rawBalZig.toFixed(2)}`}</div>
+    <div><strong>Total:</strong> ${formatZAR(total)}</div>
+    <div><strong>Paid:</strong> ${formatZAR(paid)}</div>
+    <div class="balance">${rawBal < 0 ? `Credit Balance: ${formatZAR(Math.abs(rawBal))}` : `Balance Due: ${formatZAR(rawBal)}`}</div>
   </div>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} | This is a computer-generated document.</p>
