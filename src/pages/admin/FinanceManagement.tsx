@@ -887,9 +887,11 @@ export default function FinanceManagement() {
 </body></html>`;
   }
 
-  function statusText(s: string) {
-    const label = (s || "").charAt(0).toUpperCase() + (s || "").slice(1);
-    return `<span class="status-${(s || "").toLowerCase()}">${safeHtml(label)}</span>`;
+  function statusText(s: any) {
+    const raw = typeof s === "string" ? s : (s == null ? "" : String(s?.status ?? s?.label ?? ""));
+    const clean = raw.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    const label = clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : "—";
+    return `<span class="status-${clean}">${safeHtml(label)}</span>`;
   }
 
   function buildStatementReportHtml() {
