@@ -683,10 +683,11 @@ export function buildExpensesListHtml(input: ExpensesListInput): string {
   </div>
 
   <table>
-    <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${rows || `<tr><td colspan="8" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
-    <tfoot><tr><td colspan="6" class="right">TOTAL (${input.expenses.length} entries)</td><td class="right mono red">$${fmt(totalUsd)}</td><td class="right mono">${fmt(totalZig)}</td></tr></tfoot>
+    <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Reference</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="7" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+    <tfoot><tr><td colspan="6" class="right">TOTAL (${input.expenses.length} entries)</td><td class="right mono red">${formatZAR(total)}</td></tr></tfoot>
   </table>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated expenses report.</p>
