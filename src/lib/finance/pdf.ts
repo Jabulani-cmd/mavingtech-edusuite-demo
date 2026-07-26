@@ -1,12 +1,13 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formatZAR } from "@/lib/currency";
 
-// School branding constants
-export const SCHOOL_NAME = "MavingTech High School";
+// School branding constants (South African context)
+export const SCHOOL_NAME = "MavingTech Business Solutions";
 export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
-export const SCHOOL_ADDRESS = "P.O. Box 1965, Cape Town, South Africa";
-export const SCHOOL_PHONE = "+263 29 288 3621";
-export const SCHOOL_EMAIL = "info@mavingtech.com";
+export const SCHOOL_ADDRESS = "123 Umgeni Road, Durban, KwaZulu-Natal, 4001";
+export const SCHOOL_PHONE = "+27 31 555 0123";
+export const SCHOOL_EMAIL = "info@mbsmavingtech.ac.za";
 // Use an absolute URL so the logo resolves inside print windows (about:blank)
 // and any other context that doesn't share the app's base URL.
 export const SCHOOL_LOGO_PATH = "/images/school-logo-print.png";
@@ -16,6 +17,7 @@ export const SCHOOL_LOGO_URL =
     : SCHOOL_LOGO_PATH;
 
 export type Money = { usd: number; zig: number };
+
 
 export type InvoicePdfInput = {
   schoolName?: string;
@@ -99,7 +101,7 @@ export function buildInvoicePdf(input: InvoicePdfInput): jsPDF {
   doc.text(`Student: ${input.student.fullName}`, pageWidth / 2, detailY, { align: "left" });
   doc.text(`Admission #: ${input.student.admissionNumber}`, pageWidth / 2, detailY + 5);
   if (input.student.form) {
-    doc.text(`Form: ${input.student.form}`, pageWidth / 2, detailY + 10);
+    doc.text(`Grade: ${input.student.form}`, pageWidth / 2, detailY + 10);
   }
 
   doc.line(14, detailY + 15, pageWidth - 14, detailY + 15);
@@ -107,47 +109,43 @@ export function buildInvoicePdf(input: InvoicePdfInput): jsPDF {
   // Items table
   autoTable(doc, {
     startY: detailY + 19,
-    head: [["Description", "USD", "ZiG"]],
+    head: [["Description", "Amount (R)"]],
     body: input.items.map((it) => [
       it.description,
-      Number(it.amount_usd || 0).toFixed(2),
-      Number(it.amount_zig || 0).toFixed(2),
+      formatZAR(it.amount_usd || 0),
     ]),
     theme: "grid",
     styles: { fontSize: 9, cellPadding: 2 },
-    headStyles: { fillColor: [128, 0, 0] },
+    headStyles: { fillColor: [13, 148, 136] },
     columnStyles: {
-      0: { cellWidth: 120 },
-      1: { halign: "right", cellWidth: 25 },
-      2: { halign: "right", cellWidth: 25 },
+      0: { cellWidth: 130 },
+      1: { halign: "right", cellWidth: 40 },
     },
   });
 
   const endY = (doc as any).lastAutoTable?.finalY || detailY + 70;
 
-  const totalUsd = Number(input.totals.total_usd || 0);
-  const totalZig = Number(input.totals.total_zig || 0);
-  const paidUsd = Number(input.totals.paid_usd || 0);
-  const paidZig = Number(input.totals.paid_zig || 0);
-  const rawBalUsd = totalUsd - paidUsd;
-  const rawBalZig = totalZig - paidZig;
+  const total = Number(input.totals.total_usd || 0);
+  const paid = Number(input.totals.paid_usd || 0);
+  const rawBal = total - paid;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.text(`TOTAL:     USD ${totalUsd.toFixed(2)}     ZiG ${totalZig.toFixed(2)}`, 14, endY + 10);
-  doc.text(`PAID:      USD ${paidUsd.toFixed(2)}     ZiG ${paidZig.toFixed(2)}`, 14, endY + 16);
+  doc.text(`TOTAL:   ${formatZAR(total)}`, 14, endY + 10);
+  doc.text(`PAID:    ${formatZAR(paid)}`, 14, endY + 16);
 
-  doc.setDrawColor(128, 0, 0);
+  doc.setDrawColor(13, 148, 136);
   doc.setLineWidth(0.5);
   doc.line(14, endY + 19, pageWidth - 14, endY + 19);
   doc.setDrawColor(0);
 
   doc.setFontSize(11);
-  if (rawBalUsd < 0 || rawBalZig < 0) {
-    doc.text(`CREDIT:    USD +${Math.abs(rawBalUsd).toFixed(2)}     ZiG +${Math.abs(rawBalZig).toFixed(2)}`, 14, endY + 26);
+  if (rawBal < 0) {
+    doc.text(`CREDIT:  ${formatZAR(Math.abs(rawBal))}`, 14, endY + 26);
   } else {
-    doc.text(`BALANCE:   USD ${rawBalUsd.toFixed(2)}     ZiG ${rawBalZig.toFixed(2)}`, 14, endY + 26);
+    doc.text(`BALANCE: ${formatZAR(rawBal)}`, 14, endY + 26);
   }
+
 
   // Footer
   doc.setFont("helvetica", "normal");
@@ -166,18 +164,14 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
   const motto = input.motto || SCHOOL_MOTTO;
   const logoUrl = input.logoDataUrl || SCHOOL_LOGO_URL;
 
-  const totalUsd = Number(input.totals.total_usd || 0);
-  const totalZig = Number(input.totals.total_zig || 0);
-  const paidUsd = Number(input.totals.paid_usd || 0);
-  const paidZig = Number(input.totals.paid_zig || 0);
-  const rawBalUsd = totalUsd - paidUsd;
-  const rawBalZig = totalZig - paidZig;
+  const total = Number(input.totals.total_usd || 0);
+  const paid = Number(input.totals.paid_usd || 0);
+  const rawBal = total - paid;
 
   const itemRows = input.items.map(it => `
     <tr>
       <td>${safe(it.description)}</td>
-      <td class="right mono">${Number(it.amount_usd || 0).toFixed(2)}</td>
-      <td class="right mono">${Number(it.amount_zig || 0).toFixed(2)}</td>
+      <td class="right mono">${formatZAR(it.amount_usd || 0)}</td>
     </tr>`).join("");
 
   return `<!doctype html>
@@ -201,12 +195,12 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
     .muted { color: #444; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .right { text-align: right; }
-    .divider { border-top: 2px solid #800000; margin: 14px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 14px 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; font-size: 11px; }
-    th { background: #800000; color: #fff; }
+    th { background: #0d9488; color: #fff; }
     .totals { margin-top: 14px; font-size: 12px; }
-    .totals .balance { font-size: 14px; font-weight: bold; margin-top: 8px; border-top: 2px solid #800000; padding-top: 8px; }
+    .totals .balance { font-size: 14px; font-weight: bold; margin-top: 8px; border-top: 2px solid #0d9488; padding-top: 8px; }
     .footer { margin-top: 24px; font-size: 9px; color: #888; text-align: center; }
     @media print { body { padding: 12px; } }
   </style>
@@ -233,25 +227,26 @@ export function buildInvoiceHtml(input: InvoicePdfInput): string {
     <div>
       <div><strong>Student:</strong> ${safe(input.student.fullName)}</div>
       <div><strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span></div>
-      ${input.student.form ? `<div><strong>Form:</strong> ${safe(input.student.form)}</div>` : ""}
+      ${input.student.form ? `<div><strong>Grade:</strong> ${safe(input.student.form)}</div>` : ""}
     </div>
     <div class="right">
       <div><strong>Term:</strong> ${safe(input.term)} | <strong>Year:</strong> ${safe(input.academicYear)}</div>
-      <div><strong>Due Date:</strong> ${input.dueDate ? new Date(input.dueDate).toLocaleDateString() : "—"}</div>
-      <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+      <div><strong>Due Date:</strong> ${input.dueDate ? new Date(input.dueDate).toLocaleDateString("en-ZA") : "—"}</div>
+      <div><strong>Date:</strong> ${new Date().toLocaleDateString("en-ZA")}</div>
     </div>
   </div>
 
   <table>
-    <thead><tr><th>Description</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${itemRows || "<tr><td colspan='3'>No items</td></tr>"}</tbody>
+    <thead><tr><th>Description</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${itemRows || "<tr><td colspan='2'>No items</td></tr>"}</tbody>
   </table>
 
   <div class="totals">
-    <div><strong>Total:</strong> USD ${totalUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${totalZig.toFixed(2)}</div>
-    <div><strong>Paid:</strong> USD ${paidUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${paidZig.toFixed(2)}</div>
-    <div class="balance">${rawBalUsd < 0 ? `Credit Balance: USD +${Math.abs(rawBalUsd).toFixed(2)} &nbsp;|&nbsp; ZiG +${Math.abs(rawBalZig).toFixed(2)}` : `Balance Due: USD ${rawBalUsd.toFixed(2)} &nbsp;|&nbsp; ZiG ${rawBalZig.toFixed(2)}`}</div>
+    <div><strong>Total:</strong> ${formatZAR(total)}</div>
+    <div><strong>Paid:</strong> ${formatZAR(paid)}</div>
+    <div class="balance">${rawBal < 0 ? `Credit Balance: ${formatZAR(Math.abs(rawBal))}` : `Balance Due: ${formatZAR(rawBal)}`}</div>
   </div>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} | This is a computer-generated document.</p>
@@ -301,11 +296,11 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     .receipt-title .num { font-family: monospace; font-size: 12px; }
     .row { display:flex; justify-content:space-between; gap: 12px; }
     .muted { color: #444; }
-    .box { border: 2px solid #800000; padding: 14px; margin-top: 14px; border-radius: 4px; }
+    .box { border: 2px solid #0d9488; padding: 14px; margin-top: 14px; border-radius: 4px; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .right { text-align: right; }
     hr { border: 0; border-top: 1px solid #ccc; margin: 12px 0; }
-    .divider { border-top: 2px solid #800000; margin: 14px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 14px 0; }
     .footer { margin-top: 20px; font-size: 9px; color: #888; text-align: center; }
     @media print { body { padding: 12px; } }
   </style>
@@ -332,7 +327,7 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     <div>
       <div><strong>Student:</strong> ${safe(input.student.fullName)}</div>
       <div><strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span></div>
-      ${input.student.form ? `<div><strong>Form:</strong> ${safe(input.student.form)}</div>` : ""}
+      ${input.student.form ? `<div><strong>Grade:</strong> ${safe(input.student.form)}</div>` : ""}
     </div>
     <div class="right">
       <div><strong>Date:</strong> ${safe(input.paymentDate)}</div>
@@ -347,14 +342,11 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     </div>
     <hr />
     <div class="row">
-      <div><strong>Amount Paid (USD):</strong></div>
-      <div class="mono" style="font-size:14px;"><strong>$${Number(input.amounts.usd || 0).toFixed(2)}</strong></div>
-    </div>
-    <div class="row" style="margin-top:6px;">
-      <div><strong>Amount Paid (ZiG):</strong></div>
-      <div class="mono" style="font-size:14px;"><strong>${Number(input.amounts.zig || 0).toFixed(2)}</strong></div>
+      <div><strong>Amount Paid:</strong></div>
+      <div class="mono" style="font-size:16px;"><strong>${formatZAR(input.amounts.usd || 0)}</strong></div>
     </div>
   </div>
+
 
   <p class="muted" style="margin-top: 16px;">Thank you for your payment. Please keep this receipt for your records.</p>
 
@@ -378,29 +370,31 @@ export function buildStatementHtml(input: StatementPrintInput) {
   const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
 
-  const invoiceRows = input.invoices.map(inv => `
+  const invoiceRows = input.invoices.map(inv => {
+    const total = Number(inv.total_usd || 0);
+    const paid = Number(inv.paid_usd || 0);
+    const balance = total - paid;
+    return `
     <tr>
       <td class="mono">${safe(inv.invoice_number)}</td>
       <td>${safe(inv.term)} ${safe(inv.academic_year)}</td>
-      <td class="right">$${Number(inv.total_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(inv.total_zig || 0).toFixed(2)}</td>
-      <td class="right">$${Number(inv.paid_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(inv.paid_zig || 0).toFixed(2)}</td>
+      <td class="right">${formatZAR(total)}</td>
+      <td class="right">${formatZAR(paid)}</td>
+      <td class="right">${balance < 0 ? `+${formatZAR(Math.abs(balance))} credit` : formatZAR(balance)}</td>
       <td>${safe(inv.status)}</td>
-    </tr>`).join("");
+    </tr>`;
+  }).join("");
 
   const paymentRows = input.payments.map(p => `
     <tr>
       <td class="mono">${safe(p.receipt_number)}</td>
       <td>${safe(p.payment_date)}</td>
-      <td class="right">$${Number(p.amount_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(p.amount_zig || 0).toFixed(2)}</td>
+      <td class="right">${formatZAR(p.amount_usd || 0)}</td>
       <td>${safe(p.payment_method)}</td>
     </tr>`).join("");
 
-  const totalOwedUsd = input.invoices.reduce((s, i) => s + (Number(i.total_usd) - Number(i.paid_usd)), 0);
-  const totalOwedZig = input.invoices.reduce((s, i) => s + (Number(i.total_zig) - Number(i.paid_zig)), 0);
-  const balanceLabel = totalOwedUsd < 0 ? 'Credit Balance' : 'Outstanding Balance';
+  const totalOwed = input.invoices.reduce((s, i) => s + (Number(i.total_usd) - Number(i.paid_usd)), 0);
+  const balanceLabel = totalOwed < 0 ? 'Credit Balance' : 'Outstanding Balance';
 
   return `<!doctype html>
 <html>
@@ -415,10 +409,10 @@ export function buildStatementHtml(input: StatementPrintInput) {
     .header h1 { font-size: 18px; margin: 0; }
     .header .motto { color: #555; font-style: italic; font-size: 10px; }
     .header .address { color: #666; font-size: 9px; }
-    .divider { border-top: 2px solid #800000; margin: 10px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 10px 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; font-size: 10px; }
-    th { background: #800000; color: #fff; }
+    th { background: #0d9488; color: #fff; }
     .right { text-align: right; }
     .mono { font-family: monospace; }
     .balance { font-size: 13px; font-weight: bold; margin-top: 14px; }
@@ -438,22 +432,23 @@ export function buildStatementHtml(input: StatementPrintInput) {
   <div class="divider"></div>
 
   <h2 style="font-size:14px; margin: 8px 0;">STUDENT ACCOUNT STATEMENT</h2>
-  <p><strong>Student:</strong> ${safe(input.student.fullName)} &nbsp; | &nbsp; <strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span>${input.student.form ? ` &nbsp; | &nbsp; <strong>Form:</strong> ${safe(input.student.form)}` : ""}</p>
-  <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+  <p><strong>Student:</strong> ${safe(input.student.fullName)} &nbsp; | &nbsp; <strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span>${input.student.form ? ` &nbsp; | &nbsp; <strong>Grade:</strong> ${safe(input.student.form)}` : ""}</p>
+  <p><strong>Date:</strong> ${new Date().toLocaleDateString("en-ZA")}</p>
 
   <h3 style="margin-top:14px;">Invoices</h3>
   <table>
-    <thead><tr><th>Invoice #</th><th>Period</th><th>Total USD</th><th>Total ZiG</th><th>Paid USD</th><th>Paid ZiG</th><th>Status</th></tr></thead>
-    <tbody>${invoiceRows || "<tr><td colspan='7'>No invoices</td></tr>"}</tbody>
+    <thead><tr><th>Invoice #</th><th>Period</th><th class="right">Total (R)</th><th class="right">Paid (R)</th><th class="right">Balance (R)</th><th>Status</th></tr></thead>
+    <tbody>${invoiceRows || "<tr><td colspan='6'>No invoices</td></tr>"}</tbody>
   </table>
 
   <h3 style="margin-top:14px;">Payments</h3>
   <table>
-    <thead><tr><th>Receipt #</th><th>Date</th><th>USD</th><th>ZiG</th><th>Method</th></tr></thead>
-    <tbody>${paymentRows || "<tr><td colspan='5'>No payments</td></tr>"}</tbody>
+    <thead><tr><th>Receipt #</th><th>Date</th><th class="right">Amount (R)</th><th>Method</th></tr></thead>
+    <tbody>${paymentRows || "<tr><td colspan='4'>No payments</td></tr>"}</tbody>
   </table>
 
-  <div class="balance">${balanceLabel}: USD ${totalOwedUsd < 0 ? Math.abs(totalOwedUsd).toFixed(2) : totalOwedUsd.toFixed(2)} &nbsp; | &nbsp; ZiG ${totalOwedZig < 0 ? Math.abs(totalOwedZig).toFixed(2) : totalOwedZig.toFixed(2)}</div>
+  <div class="balance">${balanceLabel}: ${formatZAR(Math.abs(totalOwed))}</div>
+
 
   <div class="footer">
     <p>This is a computer-generated statement. | ${safe(SCHOOL_NAME)} | ${safe(SCHOOL_ADDRESS)}</p>
@@ -491,8 +486,7 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td class="mono">${safe(r.receipt)}</td>
       <td>${safe(r.party)}</td>
       <td>${safe(r.method)}</td>
-      <td class="right mono green">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono green">${formatZAR(r.usd)}</td>
       <td class="mono">${safe(r.ref || "—")}</td>
     </tr>`).join("");
 
@@ -502,8 +496,7 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td>${safe(r.category)}</td>
       <td>${safe(r.description)}</td>
       <td>${safe(r.method || "—")}</td>
-      <td class="right mono red">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono red">${formatZAR(r.usd)}</td>
     </tr>`).join("");
 
   const supplierRows = input.supplierPayments.map(r => `
@@ -512,16 +505,15 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td>${safe(r.supplier)}</td>
       <td>${safe(r.method || "—")}</td>
       <td class="mono">${safe(r.ref || "—")}</td>
-      <td class="right mono red">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono red">${formatZAR(r.usd)}</td>
     </tr>`).join("");
 
   const categoryRows = (input.breakdownByCategory || []).map(c => `
     <tr>
       <td>${safe(c.category)}</td>
-      <td class="right mono">$${fmt(c.usd)}</td>
-      <td class="right mono">${fmt(c.zig)}</td>
+      <td class="right mono">${formatZAR(c.usd)}</td>
     </tr>`).join("");
+
 
   return `<!doctype html>
 <html><head>
@@ -577,32 +569,33 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
   </div>
 
   <div class="summary">
-    <div class="stat income"><div class="label">Total Income</div><div class="val">USD ${fmt(t.incomeUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.incomeZig)}</div></div>
-    <div class="stat expense"><div class="label">General Expenses</div><div class="val">USD ${fmt(t.expensesUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.expensesZig)}</div></div>
-    <div class="stat expense"><div class="label">Supplier Payments</div><div class="val">USD ${fmt(t.supplierUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.supplierZig)}</div></div>
-    <div class="stat net ${t.netUsd >= 0 ? "pos" : "neg"}"><div class="label">Net ${t.netUsd >= 0 ? "Surplus" : "Deficit"}</div><div class="val">USD ${fmt(Math.abs(t.netUsd))}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(Math.abs(t.netZig))}</div></div>
+    <div class="stat income"><div class="label">Total Income</div><div class="val">${formatZAR(t.incomeUsd)}</div></div>
+    <div class="stat expense"><div class="label">General Expenses</div><div class="val">${formatZAR(t.expensesUsd)}</div></div>
+    <div class="stat expense"><div class="label">Supplier Payments</div><div class="val">${formatZAR(t.supplierUsd)}</div></div>
+    <div class="stat net ${t.netUsd >= 0 ? "pos" : "neg"}"><div class="label">Net ${t.netUsd >= 0 ? "Surplus" : "Deficit"}</div><div class="val">${formatZAR(Math.abs(t.netUsd))}</div></div>
   </div>
 
   ${categoryRows ? `<h3>Expenditure breakdown by category</h3>
-  <table><thead><tr><th>Category</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead><tbody>${categoryRows}</tbody></table>` : ""}
+  <table><thead><tr><th>Category</th><th class="right">Amount (R)</th></tr></thead><tbody>${categoryRows}</tbody></table>` : ""}
 
   <h3>Income — ${input.income.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Receipt #</th><th>Party / Student</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th><th>Reference</th></tr></thead>
-    <tbody>${incomeRows || `<tr><td colspan="7" style="text-align:center;color:#999;">No income recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Receipt #</th><th>Party / Student</th><th>Method</th><th class="right">Amount (R)</th><th>Reference</th></tr></thead>
+    <tbody>${incomeRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No income recorded for this period.</td></tr>`}</tbody>
   </table>
 
   <h3>General Expenses — ${input.expenses.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${expenseRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${expenseRows || `<tr><td colspan="5" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
   </table>
 
   <h3>Supplier Payments — ${input.supplierPayments.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Supplier</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${supplierRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No supplier payments recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Supplier</th><th>Method</th><th>Reference</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${supplierRows || `<tr><td colspan="5" style="text-align:center;color:#999;">No supplier payments recorded for this period.</td></tr>`}</tbody>
   </table>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated financial report.</p>
@@ -631,11 +624,9 @@ export type ExpensesListInput = {
 
 export function buildExpensesListHtml(input: ExpensesListInput): string {
   const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const fmt = (n: number) => Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
 
-  const totalUsd = input.expenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
-  const totalZig = input.expenses.reduce((s, e) => s + Number(e.amount_zig || 0), 0);
+  const total = input.expenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
 
   const rows = input.expenses.map((e, i) => `
     <tr>
@@ -645,9 +636,9 @@ export function buildExpensesListHtml(input: ExpensesListInput): string {
       <td>${safe(e.description)}</td>
       <td>${safe(e.payment_method || "—")}</td>
       <td class="mono">${safe(e.reference_number || "—")}</td>
-      <td class="right mono red">$${fmt(Number(e.amount_usd))}</td>
-      <td class="right mono">${fmt(Number(e.amount_zig))}</td>
+      <td class="right mono red">${formatZAR(Number(e.amount_usd))}</td>
     </tr>`).join("");
+
 
   return `<!doctype html>
 <html><head>
@@ -692,10 +683,11 @@ export function buildExpensesListHtml(input: ExpensesListInput): string {
   </div>
 
   <table>
-    <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${rows || `<tr><td colspan="8" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
-    <tfoot><tr><td colspan="6" class="right">TOTAL (${input.expenses.length} entries)</td><td class="right mono red">$${fmt(totalUsd)}</td><td class="right mono">${fmt(totalZig)}</td></tr></tfoot>
+    <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Reference</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="7" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+    <tfoot><tr><td colspan="6" class="right">TOTAL (${input.expenses.length} entries)</td><td class="right mono red">${formatZAR(total)}</td></tr></tfoot>
   </table>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated expenses report.</p>

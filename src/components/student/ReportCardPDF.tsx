@@ -218,7 +218,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
   </div>
 
   <div class="footer">
-    <p>MavingTech High School · P.O. Box 123, Mazowe, South Africa · Tel: +263 XXX XXXX</p>
+    <p>MavingTech Business Solutions · 123 Umgeni Road, Durban, KwaZulu-Natal, 4001 · Tel: +27 31 555 0123</p>
     <p>Generated on ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
   </div>
 </div>
