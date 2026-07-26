@@ -101,7 +101,7 @@ export function buildInvoicePdf(input: InvoicePdfInput): jsPDF {
   doc.text(`Student: ${input.student.fullName}`, pageWidth / 2, detailY, { align: "left" });
   doc.text(`Admission #: ${input.student.admissionNumber}`, pageWidth / 2, detailY + 5);
   if (input.student.form) {
-    doc.text(`Form: ${input.student.form}`, pageWidth / 2, detailY + 10);
+    doc.text(`Grade: ${input.student.form}`, pageWidth / 2, detailY + 10);
   }
 
   doc.line(14, detailY + 15, pageWidth - 14, detailY + 15);
@@ -109,47 +109,43 @@ export function buildInvoicePdf(input: InvoicePdfInput): jsPDF {
   // Items table
   autoTable(doc, {
     startY: detailY + 19,
-    head: [["Description", "USD", "ZiG"]],
+    head: [["Description", "Amount (R)"]],
     body: input.items.map((it) => [
       it.description,
-      Number(it.amount_usd || 0).toFixed(2),
-      Number(it.amount_zig || 0).toFixed(2),
+      formatZAR(it.amount_usd || 0),
     ]),
     theme: "grid",
     styles: { fontSize: 9, cellPadding: 2 },
-    headStyles: { fillColor: [128, 0, 0] },
+    headStyles: { fillColor: [13, 148, 136] },
     columnStyles: {
-      0: { cellWidth: 120 },
-      1: { halign: "right", cellWidth: 25 },
-      2: { halign: "right", cellWidth: 25 },
+      0: { cellWidth: 130 },
+      1: { halign: "right", cellWidth: 40 },
     },
   });
 
   const endY = (doc as any).lastAutoTable?.finalY || detailY + 70;
 
-  const totalUsd = Number(input.totals.total_usd || 0);
-  const totalZig = Number(input.totals.total_zig || 0);
-  const paidUsd = Number(input.totals.paid_usd || 0);
-  const paidZig = Number(input.totals.paid_zig || 0);
-  const rawBalUsd = totalUsd - paidUsd;
-  const rawBalZig = totalZig - paidZig;
+  const total = Number(input.totals.total_usd || 0);
+  const paid = Number(input.totals.paid_usd || 0);
+  const rawBal = total - paid;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.text(`TOTAL:     USD ${totalUsd.toFixed(2)}     ZiG ${totalZig.toFixed(2)}`, 14, endY + 10);
-  doc.text(`PAID:      USD ${paidUsd.toFixed(2)}     ZiG ${paidZig.toFixed(2)}`, 14, endY + 16);
+  doc.text(`TOTAL:   ${formatZAR(total)}`, 14, endY + 10);
+  doc.text(`PAID:    ${formatZAR(paid)}`, 14, endY + 16);
 
-  doc.setDrawColor(128, 0, 0);
+  doc.setDrawColor(13, 148, 136);
   doc.setLineWidth(0.5);
   doc.line(14, endY + 19, pageWidth - 14, endY + 19);
   doc.setDrawColor(0);
 
   doc.setFontSize(11);
-  if (rawBalUsd < 0 || rawBalZig < 0) {
-    doc.text(`CREDIT:    USD +${Math.abs(rawBalUsd).toFixed(2)}     ZiG +${Math.abs(rawBalZig).toFixed(2)}`, 14, endY + 26);
+  if (rawBal < 0) {
+    doc.text(`CREDIT:  ${formatZAR(Math.abs(rawBal))}`, 14, endY + 26);
   } else {
-    doc.text(`BALANCE:   USD ${rawBalUsd.toFixed(2)}     ZiG ${rawBalZig.toFixed(2)}`, 14, endY + 26);
+    doc.text(`BALANCE: ${formatZAR(rawBal)}`, 14, endY + 26);
   }
+
 
   // Footer
   doc.setFont("helvetica", "normal");
