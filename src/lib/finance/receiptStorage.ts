@@ -118,7 +118,7 @@ export async function generateAndStoreReceipt(args: GenerateReceiptArgs): Promis
       update.verified_at = new Date(args.paymentDate).toISOString();
       if (args.verifiedBy) update.verified_by = args.verifiedBy;
     }
-    const { error: updErr } = await supabase.from("payments").update(update).eq("id", args.paymentId);
+    const { error: updErr } = await (supabase.from("payments") as any).update(update).eq("id", args.paymentId);
     if (updErr) console.error("[receipt] payment update failed", updErr);
     return url;
   } catch (e) {
