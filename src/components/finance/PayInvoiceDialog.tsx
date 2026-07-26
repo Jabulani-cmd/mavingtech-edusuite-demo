@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatZAR } from "@/lib/currency";
+import { generateAndStoreReceipt } from "@/lib/finance/receiptStorage";
 
 type Outcome = "auto" | "approve" | "insufficient" | "declined";
 type Step = "amount" | "method" | "card" | "gateway" | "qr" | "success" | "failed";
