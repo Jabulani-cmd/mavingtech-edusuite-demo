@@ -815,7 +815,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.phone || ""}
                     onChange={(e) => updateField("phone", e.target.value)}
-                    placeholder="07XXXXXXXX"
+                    placeholder="e.g. 0821234567 or +27821234567"
                   />
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
