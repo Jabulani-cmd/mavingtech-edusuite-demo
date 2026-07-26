@@ -296,11 +296,11 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     .receipt-title .num { font-family: monospace; font-size: 12px; }
     .row { display:flex; justify-content:space-between; gap: 12px; }
     .muted { color: #444; }
-    .box { border: 2px solid #800000; padding: 14px; margin-top: 14px; border-radius: 4px; }
+    .box { border: 2px solid #0d9488; padding: 14px; margin-top: 14px; border-radius: 4px; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
     .right { text-align: right; }
     hr { border: 0; border-top: 1px solid #ccc; margin: 12px 0; }
-    .divider { border-top: 2px solid #800000; margin: 14px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 14px 0; }
     .footer { margin-top: 20px; font-size: 9px; color: #888; text-align: center; }
     @media print { body { padding: 12px; } }
   </style>
@@ -327,7 +327,7 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     <div>
       <div><strong>Student:</strong> ${safe(input.student.fullName)}</div>
       <div><strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span></div>
-      ${input.student.form ? `<div><strong>Form:</strong> ${safe(input.student.form)}</div>` : ""}
+      ${input.student.form ? `<div><strong>Grade:</strong> ${safe(input.student.form)}</div>` : ""}
     </div>
     <div class="right">
       <div><strong>Date:</strong> ${safe(input.paymentDate)}</div>
@@ -342,14 +342,11 @@ export function buildReceiptHtml(input: ReceiptPrintInput) {
     </div>
     <hr />
     <div class="row">
-      <div><strong>Amount Paid (USD):</strong></div>
-      <div class="mono" style="font-size:14px;"><strong>$${Number(input.amounts.usd || 0).toFixed(2)}</strong></div>
-    </div>
-    <div class="row" style="margin-top:6px;">
-      <div><strong>Amount Paid (ZiG):</strong></div>
-      <div class="mono" style="font-size:14px;"><strong>${Number(input.amounts.zig || 0).toFixed(2)}</strong></div>
+      <div><strong>Amount Paid:</strong></div>
+      <div class="mono" style="font-size:16px;"><strong>${formatZAR(input.amounts.usd || 0)}</strong></div>
     </div>
   </div>
+
 
   <p class="muted" style="margin-top: 16px;">Thank you for your payment. Please keep this receipt for your records.</p>
 
