@@ -370,29 +370,31 @@ export function buildStatementHtml(input: StatementPrintInput) {
   const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
 
-  const invoiceRows = input.invoices.map(inv => `
+  const invoiceRows = input.invoices.map(inv => {
+    const total = Number(inv.total_usd || 0);
+    const paid = Number(inv.paid_usd || 0);
+    const balance = total - paid;
+    return `
     <tr>
       <td class="mono">${safe(inv.invoice_number)}</td>
       <td>${safe(inv.term)} ${safe(inv.academic_year)}</td>
-      <td class="right">$${Number(inv.total_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(inv.total_zig || 0).toFixed(2)}</td>
-      <td class="right">$${Number(inv.paid_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(inv.paid_zig || 0).toFixed(2)}</td>
+      <td class="right">${formatZAR(total)}</td>
+      <td class="right">${formatZAR(paid)}</td>
+      <td class="right">${balance < 0 ? `+${formatZAR(Math.abs(balance))} credit` : formatZAR(balance)}</td>
       <td>${safe(inv.status)}</td>
-    </tr>`).join("");
+    </tr>`;
+  }).join("");
 
   const paymentRows = input.payments.map(p => `
     <tr>
       <td class="mono">${safe(p.receipt_number)}</td>
       <td>${safe(p.payment_date)}</td>
-      <td class="right">$${Number(p.amount_usd || 0).toFixed(2)}</td>
-      <td class="right">${Number(p.amount_zig || 0).toFixed(2)}</td>
+      <td class="right">${formatZAR(p.amount_usd || 0)}</td>
       <td>${safe(p.payment_method)}</td>
     </tr>`).join("");
 
-  const totalOwedUsd = input.invoices.reduce((s, i) => s + (Number(i.total_usd) - Number(i.paid_usd)), 0);
-  const totalOwedZig = input.invoices.reduce((s, i) => s + (Number(i.total_zig) - Number(i.paid_zig)), 0);
-  const balanceLabel = totalOwedUsd < 0 ? 'Credit Balance' : 'Outstanding Balance';
+  const totalOwed = input.invoices.reduce((s, i) => s + (Number(i.total_usd) - Number(i.paid_usd)), 0);
+  const balanceLabel = totalOwed < 0 ? 'Credit Balance' : 'Outstanding Balance';
 
   return `<!doctype html>
 <html>
@@ -407,10 +409,10 @@ export function buildStatementHtml(input: StatementPrintInput) {
     .header h1 { font-size: 18px; margin: 0; }
     .header .motto { color: #555; font-style: italic; font-size: 10px; }
     .header .address { color: #666; font-size: 9px; }
-    .divider { border-top: 2px solid #800000; margin: 10px 0; }
+    .divider { border-top: 2px solid #0d9488; margin: 10px 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
     th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; font-size: 10px; }
-    th { background: #800000; color: #fff; }
+    th { background: #0d9488; color: #fff; }
     .right { text-align: right; }
     .mono { font-family: monospace; }
     .balance { font-size: 13px; font-weight: bold; margin-top: 14px; }
@@ -430,22 +432,23 @@ export function buildStatementHtml(input: StatementPrintInput) {
   <div class="divider"></div>
 
   <h2 style="font-size:14px; margin: 8px 0;">STUDENT ACCOUNT STATEMENT</h2>
-  <p><strong>Student:</strong> ${safe(input.student.fullName)} &nbsp; | &nbsp; <strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span>${input.student.form ? ` &nbsp; | &nbsp; <strong>Form:</strong> ${safe(input.student.form)}` : ""}</p>
-  <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+  <p><strong>Student:</strong> ${safe(input.student.fullName)} &nbsp; | &nbsp; <strong>Admission #:</strong> <span class="mono">${safe(input.student.admissionNumber)}</span>${input.student.form ? ` &nbsp; | &nbsp; <strong>Grade:</strong> ${safe(input.student.form)}` : ""}</p>
+  <p><strong>Date:</strong> ${new Date().toLocaleDateString("en-ZA")}</p>
 
   <h3 style="margin-top:14px;">Invoices</h3>
   <table>
-    <thead><tr><th>Invoice #</th><th>Period</th><th>Total USD</th><th>Total ZiG</th><th>Paid USD</th><th>Paid ZiG</th><th>Status</th></tr></thead>
-    <tbody>${invoiceRows || "<tr><td colspan='7'>No invoices</td></tr>"}</tbody>
+    <thead><tr><th>Invoice #</th><th>Period</th><th class="right">Total (R)</th><th class="right">Paid (R)</th><th class="right">Balance (R)</th><th>Status</th></tr></thead>
+    <tbody>${invoiceRows || "<tr><td colspan='6'>No invoices</td></tr>"}</tbody>
   </table>
 
   <h3 style="margin-top:14px;">Payments</h3>
   <table>
-    <thead><tr><th>Receipt #</th><th>Date</th><th>USD</th><th>ZiG</th><th>Method</th></tr></thead>
-    <tbody>${paymentRows || "<tr><td colspan='5'>No payments</td></tr>"}</tbody>
+    <thead><tr><th>Receipt #</th><th>Date</th><th class="right">Amount (R)</th><th>Method</th></tr></thead>
+    <tbody>${paymentRows || "<tr><td colspan='4'>No payments</td></tr>"}</tbody>
   </table>
 
-  <div class="balance">${balanceLabel}: USD ${totalOwedUsd < 0 ? Math.abs(totalOwedUsd).toFixed(2) : totalOwedUsd.toFixed(2)} &nbsp; | &nbsp; ZiG ${totalOwedZig < 0 ? Math.abs(totalOwedZig).toFixed(2) : totalOwedZig.toFixed(2)}</div>
+  <div class="balance">${balanceLabel}: ${formatZAR(Math.abs(totalOwed))}</div>
+
 
   <div class="footer">
     <p>This is a computer-generated statement. | ${safe(SCHOOL_NAME)} | ${safe(SCHOOL_ADDRESS)}</p>
