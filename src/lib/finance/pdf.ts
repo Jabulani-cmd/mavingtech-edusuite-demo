@@ -486,8 +486,7 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td class="mono">${safe(r.receipt)}</td>
       <td>${safe(r.party)}</td>
       <td>${safe(r.method)}</td>
-      <td class="right mono green">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono green">${formatZAR(r.usd)}</td>
       <td class="mono">${safe(r.ref || "—")}</td>
     </tr>`).join("");
 
@@ -497,8 +496,7 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td>${safe(r.category)}</td>
       <td>${safe(r.description)}</td>
       <td>${safe(r.method || "—")}</td>
-      <td class="right mono red">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono red">${formatZAR(r.usd)}</td>
     </tr>`).join("");
 
   const supplierRows = input.supplierPayments.map(r => `
@@ -507,16 +505,15 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
       <td>${safe(r.supplier)}</td>
       <td>${safe(r.method || "—")}</td>
       <td class="mono">${safe(r.ref || "—")}</td>
-      <td class="right mono red">$${fmt(r.usd)}</td>
-      <td class="right mono">${fmt(r.zig)}</td>
+      <td class="right mono red">${formatZAR(r.usd)}</td>
     </tr>`).join("");
 
   const categoryRows = (input.breakdownByCategory || []).map(c => `
     <tr>
       <td>${safe(c.category)}</td>
-      <td class="right mono">$${fmt(c.usd)}</td>
-      <td class="right mono">${fmt(c.zig)}</td>
+      <td class="right mono">${formatZAR(c.usd)}</td>
     </tr>`).join("");
+
 
   return `<!doctype html>
 <html><head>
