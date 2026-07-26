@@ -804,7 +804,9 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.national_id || ""}
                     onChange={(e) => updateField("national_id", e.target.value)}
-                    placeholder="XX-XXXXXXX-X-XX"
+                    placeholder="13-digit SA ID (e.g. 8001015009087)"
+                    maxLength={13}
+                    inputMode="numeric"
                   />
                   {errors.national_id && <p className="text-xs text-destructive">{errors.national_id}</p>}
                 </div>
