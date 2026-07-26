@@ -281,7 +281,15 @@ export default function MessagingPanel() {
 
   const openConversation = async (conv: Conversation) => {
     setActiveConv(conv);
+    // Optimistically clear the unread badge for this conversation
+    setConversations(prev => {
+      const next = prev.map(c => c.id === conv.id ? { ...c, unread_count: 0 } : c);
+      const total = next.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+      setTotalUnread(total);
+      return next;
+    });
     await fetchMessages(conv.id);
+    fetchConversations();
   };
 
   const sendMessage = async () => {
@@ -298,6 +306,7 @@ export default function MessagingPanel() {
     } else {
       setNewMessage("");
       await supabase.from("conversations").update({ updated_at: new Date().toISOString() }).eq("id", activeConv.id);
+      toast({ title: "Message sent" });
     }
     setSendingMessage(false);
   };
