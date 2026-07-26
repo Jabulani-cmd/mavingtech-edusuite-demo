@@ -38,7 +38,8 @@ import {
   SCHOOL_LOGO_URL,
 } from "@/lib/finance/pdf";
 import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
-import { printReceipt, openPrintWindow } from "@/lib/finance/print";
+import { printReceipt, openPrintWindow, downloadHtmlDocument } from "@/lib/finance/print";
+import { formatZAR } from "@/lib/currency";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import { invoiceActions, receiptActions, statementActions, expensesListActions } from "@/lib/finance/documentActions";
