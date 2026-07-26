@@ -2162,6 +2162,9 @@ export default function FinanceManagement() {
                   <Button variant="outline" onClick={printDebtorsList} disabled={debtors.length === 0}>
                     <Printer className="mr-1 h-4 w-4" /> Print List
                   </Button>
+                  <Button variant="outline" onClick={downloadDebtorsList} disabled={debtors.length === 0}>
+                    <Download className="mr-1 h-4 w-4" /> Download PDF
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
