@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Printer, Loader2, Eye } from "lucide-react";
+import { Search, Printer, Loader2, Eye, Download, FileText, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { buildReceiptHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
-import { openPrintWindow } from "@/lib/finance/print";
+import { openPrintWindow, downloadHtmlDocument } from "@/lib/finance/print";
+import { generateAndStoreReceipt, isInstantMethod } from "@/lib/finance/receiptStorage";
 
 const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
