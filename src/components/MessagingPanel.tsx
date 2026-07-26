@@ -254,14 +254,16 @@ export default function MessagingPanel() {
         event: "INSERT",
         schema: "public",
         table: "messages",
-      }, (payload) => {
+      }, async (payload) => {
         const newMsg = payload.new as Message;
         if (blockedIdsRef.current.includes(newMsg.sender_id)) return;
         const currentConv = activeConvRef.current;
         if (currentConv && newMsg.conversation_id === currentConv.id) {
           const senderName = profileCache.current[newMsg.sender_id] || "Unknown";
           setMessages(prev => [...prev, { ...newMsg, sender_name: senderName }]);
-          supabase
+          // Await the read-receipt update so the subsequent unread recount
+          // sees the fresh last_read_at and does not resurface a stale badge.
+          await supabase
             .from("conversation_participants")
             .update({ last_read_at: new Date().toISOString() })
             .eq("conversation_id", newMsg.conversation_id)
