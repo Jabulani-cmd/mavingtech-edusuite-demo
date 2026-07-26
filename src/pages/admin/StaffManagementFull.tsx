@@ -138,7 +138,7 @@ const emptyForm: StaffFormData = {
 };
 
 // Helper functions for portal account provisioning
-const STAFF_EMAIL_DOMAIN = "mavingtech.ac.za";
+const STAFF_EMAIL_DOMAIN = "mbsmavingtech.ac.za";
 
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8) + "A1!";
