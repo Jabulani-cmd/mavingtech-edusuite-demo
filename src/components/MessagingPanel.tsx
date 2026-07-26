@@ -102,6 +102,41 @@ export default function MessagingPanel() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const profileCache = useRef<Record<string, string>>({});
   const roleCache = useRef<Record<string, string>>({});
+  const channelTopicRef = useRef(`user-messages-${Math.random().toString(36).slice(2)}`);
+
+  const clearUnreadForConversation = useCallback((convId: string) => {
+    setConversations(prev => {
+      const next = prev.map(c => c.id === convId ? { ...c, unread_count: 0 } : c);
+      setTotalUnread(next.reduce((sum, c) => sum + (c.unread_count || 0), 0));
+      return next;
+    });
+    window.dispatchEvent(new CustomEvent("messages:conversation-read", { detail: { conversationId: convId } }));
+  }, []);
+
+  const markConversationRead = useCallback(async (convId: string, readAt?: string) => {
+    if (!user) return;
+    const timestamp = readAt || new Date(Date.now() + 1000).toISOString();
+    const { error } = await supabase
+      .from("conversation_participants")
+      .update({ last_read_at: timestamp })
+      .eq("conversation_id", convId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Failed to update message read receipt", error);
+      return;
+    }
+
+    clearUnreadForConversation(convId);
+
+    await supabase
+      .from("notifications")
+      .update({ is_read: true })
+      .eq("user_id", user.id)
+      .eq("is_read", false)
+      .in("type", ["message", "messages", "chat", "conversation"])
+      .or(`link.ilike.%${convId}%,message.ilike.%${convId}%`);
+  }, [user, clearUnreadForConversation]);
 
   // Fetch blocked users
   const fetchBlocked = useCallback(async () => {
@@ -223,13 +258,13 @@ export default function MessagingPanel() {
     }
 
     if (user) {
-      await supabase
-        .from("conversation_participants")
-        .update({ last_read_at: new Date().toISOString() })
-        .eq("conversation_id", convId)
-        .eq("user_id", user.id);
+      const latestMessageTime = data?.[data.length - 1]?.created_at;
+      const readAt = latestMessageTime
+        ? new Date(new Date(latestMessageTime).getTime() + 1000).toISOString()
+        : new Date(Date.now() + 1000).toISOString();
+      await markConversationRead(convId, readAt);
     }
-  }, [user, blockedIds]);
+  }, [user, blockedIds, markConversationRead]);
 
   // Refs to avoid stale closures in realtime callback
   const activeConvRef = useRef(activeConv);
@@ -249,7 +284,7 @@ export default function MessagingPanel() {
     if (!user) return;
 
     const channel = supabase
-      .channel("user-messages")
+      .channel(channelTopicRef.current)
       .on("postgres_changes", {
         event: "INSERT",
         schema: "public",
@@ -263,11 +298,7 @@ export default function MessagingPanel() {
           setMessages(prev => [...prev, { ...newMsg, sender_name: senderName }]);
           // Await the read-receipt update so the subsequent unread recount
           // sees the fresh last_read_at and does not resurface a stale badge.
-          await supabase
-            .from("conversation_participants")
-            .update({ last_read_at: new Date().toISOString() })
-            .eq("conversation_id", newMsg.conversation_id)
-            .eq("user_id", user.id);
+          await markConversationRead(newMsg.conversation_id, new Date(new Date(newMsg.created_at).getTime() + 1000).toISOString());
         }
         fetchConversations();
       })
@@ -284,12 +315,7 @@ export default function MessagingPanel() {
   const openConversation = async (conv: Conversation) => {
     setActiveConv(conv);
     // Optimistically clear the unread badge for this conversation
-    setConversations(prev => {
-      const next = prev.map(c => c.id === conv.id ? { ...c, unread_count: 0 } : c);
-      const total = next.reduce((sum, c) => sum + (c.unread_count || 0), 0);
-      setTotalUnread(total);
-      return next;
-    });
+    clearUnreadForConversation(conv.id);
     await fetchMessages(conv.id);
     fetchConversations();
   };

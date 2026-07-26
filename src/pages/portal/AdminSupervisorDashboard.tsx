@@ -15,7 +15,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import NotificationBell from "@/components/NotificationBell";
-import MessagingPanel from "@/components/MessagingPanel";
 
 // Import all admin modules
 import AcademicManagement from "@/pages/admin/AcademicManagement";
@@ -180,7 +179,6 @@ export default function AdminSupervisorDashboard() {
               <Badge variant="destructive" className="animate-pulse text-[10px] sm:text-xs">{pendingCount}</Badge>
             )}
             <NotificationBell />
-            <MessagingPanel />
             <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex gap-2">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>

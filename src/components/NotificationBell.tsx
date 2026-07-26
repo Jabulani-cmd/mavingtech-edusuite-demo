@@ -44,6 +44,25 @@ export default function NotificationBell() {
     return () => { supabase.removeChannel(channel); };
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const clearMessageNotifications = (event: Event) => {
+      const conversationId = (event as CustomEvent<{ conversationId?: string }>).detail?.conversationId;
+      setNotifications((prev) => prev.map((n) => {
+        const isMessageNotification = ["message", "messages", "chat", "conversation"].includes(n.type);
+        const matchesConversation = conversationId
+          ? n.link?.includes(conversationId) || n.message?.includes(conversationId)
+          : true;
+        return isMessageNotification && matchesConversation ? { ...n, is_read: true } : n;
+      }));
+      fetchNotifications();
+    };
+
+    window.addEventListener("messages:conversation-read", clearMessageNotifications);
+    return () => window.removeEventListener("messages:conversation-read", clearMessageNotifications);
+  }, [user]);
+
   const fetchNotifications = async () => {
     const { data } = await supabase
       .from("notifications")
