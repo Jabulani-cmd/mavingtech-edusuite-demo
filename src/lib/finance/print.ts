@@ -3,31 +3,43 @@ import { buildReceiptHtml } from "./pdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+function openHtmlAsBlob(html: string): { win: Window | null; url: string } {
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, "_blank");
+  // Revoke later so the tab has time to load
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  return { win, url };
+}
+
 export function openPrintWindow(html: string) {
-  const w = window.open("", "_blank");
-  if (!w) return;
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  w.focus();
+  const { win } = openHtmlAsBlob(html);
+  if (!win) return;
   const triggerPrint = () => {
-    try { w.print(); } catch { /* noop */ }
+    try { win.focus(); win.print(); } catch { /* noop */ }
   };
-  if (w.document.readyState === "complete") {
-    setTimeout(triggerPrint, 300);
-  } else {
-    w.addEventListener("load", () => setTimeout(triggerPrint, 200));
-  }
+  // Blob-loaded pages don't always fire load reliably across browsers; poll readiness.
+  let tries = 0;
+  const timer = setInterval(() => {
+    tries += 1;
+    try {
+      if (win.document && win.document.readyState === "complete") {
+        clearInterval(timer);
+        setTimeout(triggerPrint, 250);
+      }
+    } catch {
+      // cross-origin during initial nav; keep polling
+    }
+    if (tries > 40) {
+      clearInterval(timer);
+      setTimeout(triggerPrint, 250);
+    }
+  }, 150);
 }
 
 // Open the document in a new tab WITHOUT triggering the print dialog.
 export function openViewWindow(html: string) {
-  const w = window.open("", "_blank");
-  if (!w) return;
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  w.focus();
+  openHtmlAsBlob(html);
 }
 
 // Render a fully-formed HTML document string into an offscreen iframe,
