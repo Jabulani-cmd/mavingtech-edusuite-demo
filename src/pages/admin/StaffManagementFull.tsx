@@ -818,12 +818,18 @@ export default function StaffManagementFull() {
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
                 <div className="space-y-1">
-                  <Label>Email</Label>
+                  <Label>Portal Email</Label>
                   <Input
                     value={formData.email || ""}
                     onChange={(e) => updateField("email", e.target.value)}
                     type="email"
+                    placeholder={`e.g. trust.dube@${STAFF_EMAIL_DOMAIN}`}
                   />
+                  {!editingId && (
+                    <p className="text-xs text-muted-foreground">
+                      Auto-generated from the full name (e.g. <code>first.last@{STAFF_EMAIL_DOMAIN}</code>). A temporary password is issued and the staff member is required to change it on first login.
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label>Emergency Contact</Label>
