@@ -105,8 +105,9 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
     try {
       const receiptNumber = "MTR-" + Math.floor(100000 + Math.random() * 900000);
       const txId = "SPS-" + Date.now().toString(36).toUpperCase();
+      const payDate = new Date().toISOString().slice(0, 10);
 
-      const { error: payErr } = await supabase.from("payments").insert({
+      const { data: inserted, error: payErr } = await supabase.from("payments").insert({
         receipt_number: receiptNumber,
         invoice_id: invoice.id,
         student_id: student.id,
@@ -117,12 +118,31 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         payment_method: method,
         payment_status: "paid",
         reference_number: txId,
-        payment_date: new Date().toISOString().slice(0, 10),
+        payment_date: payDate,
         notes: `SecurePay SA (${METHOD_LABEL[method]}) — parent portal`,
-      });
+      }).select("id").single();
       if (payErr) throw payErr;
 
       // Invoice paid_usd/status is updated automatically by DB trigger.
+
+      // Generate the branded receipt PDF, upload to storage, and mark the
+      // payment as auto-verified (instant gateway confirms success itself).
+      const { data: { user } } = await supabase.auth.getUser();
+      generateAndStoreReceipt({
+        paymentId: inserted!.id,
+        receiptNumber,
+        paymentDate: payDate,
+        paymentMethod: method,
+        referenceNumber: txId,
+        amount: payAmount,
+        student: {
+          fullName: student.full_name,
+          admissionNumber: student.admission_number || "—",
+        },
+        invoiceNumber: invoice.invoice_number,
+        autoVerify: true,
+        verifiedBy: user?.id || null,
+      }).catch((e) => console.error("[PayInvoiceDialog] receipt generation failed", e));
 
       setReceipt(receiptNumber);
       setStep("success");
