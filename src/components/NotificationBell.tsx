@@ -56,7 +56,6 @@ export default function NotificationBell() {
           : true;
         return isMessageNotification && matchesConversation ? { ...n, is_read: true } : n;
       }));
-      fetchNotifications();
     };
 
     window.addEventListener("messages:conversation-read", clearMessageNotifications);
