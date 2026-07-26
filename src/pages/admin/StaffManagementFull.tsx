@@ -956,7 +956,7 @@ export default function StaffManagementFull() {
                     value={formData.bank_details || ""}
                     onChange={(e) => updateField("bank_details", e.target.value)}
                     rows={2}
-                    placeholder="Bank name, account number, branch"
+                    placeholder="e.g. Standard Bank, Acc 0123456789, Branch code 051001"
                   />
                 </div>
               </div>
