@@ -804,7 +804,9 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.national_id || ""}
                     onChange={(e) => updateField("national_id", e.target.value)}
-                    placeholder="XX-XXXXXXX-X-XX"
+                    placeholder="13-digit SA ID (e.g. 8001015009087)"
+                    maxLength={13}
+                    inputMode="numeric"
                   />
                   {errors.national_id && <p className="text-xs text-destructive">{errors.national_id}</p>}
                 </div>
@@ -813,7 +815,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.phone || ""}
                     onChange={(e) => updateField("phone", e.target.value)}
-                    placeholder="07XXXXXXXX"
+                    placeholder="e.g. 0821234567 or +27821234567"
                   />
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
@@ -836,7 +838,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.emergency_contact || ""}
                     onChange={(e) => updateField("emergency_contact", e.target.value)}
-                    placeholder="07XXXXXXXX"
+                    placeholder="e.g. 0821234567 or +27821234567"
                   />
                   {errors.emergency_contact && <p className="text-xs text-destructive">{errors.emergency_contact}</p>}
                 </div>
@@ -846,6 +848,7 @@ export default function StaffManagementFull() {
                     value={formData.address || ""}
                     onChange={(e) => updateField("address", e.target.value)}
                     rows={2}
+                    placeholder="Street, suburb, city, province (e.g. 12 Main Rd, Umhlanga, Durban, KwaZulu-Natal)"
                   />
                 </div>
                 <div className="space-y-1 sm:col-span-2">
@@ -953,7 +956,7 @@ export default function StaffManagementFull() {
                     value={formData.bank_details || ""}
                     onChange={(e) => updateField("bank_details", e.target.value)}
                     rows={2}
-                    placeholder="Bank name, account number, branch"
+                    placeholder="e.g. Standard Bank, Acc 0123456789, Branch code 051001"
                   />
                 </div>
               </div>
