@@ -844,66 +844,150 @@ export default function FinanceManagement() {
     setStmtPayments([]);
   }
 
-  function printStudentStatement() {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-    const totalInvoicedUsd = stmtInvoices.reduce((s, i) => s + parseFloat(i.total_usd), 0);
-    const totalInvoicedZig = stmtInvoices.reduce((s, i) => s + parseFloat(i.total_zig), 0);
-    const totalPaidUsd = stmtPayments.reduce((s, p) => s + parseFloat(p.amount_usd), 0);
-    const totalPaidZig = stmtPayments.reduce((s, p) => s + parseFloat(p.amount_zig), 0);
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>Statement - ${safeHtml(stmtStudent.full_name)}</title>
-      <style>body{font-family:Arial,sans-serif;padding:30px;font-size:12px}h1{font-size:18px;margin-bottom:4px}h2{font-size:14px;margin-top:20px;border-bottom:1px solid #ccc;padding-bottom:4px}
-      table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f5f5f5;font-weight:600}
-      .right{text-align:right}.mono{font-family:monospace}.summary{margin-top:16px;padding:12px;border:2px solid #333;display:inline-block}
-      .red{color:#c00}.green{color:#060}@media print{body{padding:15px}}</style></head><body>
-      <h1>MavingTech Business Solutions</h1>
-      <p><strong>Student Financial Statement</strong></p>
-      <p>Student: <strong>${safeHtml(stmtStudent.full_name)}</strong> | Adm #: <strong>${safeHtml(stmtStudent.admission_number)}</strong> | Grade: <strong>${safeHtml(stmtStudent.form)}</strong></p>
-      <p>Date: ${new Date().toLocaleDateString("en-ZA")}</p>
-      <h2>Invoices</h2>
-       table<thead> th<th>Invoice #</th><th>Term</th><th>Year</th><th class="right">Total (R)</th><th class="right">Paid (R)</th><th>Status</th> </thead>
-      <tbody>
-      ${stmtInvoices.map((i) => `     <tr><td class="mono">${safeHtml(i.invoice_number)}</td><td>${safeHtml(i.term)}</td><td>${safeHtml(i.academic_year)}</td><td class="right mono">R ${fmt(parseFloat(i.total_usd))}</td><td class="right mono">R ${fmt(parseFloat(i.paid_usd))}</td><td>${safeHtml(i.status)}</td></tr>`).join("")}
-      </tbody>   </table>
-      <h2>Payments</h2>
-       table<thead>   <tr><th>Receipt #</th><th>Date</th><th>Invoice</th><th class="right">Amount (R)</th><th>Method</th></tr> </thead>
-      <tbody>
-      ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">R ${fmt(parseFloat(p.amount_usd))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
-      </tbody>   </table>
-      <div class="summary">
-        <p><strong>Total Invoiced:</strong> R ${fmt(totalInvoicedUsd)}</p>
-        <p><strong>Total Paid:</strong> R ${fmt(totalPaidUsd)}</p>
-        <p class="${totalInvoicedUsd - totalPaidUsd > 0 ? "red" : "green"}"><strong>${totalInvoicedUsd - totalPaidUsd < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> R ${fmt(Math.abs(totalInvoicedUsd - totalPaidUsd))}</p>
-      </div>
+  // Shared branded document shell for finance reports (statements, debtors, etc.)
+  function buildReportShell(title: string, subtitleLines: string[], bodyHtml: string) {
+    const now = new Date().toLocaleDateString("en-ZA");
+    return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${safeHtml(title)}</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:32px;font-size:12px;background:#fff}
+  .header{border-bottom:3px solid #0f766e;padding-bottom:12px;margin-bottom:18px}
+  .header h1{margin:0;font-size:20px;color:#0f172a}
+  .header .tag{color:#0f766e;font-weight:600;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+  .header .addr{color:#555;font-size:11px;margin-top:4px}
+  h2{font-size:14px;margin:22px 0 8px;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:4px}
+  .meta{color:#334155;font-size:12px;margin-bottom:6px}
+  .meta strong{color:#0f172a}
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:11.5px}
+  th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#0f766e;color:#fff;font-weight:600}
+  tbody tr:nth-child(even){background:#f1f5f9}
+  .right{text-align:right}
+  .mono{font-family:'Courier New',monospace}
+  .red{color:#b91c1c}
+  .green{color:#047857}
+  .total-row td{background:#fef3c7;font-weight:700;border-top:2px solid #92400e}
+  .status-paid{color:#047857;font-weight:600}
+  .status-partial{color:#b45309;font-weight:600}
+  .status-unpaid,.status-overdue{color:#b91c1c;font-weight:600}
+  .summary{margin-top:18px;padding:14px 18px;border:2px solid #0f172a;border-radius:6px;display:inline-block;background:#f8fafc}
+  .summary p{margin:4px 0}
+  .footer{margin-top:28px;padding-top:10px;border-top:1px solid #e2e8f0;color:#64748b;font-size:10px;text-align:center}
+  @media print{body{padding:18px}thead{display:table-header-group}tr{page-break-inside:avoid}}
+</style></head><body>
+  <div class="header">
+    <div class="tag">MavingTech Business Solutions</div>
+    <h1>${safeHtml(title)}</h1>
+    <div class="addr">123 Umgeni Road, Durban, KwaZulu-Natal, 4001 · +27 31 555 0123 · info@mbsmavingtech.ac.za</div>
+  </div>
+  ${subtitleLines.map((l) => `<p class="meta">${l}</p>`).join("")}
+  <p class="meta"><strong>Generated:</strong> ${now}</p>
+  ${bodyHtml}
+  <div class="footer">MavingTech Business Solutions · Confidential financial document</div>
+</body></html>`;
+  }
 
-      </body></html>`);
-    printWindow.document.close();
-    printWindow.print();
+  function statusText(s: string) {
+    const label = (s || "").charAt(0).toUpperCase() + (s || "").slice(1);
+    return `<span class="status-${(s || "").toLowerCase()}">${safeHtml(label)}</span>`;
+  }
+
+  function buildStatementReportHtml() {
+    const totalInvoiced = stmtInvoices.reduce((s, i) => s + parseFloat(i.total_usd), 0);
+    const totalPaid = stmtPayments.reduce((s, p) => s + parseFloat(p.amount_usd), 0);
+    const balance = totalInvoiced - totalPaid;
+    const invRows = stmtInvoices.length
+      ? stmtInvoices.map((i) => `<tr>
+          <td class="mono">${safeHtml(i.invoice_number)}</td>
+          <td>${safeHtml(i.term)}</td>
+          <td>${safeHtml(i.academic_year)}</td>
+          <td class="right mono">${formatZAR(i.total_usd)}</td>
+          <td class="right mono">${formatZAR(i.paid_usd)}</td>
+          <td>${statusText(i.status)}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="6" style="text-align:center;color:#64748b">No invoices on record</td></tr>`;
+    const payRows = stmtPayments.length
+      ? stmtPayments.map((p) => `<tr>
+          <td class="mono">${safeHtml(p.receipt_number)}</td>
+          <td>${safeHtml(p.payment_date)}</td>
+          <td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td>
+          <td class="right mono">${formatZAR(p.amount_usd)}</td>
+          <td>${safeHtml(p.payment_method)}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="5" style="text-align:center;color:#64748b">No payments on record</td></tr>`;
+    const body = `
+      <h2>Invoices</h2>
+      <table><thead><tr>
+        <th>Invoice #</th><th>Term</th><th>Year</th>
+        <th class="right">Total (R)</th><th class="right">Paid (R)</th><th>Status</th>
+      </tr></thead><tbody>${invRows}</tbody></table>
+      <h2>Payments</h2>
+      <table><thead><tr>
+        <th>Receipt #</th><th>Date</th><th>Invoice</th>
+        <th class="right">Amount (R)</th><th>Method</th>
+      </tr></thead><tbody>${payRows}</tbody></table>
+      <div class="summary">
+        <p><strong>Total Invoiced:</strong> ${formatZAR(totalInvoiced)}</p>
+        <p><strong>Total Paid:</strong> ${formatZAR(totalPaid)}</p>
+        <p class="${balance > 0 ? "red" : "green"}">
+          <strong>${balance < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> ${formatZAR(Math.abs(balance))}
+        </p>
+      </div>`;
+    return buildReportShell("Student Account Statement", [
+      `<strong>Student:</strong> ${safeHtml(stmtStudent.full_name)}`,
+      `<strong>Admission #:</strong> ${safeHtml(stmtStudent.admission_number)} &nbsp; · &nbsp; <strong>Grade:</strong> ${safeHtml(stmtStudent.form)}`,
+    ], body);
+  }
+
+  function printStudentStatement() {
+    openPrintWindow(buildStatementReportHtml());
+  }
+
+  function downloadStudentStatement() {
+    const safeName = (stmtStudent?.full_name || "student").replace(/\s+/g, "-").toLowerCase();
+    downloadHtmlDocument(buildStatementReportHtml(), `statement-${safeName}`);
+  }
+
+  function buildDebtorsReportHtml() {
+    const filtered =
+      debtorsFormFilter === "all" ? debtors : debtors.filter((d) => d.students?.form === debtorsFormFilter);
+    const total = filtered.reduce((s, d) => s + (parseFloat(d.total_usd) - parseFloat(d.paid_usd)), 0);
+    const rows = filtered.length
+      ? filtered.map((d, i) => `<tr>
+          <td>${i + 1}</td>
+          <td>${safeHtml(d.students?.full_name || "—")}</td>
+          <td>${safeHtml(d.students?.admission_number || "—")}</td>
+          <td>${safeHtml(d.students?.form || "—")}</td>
+          <td class="mono">${safeHtml(d.invoice_number)}</td>
+          <td>${safeHtml(d.term)}</td>
+          <td class="right mono red">${formatZAR(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td>
+          <td>${statusText(d.status)}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="8" style="text-align:center;color:#64748b">No outstanding debts</td></tr>`;
+    const body = `
+      <table><thead><tr>
+        <th>#</th><th>Student Name</th><th>Admission #</th><th>Grade</th>
+        <th>Invoice #</th><th>Term</th><th class="right">Amount Owed (R)</th><th>Status</th>
+      </tr></thead><tbody>
+        ${rows}
+        <tr class="total-row"><td colspan="6" class="right">TOTAL OUTSTANDING</td>
+          <td class="right mono red">${formatZAR(total)}</td><td></td></tr>
+      </tbody></table>`;
+    return buildReportShell("Debtors List", [
+      `<strong>Filter:</strong> ${debtorsFormFilter === "all" ? "All Grades" : safeHtml(debtorsFormFilter)}`,
+      `<strong>Total students:</strong> ${filtered.length}`,
+    ], body);
   }
 
   function printDebtorsList() {
-    const filtered =
-      debtorsFormFilter === "all" ? debtors : debtors.filter((d) => d.students?.form === debtorsFormFilter);
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-    const totalUsd = filtered.reduce((s, d) => s + (parseFloat(d.total_usd) - parseFloat(d.paid_usd)), 0);
-    const totalZig = filtered.reduce((s, d) => s + (parseFloat(d.total_zig) - parseFloat(d.paid_zig)), 0);
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>Debtors List</title>
-      <style>body{font-family:Arial,sans-serif;padding:30px;font-size:12px}h1{font-size:18px;margin-bottom:4px}
-      table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f5f5f5;font-weight:600}
-      .right{text-align:right}.mono{font-family:monospace}.red{color:#c00}.total{font-weight:bold;background:#fef2f2}
-      @media print{body{padding:15px}}</style></head><body>
-      <h1>MavingTech High School — Debtors List</h1>
-      <p>Date: ${new Date().toLocaleDateString()} | Filter: ${debtorsFormFilter === "all" ? "All Forms" : debtorsFormFilter} | Total: ${filtered.length} student(s)</p>
-       table<thead>   <tr><th>#</th><th>Student</th><th>Adm #</th><th>Grade</th><th>Invoice</th><th>Term</th><th class="right">Owed (R)</th><th>Status</th></tr> </thead>
-      <tbody>
-      ${filtered.map((d, i) => `     <tr><td>${i + 1}</td><td>${safeHtml(d.students?.full_name || "—")}</td><td>${safeHtml(d.students?.admission_number || "—")}</td><td>${safeHtml(d.students?.form || "—")}</td><td class="mono">${safeHtml(d.invoice_number)}</td><td>${safeHtml(d.term)}</td><td class="right mono red">${fmt(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td><td>${statusBadge(d.status)}</td></tr>`).join("")}
-      <tr class="total"><td colspan="6">TOTAL</td><td class="right mono red">${fmt(totalUsd)}</td><td></td></tr>
-      </tbody>   </table>
-      </body></html>`);
-    printWindow.document.close();
-    printWindow.print();
+    openPrintWindow(buildDebtorsReportHtml());
   }
+
+  function downloadDebtorsList() {
+    downloadHtmlDocument(buildDebtorsReportHtml(), `debtors-list-${new Date().toISOString().slice(0, 10)}`);
+  }
+
+
 
   // ═══ INVOICE GENERATION (UPDATED) ═══
   async function generateBulkInvoices() {
