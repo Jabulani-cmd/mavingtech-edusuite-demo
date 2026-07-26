@@ -848,6 +848,7 @@ export default function StaffManagementFull() {
                     value={formData.address || ""}
                     onChange={(e) => updateField("address", e.target.value)}
                     rows={2}
+                    placeholder="Street, suburb, city, province (e.g. 12 Main Rd, Umhlanga, Durban, KwaZulu-Natal)"
                   />
                 </div>
                 <div className="space-y-1 sm:col-span-2">
