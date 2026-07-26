@@ -855,25 +855,26 @@ export default function FinanceManagement() {
       table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:left}th{background:#f5f5f5;font-weight:600}
       .right{text-align:right}.mono{font-family:monospace}.summary{margin-top:16px;padding:12px;border:2px solid #333;display:inline-block}
       .red{color:#c00}.green{color:#060}@media print{body{padding:15px}}</style></head><body>
-      <h1>MavingTech High School</h1>
+      <h1>MavingTech Business Solutions</h1>
       <p><strong>Student Financial Statement</strong></p>
-      <p>Student: <strong>${safeHtml(stmtStudent.full_name)}</strong> | Adm #: <strong>${safeHtml(stmtStudent.admission_number)}</strong> | Form: <strong>${safeHtml(stmtStudent.form)}</strong></p>
-      <p>Date: ${new Date().toLocaleDateString()}</p>
+      <p>Student: <strong>${safeHtml(stmtStudent.full_name)}</strong> | Adm #: <strong>${safeHtml(stmtStudent.admission_number)}</strong> | Grade: <strong>${safeHtml(stmtStudent.form)}</strong></p>
+      <p>Date: ${new Date().toLocaleDateString("en-ZA")}</p>
       <h2>Invoices</h2>
        table<thead> th<th>Invoice #</th><th>Term</th><th>Year</th><th class="right">Total (R)</th><th class="right">Paid (R)</th><th>Status</th> </thead>
       <tbody>
-      ${stmtInvoices.map((i) => `     <tr><td class="mono">${safeHtml(i.invoice_number)}</td><td>${safeHtml(i.term)}</td><td>${safeHtml(i.academic_year)}</td><td class="right mono">${fmt(parseFloat(i.total_usd))}</td><td class="right mono">${fmt(parseFloat(i.paid_usd))}</td><td>${safeHtml(i.status)}</td></tr>`).join("")}
+      ${stmtInvoices.map((i) => `     <tr><td class="mono">${safeHtml(i.invoice_number)}</td><td>${safeHtml(i.term)}</td><td>${safeHtml(i.academic_year)}</td><td class="right mono">R ${fmt(parseFloat(i.total_usd))}</td><td class="right mono">R ${fmt(parseFloat(i.paid_usd))}</td><td>${safeHtml(i.status)}</td></tr>`).join("")}
       </tbody>   </table>
       <h2>Payments</h2>
        table<thead>   <tr><th>Receipt #</th><th>Date</th><th>Invoice</th><th class="right">Amount (R)</th><th>Method</th></tr> </thead>
       <tbody>
-      ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">${fmt(parseFloat(p.amount_usd))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
+      ${stmtPayments.map((p) => `     <tr><td class="mono">${safeHtml(p.receipt_number)}</td><td>${safeHtml(p.payment_date)}</td><td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td><td class="right mono">R ${fmt(parseFloat(p.amount_usd))}</td><td>${safeHtml(p.payment_method)}</td></tr>`).join("")}
       </tbody>   </table>
       <div class="summary">
-        <p><strong>Total Invoiced:</strong>  ZAR ${fmt(totalInvoicedUsd)} / R ${fmt(totalInvoicedZig)}</p>
-        <p><strong>Total Paid:</strong>  ZAR ${fmt(totalPaidUsd)} / R ${fmt(totalPaidZig)}</p>
-        <p class="${totalInvoicedUsd - totalPaidUsd > 0 ? "red" : "green"}"><strong>${totalInvoicedUsd - totalPaidUsd < 0 ? "Credit Balance" : "Balance"}:</strong>  ZAR ${totalInvoicedUsd - totalPaidUsd < 0 ? "+" + fmt(Math.abs(totalInvoicedUsd - totalPaidUsd)) : fmt(totalInvoicedUsd - totalPaidUsd)} / R ${totalInvoicedZig - totalPaidZig < 0 ? "+" + fmt(Math.abs(totalInvoicedZig - totalPaidZig)) : fmt(totalInvoicedZig - totalPaidZig)}</p>
+        <p><strong>Total Invoiced:</strong> R ${fmt(totalInvoicedUsd)}</p>
+        <p><strong>Total Paid:</strong> R ${fmt(totalPaidUsd)}</p>
+        <p class="${totalInvoicedUsd - totalPaidUsd > 0 ? "red" : "green"}"><strong>${totalInvoicedUsd - totalPaidUsd < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> R ${fmt(Math.abs(totalInvoicedUsd - totalPaidUsd))}</p>
       </div>
+
       </body></html>`);
     printWindow.document.close();
     printWindow.print();
