@@ -138,8 +138,37 @@ const emptyForm: StaffFormData = {
 };
 
 // Helper functions for portal account provisioning
+const STAFF_EMAIL_DOMAIN = "mavingtech.ac.za";
+
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8) + "A1!";
+}
+
+function slugifyNamePart(part: string) {
+  return part
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
+function buildStaffEmail(fullName: string, existing: string[] = []): string {
+  const cleaned = (fullName || "").trim();
+  if (!cleaned) return "";
+  const parts = cleaned.split(/\s+/).map(slugifyNamePart).filter(Boolean);
+  if (!parts.length) return "";
+  const first = parts[0];
+  const last = parts.length > 1 ? parts[parts.length - 1] : "";
+  const base = last ? `${first}.${last}` : first;
+  const taken = new Set(existing.map((e) => e.toLowerCase()));
+  let candidate = `${base}@${STAFF_EMAIL_DOMAIN}`;
+  let n = 2;
+  while (taken.has(candidate.toLowerCase())) {
+    candidate = `${base}${n}@${STAFF_EMAIL_DOMAIN}`;
+    n++;
+  }
+  return candidate;
 }
 
 function getPortalRole(staffRole: string): string {
