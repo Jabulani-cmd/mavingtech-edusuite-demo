@@ -624,11 +624,9 @@ export type ExpensesListInput = {
 
 export function buildExpensesListHtml(input: ExpensesListInput): string {
   const safe = (s: any) => String(s ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const fmt = (n: number) => Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const logoUrl = input.logoUrl || SCHOOL_LOGO_URL;
 
-  const totalUsd = input.expenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
-  const totalZig = input.expenses.reduce((s, e) => s + Number(e.amount_zig || 0), 0);
+  const total = input.expenses.reduce((s, e) => s + Number(e.amount_usd || 0), 0);
 
   const rows = input.expenses.map((e, i) => `
     <tr>
@@ -638,9 +636,9 @@ export function buildExpensesListHtml(input: ExpensesListInput): string {
       <td>${safe(e.description)}</td>
       <td>${safe(e.payment_method || "—")}</td>
       <td class="mono">${safe(e.reference_number || "—")}</td>
-      <td class="right mono red">$${fmt(Number(e.amount_usd))}</td>
-      <td class="right mono">${fmt(Number(e.amount_zig))}</td>
+      <td class="right mono red">${formatZAR(Number(e.amount_usd))}</td>
     </tr>`).join("");
+
 
   return `<!doctype html>
 <html><head>
