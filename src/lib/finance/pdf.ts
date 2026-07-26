@@ -569,32 +569,33 @@ export function buildIncomeExpenditureHtml(input: IncomeExpenditureInput): strin
   </div>
 
   <div class="summary">
-    <div class="stat income"><div class="label">Total Income</div><div class="val">USD ${fmt(t.incomeUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.incomeZig)}</div></div>
-    <div class="stat expense"><div class="label">General Expenses</div><div class="val">USD ${fmt(t.expensesUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.expensesZig)}</div></div>
-    <div class="stat expense"><div class="label">Supplier Payments</div><div class="val">USD ${fmt(t.supplierUsd)}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(t.supplierZig)}</div></div>
-    <div class="stat net ${t.netUsd >= 0 ? "pos" : "neg"}"><div class="label">Net ${t.netUsd >= 0 ? "Surplus" : "Deficit"}</div><div class="val">USD ${fmt(Math.abs(t.netUsd))}</div><div class="mono" style="font-size:10px;color:#666;">ZiG ${fmt(Math.abs(t.netZig))}</div></div>
+    <div class="stat income"><div class="label">Total Income</div><div class="val">${formatZAR(t.incomeUsd)}</div></div>
+    <div class="stat expense"><div class="label">General Expenses</div><div class="val">${formatZAR(t.expensesUsd)}</div></div>
+    <div class="stat expense"><div class="label">Supplier Payments</div><div class="val">${formatZAR(t.supplierUsd)}</div></div>
+    <div class="stat net ${t.netUsd >= 0 ? "pos" : "neg"}"><div class="label">Net ${t.netUsd >= 0 ? "Surplus" : "Deficit"}</div><div class="val">${formatZAR(Math.abs(t.netUsd))}</div></div>
   </div>
 
   ${categoryRows ? `<h3>Expenditure breakdown by category</h3>
-  <table><thead><tr><th>Category</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead><tbody>${categoryRows}</tbody></table>` : ""}
+  <table><thead><tr><th>Category</th><th class="right">Amount (R)</th></tr></thead><tbody>${categoryRows}</tbody></table>` : ""}
 
   <h3>Income — ${input.income.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Receipt #</th><th>Party / Student</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th><th>Reference</th></tr></thead>
-    <tbody>${incomeRows || `<tr><td colspan="7" style="text-align:center;color:#999;">No income recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Receipt #</th><th>Party / Student</th><th>Method</th><th class="right">Amount (R)</th><th>Reference</th></tr></thead>
+    <tbody>${incomeRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No income recorded for this period.</td></tr>`}</tbody>
   </table>
 
   <h3>General Expenses — ${input.expenses.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${expenseRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${expenseRows || `<tr><td colspan="5" style="text-align:center;color:#999;">No expenses recorded for this period.</td></tr>`}</tbody>
   </table>
 
   <h3>Supplier Payments — ${input.supplierPayments.length} transaction(s)</h3>
   <table>
-    <thead><tr><th>Date</th><th>Supplier</th><th>Method</th><th>Reference</th><th class="right">USD</th><th class="right">ZiG</th></tr></thead>
-    <tbody>${supplierRows || `<tr><td colspan="6" style="text-align:center;color:#999;">No supplier payments recorded for this period.</td></tr>`}</tbody>
+    <thead><tr><th>Date</th><th>Supplier</th><th>Method</th><th>Reference</th><th class="right">Amount (R)</th></tr></thead>
+    <tbody>${supplierRows || `<tr><td colspan="5" style="text-align:center;color:#999;">No supplier payments recorded for this period.</td></tr>`}</tbody>
   </table>
+
 
   <div class="footer">
     <p>Generated: ${new Date().toLocaleString()} &nbsp;|&nbsp; This is a computer-generated financial report.</p>
