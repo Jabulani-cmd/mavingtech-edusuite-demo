@@ -3877,6 +3877,94 @@ export default function FinanceManagement() {
         </DialogContent>
       </Dialog>
 
+      {/* Record Expense Dialog */}
+      <Dialog open={expDialogOpen} onOpenChange={setExpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record Expense</DialogTitle>
+            <DialogDescription>Log a school expenditure entry.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  value={expForm.expense_date}
+                  onChange={(e) => setExpForm((p) => ({ ...p, expense_date: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Category</Label>
+                <Select
+                  value={expForm.category}
+                  onValueChange={(v) => setExpForm((p) => ({ ...p, category: v }))}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {expenseCategories.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Description *</Label>
+              <Input
+                value={expForm.description}
+                onChange={(e) => setExpForm((p) => ({ ...p, description: e.target.value }))}
+                placeholder="e.g. Electricity bill – July"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Amount (R)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={expForm.amount_usd}
+                  onChange={(e) => setExpForm((p) => ({ ...p, amount_usd: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Payment Method</Label>
+                <Select
+                  value={expForm.payment_method}
+                  onValueChange={(v) => setExpForm((p) => ({ ...p, payment_method: v }))}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Cash">Cash</SelectItem>
+                    <SelectItem value="EFT">EFT</SelectItem>
+                    <SelectItem value="Card">Card</SelectItem>
+                    <SelectItem value="SnapScan">SnapScan</SelectItem>
+                    <SelectItem value="Zapper">Zapper</SelectItem>
+                    <SelectItem value="Cheque">Cheque</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Reference Number</Label>
+              <Input
+                value={expForm.reference_number}
+                onChange={(e) => setExpForm((p) => ({ ...p, reference_number: e.target.value }))}
+                placeholder="Optional"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setExpDialogOpen(false)}>Cancel</Button>
+            <Button onClick={saveExpense} disabled={expLoading || !expForm.description}>
+              {expLoading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
+
       {/* Delete Debtor Confirmation Dialog */}
       <Dialog
         open={deleteDebtorOpen}
