@@ -1,12 +1,13 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formatZAR } from "@/lib/currency";
 
-// School branding constants
-export const SCHOOL_NAME = "MavingTech High School";
+// School branding constants (South African context)
+export const SCHOOL_NAME = "MavingTech Business Solutions";
 export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
-export const SCHOOL_ADDRESS = "P.O. Box 1965, Cape Town, South Africa";
-export const SCHOOL_PHONE = "+263 29 288 3621";
-export const SCHOOL_EMAIL = "info@mavingtech.com";
+export const SCHOOL_ADDRESS = "123 Umgeni Road, Durban, KwaZulu-Natal, 4001";
+export const SCHOOL_PHONE = "+27 31 555 0123";
+export const SCHOOL_EMAIL = "info@mbsmavingtech.ac.za";
 // Use an absolute URL so the logo resolves inside print windows (about:blank)
 // and any other context that doesn't share the app's base URL.
 export const SCHOOL_LOGO_PATH = "/images/school-logo-print.png";
@@ -16,6 +17,7 @@ export const SCHOOL_LOGO_URL =
     : SCHOOL_LOGO_PATH;
 
 export type Money = { usd: number; zig: number };
+
 
 export type InvoicePdfInput = {
   schoolName?: string;
