@@ -138,8 +138,37 @@ const emptyForm: StaffFormData = {
 };
 
 // Helper functions for portal account provisioning
+const STAFF_EMAIL_DOMAIN = "mavingtech.ac.za";
+
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8) + "A1!";
+}
+
+function slugifyNamePart(part: string) {
+  return part
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
+function buildStaffEmail(fullName: string, existing: string[] = []): string {
+  const cleaned = (fullName || "").trim();
+  if (!cleaned) return "";
+  const parts = cleaned.split(/\s+/).map(slugifyNamePart).filter(Boolean);
+  if (!parts.length) return "";
+  const first = parts[0];
+  const last = parts.length > 1 ? parts[parts.length - 1] : "";
+  const base = last ? `${first}.${last}` : first;
+  const taken = new Set(existing.map((e) => e.toLowerCase()));
+  let candidate = `${base}@${STAFF_EMAIL_DOMAIN}`;
+  let n = 2;
+  while (taken.has(candidate.toLowerCase())) {
+    candidate = `${base}${n}@${STAFF_EMAIL_DOMAIN}`;
+    n++;
+  }
+  return candidate;
 }
 
 function getPortalRole(staffRole: string): string {
@@ -323,6 +352,14 @@ export default function StaffManagementFull() {
       }
       toast({ title: "Staff member updated!" });
     } else {
+      // Ensure a portal email exists — auto-generate from full name if the
+      // admin didn't provide one.
+      if (!payload.email) {
+        payload.email = buildStaffEmail(
+          payload.full_name || "",
+          staff.map((s) => s.email || "").filter(Boolean),
+        );
+      }
       // Let the edge function handle both auth user creation AND staff record insertion
       // to avoid duplicate staff records
       try {
@@ -504,7 +541,22 @@ export default function StaffManagementFull() {
   };
 
   const updateField = (key: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [key]: value };
+      // Auto-generate portal email from full name for new staff when
+      // the admin has not manually entered an email yet.
+      if (
+        key === "full_name" &&
+        !editingId &&
+        (!prev.email || prev.email.endsWith(`@${STAFF_EMAIL_DOMAIN}`))
+      ) {
+        next.email = buildStaffEmail(
+          value || "",
+          staff.map((s) => s.email || "").filter(Boolean),
+        );
+      }
+      return next;
+    });
     if (errors[key])
       setErrors((prev) => {
         const n = { ...prev };
@@ -766,12 +818,18 @@ export default function StaffManagementFull() {
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
                 <div className="space-y-1">
-                  <Label>Email</Label>
+                  <Label>Portal Email</Label>
                   <Input
                     value={formData.email || ""}
                     onChange={(e) => updateField("email", e.target.value)}
                     type="email"
+                    placeholder={`e.g. trust.dube@${STAFF_EMAIL_DOMAIN}`}
                   />
+                  {!editingId && (
+                    <p className="text-xs text-muted-foreground">
+                      Auto-generated from the full name (e.g. <code>first.last@{STAFF_EMAIL_DOMAIN}</code>). A temporary password is issued and the staff member is required to change it on first login.
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label>Emergency Contact</Label>
