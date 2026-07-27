@@ -66,6 +66,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   const [students, setStudents] = useState<any[]>([]);
   const [myMaterials, setMyMaterials] = useState<any[]>([]);
   const [marks, setMarks] = useState<any[]>([]);
+  const [aiResults, setAiResults] = useState<any[]>([]);
   const [homework, setHomework] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [myAnnouncements, setMyAnnouncements] = useState<any[]>([]);
