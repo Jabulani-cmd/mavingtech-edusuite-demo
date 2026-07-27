@@ -53,11 +53,11 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
 
       // AI/assessment results — include any assessment relevant to the current class/subject scope,
       // not only ones this teacher created (demo AI quizzes may be system/other-owned).
-      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, subject_id, created_by, subjects(name)");
+      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, total_marks, class_id, subject_id, teacher_id, subjects(name)");
       if (subjectId !== "all") assessQ = assessQ.eq("subject_id", subjectId);
       const { data: allAssess } = await assessQ;
       const scopedAssess = (allAssess || []).filter((a: any) =>
-        subjectId !== "all" || classId !== "all" || a.created_by === userId
+        subjectId !== "all" || classId !== "all" || a.teacher_id === userId
       );
       const assessIds = scopedAssess.map((a: any) => a.id);
       let aiRows: any[] = [];
@@ -68,7 +68,7 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
         const aMap = new Map(scopedAssess.map((a: any) => [a.id, a]));
         aiRows = (ar || []).map((r: any) => {
           const a: any = aMap.get(r.assessment_id) || {};
-          const max = Number(a.max_marks) || 0;
+          const max = Number(a.max_marks) || Number(a.total_marks) || 0;
           const pct = max > 0 ? Math.round((Number(r.mark) / max) * 100) : Number(r.mark) || 0;
           return {
             id: `r-${r.id}`,
