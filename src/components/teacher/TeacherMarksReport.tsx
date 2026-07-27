@@ -51,17 +51,23 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
       if (subjectId !== "all") mq = mq.eq("subject_id", subjectId);
       const { data: manual } = await mq.order("created_at", { ascending: false });
 
-      // AI/assessment results for assessments owned by this teacher
-      const { data: myAssess } = await supabase.from("assessments").select("id, title, assessment_type, max_marks, subject_id, subjects(name)").eq("created_by", userId);
-      const assessIds = (myAssess || []).map((a: any) => a.id);
+      // AI/assessment results — include any assessment relevant to the current class/subject scope,
+      // not only ones this teacher created (demo AI quizzes may be system/other-owned).
+      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, subject_id, created_by, subjects(name)");
+      if (subjectId !== "all") assessQ = assessQ.eq("subject_id", subjectId);
+      const { data: allAssess } = await assessQ;
+      const scopedAssess = (allAssess || []).filter((a: any) =>
+        subjectId !== "all" || classId !== "all" || a.created_by === userId
+      );
+      const assessIds = scopedAssess.map((a: any) => a.id);
       let aiRows: any[] = [];
       if (assessIds.length) {
         let aq = supabase.from("assessment_results").select("id, mark, created_at, graded_by, assessment_id, student_id, students(full_name, admission_number, form, class)").in("assessment_id", assessIds);
         if (studentIds) aq = aq.in("student_id", studentIds);
         const { data: ar } = await aq.order("created_at", { ascending: false });
-        const aMap = new Map((myAssess || []).map((a: any) => [a.id, a]));
+        const aMap = new Map(scopedAssess.map((a: any) => [a.id, a]));
         aiRows = (ar || []).map((r: any) => {
-          const a = aMap.get(r.assessment_id) || {};
+          const a: any = aMap.get(r.assessment_id) || {};
           const max = Number(a.max_marks) || 0;
           const pct = max > 0 ? Math.round((Number(r.mark) / max) * 100) : Number(r.mark) || 0;
           return {
@@ -80,7 +86,6 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             created_at: r.created_at,
           };
         });
-        if (subjectId !== "all") aiRows = aiRows.filter(r => r.subject_id === subjectId);
       }
 
       const manualRows = (manual || []).map((m: any) => ({
