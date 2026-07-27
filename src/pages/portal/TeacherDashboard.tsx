@@ -539,6 +539,8 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                 <BulkMarksUpload userId={user!.id} classes={classes} subjects={subjects} students={students} onMarksUploaded={refreshMarks} />
               </div>
             </div>
+            <TeacherMarksReport userId={user!.id} classes={classes} subjects={subjects} />
+
           </TabsContent>
 
           {/* HOMEWORK */}
