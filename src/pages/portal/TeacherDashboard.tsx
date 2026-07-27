@@ -475,19 +475,66 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                 </CardContent>
               </Card>
               <div className="space-y-6">
-                <Card>
-                  <CardHeader><CardTitle className="font-heading">Recent Marks ({marks.length})</CardTitle></CardHeader>
-                  <CardContent className="overflow-x-auto">
-                    {marks.length === 0 ? <p className="text-sm text-muted-foreground">No marks submitted yet.</p> : (
-                      <table className="w-full text-sm">
-                        <thead className="bg-muted"><tr><th className="px-3 py-2 text-left">Subject</th><th className="px-3 py-2">Description</th><th className="px-3 py-2">Type</th><th className="px-3 py-2">Mark</th><th className="px-3 py-2">Grade</th></tr></thead>
-                        <tbody>{marks.map(m => (
-                          <tr key={m.id} className="border-b"><td className="px-3 py-2">{m.subjects?.name}</td><td className="px-3 py-2 text-center">{m.description || "—"}</td><td className="px-3 py-2 text-center">{m.assessment_type}</td><td className="px-3 py-2 text-center font-bold">{m.mark}%</td><td className="px-3 py-2 text-center"><Badge>{zimGrade(m.mark)}</Badge></td></tr>
-                        ))}</tbody>
-                      </table>
-                    )}
-                  </CardContent>
-                </Card>
+                {(() => {
+                  const manualRows = marks.map((m: any) => ({
+                    id: `m-${m.id}`, source: "manual", studentName: null,
+                    subject: m.subjects?.name || "—", description: m.description || "—",
+                    type: m.assessment_type, scoreLabel: `${m.mark}%`, percent: Number(m.mark) || 0,
+                    created_at: m.created_at,
+                  }));
+                  const aiRows = aiResults.map((r: any) => {
+                    const max = Number(r.assessments?.max_marks) || 0;
+                    const scored = Number(r.mark) || 0;
+                    const pct = max > 0 ? Math.round((scored / max) * 100) : scored;
+                    return {
+                      id: `r-${r.id}`, source: r.graded_by ? "teacher-graded" : "ai",
+                      studentName: r.students?.full_name || null,
+                      subject: r.assessments?.subjects?.name || "—",
+                      description: r.assessments?.title || "Assessment",
+                      type: r.assessments?.assessment_type || "assessment",
+                      scoreLabel: max > 0 ? `${scored}/${max}` : `${scored}`,
+                      percent: pct, created_at: r.created_at,
+                    };
+                  });
+                  const combined = [...manualRows, ...aiRows]
+                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                    .slice(0, 80);
+                  return (
+                    <Card>
+                      <CardHeader><CardTitle className="font-heading">Recent Marks ({combined.length})</CardTitle></CardHeader>
+                      <CardContent className="overflow-x-auto">
+                        {combined.length === 0 ? <p className="text-sm text-muted-foreground">No marks submitted yet.</p> : (
+                          <table className="w-full text-sm">
+                            <thead className="bg-muted"><tr>
+                              <th className="px-3 py-2 text-left">Student</th>
+                              <th className="px-3 py-2 text-left">Subject</th>
+                              <th className="px-3 py-2">Description</th>
+                              <th className="px-3 py-2">Type</th>
+                              <th className="px-3 py-2">Source</th>
+                              <th className="px-3 py-2">Score</th>
+                              <th className="px-3 py-2">Grade</th>
+                            </tr></thead>
+                            <tbody>{combined.map(r => (
+                              <tr key={r.id} className="border-b">
+                                <td className="px-3 py-2">{r.studentName || "—"}</td>
+                                <td className="px-3 py-2">{r.subject}</td>
+                                <td className="px-3 py-2 text-center">{r.description}</td>
+                                <td className="px-3 py-2 text-center capitalize">{r.type}</td>
+                                <td className="px-3 py-2 text-center">
+                                  {r.source === "ai"
+                                    ? <Badge variant="outline" className="bg-violet-50 text-violet-700 border-violet-300"><Sparkles className="h-3 w-3 mr-1" />AI Marked</Badge>
+                                    : <Badge variant="outline">Teacher</Badge>}
+                                </td>
+                                <td className="px-3 py-2 text-center font-bold">{r.scoreLabel}</td>
+                                <td className="px-3 py-2 text-center"><Badge>{zimGrade(r.percent)}</Badge></td>
+                              </tr>
+                            ))}</tbody>
+                          </table>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })()}
                 <BulkMarksUpload userId={user!.id} classes={classes} subjects={subjects} students={students} onMarksUploaded={refreshMarks} />
               </div>
             </div>
