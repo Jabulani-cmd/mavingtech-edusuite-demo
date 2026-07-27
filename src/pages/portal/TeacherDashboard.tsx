@@ -27,6 +27,7 @@ import AssessmentsTab from "@/components/teacher/AssessmentsTab";
 import EnhancedMaterialsTab from "@/components/teacher/EnhancedMaterialsTab";
 import EnhancedAnnouncementsTab from "@/components/teacher/EnhancedAnnouncementsTab";
 import BulkMarksUpload from "@/components/teacher/BulkMarksUpload";
+import TeacherMarksReport from "@/components/teacher/TeacherMarksReport";
 import StaffLeaveRequest from "@/components/teacher/StaffLeaveRequest";
 import ExamResultsUpload from "@/components/teacher/ExamResultsUpload";
 import StudentExamTimetableTab from "@/components/student/StudentExamTimetableTab";
@@ -538,6 +539,8 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                 <BulkMarksUpload userId={user!.id} classes={classes} subjects={subjects} students={students} onMarksUploaded={refreshMarks} />
               </div>
             </div>
+            <TeacherMarksReport userId={user!.id} classes={classes} subjects={subjects} />
+
           </TabsContent>
 
           {/* HOMEWORK */}
