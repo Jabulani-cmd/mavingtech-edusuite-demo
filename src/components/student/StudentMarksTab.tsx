@@ -45,10 +45,11 @@ export default function StudentMarksTab({ studentId }: Props) {
     fetchAll();
 
     const ch = supabase
-      .channel(`student-marks-${studentId}`)
+      .channel(`student-marks-${studentId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "marks", filter: `student_id=eq.${studentId}` }, () => fetchAll())
       .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results", filter: `student_id=eq.${studentId}` }, () => fetchAll())
       .subscribe();
+
 
     const onFocus = () => fetchAll();
     window.addEventListener("focus", onFocus);
