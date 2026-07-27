@@ -57,31 +57,34 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
       // Resolve student ids for scope
       let studentIds: string[] | null = null;
       if (classId !== "all") {
-        const { data: sc } = await supabase.from("student_classes").select("student_id").eq("class_id", classId);
+        const { data: sc, error: scErr } = await supabase.from("student_classes").select("student_id").eq("class_id", classId);
+        if (scErr) console.warn("[MarksReport] student_classes error", scErr);
         studentIds = (sc || []).map((r: any) => r.student_id);
         if (studentIds.length === 0) { setRows([]); setLoading(false); return; }
       }
 
-      // Manual marks by this teacher
-      let mq = supabase.from("marks").select("id, mark, term, assessment_type, description, created_at, student_id, subject_id, subjects(name), students(full_name, admission_number, form, class)").eq("teacher_id", userId);
+      // Manual marks (any teacher) scoped to the current class/subject so the
+      // report is a class report, not just this teacher's own entries.
+      let mq = supabase.from("marks").select("id, mark, term, assessment_type, description, created_at, student_id, subject_id, subjects(name), students(full_name, admission_number, form, class)");
       if (studentIds) mq = mq.in("student_id", studentIds);
       if (subjectId !== "all") mq = mq.eq("subject_id", subjectId);
-      const { data: manual } = await mq.order("created_at", { ascending: false });
+      const { data: manual, error: mErr } = await mq.order("created_at", { ascending: false });
+      if (mErr) console.warn("[MarksReport] marks error", mErr);
 
-      // AI/assessment results — include any assessment relevant to the current class/subject scope,
-      // not only ones this teacher created (demo AI quizzes may be system/other-owned).
+      // AI / assessment results scoped to class + subject (any owner)
       let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, total_marks, class_id, subject_id, teacher_id, subjects(name)");
       if (subjectId !== "all") assessQ = assessQ.eq("subject_id", subjectId);
-      const { data: allAssess } = await assessQ;
-      const scopedAssess = (allAssess || []).filter((a: any) =>
-        subjectId !== "all" || classId !== "all" || a.teacher_id === userId
-      );
+      if (classId !== "all") assessQ = assessQ.eq("class_id", classId);
+      const { data: allAssess, error: aErr } = await assessQ;
+      if (aErr) console.warn("[MarksReport] assessments error", aErr);
+      const scopedAssess = allAssess || [];
       const assessIds = scopedAssess.map((a: any) => a.id);
       let aiRows: any[] = [];
       if (assessIds.length) {
         let aq = supabase.from("assessment_results").select("id, mark, created_at, graded_by, assessment_id, student_id, students(full_name, admission_number, form, class)").in("assessment_id", assessIds);
         if (studentIds) aq = aq.in("student_id", studentIds);
-        const { data: ar } = await aq.order("created_at", { ascending: false });
+        const { data: ar, error: arErr } = await aq.order("created_at", { ascending: false });
+        if (arErr) console.warn("[MarksReport] assessment_results error", arErr);
         const aMap = new Map(scopedAssess.map((a: any) => [a.id, a]));
         aiRows = (ar || []).map((r: any) => {
           const a: any = aMap.get(r.assessment_id) || {};
@@ -120,6 +123,7 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
         created_at: m.created_at,
       }));
 
+      console.info("[MarksReport] loaded", { classId, subjectId, studentIds: studentIds?.length, assessments: scopedAssess.length, aiRows: aiRows.length, manualRows: manualRows.length });
       setRows([...manualRows, ...aiRows].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
     } finally {
       setLoading(false);
