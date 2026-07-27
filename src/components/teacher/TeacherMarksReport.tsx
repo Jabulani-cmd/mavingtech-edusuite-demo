@@ -34,6 +34,23 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
 
   useEffect(() => { load(); }, [classId, subjectId, userId]);
 
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase
+      .channel(`teacher-marks-report-results-${userId}-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "marks" }, () => load())
+      .subscribe();
+
+    const onFocus = () => load();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      supabase.removeChannel(channel);
+    };
+  }, [classId, subjectId, userId]);
+
   const load = async () => {
     setLoading(true);
     try {
