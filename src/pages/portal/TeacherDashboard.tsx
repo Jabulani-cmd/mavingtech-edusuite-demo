@@ -273,7 +273,33 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   const refreshMarks = async () => {
     const { data } = await supabase.from("marks").select("*, subjects(name)").eq("teacher_id", user!.id).order("created_at", { ascending: false }).limit(50);
     if (data) setMarks(data);
+    await refreshAiResults();
   };
+
+  const refreshAiResults = async () => {
+    // Load AI-marked (graded_by IS NULL) results for assessments owned by this teacher
+    const { data: myAssess } = await supabase.from("assessments").select("id").eq("teacher_id", user!.id);
+    const ids = (myAssess || []).map(a => a.id);
+    if (ids.length === 0) { setAiResults([]); return; }
+    const { data } = await supabase
+      .from("assessment_results")
+      .select("id, mark, feedback, graded_by, created_at, assessment_id, student_id, assessments(title, max_marks, assessment_type, subjects(name)), students(full_name)")
+      .in("assessment_id", ids)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (data) setAiResults(data);
+  };
+
+  // Realtime: refresh AI results when new rows land
+  useEffect(() => {
+    if (!user) return;
+    refreshAiResults();
+    const ch = supabase
+      .channel(`teacher-ai-results-${user.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results" }, () => refreshAiResults())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user]);
 
   const handleLogout = async () => { await signOut(); navigate("/login"); };
   const displayName = profile?.full_name || user?.user_metadata?.full_name || "Teacher";
