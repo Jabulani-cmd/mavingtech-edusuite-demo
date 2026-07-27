@@ -72,7 +72,10 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
       if (mErr) console.warn("[MarksReport] marks error", mErr);
 
       // AI / assessment results scoped to class + subject (any owner)
-      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, total_marks, class_id, subject_id, teacher_id, subjects(name)");
+      // NOTE: "term" is now selected here so AI-marked assessment results carry
+      // their real term instead of a hardcoded placeholder — without this, the
+      // Term filter dropdown was silently excluding every AI-marked row.
+      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, total_marks, term, class_id, subject_id, teacher_id, subjects(name)");
       if (subjectId !== "all") assessQ = assessQ.eq("subject_id", subjectId);
       if (classId !== "all") assessQ = assessQ.eq("class_id", classId);
       const { data: allAssess, error: aErr } = await assessQ;
@@ -100,7 +103,7 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             subject_id: a.subject_id,
             description: a.title || "Assessment",
             type: a.assessment_type || "assessment",
-            term: "—",
+            term: a.term || "—",
             scoreLabel: max > 0 ? `${r.mark}/${max}` : `${r.mark}`,
             percent: pct,
             created_at: r.created_at,
