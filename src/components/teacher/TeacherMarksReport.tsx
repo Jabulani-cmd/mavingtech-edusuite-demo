@@ -4,14 +4,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Search } from "lucide-react";
+import { Sparkles, Search, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import PrintableSection from "@/components/shared/PrintableSection";
 
 interface Props {
   userId: string;
-  classes: any[];
-  subjects: any[];
+  classes: any[];   // classes this teacher teaches: [{id, name}]
+  subjects: any[];  // subjects this teacher teaches: [{id, name}]
+}
+
+interface MarkRow {
+  id: string;
+  source: "manual" | "teacher" | "ai";
+  student: string;
+  admission: string;
+  grade: string;
+  subject: string;
+  subjectId: string | null;
+  description: string;
+  type: string;
+  term: string;
+  scoreLabel: string;
+  percent: number;
+  created_at: string;
 }
 
 function capsGrade(pct: number): string {
@@ -29,15 +45,19 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
   const [subjectId, setSubjectId] = useState<string>("all");
   const [term, setTerm] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<MarkRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => { load(); }, [classId, subjectId, userId]);
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classId, subjectId, userId]);
 
   useEffect(() => {
     if (!userId) return;
     const channel = supabase
-      .channel(`teacher-marks-report-results-${userId}-${Math.random().toString(36).slice(2)}`)
+      .channel(`teacher-marks-report-${userId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "assessment_results" }, () => load())
       .on("postgres_changes", { event: "*", schema: "public", table: "marks" }, () => load())
       .subscribe();
@@ -49,85 +69,132 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
       window.removeEventListener("focus", onFocus);
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId, subjectId, userId]);
 
   const load = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // Resolve student ids for scope
-      let studentIds: string[] | null = null;
-      if (classId !== "all") {
-        const { data: sc, error: scErr } = await supabase.from("student_classes").select("student_id").eq("class_id", classId);
-        if (scErr) console.warn("[MarksReport] student_classes error", scErr);
-        studentIds = (sc || []).map((r: any) => r.student_id);
-        if (studentIds.length === 0) { setRows([]); setLoading(false); return; }
-      }
+      // 1. Which classes are in scope (defaults to every class this teacher teaches,
+      //    so search works across all of them unless narrowed with the dropdown)
+      const scopeClassIds = classId === "all" ? classes.map(c => c.id) : [classId];
+      if (scopeClassIds.length === 0) { setRows([]); return; }
 
-      // Manual marks (any teacher) scoped to the current class/subject so the
-      // report is a class report, not just this teacher's own entries.
-      let mq = supabase.from("marks").select("id, mark, term, assessment_type, description, created_at, student_id, subject_id, subjects(name), students(full_name, admission_number, form, class)");
-      if (studentIds) mq = mq.in("student_id", studentIds);
+      // 2. Students enrolled in those classes
+      const { data: scRows, error: scErr } = await supabase
+        .from("student_classes")
+        .select("student_id, class_id")
+        .in("class_id", scopeClassIds);
+      if (scErr) throw new Error(`Could not load class rosters: ${scErr.message}`);
+
+      const studentIds = Array.from(new Set((scRows || []).map((r: any) => r.student_id)));
+      if (studentIds.length === 0) { setRows([]); return; }
+
+      // 3. Student details — fetched separately, not via embedded join
+      const { data: studentRows, error: stErr } = await supabase
+        .from("students")
+        .select("id, full_name, admission_number, form, class")
+        .in("id", studentIds);
+      if (stErr) throw new Error(`Could not load student details: ${stErr.message}`);
+      const studentMap = new Map((studentRows || []).map((s: any) => [s.id, s]));
+
+      // 4. Manual marks
+      let mq = supabase
+        .from("marks")
+        .select("id, mark, term, assessment_type, description, created_at, student_id, subject_id")
+        .in("student_id", studentIds);
       if (subjectId !== "all") mq = mq.eq("subject_id", subjectId);
       const { data: manual, error: mErr } = await mq.order("created_at", { ascending: false });
-      if (mErr) console.warn("[MarksReport] marks error", mErr);
+      if (mErr) throw new Error(`Could not load manual marks: ${mErr.message}`);
 
-      // AI / assessment results scoped to class + subject (any owner)
-      // NOTE: "term" is now selected here so AI-marked assessment results carry
-      // their real term instead of a hardcoded placeholder — without this, the
-      // Term filter dropdown was silently excluding every AI-marked row.
-      let assessQ = supabase.from("assessments").select("id, title, assessment_type, max_marks, total_marks, term, class_id, subject_id, teacher_id, subjects(name)");
-      if (subjectId !== "all") assessQ = assessQ.eq("subject_id", subjectId);
-      if (classId !== "all") assessQ = assessQ.eq("class_id", classId);
-      const { data: allAssess, error: aErr } = await assessQ;
-      if (aErr) console.warn("[MarksReport] assessments error", aErr);
-      const scopedAssess = allAssess || [];
-      const assessIds = scopedAssess.map((a: any) => a.id);
-      let aiRows: any[] = [];
-      if (assessIds.length) {
-        let aq = supabase.from("assessment_results").select("id, mark, created_at, graded_by, assessment_id, student_id, students(full_name, admission_number, form, class)").in("assessment_id", assessIds);
-        if (studentIds) aq = aq.in("student_id", studentIds);
-        const { data: ar, error: arErr } = await aq.order("created_at", { ascending: false });
-        if (arErr) console.warn("[MarksReport] assessment_results error", arErr);
-        const aMap = new Map(scopedAssess.map((a: any) => [a.id, a]));
-        aiRows = (ar || []).map((r: any) => {
-          const a: any = aMap.get(r.assessment_id) || {};
-          const max = Number(a.max_marks) || Number(a.total_marks) || 0;
-          const pct = max > 0 ? Math.round((Number(r.mark) / max) * 100) : Number(r.mark) || 0;
-          return {
-            id: `r-${r.id}`,
-            source: r.graded_by ? "teacher" : "ai",
-            student: r.students?.full_name || "—",
-            admission: r.students?.admission_number || "—",
-            grade: r.students?.form || r.students?.class || "—",
-            subject: a.subjects?.name || "—",
-            subject_id: a.subject_id,
-            description: a.title || "Assessment",
-            type: a.assessment_type || "assessment",
-            term: a.term || "—",
-            scoreLabel: max > 0 ? `${r.mark}/${max}` : `${r.mark}`,
-            percent: pct,
-            created_at: r.created_at,
-          };
-        });
+      // 5. Assessments for these classes/subjects
+      let aq = supabase
+        .from("assessments")
+        .select("id, title, assessment_type, max_marks, total_marks, term, class_id, subject_id")
+        .in("class_id", scopeClassIds);
+      if (subjectId !== "all") aq = aq.eq("subject_id", subjectId);
+      const { data: assessments, error: assessErr } = await aq;
+      if (assessErr) throw new Error(`Could not load assessments: ${assessErr.message}`);
+      const assessMap = new Map((assessments || []).map((a: any) => [a.id, a]));
+      const assessIds = (assessments || []).map((a: any) => a.id);
+
+      // 6. AI/teacher-graded assessment results — separately, not embedded.
+      //    IMPORTANT: this table's real columns are marks_obtained / percentage /
+      //    grade / is_published (matching what the student quiz submission writes),
+      //    NOT "mark" — using the wrong column name here is what silently produced
+      //    0 records even after a student successfully submitted and was marked.
+      let arRows: any[] = [];
+      if (assessIds.length > 0) {
+        const { data: ar, error: arErr } = await supabase
+          .from("assessment_results")
+          .select("id, marks_obtained, percentage, grade, is_published, created_at, graded_by, assessment_id, student_id")
+          .eq("is_published", true)
+          .in("assessment_id", assessIds)
+          .in("student_id", studentIds);
+        if (arErr) throw new Error(`Could not load assessment results: ${arErr.message}`);
+        arRows = ar || [];
       }
 
-      const manualRows = (manual || []).map((m: any) => ({
-        id: `m-${m.id}`, source: "manual",
-        student: m.students?.full_name || "—",
-        admission: m.students?.admission_number || "—",
-        grade: m.students?.form || m.students?.class || "—",
-        subject: m.subjects?.name || "—",
-        subject_id: m.subject_id,
-        description: m.description || "—",
-        type: m.assessment_type || "—",
-        term: m.term || "—",
-        scoreLabel: `${m.mark}%`,
-        percent: Number(m.mark) || 0,
-        created_at: m.created_at,
-      }));
+      const subjectMap = new Map(subjects.map((s: any) => [s.id, s.name]));
 
-      console.info("[MarksReport] loaded", { classId, subjectId, studentIds: studentIds?.length, assessments: scopedAssess.length, aiRows: aiRows.length, manualRows: manualRows.length });
-      setRows([...manualRows, ...aiRows].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+      const manualRows: MarkRow[] = (manual || []).map((m: any) => {
+        const st = studentMap.get(m.student_id);
+        return {
+          id: `m-${m.id}`,
+          source: "manual",
+          student: st?.full_name || "—",
+          admission: st?.admission_number || "—",
+          grade: st?.form || st?.class || "—",
+          subject: subjectMap.get(m.subject_id) || "—",
+          subjectId: m.subject_id,
+          description: m.description || "—",
+          type: m.assessment_type || "—",
+          term: m.term || "—",
+          scoreLabel: `${m.mark}%`,
+          percent: Number(m.mark) || 0,
+          created_at: m.created_at,
+        };
+      });
+
+      const aiRows: MarkRow[] = arRows.map((r: any) => {
+        const a = assessMap.get(r.assessment_id);
+        const st = studentMap.get(r.student_id);
+        const max = Number(a?.max_marks) || Number(a?.total_marks) || 0;
+        const pct = r.percentage != null
+          ? Math.round(Number(r.percentage))
+          : (max > 0 ? Math.round((Number(r.marks_obtained) / max) * 100) : Number(r.marks_obtained) || 0);
+        return {
+          id: `r-${r.id}`,
+          source: r.graded_by ? "teacher" : "ai",
+          student: st?.full_name || "—",
+          admission: st?.admission_number || "—",
+          grade: st?.form || st?.class || "—",
+          subject: subjectMap.get(a?.subject_id) || "—",
+          subjectId: a?.subject_id || null,
+          description: a?.title || "Assessment",
+          type: a?.assessment_type || "assessment",
+          term: a?.term || "—",
+          scoreLabel: max > 0 ? `${r.marks_obtained}/${max}` : `${r.marks_obtained}`,
+          percent: pct,
+          created_at: r.created_at,
+        };
+      });
+
+      const combined = [...manualRows, ...aiRows].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      console.info("[MarksReport] loaded", {
+        classId, subjectId, students: studentIds.length,
+        assessments: (assessments || []).length, aiRows: aiRows.length, manualRows: manualRows.length,
+      });
+
+      setRows(combined);
+    } catch (e: any) {
+      console.error("[MarksReport] load failed", e);
+      setError(e.message || "Failed to load marks.");
+      setRows([]);
     } finally {
       setLoading(false);
     }
@@ -138,21 +205,31 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
       if (term !== "all" && r.term !== term) return false;
       if (search) {
         const q = search.toLowerCase();
-        if (!(r.student.toLowerCase().includes(q) || r.admission.toLowerCase().includes(q) || r.subject.toLowerCase().includes(q) || r.description.toLowerCase().includes(q))) return false;
+        if (
+          !r.student.toLowerCase().includes(q) &&
+          !r.admission.toLowerCase().includes(q) &&
+          !r.subject.toLowerCase().includes(q) &&
+          !r.description.toLowerCase().includes(q)
+        ) return false;
       }
       return true;
     });
   }, [rows, term, search]);
 
-  const overall = filtered.length ? Math.round(filtered.reduce((a, r) => a + r.percent, 0) / filtered.length) : 0;
+  const overall = filtered.length
+    ? Math.round(filtered.reduce((a, r) => a + r.percent, 0) / filtered.length)
+    : 0;
 
   const bySubject = useMemo(() => {
     const map: Record<string, { total: number; n: number }> = {};
     filtered.forEach(r => {
       map[r.subject] = map[r.subject] || { total: 0, n: 0 };
-      map[r.subject].total += r.percent; map[r.subject].n += 1;
+      map[r.subject].total += r.percent;
+      map[r.subject].n += 1;
     });
-    return Object.entries(map).map(([subject, v]) => ({ subject, avg: Math.round(v.total / v.n), n: v.n })).sort((a, b) => b.avg - a.avg);
+    return Object.entries(map)
+      .map(([subject, v]) => ({ subject, avg: Math.round(v.total / v.n), n: v.n }))
+      .sort((a, b) => b.avg - a.avg);
   }, [filtered]);
 
   const byStudent = useMemo(() => {
@@ -160,12 +237,15 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
     filtered.forEach(r => {
       const k = r.admission + "|" + r.student;
       map[k] = map[k] || { name: r.student, admission: r.admission, total: 0, n: 0 };
-      map[k].total += r.percent; map[k].n += 1;
+      map[k].total += r.percent;
+      map[k].n += 1;
     });
-    return Object.values(map).map(s => ({ ...s, avg: Math.round(s.total / s.n) })).sort((a, b) => b.avg - a.avg);
+    return Object.values(map)
+      .map(s => ({ ...s, avg: Math.round(s.total / s.n) }))
+      .sort((a, b) => b.avg - a.avg);
   }, [filtered]);
 
-  const className = classId === "all" ? "All Classes" : (classes.find(c => c.id === classId)?.name || "Class");
+  const className = classId === "all" ? "All My Classes" : (classes.find(c => c.id === classId)?.name || "Class");
   const subjectName = subjectId === "all" ? "All Subjects" : (subjects.find(s => s.id === subjectId)?.name || "Subject");
   const subtitle = `${className} · ${subjectName}${term !== "all" ? ` · ${term}` : ""} · ${filtered.length} record${filtered.length === 1 ? "" : "s"} · Overall average ${overall}%`;
 
@@ -178,7 +258,7 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             <Select value={classId} onValueChange={setClassId}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Classes</SelectItem>
+                <SelectItem value="all">All My Classes</SelectItem>
                 {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -207,18 +287,31 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             </Select>
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Search</label>
+            <label className="text-xs font-medium text-muted-foreground">Search (all my classes)</label>
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-8" placeholder="Student, subject, assessment…" value={search} onChange={e => setSearch(e.target.value)} />
+              <Input
+                className="pl-8"
+                placeholder="Student, subject, assessment…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <PrintableSection title={`Marks Report — ${className}`} subtitle={subtitle} fileName={`marks-${className}`.replace(/\s+/g, "-").toLowerCase()}>
+      <PrintableSection
+        title={`Marks Report — ${className}`}
+        subtitle={subtitle}
+        fileName={`marks-${className}`.replace(/\s+/g, "-").toLowerCase()}
+      >
         {loading ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">Loading marks…</p>
+          <div className="flex items-center justify-center gap-2 py-10 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading marks…
+          </div>
+        ) : error ? (
+          <p className="text-sm text-destructive py-6 text-center">{error}</p>
         ) : filtered.length === 0 ? (
           <p className="text-sm text-muted-foreground py-6 text-center">No marks match the current filters.</p>
         ) : (
@@ -242,12 +335,14 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             <div>
               <h4 className="font-semibold text-sm mb-2">Class Averages by Subject</h4>
               <table className="w-full text-sm border">
-                <thead className="bg-muted"><tr>
-                  <th className="px-3 py-2 text-left">Subject</th>
-                  <th className="px-3 py-2 text-center">Records</th>
-                  <th className="px-3 py-2 text-center">Average</th>
-                  <th className="px-3 py-2 text-center">CAPS</th>
-                </tr></thead>
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-3 py-2 text-left">Subject</th>
+                    <th className="px-3 py-2 text-center">Records</th>
+                    <th className="px-3 py-2 text-center">Average</th>
+                    <th className="px-3 py-2 text-center">CAPS</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {bySubject.map(s => (
                     <tr key={s.subject} className="border-t">
@@ -264,14 +359,16 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             <div>
               <h4 className="font-semibold text-sm mb-2">Learner Rankings</h4>
               <table className="w-full text-sm border">
-                <thead className="bg-muted"><tr>
-                  <th className="px-3 py-2 text-left">#</th>
-                  <th className="px-3 py-2 text-left">Learner</th>
-                  <th className="px-3 py-2 text-left">Admission</th>
-                  <th className="px-3 py-2 text-center">Records</th>
-                  <th className="px-3 py-2 text-center">Average</th>
-                  <th className="px-3 py-2 text-center">CAPS</th>
-                </tr></thead>
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-3 py-2 text-left">#</th>
+                    <th className="px-3 py-2 text-left">Learner</th>
+                    <th className="px-3 py-2 text-left">Admission</th>
+                    <th className="px-3 py-2 text-center">Records</th>
+                    <th className="px-3 py-2 text-center">Average</th>
+                    <th className="px-3 py-2 text-center">CAPS</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {byStudent.map((s, i) => (
                     <tr key={s.admission} className="border-t">
@@ -290,19 +387,21 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
             <div>
               <h4 className="font-semibold text-sm mb-2">All Marks</h4>
               <table className="w-full text-sm border">
-                <thead className="bg-muted"><tr>
-                  <th className="px-3 py-2 text-left">Date</th>
-                  <th className="px-3 py-2 text-left">Learner</th>
-                  <th className="px-3 py-2 text-left">Grade</th>
-                  <th className="px-3 py-2 text-left">Subject</th>
-                  <th className="px-3 py-2 text-left">Assessment</th>
-                  <th className="px-3 py-2 text-center">Type</th>
-                  <th className="px-3 py-2 text-center">Term</th>
-                  <th className="px-3 py-2 text-center">Source</th>
-                  <th className="px-3 py-2 text-center">Score</th>
-                  <th className="px-3 py-2 text-center">%</th>
-                  <th className="px-3 py-2 text-center">CAPS</th>
-                </tr></thead>
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-3 py-2 text-left">Date</th>
+                    <th className="px-3 py-2 text-left">Learner</th>
+                    <th className="px-3 py-2 text-left">Grade</th>
+                    <th className="px-3 py-2 text-left">Subject</th>
+                    <th className="px-3 py-2 text-left">Assessment</th>
+                    <th className="px-3 py-2 text-center">Type</th>
+                    <th className="px-3 py-2 text-center">Term</th>
+                    <th className="px-3 py-2 text-center">Source</th>
+                    <th className="px-3 py-2 text-center">Score</th>
+                    <th className="px-3 py-2 text-center">%</th>
+                    <th className="px-3 py-2 text-center">CAPS</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {filtered.map(r => (
                     <tr key={r.id} className="border-t">
@@ -314,9 +413,13 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
                       <td className="px-3 py-2 text-center capitalize">{r.type}</td>
                       <td className="px-3 py-2 text-center">{r.term}</td>
                       <td className="px-3 py-2 text-center">
-                        {r.source === "ai"
-                          ? <Badge variant="outline" className="bg-violet-50 text-violet-700 border-violet-300"><Sparkles className="h-3 w-3 mr-1" />AI</Badge>
-                          : <Badge variant="outline">{r.source === "teacher" ? "Teacher" : "Manual"}</Badge>}
+                        {r.source === "ai" ? (
+                          <Badge variant="outline" className="bg-violet-50 text-violet-700 border-violet-300">
+                            <Sparkles className="h-3 w-3 mr-1" />AI
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">{r.source === "teacher" ? "Teacher" : "Manual"}</Badge>
+                        )}
                       </td>
                       <td className="px-3 py-2 text-center font-semibold">{r.scoreLabel}</td>
                       <td className="px-3 py-2 text-center">{r.percent}%</td>
