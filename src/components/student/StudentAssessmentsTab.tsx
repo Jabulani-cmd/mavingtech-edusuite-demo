@@ -9,12 +9,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { ClipboardList, Clock, CheckCircle2, Upload, Eye, Sparkles, Timer, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { format, isPast, differenceInDays } from "date-fns";
+import { format, differenceInCalendarDays, endOfDay, isBefore } from "date-fns";
 
 interface Props {
   studentId: string | null;
   studentClassId: string | null;
   userId: string;
+}
+
+// Treat "due" as end-of-day on the due date, not midnight at the start of it —
+// otherwise an assessment due "today" shows as overdue the moment any time
+// passes 00:00 on that day.
+function isOverdueDate(dueDateStr: string): boolean {
+  return isBefore(endOfDay(new Date(dueDateStr)), new Date());
 }
 
 export default function StudentAssessmentsTab({ studentId, studentClassId, userId }: Props) {
@@ -70,8 +77,8 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   const getResult = (id: string) => results.find(r => r.assessment_id === id);
   const hasQuestions = (a: any) => Array.isArray(a?.questions) && a.questions.length > 0;
 
-  const upcoming = assessments.filter(a => a.due_date && !isPast(new Date(a.due_date)) && !getResult(a.id) && !getSubmission(a.id));
-  const pastDue = assessments.filter(a => a.due_date && isPast(new Date(a.due_date)) && !getSubmission(a.id) && !getResult(a.id));
+  const upcoming = assessments.filter(a => a.due_date && !isOverdueDate(a.due_date) && !getResult(a.id) && !getSubmission(a.id));
+  const pastDue = assessments.filter(a => a.due_date && isOverdueDate(a.due_date) && !getSubmission(a.id) && !getResult(a.id));
   const completed = assessments.filter(a => getResult(a.id) || getSubmission(a.id));
 
   const openQuiz = (a: any) => {
@@ -127,7 +134,7 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
       return `Q${i + 1}: ${correct ? "✓ Correct" : `✗ Your answer: ${q.options[chosen] ?? "—"} | Correct: ${q.options[q.correct_index]}`}${q.explanation ? ` — ${q.explanation}` : ""}`;
     }).join("\n");
 
-    await supabase.from("assessment_results").insert({
+    const { error: resultErr } = await supabase.from("assessment_results").insert({
       assessment_id: selectedAssessment.id,
       student_id: studentId,
       marks_obtained: obtained,
@@ -138,6 +145,12 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
       graded_by: userId,
       graded_date: new Date().toISOString(),
     });
+
+    if (resultErr) {
+      toast({ title: "Marking failed to save", description: resultErr.message, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
 
     setSubmitting(false);
     setShowQuiz(false);
@@ -178,8 +191,10 @@ export default function StudentAssessmentsTab({ studentId, studentClassId, userI
   const renderCard = (a: any, showDue = true) => {
     const sub = getSubmission(a.id);
     const res = getResult(a.id);
-    const daysLeft = a.due_date ? differenceInDays(new Date(a.due_date), new Date()) : null;
-    const isOverdue = a.due_date && isPast(new Date(a.due_date));
+    // Calendar-day difference (ignores time-of-day) so "due today" reads as 0 days
+    // left, not a negative number just because part of the day has passed.
+    const daysLeft = a.due_date ? differenceInCalendarDays(new Date(a.due_date), new Date()) : null;
+    const isOverdue = a.due_date && isOverdueDate(a.due_date);
     const isQuiz = hasQuestions(a);
 
     return (
