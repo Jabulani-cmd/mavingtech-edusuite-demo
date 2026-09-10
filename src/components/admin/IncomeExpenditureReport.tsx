@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import { incomeExpenditureActions } from "@/lib/finance/documentActions";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 
 const fmt = (n: any): string => { const v=Number(n); return `US$ ${new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
 const fmtZ = (n: any): string => { const v=Number(n); return `ZiG ${new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
