@@ -218,7 +218,7 @@ export default function ReportCardDownloadButton(props: ReportCardProps) {
   </div>
 
   <div class="footer">
-    <p>MavingTech Business Solutions · 123 Umgeni Road, Durban, KwaZulu-Natal, 4001 · Tel: +27 31 555 0123</p>
+    <p>MavingTech Business Solutions · 123 Samora Machel Avenue, Harare, Zimbabwe · Tel: +263 24 255 0123</p>
     <p>Generated on ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
   </div>
 </div>

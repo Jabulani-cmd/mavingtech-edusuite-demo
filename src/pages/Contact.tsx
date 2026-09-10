@@ -112,7 +112,7 @@ export default function Contact() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: MapPin, title: t("contact.cards.address"), text: t("contact.cards.addressText") },
-              { icon: Phone, title: t("contact.cards.phone"), text: "+27 31 000 0000" },
+              { icon: Phone, title: t("contact.cards.phone"), text: "+263 24 255 0123" },
               { icon: Mail, title: t("contact.cards.email"), text: "info@mavingtech.com" },
               { icon: Clock, title: t("contact.cards.hours"), text: t("contact.cards.hoursText") },
             ].map((item, i) => (
@@ -206,7 +206,7 @@ export default function Contact() {
                           )} />
                         </div>
                         <FormField control={appointmentForm.control} name="phone" render={({ field }) => (
-                          <FormItem><FormLabel>{t("contact.appointment.phone")}</FormLabel><FormControl><Input placeholder="+27..." {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t("contact.appointment.phone")}</FormLabel><FormControl><Input placeholder="+263..." {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <div className="grid gap-4 sm:grid-cols-2">
                           <FormField control={appointmentForm.control} name="authority" render={({ field }) => (

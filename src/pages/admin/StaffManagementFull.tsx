@@ -138,7 +138,7 @@ const emptyForm: StaffFormData = {
 };
 
 // Helper functions for portal account provisioning
-const STAFF_EMAIL_DOMAIN = "mbsmavingtech.ac.za";
+const STAFF_EMAIL_DOMAIN = "mbsmavingtech.ac.zw";
 
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8) + "A1!";
@@ -815,7 +815,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.phone || ""}
                     onChange={(e) => updateField("phone", e.target.value)}
-                    placeholder="e.g. 0821234567 or +27821234567"
+                    placeholder="e.g. 0772123456 or +263772123456"
                   />
                   {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                 </div>
@@ -833,7 +833,7 @@ export default function StaffManagementFull() {
                   <Input
                     value={formData.emergency_contact || ""}
                     onChange={(e) => updateField("emergency_contact", e.target.value)}
-                    placeholder="e.g. 0821234567 or +27821234567"
+                    placeholder="e.g. 0772123456 or +263772123456"
                   />
                   {errors.emergency_contact && <p className="text-xs text-destructive">{errors.emergency_contact}</p>}
                 </div>
@@ -843,7 +843,7 @@ export default function StaffManagementFull() {
                     value={formData.address || ""}
                     onChange={(e) => updateField("address", e.target.value)}
                     rows={2}
-                    placeholder="Street, suburb, city, province (e.g. 12 Main Rd, Umhlanga, Durban, KwaZulu-Natal)"
+                    placeholder="Street, suburb, city (e.g. 12 Main Rd, Avondale, Harare)"
                   />
                 </div>
                 <div className="space-y-1 sm:col-span-2">

@@ -2,12 +2,12 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatMoney } from "@/lib/currency";
 
-// School branding constants (South African context)
+// School branding constants (Zimbabwean context)
 export const SCHOOL_NAME = "MavingTech Business Solutions";
 export const SCHOOL_MOTTO = "Empowering Your Business Through Technology";
-export const SCHOOL_ADDRESS = "123 Umgeni Road, Durban, KwaZulu-Natal, 4001";
-export const SCHOOL_PHONE = "+27 31 555 0123";
-export const SCHOOL_EMAIL = "info@mbsmavingtech.ac.za";
+export const SCHOOL_ADDRESS = "123 Samora Machel Avenue, Harare, Zimbabwe";
+export const SCHOOL_PHONE = "+263 24 255 0123";
+export const SCHOOL_EMAIL = "info@mbsmavingtech.ac.zw";
 // Use an absolute URL so the logo resolves inside print windows (about:blank)
 // and any other context that doesn't share the app's base URL.
 export const SCHOOL_LOGO_PATH = "/images/school-logo-print.png";
