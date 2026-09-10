@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { safeHtml } from "@/lib/utils";
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -20,7 +21,7 @@ const fmt = (n: any): string => { const v=Number(n); return "US$ " + new Intl.Nu
 export default function BankReconciliation() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const rate = 1; const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
       const usd = Number(usdValue);

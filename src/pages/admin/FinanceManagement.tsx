@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -126,8 +127,7 @@ function statusBadge(status: string) {
 export default function FinanceManagement() {
   const { toast } = useToast();
   const { user, role } = useAuth();
-  const rate = 1;
-  const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
   const toNumber = (value: any) => {
     const n = Number(value);
     return Number.isFinite(n) ? n : 0;

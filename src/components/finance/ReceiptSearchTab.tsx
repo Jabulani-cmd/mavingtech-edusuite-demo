@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ const fmt = (n: any): string => { const v=Number(n); return "US$ " + new Intl.Nu
 
 export default function ReceiptSearchTab() {
   const { toast } = useToast();
-  const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
   const [searchTerm, setSearchTerm] = useState("");
   const [receipts, setReceipts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
