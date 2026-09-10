@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 import { format } from "date-fns";
 
 export default function ParentBilling() {
@@ -115,7 +115,7 @@ export default function ParentBilling() {
                       {current && <Badge className="bg-emerald-100 text-emerald-700">Current</Badge>}
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">
-                      <span className="text-3xl font-bold">{formatZAR(p.amount_usd, { decimals: false })}</span>
+                      <span className="text-3xl font-bold">{formatMoney(p.amount_usd, { decimals: false })}</span>
                       <span className="text-muted-foreground text-sm">/ {p.plan_type === "monthly" ? "month" : "term"}</span>
                     </div>
                     {p.description && <p className="text-sm mt-3">{p.description}</p>}
@@ -175,7 +175,7 @@ export default function ParentBilling() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <div className="font-semibold">{formatZAR(p.amount)}</div>
+                        <div className="font-semibold">{formatMoney(p.amount)}</div>
                         <div className="text-xs">
                           <Badge variant={p.payment_status === "paid" ? "default" : "outline"} className={
                             p.payment_status === "paid" ? "bg-emerald-100 text-emerald-700 border-emerald-300" :

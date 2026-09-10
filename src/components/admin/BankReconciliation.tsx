@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { safeHtml } from "@/lib/utils";
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,12 +16,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Search, CheckCircle, AlertTriangle, Loader2, Printer } from "lucide-react";
 
-const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
+const fmt = (n: any): string => { const v=Number(n); return "US$ " + new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
 export default function BankReconciliation() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const rate = 1; const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
       const usd = Number(usdValue);

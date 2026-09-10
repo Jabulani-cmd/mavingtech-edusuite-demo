@@ -11,15 +11,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import { incomeExpenditureActions } from "@/lib/finance/documentActions";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 
-const fmt = (n: any): string => { const v=Number(n); return `R ${new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
+const fmt = (n: any): string => { const v=Number(n); return `US$ ${new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
+const fmtZ = (n: any): string => { const v=Number(n); return `ZiG ${new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function IncomeExpenditureReport() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth(); // 0-indexed
-  const rate = 1;
-  const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
 
   const convertUsdToZig = useCallback(
     (usdValue: any) => {
@@ -209,7 +210,7 @@ export default function IncomeExpenditureReport() {
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Income</p>
             </div>
             <p className="text-xl font-bold font-mono text-green-700">{fmt(totalIncomeUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">{fmt(totalIncomeZig)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmtZ(totalIncomeZig)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -219,7 +220,7 @@ export default function IncomeExpenditureReport() {
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Expenses</p>
             </div>
             <p className="text-xl font-bold font-mono text-destructive">{fmt(totalOutUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">{fmt(totalOutZig)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmtZ(totalOutZig)}</p>
           </CardContent>
         </Card>
         <Card className={netUsd >= 0 ? "bg-green-50/50 border-green-200" : "bg-destructive/5 border-destructive/30"}>
@@ -229,7 +230,7 @@ export default function IncomeExpenditureReport() {
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Net</p>
             </div>
             <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700" : "text-destructive"}`}>{fmt(netUsd)}</p>
-            <p className="text-sm font-mono text-muted-foreground">{fmt(netZig)}</p>
+            <p className="text-sm font-mono text-muted-foreground">{fmtZ(netZig)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -252,7 +253,7 @@ export default function IncomeExpenditureReport() {
               {expenseByCategory.map(([cat, totals]) => (
                 <div key={cat} className="flex items-center justify-between text-sm border-b pb-1">
                   <span><Badge variant="outline">{cat}</Badge></span>
-                  <span className="font-mono">{fmt(totals.usd)} / {fmt(totals.zig)}</span>
+                  <span className="font-mono">{fmt(totals.usd)} / {fmtZ(totals.zig)}</span>
                 </div>
               ))}
             </div>

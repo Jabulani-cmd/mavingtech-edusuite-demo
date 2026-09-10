@@ -88,11 +88,11 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>Johannesburg, South Africa</span>
+                <span>Harare, Zimbabwe</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <span>+27 31 000 0000</span>
+                <span>+263 24 255 0123</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />

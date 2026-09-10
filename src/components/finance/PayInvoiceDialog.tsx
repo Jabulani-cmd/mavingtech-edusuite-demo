@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 import { generateAndStoreReceipt } from "@/lib/finance/receiptStorage";
 
 type Outcome = "auto" | "approve" | "insufficient" | "declined";
@@ -113,7 +113,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         invoice_id: invoice.id,
         student_id: student.id,
         amount: payAmount,
-        currency: "ZAR",
+        currency: "USD",
         amount_usd: payAmount,
         amount_zig: 0,
         payment_method: method,
@@ -194,14 +194,14 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         <DialogHeader>
           <DialogTitle>Pay Invoice {invoice?.invoice_number}</DialogTitle>
           <DialogDescription>
-            {student.full_name} · Outstanding {formatZAR(outstanding)}
+            {student.full_name} · Outstanding {formatMoney(outstanding)}
           </DialogDescription>
         </DialogHeader>
 
         {step === "amount" && (
           <div className="space-y-4">
             <div>
-              <Label>Amount to pay (ZAR)</Label>
+              <Label>Amount to pay (US$)</Label>
               <Input
                 type="number"
                 min="0"
@@ -227,7 +227,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         {step === "method" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="text-sm">Paying <strong>{formatZAR(payAmount)}</strong></div>
+              <div className="text-sm">Paying <strong>{formatMoney(payAmount)}</strong></div>
               <DemoBadge />
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -280,7 +280,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
                 <OutcomeSelect />
                 {error && <div className="text-xs text-destructive flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {error}</div>}
                 <Button className="w-full" size="lg" onClick={() => simulate(true)}>
-                  <Lock className="w-4 h-4 mr-2" /> Pay {formatZAR(payAmount)}
+                  <Lock className="w-4 h-4 mr-2" /> Pay {formatMoney(payAmount)}
                 </Button>
               </>
             ) : (
@@ -298,7 +298,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
             <Building2 className="w-12 h-12 mx-auto text-teal-600" />
             <h3 className="font-semibold">SecurePay SA — Instant EFT</h3>
             <p className="text-sm text-muted-foreground">
-              Authorise a {formatZAR(payAmount)} payment with your bank.
+              Authorise a {formatMoney(payAmount)} payment with your bank.
             </p>
             {!processing && <div className="text-left"><OutcomeSelect /></div>}
             {processing ? (
@@ -313,7 +313,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
           <div className="text-center space-y-3">
             <h3 className="font-semibold">SecurePay SA — {method === "snapscan" ? "SnapScan" : "Zapper"}</h3>
             <p className="text-sm text-muted-foreground">
-              Scan to pay {formatZAR(payAmount)}
+              Scan to pay {formatMoney(payAmount)}
             </p>
             <div className="mx-auto my-2 h-40 w-40 rounded-lg border-4 border-foreground p-2 bg-white">
               <div className="h-full w-full" style={{ backgroundImage: "repeating-conic-gradient(#0f172a 0% 25%, #ffffff 0% 50%)", backgroundSize: "14px 14px" }} />
@@ -335,7 +335,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
             <h3 className="text-xl font-bold">Payment Successful</h3>
             <div className="bg-muted/40 rounded-lg p-3 text-sm text-left space-y-1">
               <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><strong>{receipt}</strong></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><strong>{formatZAR(payAmount)}</strong></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><strong>{formatMoney(payAmount)}</strong></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Method</span><strong>{METHOD_LABEL[method]}</strong></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Invoice</span><strong>{invoice.invoice_number}</strong></div>
             </div>

@@ -1,4 +1,6 @@
 // @ts-nocheck
+import ExchangeRateCard from "@/components/finance/ExchangeRateCard";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -39,7 +41,7 @@ import {
 } from "@/lib/finance/pdf";
 import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
 import { printReceipt, openPrintWindow, downloadHtmlDocument } from "@/lib/finance/print";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import { invoiceActions, receiptActions, statementActions, expensesListActions } from "@/lib/finance/documentActions";
@@ -102,7 +104,7 @@ const restrictionTypes = [
 // ── helpers ──
 const fmt = (n: any): string => {
   const v = Number(n);
-  return `R ${new Intl.NumberFormat("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
+  return `${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
 };
 const genInvoiceNum = () =>
   `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0")}`;
@@ -126,8 +128,7 @@ function statusBadge(status: string) {
 export default function FinanceManagement() {
   const { toast } = useToast();
   const { user, role } = useAuth();
-  const rate = 1;
-  const usdToZig = (v: number) => v;
+  const { rate, usdToZig } = useExchangeRate();
   const toNumber = (value: any) => {
     const n = Number(value);
     return Number.isFinite(n) ? n : 0;
@@ -878,7 +879,7 @@ export default function FinanceManagement() {
   <div class="header">
     <div class="tag">MavingTech Business Solutions</div>
     <h1>${safeHtml(title)}</h1>
-    <div class="addr">123 Umgeni Road, Durban, KwaZulu-Natal, 4001 · +27 31 555 0123 · info@mbsmavingtech.ac.za</div>
+    <div class="addr">123 Samora Machel Avenue, Harare, Zimbabwe · +263 24 255 0123 · info@mbsmavingtech.ac.zw</div>
   </div>
   ${subtitleLines.map((l) => `<p class="meta">${l}</p>`).join("")}
   <p class="meta"><strong>Generated:</strong> ${now}</p>
@@ -903,8 +904,8 @@ export default function FinanceManagement() {
           <td class="mono">${safeHtml(i.invoice_number)}</td>
           <td>${safeHtml(i.term)}</td>
           <td>${safeHtml(i.academic_year)}</td>
-          <td class="right mono">${formatZAR(i.total_usd)}</td>
-          <td class="right mono">${formatZAR(i.paid_usd)}</td>
+          <td class="right mono">${formatMoney(i.total_usd)}</td>
+          <td class="right mono">${formatMoney(i.paid_usd)}</td>
           <td>${statusText(i.status)}</td>
         </tr>`).join("")
       : `<tr><td colspan="6" style="text-align:center;color:#64748b">No invoices on record</td></tr>`;
@@ -913,7 +914,7 @@ export default function FinanceManagement() {
           <td class="mono">${safeHtml(p.receipt_number)}</td>
           <td>${safeHtml(p.payment_date)}</td>
           <td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td>
-          <td class="right mono">${formatZAR(p.amount_usd)}</td>
+          <td class="right mono">${formatMoney(p.amount_usd)}</td>
           <td>${safeHtml(p.payment_method)}</td>
         </tr>`).join("")
       : `<tr><td colspan="5" style="text-align:center;color:#64748b">No payments on record</td></tr>`;
@@ -929,10 +930,10 @@ export default function FinanceManagement() {
         <th class="right">Amount (R)</th><th>Method</th>
       </tr></thead><tbody>${payRows}</tbody></table>
       <div class="summary">
-        <p><strong>Total Invoiced:</strong> ${formatZAR(totalInvoiced)}</p>
-        <p><strong>Total Paid:</strong> ${formatZAR(totalPaid)}</p>
+        <p><strong>Total Invoiced:</strong> ${formatMoney(totalInvoiced)}</p>
+        <p><strong>Total Paid:</strong> ${formatMoney(totalPaid)}</p>
         <p class="${balance > 0 ? "red" : "green"}">
-          <strong>${balance < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> ${formatZAR(Math.abs(balance))}
+          <strong>${balance < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> ${formatMoney(Math.abs(balance))}
         </p>
       </div>`;
     return buildReportShell("Student Account Statement", [
@@ -962,7 +963,7 @@ export default function FinanceManagement() {
           <td>${safeHtml(d.students?.form || "—")}</td>
           <td class="mono">${safeHtml(d.invoice_number)}</td>
           <td>${safeHtml(d.term)}</td>
-          <td class="right mono red">${formatZAR(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td>
+          <td class="right mono red">${formatMoney(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td>
           <td>${statusText(d.status)}</td>
         </tr>`).join("")
       : `<tr><td colspan="8" style="text-align:center;color:#64748b">No outstanding debts</td></tr>`;
@@ -973,7 +974,7 @@ export default function FinanceManagement() {
       </tr></thead><tbody>
         ${rows}
         <tr class="total-row"><td colspan="6" class="right">TOTAL OUTSTANDING</td>
-          <td class="right mono red">${formatZAR(total)}</td><td></td></tr>
+          <td class="right mono red">${formatMoney(total)}</td><td></td></tr>
       </tbody></table>`;
     return buildReportShell("Debtors List", [
       `<strong>Filter:</strong> ${debtorsFormFilter === "all" ? "All Grades" : safeHtml(debtorsFormFilter)}`,
@@ -1712,11 +1713,16 @@ export default function FinanceManagement() {
                 <c.icon className={`h-5 w-5 ${c.color}`} />
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{c.label}</span>
               </div>
-              <p className="text-lg font-bold">{fmt(c.usd)}</p>
+              <p className="text-lg font-bold">US$ {fmt(c.usd)}</p>
+              <p className="text-xs font-mono text-muted-foreground">ZiG {fmt(c.zig)}</p>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <ExchangeRateCard />
+
+
 
 
       <Tabs defaultValue="fee-structures" className="space-y-4">
@@ -2121,7 +2127,7 @@ export default function FinanceManagement() {
                 <CardContent className="p-5">
                   <p className="text-xs text-destructive font-medium uppercase tracking-wider">Total Outstanding</p>
                   <p className="text-xl font-bold text-destructive">{fmt(totalOwedUsd)}</p>
-                  <p className="text-sm text-destructive/80">R {fmt(totalOwedZig)}</p>
+                  <p className="text-sm text-destructive/80">ZiG {fmt(totalOwedZig)}</p>
                 </CardContent>
               </Card>
               <Card className="border-amber-300/50 bg-amber-50/50">
@@ -2299,12 +2305,12 @@ export default function FinanceManagement() {
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Deposits</p>
                         <p className="text-xl font-bold font-mono text-green-700">{fmt(depositsUsd)}</p>
-                        <p className="text-sm font-mono text-muted-foreground">R {fmt(depositsZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(depositsZig)}</p>
                       </div>
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Withdrawals</p>
                         <p className="text-xl font-bold font-mono text-destructive">{fmt(withdrawalsUsd)}</p>
-                        <p className="text-sm font-mono text-muted-foreground">R {fmt(withdrawalsZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(withdrawalsZig)}</p>
                       </div>
                       <div
                         className={`rounded-lg border p-4 ${balUsd >= 0 ? "bg-green-50/50 border-green-200" : "bg-destructive/5 border-destructive/30"}`}
@@ -2313,9 +2319,9 @@ export default function FinanceManagement() {
                         <p
                           className={`text-xl font-bold font-mono ${balUsd >= 0 ? "text-green-700" : "text-destructive"}`}
                         >
-                           ZAR {fmt(balUsd)}
+                           US$ {fmt(balUsd)}
                         </p>
-                        <p className="text-sm font-mono text-muted-foreground">R {fmt(balZig)}</p>
+                        <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(balZig)}</p>
                       </div>
                     </div>
                     {pettyCash.length === 0 ? (
@@ -2385,7 +2391,7 @@ export default function FinanceManagement() {
                     Total Owed to Suppliers
                   </p>
                   <p className="text-xl font-bold text-destructive">
-                     ZAR {fmt(supplierInvoices.reduce((s, si) => s + (Number(si.amount_usd) - Number(si.paid_usd)), 0))}
+                     US$ {fmt(supplierInvoices.reduce((s, si) => s + (Number(si.amount_usd) - Number(si.paid_usd)), 0))}
                   </p>
                 </CardContent>
               </Card>
@@ -2643,14 +2649,14 @@ export default function FinanceManagement() {
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Invoiced</p>
                             <p className="font-bold font-mono">{fmt(tInvUsd)}</p>
-                            <p className="text-sm text-muted-foreground font-mono">R {fmt(tInvZig)}</p>
+                            <p className="text-sm text-muted-foreground font-mono">ZiG {fmt(tInvZig)}</p>
                           </CardContent>
                         </Card>
                         <Card>
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Paid</p>
                             <p className="font-bold font-mono text-green-700">{fmt(tPaidUsd)}</p>
-                            <p className="text-sm text-muted-foreground font-mono">R {fmt(tPaidZig)}</p>
+                            <p className="text-sm text-muted-foreground font-mono">ZiG {fmt(tPaidZig)}</p>
                           </CardContent>
                         </Card>
                         <Card
@@ -2663,10 +2669,10 @@ export default function FinanceManagement() {
                             <p
                               className={`font-bold font-mono ${isCredit ? "text-green-700" : balUsd > 0 ? "text-destructive" : "text-muted-foreground"}`}
                             >
-                               ZAR {isCredit ? fmt(Math.abs(balUsd)) : fmt(balUsd)}
+                               US$ {isCredit ? fmt(Math.abs(balUsd)) : fmt(balUsd)}
                             </p>
                             <p className="text-sm text-muted-foreground font-mono">
-                              R {balZig < 0 ? fmt(Math.abs(balZig)) : fmt(balZig)}
+                              ZiG {balZig < 0 ? fmt(Math.abs(balZig)) : fmt(balZig)}
                             </p>
                             {isCredit && <span className="text-xs text-green-600">(credit)</span>}
                           </CardContent>
@@ -2791,7 +2797,7 @@ export default function FinanceManagement() {
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border bg-muted/30 px-3 py-2 text-xs">
                 <span className="text-muted-foreground">
                   Showing <strong>{filteredExpenses.length}</strong> of {expenses.length} · Total
-                   ZAR <strong className="text-destructive">${fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_usd || 0), 0))}</strong>
+                   US$ <strong className="text-destructive">${fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_usd || 0), 0))}</strong>
                   &nbsp;·&nbsp; R <strong>{fmt(filteredExpenses.reduce((s, e) => s + parseFloat(e.amount_zig || 0), 0))}</strong>
                 </span>
                 <DocActionButtons
@@ -2885,12 +2891,12 @@ export default function FinanceManagement() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-lg border p-4">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total  ZAR Collected</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Total USD Collected</p>
                     <p className="text-2xl font-bold text-green-700">${fmt(totalCollectedUsd)}</p>
                   </div>
                   <div className="rounded-lg border p-4">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Total R Collected</p>
-                    <p className="text-2xl font-bold text-green-700">R {fmt(totalCollectedZig)}</p>
+                    <p className="text-2xl font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -2904,7 +2910,7 @@ export default function FinanceManagement() {
                       <div key={method} className="flex items-center justify-between text-sm border-b pb-1">
                         <span>{method}</span>
                         <span className="font-mono">
-                           ZAR {fmt(mUsd)} / R {fmt(mZig)}
+                           US$ {fmt(mUsd)} / ZiG {fmt(mZig)}
                         </span>
                       </div>
                     );
@@ -2920,15 +2926,15 @@ export default function FinanceManagement() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Income (ZAR)</span>
+                    <span className="text-sm">Income (US$)</span>
                     <span className="font-mono font-bold text-green-700">${fmt(totalCollectedUsd)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Expenses (ZAR)</span>
+                    <span className="text-sm">Expenses (US$)</span>
                     <span className="font-mono font-bold text-red-600">${fmt(totalExpensesUsd)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
-                    <span className="text-sm font-semibold">Net (ZAR)</span>
+                    <span className="text-sm font-semibold">Net (US$)</span>
                     <span
                       className={`font-mono font-bold ${totalCollectedUsd - totalExpensesUsd >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
@@ -2939,18 +2945,18 @@ export default function FinanceManagement() {
                 <div className="border-t pt-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Income (R)</span>
-                    <span className="font-mono font-bold text-green-700">R {fmt(totalCollectedZig)}</span>
+                    <span className="font-mono font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expenses (R)</span>
-                    <span className="font-mono font-bold text-red-600">R {fmt(totalExpensesZig)}</span>
+                    <span className="font-mono font-bold text-red-600">ZiG {fmt(totalExpensesZig)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
                     <span className="text-sm font-semibold">Net (R)</span>
                     <span
                       className={`font-mono font-bold ${totalCollectedZig - totalExpensesZig >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
-                      R {fmt(totalCollectedZig - totalExpensesZig)}
+                      ZiG {fmt(totalCollectedZig - totalExpensesZig)}
                     </span>
                   </div>
                 </div>
@@ -3003,7 +3009,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingFee ? "Edit Fee Structure" : "Add Fee Structure"}</DialogTitle>
-            <DialogDescription>Enter the fee amount in South African Rand (R).</DialogDescription>
+            <DialogDescription>Enter the fee amount in US Dollars (US$).</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-3">
@@ -3258,7 +3264,7 @@ export default function FinanceManagement() {
                   {availableFeeStructures.map((fs) => (
                     <SelectItem key={fs.id} value={fs.id}>
                       {fs.description || `${fs.form} - ${fs.boarding_status === "boarding" ? "Boarding" : "Day"} Fees`}{" "}
-                      –  ZAR {fs.amount_usd} / R {fs.amount_zig}
+                      –  US$ {fs.amount_usd} / ZiG {fs.amount_zig}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -3297,7 +3303,7 @@ export default function FinanceManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Record Payment</DialogTitle>
-            <DialogDescription>Record a payment with in Rand (R).</DialogDescription>
+            <DialogDescription>Record a payment in US Dollars (US$).</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="space-y-2">
@@ -3346,7 +3352,7 @@ export default function FinanceManagement() {
                         <SelectItem key={inv.id} value={inv.id}>
                           {inv.invoice_number} —{" "}
                           {balUsd < 0 ? `+${fmt(Math.abs(balUsd))} credit` : `${fmt(balUsd)} owing`} /{" "}
-                          {balZig < 0 ? `+R ${fmt(Math.abs(balZig))} credit` : `R ${fmt(balZig)} owing`}
+                          {balZig < 0 ? `+ZiG ${fmt(Math.abs(balZig))} credit` : `ZiG ${fmt(balZig)} owing`}
                         </SelectItem>
                       );
                     })}
@@ -3508,7 +3514,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount  ZAR *</Label>
+                <Label>Amount (US$) *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3557,7 +3563,7 @@ export default function FinanceManagement() {
             <DialogTitle>Record Supplier Payment</DialogTitle>
             <DialogDescription>
               {spInvoice
-                ? `Payment for ${spInvoice.supplier_name} — Invoice #${spInvoice.invoice_number} (Balance:  ZAR ${fmt(Number(spInvoice.amount_usd) - Number(spInvoice.paid_usd))})`
+                ? `Payment for ${spInvoice.supplier_name} — Invoice #${spInvoice.invoice_number} (Balance:  US$ ${fmt(Number(spInvoice.amount_usd) - Number(spInvoice.paid_usd))})`
                 : "Select an unpaid supplier invoice and record a payment."}
             </DialogDescription>
           </DialogHeader>
@@ -3579,7 +3585,7 @@ export default function FinanceManagement() {
                       .filter((si) => si.status !== "paid")
                       .map((si) => (
                         <SelectItem key={si.id} value={si.id}>
-                          {si.supplier_name} — #{si.invoice_number} (Bal:  ZAR $
+                          {si.supplier_name} — #{si.invoice_number} (Bal:  US$ $
                           {fmt(Number(si.amount_usd) - Number(si.paid_usd))})
                         </SelectItem>
                       ))}
@@ -3617,7 +3623,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount  ZAR *</Label>
+                <Label>Amount (US$) *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -3735,7 +3741,7 @@ export default function FinanceManagement() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Amount  ZAR *</Label>
+                <Label>Amount (US$) *</Label>
                 <Input
                   type="number"
                   step="0.01"

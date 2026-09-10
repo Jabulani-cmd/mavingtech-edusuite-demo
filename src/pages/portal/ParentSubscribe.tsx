@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { downloadSubscriptionReceipt } from "@/lib/receiptPdf";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 
 type Step = "plans" | "method" | "card" | "eft" | "gateway" | "qr" | "success" | "failed";
 
@@ -188,7 +188,7 @@ export default function ParentSubscribe() {
       await supabase.from("payments").insert({
         parent_id: user.id,
         amount: plan.amount_usd,
-        currency: "ZAR",
+        currency: "USD",
         payment_method: method,
         transaction_id: txId,
         receipt_number: null,
@@ -217,9 +217,9 @@ export default function ParentSubscribe() {
       student_id: selectedChild,
       plan_id: plan.id,
       plan_type: plan.plan_type,
-      amount_usd: plan.amount_usd,    // legacy column name, now storing ZAR
+      amount_usd: plan.amount_usd,    // USD amount
       amount_zwg: plan.amount_usd,
-      currency_paid: "ZAR",
+      currency_paid: "USD",
       payment_method: method,
       transaction_id: txId,
       status: subStatus,
@@ -234,7 +234,7 @@ export default function ParentSubscribe() {
       subscription_id: subRow.id,
       parent_id: user.id,
       amount: plan.amount_usd,
-      currency: "ZAR",
+      currency: "USD",
       payment_method: method,
       transaction_id: txId,
       receipt_number: receiptNumber,
@@ -348,7 +348,7 @@ export default function ParentSubscribe() {
                 parentName: user?.email || "Parent",
                 studentName: completed.childName,
                 amount: Number(completed.plan.amount_usd),
-                currency: "ZAR",
+                currency: "USD",
                 method: METHOD_LABEL[completed.method],
                 transactionId: completed.txId,
                 plan: completed.plan.name,
@@ -379,7 +379,7 @@ function PlansView({ plans, onPick }: any) {
           <CardContent className="p-7">
             <h3 className="text-2xl font-bold font-display">{p.name}</h3>
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="text-4xl font-bold">{formatZAR(p.amount_usd, { decimals: false })}</span>
+              <span className="text-4xl font-bold">{formatMoney(p.amount_usd, { decimals: false })}</span>
               <span className="text-muted-foreground">/ {p.plan_type === "monthly" ? "month" : "term"}</span>
             </div>
             <p className="text-sm mt-3">{p.description}</p>
@@ -452,7 +452,7 @@ function MethodView({ plan, onPick }: any) {
             <div className="font-semibold text-lg">{plan.name}</div>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold">{formatZAR(plan.amount_usd)}</div>
+            <div className="text-2xl font-bold">{formatMoney(plan.amount_usd)}</div>
           </div>
         </div>
       </Card>
@@ -518,10 +518,10 @@ function CardView({ plan, cardNumber, setCardNumber, cardName, setCardName, card
               </div>
             )}
             <div className="text-sm bg-muted/40 rounded-lg p-3">
-              You will be charged <strong>{formatZAR(plan.amount_usd)}</strong>.
+              You will be charged <strong>{formatMoney(plan.amount_usd)}</strong>.
             </div>
             <Button className="w-full" size="lg" onClick={onPay}>
-              <Lock className="w-4 h-4 mr-2" /> Pay {formatZAR(plan.amount_usd)}
+              <Lock className="w-4 h-4 mr-2" /> Pay {formatMoney(plan.amount_usd)}
             </Button>
           </div>
         ) : (
@@ -544,7 +544,7 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
         <Building2 className="w-12 h-12 mx-auto mb-3 text-teal-600" />
         <h3 className="font-semibold text-lg">SecurePay SA — Instant EFT</h3>
         <p className="text-sm text-muted-foreground mt-1 mb-5">
-          You will be redirected to your bank to authorise a {formatZAR(plan.amount_usd)} payment.
+          You will be redirected to your bank to authorise a {formatMoney(plan.amount_usd)} payment.
         </p>
 
         {!processing && (
@@ -577,7 +577,7 @@ function QrView({ plan, method, processing, onConfirm, forceOutcome, setForceOut
         </div>
         <h3 className="font-semibold text-lg">SecurePay SA — {brand}</h3>
         <p className="text-sm text-muted-foreground mt-1 mb-4">
-          Open your {brand} app and scan the QR code to pay {formatZAR(plan.amount_usd)}.
+          Open your {brand} app and scan the QR code to pay {formatMoney(plan.amount_usd)}.
         </p>
 
         {/* Simulated QR code */}
@@ -626,7 +626,7 @@ function BankView({ bank, proof, setProof, onSubmit, processing, error, plan }: 
             <div><span className="text-muted-foreground">Account #:</span> <strong>{bank.account_number}</strong></div>
             {bank.branch && <div><span className="text-muted-foreground">Branch code:</span> {bank.branch}</div>}
             <div><span className="text-muted-foreground">Reference:</span> <strong>PARENT-{plan.plan_type.toUpperCase()}</strong></div>
-            <div className="pt-2 border-t mt-2"><span className="text-muted-foreground">Amount:</span> <strong>{formatZAR(plan.amount_usd)}</strong></div>
+            <div className="pt-2 border-t mt-2"><span className="text-muted-foreground">Amount:</span> <strong>{formatMoney(plan.amount_usd)}</strong></div>
           </div>
         ) : (
           <div className="bg-muted/40 rounded-lg p-4 text-sm space-y-1">
@@ -635,7 +635,7 @@ function BankView({ bank, proof, setProof, onSubmit, processing, error, plan }: 
             <div><span className="text-muted-foreground">Account #:</span> <strong>62861234567</strong></div>
             <div><span className="text-muted-foreground">Branch code:</span> 250655</div>
             <div><span className="text-muted-foreground">Reference:</span> <strong>PARENT-{plan.plan_type.toUpperCase()}</strong></div>
-            <div className="pt-2 border-t mt-2"><span className="text-muted-foreground">Amount:</span> <strong>{formatZAR(plan.amount_usd)}</strong></div>
+            <div className="pt-2 border-t mt-2"><span className="text-muted-foreground">Amount:</span> <strong>{formatMoney(plan.amount_usd)}</strong></div>
           </div>
         )}
 
@@ -692,7 +692,7 @@ function SuccessView({ data, onDownload, onPortal }: any) {
         <div className="bg-muted/40 rounded-lg p-4 text-left text-sm space-y-1">
           <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span> <strong>{data.receiptNumber}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Plan</span> <strong>{data.plan.name}</strong></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Amount</span> <strong>{formatZAR(data.plan.amount_usd)}</strong></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Amount</span> <strong>{formatMoney(data.plan.amount_usd)}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Method</span> <strong>{METHOD_LABEL[data.method]}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Access until</span> <strong>{new Date(data.accessEnd).toLocaleDateString("en-ZA")}</strong></div>
         </div>
