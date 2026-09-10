@@ -1712,11 +1712,16 @@ export default function FinanceManagement() {
                 <c.icon className={`h-5 w-5 ${c.color}`} />
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{c.label}</span>
               </div>
-              <p className="text-lg font-bold">{fmt(c.usd)}</p>
+              <p className="text-lg font-bold">US$ {fmt(c.usd)}</p>
+              <p className="text-xs font-mono text-muted-foreground">ZiG {fmt(c.zig)}</p>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <ExchangeRateCard />
+
+
 
 
       <Tabs defaultValue="fee-structures" className="space-y-4">
