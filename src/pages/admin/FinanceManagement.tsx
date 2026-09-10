@@ -102,7 +102,7 @@ const restrictionTypes = [
 // ── helpers ──
 const fmt = (n: any): string => {
   const v = Number(n);
-  return `R ${new Intl.NumberFormat("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
+  return `${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number.isFinite(v) ? v : 0)}`;
 };
 const genInvoiceNum = () =>
   `INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0")}`;
@@ -3346,7 +3346,7 @@ export default function FinanceManagement() {
                         <SelectItem key={inv.id} value={inv.id}>
                           {inv.invoice_number} —{" "}
                           {balUsd < 0 ? `+${fmt(Math.abs(balUsd))} credit` : `${fmt(balUsd)} owing`} /{" "}
-                          {balZig < 0 ? `+R ${fmt(Math.abs(balZig))} credit` : `R ${fmt(balZig)} owing`}
+                          {balZig < 0 ? `+ZiG ${fmt(Math.abs(balZig))} credit` : `ZiG ${fmt(balZig)} owing`}
                         </SelectItem>
                       );
                     })}

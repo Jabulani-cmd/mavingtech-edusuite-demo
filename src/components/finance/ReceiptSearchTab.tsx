@@ -13,7 +13,7 @@ import { buildReceiptHtml, SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { openPrintWindow, downloadHtmlDocument } from "@/lib/finance/print";
 import { generateAndStoreReceipt, isInstantMethod } from "@/lib/finance/receiptStorage";
 
-const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
+const fmt = (n: any): string => { const v=Number(n); return "US$ " + new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
 export default function ReceiptSearchTab() {
   const { toast } = useToast();
@@ -255,7 +255,7 @@ export default function ReceiptSearchTab() {
                     <TableCell>{p.students?.full_name}</TableCell>
                     <TableCell>{p.students?.admission_number}</TableCell>
                     <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
-                    <TableCell className="text-right font-mono">R {fmt(p.amount_usd)}</TableCell>
+                    <TableCell className="text-right font-mono">{fmt(p.amount_usd)}</TableCell>
                     <TableCell>{p.payment_method}</TableCell>
                     <TableCell>
                       {p.verified_at ? (

@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, Search, CheckCircle, AlertTriangle, Loader2, Printer } from "lucide-react";
 
-const fmt = (n: any): string => { const v=Number(n); return "R " + new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
+const fmt = (n: any): string => { const v=Number(n); return "US$ " + new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0); };
 
 export default function BankReconciliation() {
   const { toast } = useToast();

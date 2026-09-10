@@ -12,7 +12,7 @@ import { Search, Loader2, TrendingUp, TrendingDown, BarChart3 } from "lucide-rea
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import { incomeExpenditureActions } from "@/lib/finance/documentActions";
 
-const fmt = (n: any): string => { const v=Number(n); return `R ${new Intl.NumberFormat("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
+const fmt = (n: any): string => { const v=Number(n); return `US$ ${new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(v)?v:0)}`; };
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function IncomeExpenditureReport() {
