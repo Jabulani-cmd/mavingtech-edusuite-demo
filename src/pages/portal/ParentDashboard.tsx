@@ -53,7 +53,7 @@ import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableW
 import SubscriptionGate from "@/components/subscription/SubscriptionGate";
 import PrintableSection from "@/components/shared/PrintableSection";
 import PayInvoiceDialog from "@/components/finance/PayInvoiceDialog";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 
 const Locked = ({ feature, children }: { feature: string; children: React.ReactNode }) => (
   <div className="relative min-h-[60vh]">
@@ -715,10 +715,10 @@ function TabContentInner(props: TabContentProps) {
               <div>
                 <p className={`text-lg font-bold ${feeBalance > 0 ? "text-red-700" : "text-emerald-700"}`}>
                   {feeBalance > 0
-                    ? `${formatZAR(feeBalance)}`
+                    ? `${formatMoney(feeBalance)}`
                     : feeBalance < 0
-                      ? `${formatZAR(Math.abs(feeBalance))} credit`
-                      : formatZAR(0)}
+                      ? `${formatMoney(Math.abs(feeBalance))} credit`
+                      : formatMoney(0)}
                 </p>
                 <p className="text-[11px] text-muted-foreground">
                   {feeBalance > 0 ? "Fee Balance" : feeBalance < 0 ? "Credit Balance" : "Fees Settled"}
@@ -1046,16 +1046,16 @@ function TabContentInner(props: TabContentProps) {
             <div className="flex-1 min-w-0">
               <p className="text-2xl font-bold">
                 {feeBalance > 0
-                  ? `${formatZAR(feeBalance)} owing`
+                  ? `${formatMoney(feeBalance)} owing`
                   : feeBalance < 0
-                    ? `${formatZAR(Math.abs(feeBalance))} credit`
-                    : formatZAR(0)}
+                    ? `${formatMoney(Math.abs(feeBalance))} credit`
+                    : formatMoney(0)}
               </p>
               <p className="text-sm text-muted-foreground">
                 {feeBalance > 0 ? "Outstanding Balance" : feeBalance < 0 ? "Credit Balance" : "No Outstanding Balance"}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Total Invoiced: {formatZAR(totalInvoiced)} · Total Paid: {formatZAR(totalPaidAll)}
+                Total Invoiced: {formatMoney(totalInvoiced)} · Total Paid: {formatMoney(totalPaidAll)}
               </p>
             </div>
             {feeBalance > 0 && (() => {
@@ -1168,18 +1168,18 @@ function TabContentInner(props: TabContentProps) {
 
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                           <span className="text-muted-foreground">Total:</span>
-                          <span className="text-right font-mono">{formatZAR(inv.total_usd)}</span>
+                          <span className="text-right font-mono">{formatMoney(inv.total_usd)}</span>
 
                           <span className="text-muted-foreground">Paid:</span>
-                          <span className="text-right font-mono text-emerald-600">{formatZAR(paid)}</span>
+                          <span className="text-right font-mono text-emerald-600">{formatMoney(paid)}</span>
 
                           <span className="text-muted-foreground">Balance:</span>
                           <span
                             className={`text-right font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
                           >
                             {bal < 0
-                              ? `+${formatZAR(Math.abs(bal))} credit`
-                              : formatZAR(bal)}
+                              ? `+${formatMoney(Math.abs(bal))} credit`
+                              : formatMoney(bal)}
                           </span>
                         </div>
                         {bal > 0.001 && (
@@ -1188,7 +1188,7 @@ function TabContentInner(props: TabContentProps) {
                             className="w-full mt-2 bg-teal-600 hover:bg-teal-700"
                             onClick={() => setPayInvoice(inv)}
                           >
-                            <CreditCard className="w-3 h-3 mr-1" /> Pay {formatZAR(bal)}
+                            <CreditCard className="w-3 h-3 mr-1" /> Pay {formatMoney(bal)}
                           </Button>
                         )}
                       </CardContent>
@@ -1221,12 +1221,12 @@ function TabContentInner(props: TabContentProps) {
                           <td className="px-3 py-2 text-muted-foreground">
                             {inv.term} {inv.academic_year}
                           </td>
-                          <td className="px-3 py-2 text-center font-mono">{formatZAR(inv.total_usd)}</td>
-                          <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(paid)}</td>
+                          <td className="px-3 py-2 text-center font-mono">{formatMoney(inv.total_usd)}</td>
+                          <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatMoney(paid)}</td>
                           <td
                             className={`px-3 py-2 text-center font-bold font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
                           >
-                            {bal < 0 ? `+${formatZAR(Math.abs(bal))}` : formatZAR(bal)}
+                            {bal < 0 ? `+${formatMoney(Math.abs(bal))}` : formatMoney(bal)}
                           </td>
                           <td className="px-3 py-2 text-center">
                             <Badge
@@ -1443,7 +1443,7 @@ function ParentPaymentHistory({
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                     <span className="text-muted-foreground">Amount:</span>
-                    <span className="text-right font-mono text-emerald-600">{formatZAR(p.amount_usd || p.amount || 0)}</span>
+                    <span className="text-right font-mono text-emerald-600">{formatMoney(p.amount_usd || p.amount || 0)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -1466,7 +1466,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatZAR(p.amount_usd || p.amount || 0)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatMoney(p.amount_usd || p.amount || 0)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
                       <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />

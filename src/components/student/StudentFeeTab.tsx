@@ -16,7 +16,7 @@ import {
   receiptActions,
   statementActions,
 } from "@/lib/finance/documentActions";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 
 interface Props {
   studentId: string | null;
@@ -172,13 +172,13 @@ export default function StudentFeeTab({ studentId }: Props) {
             <p
               className={`text-2xl font-bold ${balanceUsd < 0 ? "text-green-600" : balanceUsd > 0 ? "text-destructive" : "text-foreground"}`}
             >
-              {balanceUsd < 0 ? `${formatZAR(Math.abs(balanceUsd))} credit` : formatZAR(balanceUsd)}
+              {balanceUsd < 0 ? `${formatMoney(Math.abs(balanceUsd))} credit` : formatMoney(balanceUsd)}
             </p>
             <p className="text-sm text-muted-foreground">
               {balanceUsd < 0 ? "Credit Balance" : balanceUsd > 0 ? "Outstanding Balance" : "No Balance"}
             </p>
             <p className="text-xs text-muted-foreground mt-1 break-words">
-              Invoiced: {formatZAR(totalInvoicedUsd)} · Paid: {formatZAR(totalPaidUsd)}
+              Invoiced: {formatMoney(totalInvoicedUsd)} · Paid: {formatMoney(totalPaidUsd)}
             </p>
           </div>
         </CardContent>
@@ -210,12 +210,12 @@ export default function StudentFeeTab({ studentId }: Props) {
                       <p className="text-xs text-muted-foreground">{inv.term} {inv.academic_year}</p>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                         <span className="text-muted-foreground">Total:</span>
-                        <span className="text-right font-mono">{formatZAR(inv.total_usd)}</span>
+                        <span className="text-right font-mono">{formatMoney(inv.total_usd)}</span>
                         <span className="text-muted-foreground">Paid:</span>
-                        <span className="text-right font-mono">{formatZAR(actualPaid)}</span>
+                        <span className="text-right font-mono">{formatMoney(actualPaid)}</span>
                         <span className="text-muted-foreground">Balance:</span>
                         <span className={`text-right font-mono ${balance < 0 ? "text-green-600" : ""}`}>
-                          {balance < 0 ? `+${formatZAR(Math.abs(balance))} credit` : formatZAR(balance)}
+                          {balance < 0 ? `+${formatMoney(Math.abs(balance))} credit` : formatMoney(balance)}
                         </span>
                       </div>
                     </CardContent>
@@ -245,13 +245,13 @@ export default function StudentFeeTab({ studentId }: Props) {
                       <TableRow key={inv.id}>
                         <TableCell className="font-mono text-xs">{inv.invoice_number}</TableCell>
                         <TableCell>{inv.term} {inv.academic_year}</TableCell>
-                        <TableCell className="text-right">{formatZAR(inv.total_usd)}</TableCell>
-                        <TableCell className="text-right">{formatZAR(actualPaid)}</TableCell>
+                        <TableCell className="text-right">{formatMoney(inv.total_usd)}</TableCell>
+                        <TableCell className="text-right">{formatMoney(actualPaid)}</TableCell>
                         <TableCell className="text-right">
                           {balance < 0 ? (
-                            <span className="text-green-600">+{formatZAR(Math.abs(balance))} credit</span>
+                            <span className="text-green-600">+{formatMoney(Math.abs(balance))} credit</span>
                           ) : (
-                            formatZAR(balance)
+                            formatMoney(balance)
                           )}
                         </TableCell>
                         <TableCell className="text-center">{statusBadge(inv.status)}</TableCell>
@@ -292,7 +292,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                       )}
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                         <span className="text-muted-foreground">Amount:</span>
-                        <span className="text-right font-mono font-medium">{formatZAR(p.amount_usd || p.amount || 0)}</span>
+                        <span className="text-right font-mono font-medium">{formatMoney(p.amount_usd || p.amount || 0)}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -317,7 +317,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
                         <TableCell>{format(new Date(p.payment_date), "dd MMM yyyy")}</TableCell>
                         <TableCell className="font-mono text-xs">{p.invoices?.invoice_number || "—"}</TableCell>
-                        <TableCell className="text-right font-mono">{formatZAR(p.amount_usd || p.amount || 0)}</TableCell>
+                        <TableCell className="text-right font-mono">{formatMoney(p.amount_usd || p.amount || 0)}</TableCell>
                         <TableCell>{p.payment_method}</TableCell>
                         <TableCell className="text-center">
                           <DocActionButtons labels actions={receiptActions(p, docStudent)} email={{ documentLabel: "Receipt", filename: `receipt-${p.receipt_number}`, subject: `Official Receipt ${p.receipt_number}` }} />

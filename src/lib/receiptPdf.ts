@@ -2,7 +2,7 @@
 // Simple HTML→print-window receipt generator (ZAR).
 import { openPrintWindow } from "@/lib/finance/print";
 import { SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
-import { formatZAR, CITY, COUNTRY } from "@/lib/currency";
+import { formatMoney, CITY, COUNTRY } from "@/lib/currency";
 
 interface ReceiptData {
   receiptNumber: string;
@@ -61,7 +61,7 @@ export function buildSubscriptionReceiptHtml(r: ReceiptData) {
     <tr><td>Access Period</td><td>${fmt(r.accessStart)} → ${fmt(r.accessEnd)}</td></tr>
   </table>
 
-  <div class="total">Total Paid: ${formatZAR(r.amount)}</div>
+  <div class="total">Total Paid: ${formatMoney(r.amount)}</div>
   <div class="stamp">PAID</div>
 
   <div class="footer">

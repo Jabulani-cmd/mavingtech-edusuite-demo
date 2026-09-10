@@ -39,7 +39,7 @@ import {
 } from "@/lib/finance/pdf";
 import ReceiptSearchTab from "@/components/finance/ReceiptSearchTab";
 import { printReceipt, openPrintWindow, downloadHtmlDocument } from "@/lib/finance/print";
-import { formatZAR } from "@/lib/currency";
+import { formatMoney } from "@/lib/currency";
 import DocActionButtons from "@/components/finance/DocActionButtons";
 import DateRangeFilter, { dateMatches, emptyDateFilter, type FinanceDateFilter } from "@/components/finance/DateRangeFilter";
 import { invoiceActions, receiptActions, statementActions, expensesListActions } from "@/lib/finance/documentActions";
@@ -903,8 +903,8 @@ export default function FinanceManagement() {
           <td class="mono">${safeHtml(i.invoice_number)}</td>
           <td>${safeHtml(i.term)}</td>
           <td>${safeHtml(i.academic_year)}</td>
-          <td class="right mono">${formatZAR(i.total_usd)}</td>
-          <td class="right mono">${formatZAR(i.paid_usd)}</td>
+          <td class="right mono">${formatMoney(i.total_usd)}</td>
+          <td class="right mono">${formatMoney(i.paid_usd)}</td>
           <td>${statusText(i.status)}</td>
         </tr>`).join("")
       : `<tr><td colspan="6" style="text-align:center;color:#64748b">No invoices on record</td></tr>`;
@@ -913,7 +913,7 @@ export default function FinanceManagement() {
           <td class="mono">${safeHtml(p.receipt_number)}</td>
           <td>${safeHtml(p.payment_date)}</td>
           <td class="mono">${safeHtml(p.invoices?.invoice_number || "—")}</td>
-          <td class="right mono">${formatZAR(p.amount_usd)}</td>
+          <td class="right mono">${formatMoney(p.amount_usd)}</td>
           <td>${safeHtml(p.payment_method)}</td>
         </tr>`).join("")
       : `<tr><td colspan="5" style="text-align:center;color:#64748b">No payments on record</td></tr>`;
@@ -929,10 +929,10 @@ export default function FinanceManagement() {
         <th class="right">Amount (R)</th><th>Method</th>
       </tr></thead><tbody>${payRows}</tbody></table>
       <div class="summary">
-        <p><strong>Total Invoiced:</strong> ${formatZAR(totalInvoiced)}</p>
-        <p><strong>Total Paid:</strong> ${formatZAR(totalPaid)}</p>
+        <p><strong>Total Invoiced:</strong> ${formatMoney(totalInvoiced)}</p>
+        <p><strong>Total Paid:</strong> ${formatMoney(totalPaid)}</p>
         <p class="${balance > 0 ? "red" : "green"}">
-          <strong>${balance < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> ${formatZAR(Math.abs(balance))}
+          <strong>${balance < 0 ? "Credit Balance" : "Outstanding Balance"}:</strong> ${formatMoney(Math.abs(balance))}
         </p>
       </div>`;
     return buildReportShell("Student Account Statement", [
@@ -962,7 +962,7 @@ export default function FinanceManagement() {
           <td>${safeHtml(d.students?.form || "—")}</td>
           <td class="mono">${safeHtml(d.invoice_number)}</td>
           <td>${safeHtml(d.term)}</td>
-          <td class="right mono red">${formatZAR(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td>
+          <td class="right mono red">${formatMoney(parseFloat(d.total_usd) - parseFloat(d.paid_usd))}</td>
           <td>${statusText(d.status)}</td>
         </tr>`).join("")
       : `<tr><td colspan="8" style="text-align:center;color:#64748b">No outstanding debts</td></tr>`;
@@ -973,7 +973,7 @@ export default function FinanceManagement() {
       </tr></thead><tbody>
         ${rows}
         <tr class="total-row"><td colspan="6" class="right">TOTAL OUTSTANDING</td>
-          <td class="right mono red">${formatZAR(total)}</td><td></td></tr>
+          <td class="right mono red">${formatMoney(total)}</td><td></td></tr>
       </tbody></table>`;
     return buildReportShell("Debtors List", [
       `<strong>Filter:</strong> ${debtorsFormFilter === "all" ? "All Grades" : safeHtml(debtorsFormFilter)}`,
