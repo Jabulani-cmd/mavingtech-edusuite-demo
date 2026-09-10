@@ -113,7 +113,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         invoice_id: invoice.id,
         student_id: student.id,
         amount: payAmount,
-        currency: "ZAR",
+        currency: "USD",
         amount_usd: payAmount,
         amount_zig: 0,
         payment_method: method,
@@ -201,7 +201,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         {step === "amount" && (
           <div className="space-y-4">
             <div>
-              <Label>Amount to pay (ZAR)</Label>
+              <Label>Amount to pay (US$)</Label>
               <Input
                 type="number"
                 min="0"

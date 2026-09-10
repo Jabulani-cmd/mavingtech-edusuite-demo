@@ -230,9 +230,9 @@ export default function StudentFeeTab({ studentId }: Props) {
                   <TableRow>
                     <TableHead>Invoice #</TableHead>
                     <TableHead>Term</TableHead>
-                    <TableHead className="text-right">Total (ZAR)</TableHead>
-                    <TableHead className="text-right">Paid (ZAR)</TableHead>
-                    <TableHead className="text-right">Balance (ZAR)</TableHead>
+                    <TableHead className="text-right">Total (US$)</TableHead>
+                    <TableHead className="text-right">Paid (US$)</TableHead>
+                    <TableHead className="text-right">Balance (US$)</TableHead>
                     <TableHead className="text-center">Status</TableHead>
                     <TableHead className="text-center">Document</TableHead>
                   </TableRow>

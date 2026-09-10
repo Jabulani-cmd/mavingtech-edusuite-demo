@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Simple HTML→print-window receipt generator (ZAR).
+// Simple HTML→print-window receipt generator (US$).
 import { openPrintWindow } from "@/lib/finance/print";
 import { SCHOOL_LOGO_URL } from "@/lib/finance/pdf";
 import { formatMoney, CITY, COUNTRY } from "@/lib/currency";

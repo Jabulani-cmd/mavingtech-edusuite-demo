@@ -188,7 +188,7 @@ export default function ParentSubscribe() {
       await supabase.from("payments").insert({
         parent_id: user.id,
         amount: plan.amount_usd,
-        currency: "ZAR",
+        currency: "USD",
         payment_method: method,
         transaction_id: txId,
         receipt_number: null,
@@ -217,9 +217,9 @@ export default function ParentSubscribe() {
       student_id: selectedChild,
       plan_id: plan.id,
       plan_type: plan.plan_type,
-      amount_usd: plan.amount_usd,    // legacy column name, now storing ZAR
+      amount_usd: plan.amount_usd,    // USD amount
       amount_zwg: plan.amount_usd,
-      currency_paid: "ZAR",
+      currency_paid: "USD",
       payment_method: method,
       transaction_id: txId,
       status: subStatus,
@@ -234,7 +234,7 @@ export default function ParentSubscribe() {
       subscription_id: subRow.id,
       parent_id: user.id,
       amount: plan.amount_usd,
-      currency: "ZAR",
+      currency: "USD",
       payment_method: method,
       transaction_id: txId,
       receipt_number: receiptNumber,
@@ -348,7 +348,7 @@ export default function ParentSubscribe() {
                 parentName: user?.email || "Parent",
                 studentName: completed.childName,
                 amount: Number(completed.plan.amount_usd),
-                currency: "ZAR",
+                currency: "USD",
                 method: METHOD_LABEL[completed.method],
                 transactionId: completed.txId,
                 plan: completed.plan.name,

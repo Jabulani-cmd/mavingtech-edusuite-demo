@@ -29,7 +29,7 @@ export const PARENT_PORTAL_DICTIONARY: Record<string, string> = {
   "Expiry must be MM/YY.": "Usuku lokuphelelwa kufanele lube MM/YY.",
   "Enter the cardholder name.": "Faka igama lomniniwekhadi.",
   "Please enter the admission number": "Sicela ufake inombolo yokwamukelwa",
-  "Amount to pay (ZAR)": "Inani okumele likhokhwe (ZAR)",
+  "Amount to pay (US$)": "Inani okumele likhokhwe (US$)",
   "Bank Transfer / Manual EFT": "Ukudlulisa Kwebhange / I-EFT Yesandla",
   "Card (Visa / Mastercard)": "Ikhadi (Visa / Mastercard)",
   "Marks You've Submitted": "Amamaki Owathumele",
