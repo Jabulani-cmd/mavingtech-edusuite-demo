@@ -1,4 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
+import type React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -27,11 +28,17 @@ import principalPhoto from "@/assets/principal-moyo.jpg";
 
 // `hasText` slides carry the welcome text and logo in the picture itself, so the live headline is hidden on them
 // from tablet width up. `phoneSrc` is a tall, text-free crop used on phones, where the headline is shown as usual.
-type HeroSlide = { src: string; phoneSrc?: string; hasText?: boolean };
+// `pos` / `phonePos` are CSS object-position values (desktop / phone) that keep each photo's faces in frame when the
+// hero crops it.
+type HeroSlide = { src: string; phoneSrc?: string; hasText?: boolean; pos?: string; phonePos?: string };
 
 const heroSlides: HeroSlide[] = [
-  { src: heroCampus, phoneSrc: heroCampusPhone, hasText: true },
-  ...[hero1, hero2, hero3, hero4, hero5].map((src): HeroSlide => ({ src })),
+  { src: heroCampus, phoneSrc: heroCampusPhone, hasText: true, pos: "center 30%", phonePos: "center 75%" },
+  { src: hero1, pos: "center 25%", phonePos: "40% 50%" },
+  { src: hero2, pos: "center 8%", phonePos: "62% 50%" },
+  { src: hero3, pos: "center 0%", phonePos: "35% 50%" },
+  { src: hero4, pos: "center 35%", phonePos: "55% 50%" },
+  { src: hero5, pos: "center 0%", phonePos: "60% 50%" },
 ];
 
 const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, ref) {
@@ -123,10 +130,10 @@ export default function Home() {
               aria-hidden={!active}
               className={`absolute inset-0 block h-full w-full ${
                 active
-                  ? "z-[2] scale-100 opacity-100 transition-[opacity,transform] duration-[1200ms,4500ms] ease-out"
+                  ? "z-[2] opacity-100 transition-opacity duration-[1200ms] ease-out"
                   : leaving
-                    ? "z-[1] scale-100 opacity-100"
-                    : "z-0 scale-105 opacity-0"
+                    ? "z-[1] opacity-100"
+                    : "z-0 opacity-0"
               }`}
             >
               {sl.phoneSrc && <source media="(max-width: 767px)" srcSet={sl.phoneSrc} />}
@@ -136,18 +143,20 @@ export default function Home() {
                 loading="eager"
                 decoding="async"
                 fetchPriority={i === 0 ? "high" : "auto"}
-                className={`h-full w-full object-cover ${sl.phoneSrc ? "object-[center_75%] md:object-[center_30%]" : "object-[center_30%]"}`}
+                className="h-full w-full object-cover [object-position:var(--pos-m)] md:[object-position:var(--pos-d)]"
+                style={{ "--pos-d": sl.pos ?? "center 30%", "--pos-m": sl.phonePos ?? sl.pos ?? "center 30%" } as React.CSSProperties}
               />
             </picture>
           );
         })}
-        <div className="absolute inset-0 z-[3] bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
+        <div className="absolute inset-0 z-[3] bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
+        <div className="absolute inset-0 z-[3] bg-gradient-to-r from-black/50 via-black/15 to-transparent md:from-black/45 md:via-black/10" />
 
-        <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
+        <div className="container relative z-10 flex h-full flex-col justify-end pb-40 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)] md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
             {/* Slides with baked-in welcome text hide the live copy (still readable by screen readers). */}
             <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80 ${hideCopy ? "md:sr-only" : ""}`}>Harare, Zimbabwe</span>
-            <h1 className={`mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl ${hideCopy ? "md:sr-only" : ""}`}>
+            <h1 className={`mt-4 font-heading text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl ${hideCopy ? "md:sr-only" : ""}`}>
               {t("home.hero.title")}
             </h1>
             <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg ${hideCopy ? "md:sr-only" : ""}`}>
