@@ -1,7 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
@@ -52,7 +52,8 @@ export default function Home() {
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
   const [slide, setSlide] = useState(0);
   const slides = heroSlides;
-  const current = slides[slide % slides.length];
+  const current = slides[slide];
+  const [prev, setPrev] = useState(-1);
 
   const stats = [
     { value: "800+", label: t("home.stats.enrollments") },
@@ -88,7 +89,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const tm = setTimeout(() => setSlide((s) => (s + 1) % slides.length), 3800);
+    const tm = setTimeout(() => {
+      setPrev(slide);
+      setSlide((slide + 1) % slides.length);
+    }, 4500);
     return () => clearTimeout(tm);
   }, [slide, slides.length]);
 
@@ -109,24 +113,35 @@ export default function Home() {
     <Layout>
       {/* HERO: full-bleed image, headline anchored bottom-left */}
       <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
-        <AnimatePresence initial={false}>
-          <motion.picture
-            key={slide}
-            initial={{ opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.4 }}
-            className="absolute inset-0 block h-full w-full"
-          >
-            {current.phoneSrc && <source media="(max-width: 767px)" srcSet={current.phoneSrc} />}
-            <img
-              src={current.src}
-              alt={t("home.hero.title")}
-              className={`h-full w-full object-cover ${current.phoneSrc ? "object-[center_75%] md:object-[center_30%]" : "object-[center_30%]"}`}
-            />
-          </motion.picture>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
+        {/* All slides are mounted and stacked so every image is loaded before it is shown; the incoming slide fades in over the outgoing one. */}
+        {slides.map((sl, i) => {
+          const active = i === slide;
+          const leaving = i === prev;
+          return (
+            <picture
+              key={i}
+              aria-hidden={!active}
+              className={`absolute inset-0 block h-full w-full ${
+                active
+                  ? "z-[2] scale-100 opacity-100 transition-[opacity,transform] duration-[1200ms,4500ms] ease-out"
+                  : leaving
+                    ? "z-[1] scale-100 opacity-100"
+                    : "z-0 scale-105 opacity-0"
+              }`}
+            >
+              {sl.phoneSrc && <source media="(max-width: 767px)" srcSet={sl.phoneSrc} />}
+              <img
+                src={sl.src}
+                alt={active ? t("home.hero.title") : ""}
+                loading="eager"
+                decoding="async"
+                fetchPriority={i === 0 ? "high" : "auto"}
+                className={`h-full w-full object-cover ${sl.phoneSrc ? "object-[center_75%] md:object-[center_30%]" : "object-[center_30%]"}`}
+              />
+            </picture>
+          );
+        })}
+        <div className="absolute inset-0 z-[3] bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
 
         <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
@@ -155,8 +170,8 @@ export default function Home() {
 
         <div className="absolute bottom-28 right-6 z-20 hidden gap-2 md:flex">
           {slides.map((_, i) => (
-            <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
-              className={`h-1.5 transition-all ${i === slide % slides.length ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
+            <button key={i} onClick={() => { setPrev(slide); setSlide(i); }} aria-label={`Slide ${i + 1}`}
+              className={`h-1.5 transition-all ${i === slide ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
           ))}
         </div>
       </section>
@@ -222,8 +237,7 @@ export default function Home() {
                   <img src={c.img} alt={c.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
                 </div>
                 <div>
-                  <span className="font-heading text-6xl font-bold text-primary/20">0{i + 1}</span>
-                  <h3 className="-mt-2 font-heading text-3xl font-bold text-foreground md:text-4xl">{c.title}</h3>
+                  <h3 className="font-heading text-3xl font-bold text-foreground md:text-4xl">{c.title}</h3>
                   <p className="mt-4 max-w-md leading-relaxed text-muted-foreground">{c.desc}</p>
                   <Link to="/academics" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary">
                     {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
