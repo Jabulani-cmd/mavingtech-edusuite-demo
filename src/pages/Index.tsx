@@ -23,7 +23,12 @@ import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import principalPhoto from "@/assets/principal-moyo.jpg";
 
-const heroImages = [hero1, hero2, hero3, hero4, hero5];
+type HeroSlide = { type: "video"; src: string; poster: string } | { type: "image"; src: string };
+
+const heroSlides: HeroSlide[] = [
+  { type: "video", src: "/videos/hero-campus.mp4", poster: "/videos/hero-campus-poster.jpg" },
+  ...[hero1, hero2, hero3, hero4, hero5].map((src): HeroSlide => ({ type: "image", src })),
+];
 
 const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, ref) {
   return (
@@ -77,9 +82,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const tm = setInterval(() => setSlide((s) => (s + 1) % heroImages.length), 3800);
-    return () => clearInterval(tm);
-  }, []);
+    // Image slides advance on a timer; the video slide advances when it ends (with a safety timeout).
+    const isVideo = heroSlides[slide].type === "video";
+    const tm = setTimeout(() => setSlide((s) => (s + 1) % heroSlides.length), isVideo ? 14000 : 3800);
+    return () => clearTimeout(tm);
+  }, [slide]);
+
+  const onVideo = heroSlides[slide].type === "video";
+  const nextSlide = () => setSlide((s) => (s + 1) % heroSlides.length);
 
   const quickLinks = [
     { to: "/admissions", label: t("home.quick.admissions", "Admissions") },
@@ -97,27 +107,49 @@ export default function Home() {
       {/* HERO: full-bleed image, headline anchored bottom-left */}
       <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
         <AnimatePresence initial={false}>
-          <motion.img
-            key={slide}
-            src={heroImages[slide]}
-            alt={t("home.hero.title")}
-            initial={{ opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.4 }}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: "center 30%" }}
-          />
+          {heroSlides[slide].type === "video" ? (
+            <motion.video
+              key={`video-${slide}`}
+              poster={(heroSlides[slide] as { poster: string }).poster}
+              autoPlay
+              muted
+              playsInline
+              preload="auto"
+              onEnded={nextSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: "center 30%" }}
+            >
+              <source src="/videos/hero-campus.webm" type="video/webm" />
+              <source src="/videos/hero-campus.mp4" type="video/mp4" />
+            </motion.video>
+          ) : (
+            <motion.img
+              key={slide}
+              src={heroSlides[slide].src}
+              alt={t("home.hero.title")}
+              initial={{ opacity: 0, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.4 }}
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: "center 30%" }}
+            />
+          )}
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
 
         <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Harare, Zimbabwe</span>
-            <h1 className="mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl">
+            {/* The video frame already carries the welcome text, so hide the live copy on that slide (still readable by screen readers). */}
+            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80 ${onVideo ? "sr-only" : ""}`}>Harare, Zimbabwe</span>
+            <h1 className={`mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl ${onVideo ? "sr-only" : ""}`}>
               {t("home.hero.title")}
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
+            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg ${onVideo ? "sr-only" : ""}`}>
               {t("home.hero.subtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -136,7 +168,7 @@ export default function Home() {
         </div>
 
         <div className="absolute bottom-28 right-6 z-20 hidden gap-2 md:flex">
-          {heroImages.map((_, i) => (
+          {heroSlides.map((_, i) => (
             <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
               className={`h-1.5 transition-all ${i === slide ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
           ))}
