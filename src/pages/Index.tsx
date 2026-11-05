@@ -81,88 +81,167 @@ export default function Home() {
     return () => clearInterval(tm);
   }, []);
 
+  const quickLinks = [
+    { to: "/admissions", label: t("home.quick.admissions", "Admissions") },
+    { to: "/academics", label: t("home.quick.academics", "Academics") },
+    { to: "/school-life", label: t("home.quick.life", "School Life") },
+    { to: "/news", label: t("home.quick.news", "News & Events") },
+    { to: "/contact", label: t("home.quick.visit", "Visit Us") },
+  ];
+
+  const eyebrow = "text-xs font-semibold uppercase tracking-[0.25em] text-primary";
+  const heading = "font-heading text-3xl font-bold leading-[1.1] text-foreground md:text-5xl";
+
   return (
     <Layout>
-      <section className="relative isolate h-[80vh] min-h-[560px] w-full overflow-hidden bg-foreground">
+      {/* HERO: full-bleed image, headline anchored bottom-left */}
+      <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
         <AnimatePresence initial={false}>
           <motion.img
             key={slide}
             src={heroImages[slide]}
             alt={t("home.hero.title")}
-            initial={{ opacity: 0, scale: 1.05 }}
+            initial={{ opacity: 0, scale: 1.06 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
+            transition={{ duration: 1.4 }}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: "center 30%" }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/55 via-foreground/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
 
-        <div className="container relative z-10 flex h-full items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-2xl text-white">
-            <div className="mb-6 h-[2px] w-12 bg-white" />
-            <h1 className="font-heading text-4xl font-bold leading-tight md:text-6xl lg:text-7xl">
+        <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
+          <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Harare, Zimbabwe</span>
+            <h1 className="mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl">
               {t("home.hero.title")}
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/90 md:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
               {t("home.hero.subtitle")}
             </p>
-            <Link to="/academics" className="mt-10 inline-block">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                {t("home.hero.cta")} <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/admissions">
+                <Button size="lg" className="rounded-none bg-primary px-8 text-primary-foreground hover:bg-primary/90">
+                  {t("home.hero.cta")} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button size="lg" variant="outline" className="rounded-none border-white bg-transparent px-8 text-white hover:bg-white hover:text-foreground">
+                  {t("home.quick.visit", "Visit Us")}
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-28 right-6 z-20 hidden gap-2 md:flex">
           {heroImages.map((_, i) => (
             <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
-              className={`h-2 rounded-full transition-all ${i === slide ? "w-8 bg-white" : "w-2 bg-white/50 hover:bg-white/80"}`} />
+              className={`h-1.5 transition-all ${i === slide ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
           ))}
         </div>
       </section>
 
-      <section className="py-20 md:py-28">
-        <div className="container grid items-center gap-14 lg:grid-cols-2">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <h2 className="font-heading text-3xl font-bold leading-tight text-foreground md:text-5xl">
-              {t("home.learning.title")}
-            </h2>
-            <div className="mt-5 h-[3px] w-12 bg-primary" />
+      {/* QUICK LINKS: bar overlapping the hero */}
+      <section className="relative z-30 -mt-16">
+        <div className="container">
+          <nav aria-label="Quick links" className="grid grid-cols-2 bg-primary text-primary-foreground shadow-2xl md:grid-cols-5">
+            {quickLinks.map((q) => (
+              <Link key={q.to} to={q.to}
+                className="group flex items-center justify-between border-b border-r border-white/15 px-6 py-6 font-heading text-lg font-semibold transition-colors hover:bg-white hover:text-primary md:border-b-0">
+                {q.label}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+
+      {/* INTRO */}
+      <section className="py-24 md:py-32">
+        <div className="container grid items-start gap-14 lg:grid-cols-12">
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-7">
+            <span className={eyebrow}>{t("home.quick.about", "Welcome")}</span>
+            <h2 className={`mt-4 ${heading} md:text-6xl`}>{t("home.learning.title")}</h2>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <p className="leading-relaxed text-muted-foreground">{t("home.learning.p1")}</p>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }} className="lg:col-span-5">
+            <p className="text-lg leading-relaxed text-muted-foreground">{t("home.learning.p1")}</p>
             <p className="mt-4 leading-relaxed text-muted-foreground">{t("home.learning.p2")}</p>
-            <Link to="/about" className="mt-8 inline-block">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">{t("home.learning.cta")}</Button>
+            <Link to="/about" className="mt-8 inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
+              {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>
         </div>
       </section>
 
-      <section className="bg-muted/60 py-16 md:py-20">
-        <div className="container grid grid-cols-2 gap-8 md:grid-cols-4">
+      {/* STATS BAND */}
+      <section className="bg-foreground py-16 text-background md:py-20">
+        <div className="container grid grid-cols-2 gap-10 md:grid-cols-4">
           {stats.map((s, i) => (
-            <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center">
-              <div className="text-sm font-medium text-muted-foreground">{s.label}</div>
-              <div className="mt-2 font-heading text-4xl font-bold text-primary md:text-5xl">{s.value}</div>
+            <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="border-l border-white/25 pl-6">
+              <div className="font-heading text-5xl font-bold text-[hsl(var(--gold))] md:text-6xl">{s.value}</div>
+              <div className="mt-2 text-sm uppercase tracking-widest text-background/75">{s.label}</div>
             </motion.div>
           ))}
         </div>
       </section>
 
-      <section className="py-20 md:py-28">
-        <div className="container grid items-center gap-12 lg:grid-cols-5">
+      {/* ACADEMICS: alternating feature blocks */}
+      <section className="py-24 md:py-32">
+        <div className="container">
+          <div className="max-w-3xl">
+            <span className={eyebrow}>{t("home.quick.academics", "Academics")}</span>
+            <h2 className={`mt-4 ${heading}`}>{t("home.curriculum.title")}</h2>
+            <p className="mt-5 leading-relaxed text-muted-foreground">{t("home.curriculum.intro")}</p>
+          </div>
+
+          <div className="mt-16 space-y-20">
+            {curriculum.slice(0, 3).map((c, i) => (
+              <motion.div key={c.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+                className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+                <div className={`aspect-[3/2] overflow-hidden bg-muted ${i % 2 ? "lg:order-2" : ""}`}>
+                  <img src={c.img} alt={c.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+                </div>
+                <div>
+                  <span className="font-heading text-6xl font-bold text-primary/20">0{i + 1}</span>
+                  <h3 className="-mt-2 font-heading text-3xl font-bold text-foreground md:text-4xl">{c.title}</h3>
+                  <p className="mt-4 max-w-md leading-relaxed text-muted-foreground">{c.desc}</p>
+                  <Link to="/academics" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary">
+                    {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-20 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+            {curriculum.slice(3).map((c) => (
+              <Link to="/academics" key={c.title} className="group relative aspect-[4/3] overflow-hidden bg-foreground">
+                <img src={c.img} alt={c.title} loading="lazy" className="h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+                  <h3 className="font-heading text-2xl font-bold">{c.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-white/80">{c.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PRINCIPAL */}
+      <section className="bg-muted/60 py-24 md:py-32">
+        <div className="container grid items-center gap-14 lg:grid-cols-5">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-2">
             <DirectorPhoto />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("home.director.eyebrow")}</span>
-            <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-foreground md:text-4xl">{t("home.director.title")}</h2>
-            <div className="mt-4 h-[3px] w-12 bg-primary" />
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground italic">"{t("home.director.quote")}"</p>
+            <span className={eyebrow}>{t("home.director.eyebrow")}</span>
+            <h2 className={`mt-4 ${heading}`}>{t("home.director.title")}</h2>
+            <blockquote className="mt-8 border-l-4 border-[hsl(var(--gold))] pl-6 font-heading text-xl italic leading-relaxed text-foreground md:text-2xl">
+              "{t("home.director.quote")}"
+            </blockquote>
             <p className="mt-6 leading-relaxed text-muted-foreground">{t("home.director.body")}</p>
             <p className="mt-6 font-heading text-base font-semibold text-foreground">
               {t("home.director.signature")} <span className="font-normal text-muted-foreground">{t("home.director.signatureRole")}</span>
@@ -171,74 +250,53 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-muted/40 py-20 md:py-28">
+      {/* SCHOOL LIFE */}
+      <section className="py-24 md:py-32">
         <div className="container">
-          <div className="grid items-end gap-8 lg:grid-cols-2">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="font-heading text-3xl font-bold leading-tight text-foreground md:text-5xl">{t("home.curriculum.title")}</h2>
-              <div className="mt-5 h-[3px] w-12 bg-primary" />
-            </motion.div>
-            <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="leading-relaxed text-muted-foreground">
-              {t("home.curriculum.intro")}
-            </motion.p>
+          <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <span className={eyebrow}>{t("home.activities.eyebrow")}</span>
+              <h2 className={`mt-4 ${heading}`}>{t("home.activities.title")}</h2>
+            </div>
+            <Link to="/school-life" className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
+              {t("home.quick.life", "School Life")} <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-
-          <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {curriculum.map((c, i) => (
-              <motion.div key={c.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="group overflow-hidden rounded-lg bg-card shadow-sm ring-1 ring-border/60 transition-shadow hover:shadow-lg">
-                <div className="aspect-[4/3] overflow-hidden bg-muted">
-                  <img src={c.img} alt={c.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                </div>
-                <div className="p-6">
-                  <h3 className="font-heading text-lg font-bold text-foreground">{c.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-28">
-        <div className="container">
-          <div className="mb-12 text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("home.activities.eyebrow")}</span>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">{t("home.activities.title")}</h2>
-            <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {activities.map((a, i) => (
               <motion.div key={a.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="group relative aspect-[4/5] overflow-hidden rounded-lg">
-                <img src={a.img} alt={a.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                className="group relative aspect-[3/4] overflow-hidden">
+                <img src={a.img} alt={a.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <h3 className="font-heading text-xl font-semibold text-white">{a.title}</h3>
-                </div>
+                <h3 className="absolute inset-x-0 bottom-0 p-5 font-heading text-2xl font-semibold text-white">{a.title}</h3>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* NEWS */}
       {announcements.length > 0 && (
-        <section className="bg-muted/40 py-20 md:py-28">
+        <section className="bg-muted/60 py-24 md:py-32">
           <div className="container">
-            <div className="mb-12 text-center">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("home.news.eyebrow")}</span>
-              <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">{t("home.news.title")}</h2>
-              <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
+            <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <span className={eyebrow}>{t("home.news.eyebrow")}</span>
+                <h2 className={`mt-4 ${heading}`}>{t("home.news.title")}</h2>
+              </div>
+              <Link to="/news" className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
+                {t("home.quick.news", "News & Events")} <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="grid gap-px bg-border md:grid-cols-3">
               {announcements.map((a, i) => (
                 <motion.article key={a.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                  className="overflow-hidden rounded-lg bg-card p-6 shadow-sm ring-1 ring-border/60">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                  className="bg-card p-8">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-primary">
                     {new Date(a.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                   </span>
-                  <h3 className="mt-3 font-heading text-lg font-bold text-foreground">{a.title}</h3>
-                  {a.content && <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{a.content}</p>}
+                  <h3 className="mt-4 font-heading text-2xl font-bold leading-snug text-foreground">{a.title}</h3>
+                  {a.content && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{a.content}</p>}
                 </motion.article>
               ))}
             </div>
@@ -246,17 +304,27 @@ export default function Home() {
         </section>
       )}
 
-      <section className="relative isolate overflow-hidden bg-primary py-20 text-primary-foreground md:py-24">
+      {/* CTA */}
+      <section className="relative isolate overflow-hidden py-28 text-white md:py-36">
+        <img src={hero3} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+        <div className="absolute inset-0 -z-10 bg-primary/85" />
         <div className="container text-center">
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-heading text-3xl font-bold md:text-5xl">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto max-w-3xl font-heading text-4xl font-bold leading-tight md:text-6xl">
             {t("home.cta.title")}
           </motion.h2>
-          <p className="mx-auto mt-5 max-w-2xl leading-relaxed text-white/85">{t("home.cta.desc")}</p>
-          <Link to="/admissions" className="mt-8 inline-block">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90">
-              {t("home.cta.button")} <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-white/85">{t("home.cta.desc")}</p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link to="/admissions">
+              <Button size="lg" className="rounded-none bg-white px-8 text-primary hover:bg-white/90">
+                {t("home.cta.button")} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button size="lg" variant="outline" className="rounded-none border-white bg-transparent px-8 text-white hover:bg-white hover:text-primary">
+                {t("home.quick.visit", "Visit Us")}
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </Layout>
