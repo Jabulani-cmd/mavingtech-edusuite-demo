@@ -99,7 +99,17 @@
     "studentTeacherNote": "Abafundi labafundisi: imininingwane iphiwa ngumphathi",
     "backHome": "Buyela Ekhaya",
     "loginFailed": "Ukungena kwehlulekile",
-    "loginSuccess": "Ungenile kuhle!"
+    "loginSuccess": "Ungenile kuhle!",
+    "choosePortal": "Ngena njengo",
+    "wrongPortal": "Iportal engalunganga",
+    "wrongPortalDesc": "I-akhawunti le kayisiyo ye-{{portal}}. Khetha iportal elungileyo uzame futhi.",
+    "portal": {
+      "student": "Umfundi",
+      "parent": "Umzali",
+      "teacher": "Umfundisi",
+      "admin": "Ukuphatha",
+      "finance": "Ezezimali"
+    }
   },
   "portal": {
     "dashboard": "Ideshibhodi",

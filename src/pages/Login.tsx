@@ -81,7 +81,7 @@ export default function Login() {
         signOut();
         toast({
           title: t("login.wrongPortal", "Wrong portal"),
-          description: t("login.wrongPortalDesc", "This account is not a {{portal}} account. Choose the correct portal and try again.", { portal: selected.label }),
+          description: t("login.wrongPortalDesc", "This account is not a {{portal}} account. Choose the correct portal and try again.", { portal: t(`login.portal.${selected.key}`, selected.label) }),
           variant: "destructive",
         });
         return;

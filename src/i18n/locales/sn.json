@@ -99,7 +99,17 @@
     "studentTeacherNote": "Vadzidzi nevadzidzisi: mashoko ekupinda anopiwa nemutungamiri",
     "backHome": "Dzokera Kumba",
     "loginFailed": "Kupinda kwatadza",
-    "loginSuccess": "Wapinda zvakanaka!"
+    "loginSuccess": "Wapinda zvakanaka!",
+    "choosePortal": "Pinda se",
+    "wrongPortal": "Portal isiriyo",
+    "wrongPortalDesc": "Account iyi haisi ye{{portal}}. Sarudza portal chaiyo woedza zvakare.",
+    "portal": {
+      "student": "Mudzidzi",
+      "parent": "Mubereki",
+      "teacher": "Mudzidzisi",
+      "admin": "Utungamiriri",
+      "finance": "Zvemari"
+    }
   },
   "portal": {
     "dashboard": "Dashboard",
