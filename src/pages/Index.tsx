@@ -6,8 +6,6 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import heroCampus from "@/assets/hero-campus.jpg";
-import heroCampusPhone from "@/assets/hero-campus-phone.jpg";
 import hero1 from "@/assets/hero-students-1.jpg";
 import hero2 from "@/assets/hero-students-2.jpg";
 import hero3 from "@/assets/hero-students-3.jpg";
@@ -26,14 +24,11 @@ import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import principalPhoto from "@/assets/principal-moyo.jpg";
 
-// `hasText` slides carry the welcome text and logo in the picture itself, so the live headline is hidden on them
-// from tablet width up. `phoneSrc` is a tall, text-free crop used on phones, where the headline is shown as usual.
 // `pos` / `phonePos` are CSS object-position values (desktop / phone) that keep each photo's faces in frame when the
 // hero crops it.
-type HeroSlide = { src: string; phoneSrc?: string; hasText?: boolean; pos?: string; phonePos?: string };
+type HeroSlide = { src: string; pos?: string; phonePos?: string };
 
 const heroSlides: HeroSlide[] = [
-  { src: heroCampus, phoneSrc: heroCampusPhone, hasText: true, pos: "center 30%", phonePos: "center 75%" },
   { src: hero1, pos: "center 25%", phonePos: "40% 50%" },
   { src: hero2, pos: "center 8%", phonePos: "62% 50%" },
   { src: hero3, pos: "center 0%", phonePos: "35% 50%" },
@@ -59,7 +54,6 @@ export default function Home() {
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
   const [slide, setSlide] = useState(0);
   const slides = heroSlides;
-  const current = slides[slide];
   const [prev, setPrev] = useState(-1);
 
   const stats = [
@@ -103,8 +97,6 @@ export default function Home() {
     return () => clearTimeout(tm);
   }, [slide, slides.length]);
 
-  const hideCopy = !!current.hasText;
-
   const quickLinks = [
     { to: "/admissions", label: t("home.quick.admissions", "Admissions") },
     { to: "/academics", label: t("home.quick.academics", "Academics") },
@@ -136,7 +128,6 @@ export default function Home() {
                     : "z-0 opacity-0"
               }`}
             >
-              {sl.phoneSrc && <source media="(max-width: 767px)" srcSet={sl.phoneSrc} />}
               <img
                 src={sl.src}
                 alt={active ? t("home.hero.title") : ""}
@@ -155,11 +146,11 @@ export default function Home() {
         <div className="container relative z-10 flex h-full flex-col justify-end pb-40 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)] md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
             {/* Slides with baked-in welcome text hide the live copy (still readable by screen readers). */}
-            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80 ${hideCopy ? "md:sr-only" : ""}`}>Harare, Zimbabwe</span>
-            <h1 className={`mt-4 font-heading text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl ${hideCopy ? "md:sr-only" : ""}`}>
+            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80`}>Harare, Zimbabwe</span>
+            <h1 className={`mt-4 font-heading text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl`}>
               {t("home.hero.title")}
             </h1>
-            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg ${hideCopy ? "md:sr-only" : ""}`}>
+            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg`}>
               {t("home.hero.subtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
