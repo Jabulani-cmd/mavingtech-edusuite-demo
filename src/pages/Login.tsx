@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, Eye, EyeOff } from "lucide-react";
+import { Home, Eye, EyeOff, GraduationCap, Users, BookOpen, Landmark, Wallet } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -15,16 +15,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/errors";
 import { DEMO_EMAIL_DOMAIN, DEMO_PASSWORDS } from "@/lib/demoAccounts";
 
+type PortalKey = "student" | "parent" | "teacher" | "admin" | "finance";
+
+const PORTALS: { key: PortalKey; label: string; icon: typeof Home; roles: string[] }[] = [
+  { key: "student", label: "Student", icon: GraduationCap, roles: ["student"] },
+  { key: "parent", label: "Parent", icon: Users, roles: ["parent"] },
+  { key: "teacher", label: "Teacher", icon: BookOpen, roles: ["teacher", "hod"] },
+  { key: "admin", label: "Administration", icon: Landmark, roles: ["admin", "principal", "deputy_principal", "admin_supervisor", "registration"] },
+  { key: "finance", label: "Finance", icon: Wallet, roles: ["finance", "finance_clerk", "bursar"] },
+];
+
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, role, user, loading: authLoading } = useAuth();
+  const { signIn, signOut, role, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [seedingDemo, setSeedingDemo] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [portal, setPortal] = useState<PortalKey>("student");
 
   const handleSeedDemoAdmin = async () => {
     setSeedingDemo(true);
@@ -64,10 +75,21 @@ export default function Login() {
         navigate("/change-password");
         return;
       }
+      const selected = PORTALS.find((p) => p.key === portal);
+      if (selected && !selected.roles.includes(role)) {
+        setJustLoggedIn(false);
+        signOut();
+        toast({
+          title: t("login.wrongPortal", "Wrong portal"),
+          description: t("login.wrongPortalDesc", "This account is not a {{portal}} account. Choose the correct portal and try again.", { portal: selected.label }),
+          variant: "destructive",
+        });
+        return;
+      }
       toast({ title: t("login.loginSuccess") });
       redirectByRole(role);
     }
-  }, [authLoading, user, role, justLoggedIn, toast, t, redirectByRole, navigate]);
+  }, [authLoading, user, role, justLoggedIn, portal, signOut, toast, t, redirectByRole, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +119,20 @@ export default function Login() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                <fieldset className="space-y-2">
+                  <legend className="text-sm font-medium">{t("login.choosePortal", "Sign in to")}</legend>
+                  <div role="radiogroup" aria-label={t("login.choosePortal", "Sign in to")} className="grid grid-cols-3 gap-2">
+                    {PORTALS.map(({ key, label, icon: Icon }) => (
+                      <button key={key} type="button" role="radio" aria-checked={portal === key} onClick={() => setPortal(key)}
+                        className={`flex flex-col items-center gap-1 rounded-md border px-2 py-3 text-xs font-medium transition-colors ${
+                          portal === key ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/50"
+                        }`}>
+                        <Icon className="h-5 w-5" />
+                        {t(`login.portal.${key}`, label)}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t("auth.emailLabel")}</Label>
                   <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("login.emailPlaceholder")} required />
