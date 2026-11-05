@@ -25,7 +25,6 @@ import { supabase } from "@/integrations/supabase/client";
 import principalPhoto from "@/assets/principal-moyo.jpg";
 
 // `hasText` slides carry the welcome text and logo in the picture itself, so the live headline is hidden on them.
-// Those are desktop-only: the baked-in text gets cropped on narrow screens.
 type HeroSlide = { src: string; hasText?: boolean };
 
 const heroSlides: HeroSlide[] = [
@@ -50,14 +49,7 @@ export default function Home() {
   const { t } = useTranslation();
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
   const [slide, setSlide] = useState(0);
-  const [wide, setWide] = useState(() => typeof window === "undefined" || window.matchMedia("(min-width: 768px)").matches);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const onChange = () => setWide(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-  const slides = wide ? heroSlides : heroSlides.filter((x) => !x.hasText);
+  const slides = heroSlides;
   const current = slides[slide % slides.length];
 
   const stats = [
