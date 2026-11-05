@@ -47,6 +47,16 @@ export default function Home() {
   const { t } = useTranslation();
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
   const [slide, setSlide] = useState(0);
+  // The video frame has text baked in that gets cropped on narrow screens, so phones only get the photo slides.
+  const [wide, setWide] = useState(() => typeof window === "undefined" || window.matchMedia("(min-width: 768px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setWide(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const slides = wide ? heroSlides : heroSlides.filter((x) => x.type === "image");
+  const current = slides[slide % slides.length];
 
   const stats = [
     { value: "800+", label: t("home.stats.enrollments") },
@@ -83,13 +93,12 @@ export default function Home() {
 
   useEffect(() => {
     // Image slides advance on a timer; the video slide advances when it ends (with a safety timeout).
-    const isVideo = heroSlides[slide].type === "video";
-    const tm = setTimeout(() => setSlide((s) => (s + 1) % heroSlides.length), isVideo ? 14000 : 3800);
+    const tm = setTimeout(() => setSlide((s) => (s + 1) % slides.length), current.type === "video" ? 14000 : 3800);
     return () => clearTimeout(tm);
-  }, [slide]);
+  }, [slide, slides.length, current.type]);
 
-  const onVideo = heroSlides[slide].type === "video";
-  const nextSlide = () => setSlide((s) => (s + 1) % heroSlides.length);
+  const onVideo = current.type === "video";
+  const nextSlide = () => setSlide((s) => (s + 1) % slides.length);
 
   const quickLinks = [
     { to: "/admissions", label: t("home.quick.admissions", "Admissions") },
@@ -107,10 +116,10 @@ export default function Home() {
       {/* HERO: full-bleed image, headline anchored bottom-left */}
       <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
         <AnimatePresence initial={false}>
-          {heroSlides[slide].type === "video" ? (
+          {current.type === "video" ? (
             <motion.video
               key={`video-${slide}`}
-              poster={(heroSlides[slide] as { poster: string }).poster}
+              poster={current.poster}
               autoPlay
               muted
               playsInline
@@ -129,7 +138,7 @@ export default function Home() {
           ) : (
             <motion.img
               key={slide}
-              src={heroSlides[slide].src}
+              src={current.src}
               alt={t("home.hero.title")}
               initial={{ opacity: 0, scale: 1.06 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -168,9 +177,9 @@ export default function Home() {
         </div>
 
         <div className="absolute bottom-28 right-6 z-20 hidden gap-2 md:flex">
-          {heroSlides.map((_, i) => (
+          {slides.map((_, i) => (
             <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
-              className={`h-1.5 transition-all ${i === slide ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
+              className={`h-1.5 transition-all ${i === slide % slides.length ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
           ))}
         </div>
       </section>
@@ -179,9 +188,9 @@ export default function Home() {
       <section className="relative z-30 -mt-16">
         <div className="container">
           <nav aria-label="Quick links" className="grid grid-cols-2 bg-primary text-primary-foreground shadow-2xl md:grid-cols-5">
-            {quickLinks.map((q) => (
+            {quickLinks.map((q, i) => (
               <Link key={q.to} to={q.to}
-                className="group flex items-center justify-between border-b border-r border-white/15 px-6 py-6 font-heading text-lg font-semibold transition-colors hover:bg-white hover:text-primary md:border-b-0">
+                className={`group flex items-center justify-between border-b border-r border-white/15 px-6 py-6 font-heading text-lg font-semibold transition-colors hover:bg-white hover:text-primary md:border-b-0 ${i === quickLinks.length - 1 ? "col-span-2 md:col-span-1" : ""}`}>
                 {q.label}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
