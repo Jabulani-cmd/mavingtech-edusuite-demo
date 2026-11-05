@@ -107,8 +107,7 @@
       "student": "Student",
       "parent": "Parent",
       "teacher": "Teacher",
-      "admin": "Administration",
-      "finance": "Finance"
+      "admin": "Administration"
     }
   },
   "portal": {

@@ -6,6 +6,8 @@ import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageSelect from "@/components/LanguageSelect";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { PORTALS } from "@/lib/portals";
 
 interface NavItem {
   label: string;
@@ -166,6 +168,7 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
   const location = useLocation();
   const { t } = useTranslation();
   const navLinks = useNavLinks();
@@ -213,11 +216,20 @@ export default function Navbar() {
         {/* Right side: portal + language */}
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSelect />
-          <Link to="/login" className="hidden sm:block">
-            <Button size="sm" className="whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90">
-              {t("nav.portalLogin")}
-            </Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" className="hidden gap-1 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 sm:inline-flex">
+                {t("nav.portalLogin")} <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {PORTALS.map(({ key, label }) => (
+                <DropdownMenuItem key={key} asChild>
+                  <Link to={`/login?portal=${key}`} className="cursor-pointer">{t(`login.portal.${key}`, label)}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <button
             className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted xl:hidden"
@@ -254,11 +266,27 @@ export default function Navbar() {
                   </Link>
                 )
               )}
-              <Link to="/login" onClick={() => setMobileOpen(false)} className="mt-3">
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  {t("nav.portalLogin")}
-                </Button>
-              </Link>
+              <Button
+                className="mt-3 w-full gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => setPortalOpen(!portalOpen)}
+                aria-expanded={portalOpen}
+              >
+                {t("nav.portalLogin")} <ChevronDown className={`h-4 w-4 transition-transform ${portalOpen ? "rotate-180" : ""}`} />
+              </Button>
+              {portalOpen && (
+                <div className="mt-1 flex flex-col rounded-md border border-border">
+                  {PORTALS.map(({ key, label }) => (
+                    <Link
+                      key={key}
+                      to={`/login?portal=${key}`}
+                      onClick={() => { setMobileOpen(false); setPortalOpen(false); }}
+                      className="border-b border-border/60 px-4 py-3 text-sm font-medium text-foreground last:border-b-0"
+                    >
+                      {t(`login.portal.${key}`, label)}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
