@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import heroCampus from "@/assets/hero-campus.jpg";
+import heroCampusPhone from "@/assets/hero-campus-phone.jpg";
 import hero1 from "@/assets/hero-students-1.jpg";
 import hero2 from "@/assets/hero-students-2.jpg";
 import hero3 from "@/assets/hero-students-3.jpg";
@@ -24,11 +25,12 @@ import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import principalPhoto from "@/assets/principal-moyo.jpg";
 
-// `hasText` slides carry the welcome text and logo in the picture itself, so the live headline is hidden on them.
-type HeroSlide = { src: string; hasText?: boolean };
+// `hasText` slides carry the welcome text and logo in the picture itself, so the live headline is hidden on them
+// from tablet width up. `phoneSrc` is a tall, text-free crop used on phones, where the headline is shown as usual.
+type HeroSlide = { src: string; phoneSrc?: string; hasText?: boolean };
 
 const heroSlides: HeroSlide[] = [
-  { src: heroCampus, hasText: true },
+  { src: heroCampus, phoneSrc: heroCampusPhone, hasText: true },
   ...[hero1, hero2, hero3, hero4, hero5].map((src): HeroSlide => ({ src })),
 ];
 
@@ -108,28 +110,32 @@ export default function Home() {
       {/* HERO: full-bleed image, headline anchored bottom-left */}
       <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
         <AnimatePresence initial={false}>
-          <motion.img
+          <motion.picture
             key={slide}
-            src={current.src}
-            alt={t("home.hero.title")}
             initial={{ opacity: 0, scale: 1.06 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.4 }}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: "center 30%" }}
-          />
+            className="absolute inset-0 block h-full w-full"
+          >
+            {current.phoneSrc && <source media="(max-width: 767px)" srcSet={current.phoneSrc} />}
+            <img
+              src={current.src}
+              alt={t("home.hero.title")}
+              className={`h-full w-full object-cover ${current.phoneSrc ? "object-[center_75%] md:object-[center_30%]" : "object-[center_30%]"}`}
+            />
+          </motion.picture>
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
 
         <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
             {/* Slides with baked-in welcome text hide the live copy (still readable by screen readers). */}
-            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80 ${hideCopy ? "sr-only" : ""}`}>Harare, Zimbabwe</span>
-            <h1 className={`mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl ${hideCopy ? "sr-only" : ""}`}>
+            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80 ${hideCopy ? "md:sr-only" : ""}`}>Harare, Zimbabwe</span>
+            <h1 className={`mt-4 font-heading text-5xl font-bold leading-[1.02] md:text-7xl lg:text-8xl ${hideCopy ? "md:sr-only" : ""}`}>
               {t("home.hero.title")}
             </h1>
-            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg ${hideCopy ? "sr-only" : ""}`}>
+            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg ${hideCopy ? "md:sr-only" : ""}`}>
               {t("home.hero.subtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
