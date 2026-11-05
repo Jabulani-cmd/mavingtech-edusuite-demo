@@ -99,7 +99,17 @@
     "studentTeacherNote": "Students & teachers: credentials provided by admin",
     "backHome": "Back to Home",
     "loginFailed": "Login failed",
-    "loginSuccess": "Logged in successfully!"
+    "loginSuccess": "Logged in successfully!",
+    "choosePortal": "Sign in to",
+    "wrongPortal": "Wrong portal",
+    "wrongPortalDesc": "This account is not a {{portal}} account. Choose the correct portal and try again.",
+    "portal": {
+      "student": "Student",
+      "parent": "Parent",
+      "teacher": "Teacher",
+      "admin": "Administration",
+      "finance": "Finance"
+    }
   },
   "portal": {
     "dashboard": "Dashboard",
