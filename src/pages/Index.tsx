@@ -109,7 +109,7 @@ export default function Home() {
             style={{ objectPosition: "center 30%" }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30" />
 
         <div className="container relative z-10 flex h-full flex-col justify-end pb-40 md:pb-44">
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
