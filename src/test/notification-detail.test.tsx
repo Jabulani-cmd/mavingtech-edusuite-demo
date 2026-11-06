@@ -23,7 +23,7 @@ const base: Notification = {
 };
 
 const open = (n: Notification | null, onClose = vi.fn()) =>
-  render(<MemoryRouter><NotificationDetail notification={n} onClose={onClose} /></MemoryRouter>);
+  render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><NotificationDetail notification={n} onClose={onClose} /></MemoryRouter>);
 
 describe("NotificationDetail", () => {
   it("renders nothing when no notification is selected", () => {

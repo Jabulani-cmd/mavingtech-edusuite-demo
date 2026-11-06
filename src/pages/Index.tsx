@@ -122,7 +122,7 @@ export default function Home() {
               aria-hidden={!active}
               className={`absolute inset-0 block h-full w-full ${
                 active
-                  ? "z-[2] opacity-100 transition-opacity duration-[1200ms] ease-out"
+                  ? "z-[2] opacity-100 transition-opacity [transition-duration:1200ms] ease-out"
                   : leaving
                     ? "z-[1] opacity-100"
                     : "z-0 opacity-0"
