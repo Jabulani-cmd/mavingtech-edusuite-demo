@@ -4368,6 +4368,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_school_role: { Args: { _uid: string }; Returns: boolean }
       in_class: { Args: { _class_id: string; _uid: string }; Returns: boolean }
       is_conversation_member: {
         Args: { _conversation_id: string; _uid: string }
