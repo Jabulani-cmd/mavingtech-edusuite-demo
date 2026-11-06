@@ -339,8 +339,18 @@ export default function DemoDataSeederPanel() {
   /** Every login, created in parallel batches. Parents go last so their children's logins already exist. */
   async function provisionAccounts(seed: Seed): Promise<{ total: number; failed: number; errors: string[] }> {
     const admission = new Map(seed.students.map((s) => [s.id, s.admissionNumber]));
+    // If the demo administrator is the one running this load, leave their login alone: updating it ends their
+    // session on the server, and every later call would be refused as "not a school administrator".
+    const demoAdminEmail = `admin@${DEMO_EMAIL_DOMAIN}`;
+    let runningAsDemoAdmin = false;
+    try {
+      const { data } = await supabase.auth.getUser();
+      runningAsDemoAdmin = data?.user?.email?.toLowerCase() === demoAdminEmail;
+    } catch {
+      // Not signed in, or the session could not be read: send the account as usual.
+    }
     const staffAndStudents: AccountPayload[] = [
-      { email: `admin@${DEMO_EMAIL_DOMAIN}`, password: DEMO_PASSWORDS.admin, full_name: "Demo Administrator", role: "admin" },
+      ...(runningAsDemoAdmin ? [] : [{ email: demoAdminEmail, password: DEMO_PASSWORDS.admin, full_name: "Demo Administrator", role: "admin" as const }]),
       // One login for each leadership and office portal (principal, deputy, HOD, finance, bursar, ...).
       ...DEMO_STAFF_ACCOUNTS.map((a) => ({ email: a.email, password: DEMO_PASSWORDS.staff, full_name: a.fullName, role: a.role, department: a.department })),
       ...seed.teachers.map((t) => ({ email: t.email, password: DEMO_PASSWORDS.teacher, full_name: t.name, role: "teacher" as const })),

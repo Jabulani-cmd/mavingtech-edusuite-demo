@@ -42,10 +42,13 @@ function fakeQuery(table: string) {
 const rpcCalls: string[] = [];
 const agentRuns: string[] = [];
 let failRpc: string | null = null;
+// Who is signed in while the seeder runs (the demo administrator is left out of the accounts it sends).
+let signedInEmail = "head.office@school.test";
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: (table: string) => fakeQuery(table),
+    auth: { getUser: vi.fn(async () => ({ data: { user: { email: signedInEmail } }, error: null })) },
     rpc: vi.fn(async (name: string) => {
       rpcCalls.push(name);
       return name === failRpc
@@ -124,6 +127,27 @@ describe("Demo data seeder panel", () => {
     const firstRosterDelete = writes.findIndex((w) => w.table === "student_classes" && w.op === "delete");
     expect(firstRosterDelete).toBeGreaterThanOrEqual(0);
     expect(firstRosterDelete).toBeLessThan(firstRosterInsert);
+  }, 30000);
+
+  it("leaves the signed-in demo administrator's own login alone, so their session is not ended mid-load", async () => {
+    writes.length = 0; invokes.length = 0; rpcCalls.length = 0; agentRuns.length = 0; saved.clear();
+    signedInEmail = "admin@schooldemo.com";
+    render(
+      <AllocationProvider>
+        <DemoPeopleProvider>
+          <DemoDataSeederPanel />
+        </DemoPeopleProvider>
+      </AllocationProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /(re-seed|load) demo data/i }));
+    await waitFor(() => expect(rpcCalls).toEqual(["seed_demo_activity", "seed_demo_finance"]), { timeout: 15000 });
+    const accounts = invokes.flatMap((b) => b.accounts);
+    // Updating the administrator's login ends their session on the server and every later call is refused.
+    expect(accounts.some((a) => a.email === "admin@schooldemo.com")).toBe(false);
+    // Everyone else is still created.
+    expect(accounts.filter((a) => a.role === "student")).toHaveLength(500);
+    expect(accounts.filter((a) => DEMO_STAFF_ACCOUNTS.some((d) => d.role === a.role))).toHaveLength(DEMO_STAFF_ACCOUNTS.length);
+    signedInEmail = "head.office@school.test";
   }, 30000);
 
   it("still finishes the load and says what is missing when fees cannot be loaded", async () => {

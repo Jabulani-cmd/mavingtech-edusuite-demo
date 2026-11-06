@@ -66,17 +66,23 @@ function validate(raw: unknown): Account | string {
   return a as unknown as Account;
 }
 
-async function callerIsSchoolAdmin(req: Request, admin: SupabaseClient): Promise<boolean> {
+/** The signed-in school administrator's user id, or null when the caller is not one. */
+async function schoolAdminCallerId(req: Request, admin: SupabaseClient): Promise<string | null> {
   const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
-  if (!token) return false;
+  if (!token) return null;
   const { data, error } = await admin.auth.getUser(token);
-  if (error || !data.user) return false;
+  if (error || !data.user) return null;
   const { data: ok } = await admin.rpc("is_school_admin", { _uid: data.user.id });
-  return ok === true;
+  return ok === true ? data.user.id : null;
 }
 
-async function upsertUser(admin: SupabaseClient, a: Account, existingId: string | undefined): Promise<{ id: string; created: boolean }> {
+async function upsertUser(
+  admin: SupabaseClient, a: Account, existingId: string | undefined, callerId: string | null,
+): Promise<{ id: string; created: boolean }> {
   const meta = { full_name: a.full_name, demo: true };
+  // Never update the signed-in administrator's own login: changing their password ends their session on the
+  // server, and every later call in the same load would be refused as "not a school administrator".
+  if (existingId && existingId === callerId) return { id: existingId, created: false };
   if (existingId) {
     const { error } = await admin.auth.admin.updateUserById(existingId, { password: a.password, email_confirm: true, user_metadata: meta });
     if (error) throw error;
@@ -202,10 +208,12 @@ Deno.serve(async (req) => {
     const requested: unknown[] = Array.isArray(body?.accounts) ? body.accounts : [];
 
     let accounts: Account[];
+    let callerId: string | null = null;
     if (requested.length === 0) {
       accounts = [DEMO_ADMIN];
     } else {
-      if (!(await callerIsSchoolAdmin(req, admin))) return json({ error: "Only a school administrator can seed demo accounts" }, 403);
+      callerId = await schoolAdminCallerId(req, admin);
+      if (!callerId) return json({ error: "Only a school administrator can seed demo accounts" }, 403);
       if (requested.length > MAX_ACCOUNTS_PER_CALL) return json({ error: `Send at most ${MAX_ACCOUNTS_PER_CALL} accounts per call` }, 400);
       const checked = requested.map(validate);
       const bad = checked.find((c) => typeof c === "string");
@@ -225,13 +233,13 @@ Deno.serve(async (req) => {
       try {
         let user: { id: string; created: boolean };
         try {
-          user = await upsertUser(admin, a, existing.get(a.email.toLowerCase()));
+          user = await upsertUser(admin, a, existing.get(a.email.toLowerCase()), callerId);
         } catch (e) {
           // The auth user exists but has no profile yet: find it, then update it.
           if (!String((e as Error).message).toLowerCase().includes("already")) throw e;
           const found = await findUserId(admin, a.email);
           if (!found) throw e;
-          user = await upsertUser(admin, a, found);
+          user = await upsertUser(admin, a, found, callerId);
         }
 
         const { error: roleErr } = await admin.from("user_roles").upsert({ user_id: user.id, role: a.role }, { onConflict: "user_id,role" });
