@@ -1,6 +1,7 @@
 import type { Teacher, Subject, SchoolClass } from "@/contexts/AllocationContext";
 import type { DemoStudent, DemoParent } from "@/lib/demoSeeder";
 import { DEMO_EMAIL_DOMAIN, DEMO_PASSWORDS } from "@/lib/demoSeeder";
+import { DEMO_STAFF_ACCOUNTS } from "@/lib/demoAccounts";
 import { SCHOOL_CONTACT_LINE } from "@/lib/school";
 
 export interface CredentialsInput {
@@ -52,6 +53,7 @@ export async function buildCredentialsWorkbook(input: CredentialsInput): Promise
   const summary: [string, string | number, string][] = [
     ["Sign-in page", input.loginUrl, ""],
     ["Administrator", `admin@${DEMO_EMAIL_DOMAIN}`, DEMO_PASSWORDS.admin],
+    ["Leadership & office staff", DEMO_STAFF_ACCOUNTS.length, DEMO_PASSWORDS.staff],
     ["Teachers", input.teachers.length, DEMO_PASSWORDS.teacher],
     ["Students", input.students.length, DEMO_PASSWORDS.student],
     ["Parents & guardians", input.parents.length, DEMO_PASSWORDS.parent],
@@ -67,8 +69,21 @@ export async function buildCredentialsWorkbook(input: CredentialsInput): Promise
   });
   ov.getCell("C6").value = { text: input.loginUrl, hyperlink: input.loginUrl };
   ov.getCell("C6").font = { color: { argb: "FF2563EB" }, underline: true };
-  ov.getCell("B12").value = "Each sheet lists one group. Use the filter arrows in the header row to find a class, form or person.";
-  ov.getCell("B12").font = { size: 10, color: { argb: "FF6B7280" } };
+  ov.getCell("B13").value = "Each sheet lists one group. Use the filter arrows in the header row to find a class, form or person.";
+  ov.getCell("B13").font = { size: 10, color: { argb: "FF6B7280" } };
+
+  // ---- Leadership and office staff: one login for each staff portal ----
+  const roleLabel = (role: string) => role.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+  addTable(wb, "Leadership & Office", [
+    { header: "Role", key: "role", width: 18 },
+    { header: "Name", key: "name", width: 26 },
+    { header: "Title", key: "title", width: 22 },
+    { header: "Choose this portal", key: "portal", width: 20 },
+    { header: "Email (login)", key: "email", width: 38 },
+    { header: "Password", key: "password", width: 15 },
+  ], DEMO_STAFF_ACCOUNTS.map((a) => ({
+    role: roleLabel(a.role), name: a.fullName, title: a.title, portal: "Administration", email: a.email, password: DEMO_PASSWORDS.staff,
+  })));
 
   // ---- Staff ----
   addTable(wb, "Staff", [

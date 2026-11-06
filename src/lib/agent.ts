@@ -59,6 +59,13 @@ export async function reviewFinding(id: string, status: FindingStatus, note?: st
   if (error) throw error;
 }
 
+/** Loads demo fee structures, invoices (paid, part-paid and unpaid) and payments for the demo learners. */
+export async function loadDemoFinance() {
+  const { data, error } = await supabase.rpc("seed_demo_finance");
+  if (error) throw error;
+  return data as Record<string, number>;
+}
+
 /** Loads eight weeks of demo attendance, marks and homework for the demo school. */
 export async function loadDemoActivity() {
   const { data, error } = await supabase.rpc("seed_demo_activity");

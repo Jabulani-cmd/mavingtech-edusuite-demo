@@ -7,6 +7,8 @@
 //   addresses on the demo domain, and links every login to its school record:
 //     student → students.user_id (by admission number)
 //     teacher → staff.user_id (by email)
+//     principal, deputy principal, HOD, finance, bursar, finance clerk, registration, admin supervisor
+//             → a staff record (created if missing) linked to the login, so every staff portal can be shown
 //     parent  → parent_students + parent_student_links for each child, plus a
 //               complimentary access grant so the parent and student portals open.
 // Safe to re-run: existing users are updated, links are upserted.
@@ -19,7 +21,15 @@ const corsHeaders = {
 
 const DEMO_DOMAIN = "schooldemo.com";
 const DEMO_ADMIN = { email: `admin@${DEMO_DOMAIN}`, password: "MbsDemo#Admin26", full_name: "Demo Administrator", role: "admin" as const };
-const ROLES = ["admin", "teacher", "student", "parent"] as const;
+// Staff roles other than teachers: leaders and office staff who sign in through "Administration".
+// Keep in step with DEMO_STAFF_ACCOUNTS in src/lib/demoAccounts.ts.
+const STAFF_ROLES = ["principal", "deputy_principal", "hod", "finance", "bursar", "finance_clerk", "registration", "admin_supervisor"] as const;
+const ROLES = ["admin", "teacher", "student", "parent", ...STAFF_ROLES] as const;
+// The public Staff page groups people as leadership, teaching, admin and general.
+const STAFF_CATEGORY: Record<(typeof STAFF_ROLES)[number], string> = {
+  principal: "leadership", deputy_principal: "leadership", hod: "leadership",
+  finance: "admin", bursar: "admin", finance_clerk: "admin", registration: "admin", admin_supervisor: "admin",
+};
 const MAX_ACCOUNTS_PER_CALL = 60;
 const USER_PAGES = 10; // up to 10,000 users when looking one up by email
 
@@ -29,6 +39,8 @@ type Account = {
   password: string;
   full_name: string;
   role: Role;
+  /** Staff (leaders and office staff): shown on their staff record. */
+  department?: string;
   /** Student: their admission number. */
   admission_number?: string;
   /** Parent: their children's admission numbers and the relationship to them. */
@@ -109,6 +121,21 @@ async function linkRecords(admin: SupabaseClient, linked: { account: Account; ui
     const { data, error } = await admin.from("staff").update({ user_id: uid }).eq("email", account.email).select("id");
     if (error) problems.set(account.email, `staff record: ${error.message}`);
     else if (!data?.length) problems.set(account.email, "no staff record with this email. Load the demo data first");
+  }
+
+  // Leaders and office staff: a staff record linked to the login (created on first run, updated after).
+  for (const { account, uid } of linked.filter((l) => (STAFF_ROLES as readonly string[]).includes(l.account.role))) {
+    const row = {
+      full_name: account.full_name, email: account.email, user_id: uid,
+      role: account.role, category: STAFF_CATEGORY[account.role as (typeof STAFF_ROLES)[number]],
+      status: "active", department: account.department ?? "Administration",
+    };
+    const { data: found, error: findErr } = await admin.from("staff").select("id").eq("email", account.email).limit(1);
+    if (findErr) { problems.set(account.email, `staff record: ${findErr.message}`); continue; }
+    const { error } = found?.length
+      ? await admin.from("staff").update(row).eq("id", found[0].id)
+      : await admin.from("staff").insert(row);
+    if (error) problems.set(account.email, `staff record: ${error.message}`);
   }
 
   // Parents: link every child and open portal access for the demo.
