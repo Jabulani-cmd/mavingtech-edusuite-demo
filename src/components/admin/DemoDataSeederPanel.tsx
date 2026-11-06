@@ -11,7 +11,7 @@ import { useDemoPeople } from "@/contexts/DemoPeopleContext";
 import { buildCredentialsWorkbook } from "@/lib/credentialsWorkbook";
 import { generateDemoSeed, DEMO_PERIODS, DEMO_EMAIL_DOMAIN, DEMO_PASSWORDS, type DemoSeed } from "@/lib/demoSeeder";
 import { DEMO_STAFF_ACCOUNTS, type DemoStaffRole } from "@/lib/demoAccounts";
-import { loadDemoActivity, loadDemoFinance, runAgent } from "@/lib/agent";
+import { clearDemoSchoolLife, loadDemoActivity, loadDemoFinance, loadDemoSchoolLife, runAgent, type DemoArea } from "@/lib/agent";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/errors";
@@ -24,7 +24,7 @@ const STEPS = [
   "Saving the school to the database",
   "Creating login accounts",
   "Linking parents to their children",
-  "Loading marks, attendance, homework, fees and alerts",
+  "Loading marks, exams, fees, boarding, inventory and school life",
   "Publishing to all portals",
 ];
 
@@ -100,7 +100,7 @@ export default function DemoDataSeederPanel() {
   const [loginErrors, setLoginErrors] = useState<string[]>([]);
   const [summary, setSummary] = useState<null | {
     students: number; parents: number; teachers: number; logins: number; failedLogins: number; errors: string[];
-    subjects: number; classes: number; rooms: number; periods: number;
+    subjects: number; classes: number; rooms: number; periods: number; records: number;
   }>(null);
   const [showSummary, setShowSummary] = useState(false);
 
@@ -321,19 +321,39 @@ export default function DemoDataSeederPanel() {
     return warnings;
   }
 
+  /** Plain-language names for the loader steps, so a warning reads well. */
+  const AREA_LABEL: Record<DemoArea, string> = {
+    academic: "Exams, report cards and class materials",
+    finance: "Finance records",
+    boarding: "Boarding and inventory",
+    school: "School life",
+  };
+
   /**
-   * Eight weeks of attendance, class-test marks and homework, fees, invoices and payments, then a
-   * school agent run so teachers have alerts. Each part reports a warning rather than stopping the load.
+   * Eight weeks of attendance, class-test marks and homework, fees, invoices and payments, then exams and report
+   * cards, finance records, boarding and inventory, and school life (announcements, events, awards and more), then
+   * a school agent run so teachers have alerts. Each part is its own call; a part (or a single step inside one)
+   * that fails is reported as a warning and never stops the rest.
    */
-  async function loadDemoRecords(): Promise<string[]> {
+  async function loadDemoRecords(): Promise<{ warnings: string[]; records: number }> {
     const warnings: string[] = [];
+    let records = 0;
     const attempt = async (what: string, run: () => Promise<unknown>) => {
-      try { await run(); } catch (e) { warnings.push(`${what} not loaded: ${errorMessage(e, "unknown error")}`); }
+      try { return await run(); } catch (e) { warnings.push(`${what} not loaded: ${errorMessage(e, "unknown error")}`); return null; }
     };
-    await attempt("Marks, attendance and homework", loadDemoActivity);
-    await attempt("Fees, invoices and payments", loadDemoFinance);
+    const count = (r: unknown) => Object.values((r as { loaded?: Record<string, number> } | null)?.loaded ?? {}).reduce((n, v) => n + Number(v || 0), 0);
+    const activity = await attempt("Marks, attendance and homework", loadDemoActivity) as Record<string, number> | null;
+    const finance = await attempt("Fees, invoices and payments", loadDemoFinance) as Record<string, number> | null;
+    records += Object.values(activity ?? {}).reduce((n, v) => n + Number(v || 0), 0) + Object.values(finance ?? {}).reduce((n, v) => n + Number(v || 0), 0);
+    for (const area of ["academic", "finance", "boarding", "school"] as DemoArea[]) {
+      const result = await attempt(AREA_LABEL[area], () => loadDemoSchoolLife(area));
+      records += count(result);
+      for (const f of (result as { failed?: { step: string; error: string }[] } | null)?.failed ?? []) {
+        warnings.push(`${AREA_LABEL[area]}: ${f.step} not loaded: ${f.error}`);
+      }
+    }
     await attempt("School agent alerts", () => runAgent("manual"));
-    return warnings;
+    return { warnings, records };
   }
 
   /** Every login, created in parallel batches. Parents go last so their children's logins already exist. */
@@ -461,7 +481,8 @@ export default function DemoDataSeederPanel() {
       }
       // Marks, attendance, homework, fees and agent alerts come last: they need the classes, teachers and logins above.
       setStepIdx(6);
-      warnings = [...warnings, ...(await loadDemoRecords())];
+      const extra = await loadDemoRecords();
+      warnings = [...warnings, ...extra.warnings];
       setStepIdx(7);
       setLoginErrors((prev) => [...prev, ...ids.warnings, ...warnings]);
 
@@ -476,6 +497,7 @@ export default function DemoDataSeederPanel() {
         classes: seed.classes.length,
         rooms: seed.rooms.length,
         periods: seed.slots.filter((s) => s.subjectId).length,
+        records: extra.records,
       };
       setSummary(summ);
       setShowSummary(true);
@@ -497,6 +519,8 @@ export default function DemoDataSeederPanel() {
     try { window.localStorage.removeItem("mt_demo_allocation_v2"); } catch { /* storage unavailable */ }
     setSummary(null);
     try {
+      // Exams, finance records, boarding, inventory and school life first: they point at students, classes and invoices.
+      try { await clearDemoSchoolLife(); } catch { /* not installed yet, or nothing to remove */ }
       const ids: string[] = [];
       for (const nums of chunk(seed.students.map((s) => s.admissionNumber), 100)) {
         const { data } = await supabase.from("students").select("id").in("admission_number", nums);
@@ -587,7 +611,8 @@ export default function DemoDataSeederPanel() {
             <p className="text-sm text-muted-foreground mt-1">
               One-click populate the entire system with realistic Zimbabwean school data (ZIMSEC O-Level and A-Level): students, parents,
               teachers, subjects, classes, venues and a complete weekly timetable, plus logins for the principal, deputy principal, HOD, finance, bursar,
-              finance clerk, registration and admin supervisor portals, eight weeks of marks, attendance and homework, and fees, invoices and payments.
+              finance clerk, registration and admin supervisor portals. It also loads eight weeks of marks, attendance and homework, exams and report
+              cards, fees, invoices, payments and expenses, boarding, inventory, announcements, events, awards and more, so every portal has data to show.
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -686,6 +711,7 @@ export default function DemoDataSeederPanel() {
               <Row label="Venues"              value={summary.rooms}     hint="Classrooms, labs, hall, sports field" />
               <Row label="Login accounts"      value={summary.logins}    hint={summary.failedLogins ? `${summary.failedLogins} failed: ${summary.errors[0] ?? "unknown error"}. Use "Create missing logins" to retry` : "Admin, 8 leadership and office staff, teachers, students and parents. All linked"} />
               <Row label="Timetable periods"   value={summary.periods}   hint="Lessons plus supervised study periods, with teacher, venue and time" />
+              <Row label="Demo records"        value={summary.records}   hint="Marks, attendance, homework, exams and report cards, fees, invoices and payments, expenses, boarding, inventory, announcements, events and more" />
             </div>
           )}
           <div className="flex gap-2 pt-2">
