@@ -526,22 +526,28 @@ export default function DemoDataSeederPanel() {
         const { data } = await supabase.from("students").select("id").in("admission_number", nums);
         ids.push(...(data ?? []).map((r) => r.id));
       }
-      // Marks, attendance, fees and agent alerts created by the demo load.
+      // Everything that points at the demo students goes first. The demo students are demo-only, so all of their
+      // records are removed, including the invoice the database creates automatically for each new student: any
+      // of these left behind stops the students themselves from being deleted.
+      const BY_STUDENT = [
+        "payment_reminders", "payments", "invoices", "marks", "attendance", "exam_results", "term_reports", "term_registrations",
+        "enrollments", "assessment_results", "assessment_submissions", "homework_submissions", "bed_allocations", "health_visits",
+        "textbook_issues", "agent_findings", "appointments", "parent_communication_logs", "personal_timetables",
+        "parent_students", "parent_student_links", "student_classes",
+      ];
       for (const part of chunk(ids, 100)) {
-        await supabase.from("agent_findings").delete().in("student_id", part);
-        await supabase.from("marks").delete().in("student_id", part).eq("comment", "demo-activity");
-        await supabase.from("attendance").delete().in("student_id", part).eq("notes", "demo-activity");
-        await supabase.from("payments").delete().in("student_id", part).eq("notes", "demo-finance");
-        await supabase.from("invoices").delete().in("student_id", part).eq("notes", "demo-finance");
+        for (const table of BY_STUDENT) {
+          // A table that does not exist here, or has nothing to remove, is skipped.
+          await (supabase.from(table as never) as unknown as { delete: () => { in: (c: string, v: string[]) => PromiseLike<unknown> } })
+            .delete().in("student_id", part);
+        }
+        await supabase.from("access_grants").delete().in("student_id", part).eq("reason", "Demo account");
       }
       await supabase.from("fee_structures").delete().like("description", "DEMO %");
-      // Links without a foreign key to students are removed explicitly.
+      let studentsBlocked: string | null = null;
       for (const part of chunk(ids, 100)) {
-        await supabase.from("parent_students").delete().in("student_id", part);
-        await supabase.from("parent_student_links").delete().in("student_id", part);
-        await supabase.from("access_grants").delete().in("student_id", part).eq("reason", "Demo account");
-        await supabase.from("student_classes").delete().in("student_id", part);
-        await supabase.from("students").delete().in("id", part);
+        const { error } = await supabase.from("students").delete().in("id", part);
+        if (error) studentsBlocked = error.message;
       }
       await supabase.from("timetable_entries").delete().eq("term", "DEMO");
       await supabase.from("tt_definitions").delete().like("name", "DEMO %");
@@ -559,7 +565,9 @@ export default function DemoDataSeederPanel() {
         await supabase.from("classes").delete().in("id", emptyClasses);
       }
       await supabase.from("staff").delete().like("email", `%@${DEMO_EMAIL_DOMAIN}`);
-      toast({ title: "Demo data cleared", description: "Demo students, classes, staff, timetables, marks, attendance and fees were removed. Demo logins stay and are reused on the next load." });
+      toast(studentsBlocked
+        ? { title: "Demo students could not all be removed", description: `${studentsBlocked}. Load Demo Data again to rebuild them, or send this message for help.`, variant: "destructive" }
+        : { title: "Demo data cleared", description: "Demo students, classes, staff, timetables, marks, attendance and fees were removed. Demo logins stay and are reused on the next load." });
     } catch (e) {
       toast({ title: "Some demo data could not be removed", description: errorMessage(e, "Unknown error"), variant: "destructive" });
     }

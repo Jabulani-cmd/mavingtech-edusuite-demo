@@ -9,8 +9,9 @@ import { join } from "node:path";
 const dir = "supabase/migrations";
 const file = readdirSync(dir).filter((f) => f.startsWith("20261106150000_")).map((f) => join(dir, f))[0];
 const lifeFile = readdirSync(dir).filter((f) => f.startsWith("20261106160000_")).map((f) => join(dir, f))[0];
+const feesFile = readdirSync(dir).filter((f) => f.startsWith("20261106170000_")).map((f) => join(dir, f))[0];
 // Both loader migrations are held to the same rules.
-const sql = [file, lifeFile].filter(Boolean).map((f) => readFileSync(f, "utf8")).join("\n");
+const sql = [file, lifeFile, feesFile].filter(Boolean).map((f) => readFileSync(f, "utf8")).join("\n");
 const code = sql.split("\n").filter((l) => !l.trim().startsWith("--")).join("\n"); // without comments
 
 describe("demo loader functions", () => {
@@ -38,6 +39,14 @@ describe("demo loader functions", () => {
 
   it("does not join a LATERAL sub-select after another join (the live failure)", () => {
     expect(code).not.toMatch(/\bLATERAL\b/i);
+  });
+
+  it("replaces every invoice of the demo learners, including the automatic one", () => {
+    expect(feesFile).toBeTruthy();
+    const fees = readFileSync(feesFile, "utf8");
+    expect(fees).toContain("FUNCTION public.seed_demo_finance()");
+    expect(fees).toMatch(/DELETE FROM public\.invoices WHERE notes = 'demo-finance'\s+OR student_id IN/);
+    expect(fees).toMatch(/lower\(st\.email\) LIKE '%schooldemo\.com'/);
   });
 
   it("only links to demo images and documents that exist", () => {

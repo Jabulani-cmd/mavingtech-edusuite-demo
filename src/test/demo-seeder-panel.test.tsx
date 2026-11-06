@@ -17,7 +17,7 @@ let respond: (body: { accounts: Row[] }) => InvokeResult = ok;
 const saved = new Map<string, Row[]>();
 
 function fakeQuery(table: string) {
-  let result: { data: unknown; error: null } = { data: saved.get(table) ?? [], error: null };
+  let result: { data: unknown; error: null | { message: string } } = { data: saved.get(table) ?? [], error: null };
   const chain: Record<string, unknown> = {};
   const self = () => chain;
   for (const m of ["select", "eq", "in", "like", "ilike", "order", "limit"]) chain[m] = vi.fn(self);
@@ -32,7 +32,11 @@ function fakeQuery(table: string) {
   chain.insert = vi.fn(write("insert"));
   chain.upsert = vi.fn(write("upsert"));
   chain.update = vi.fn(write("update"));
-  chain.delete = vi.fn(() => { writes.push({ table, op: "delete", rows: [] }); return chain; });
+  chain.delete = vi.fn(() => {
+    writes.push({ table, op: "delete", rows: [] });
+    if (table === "students" && blockStudentDelete) result = { data: null, error: { message: blockStudentDelete } };
+    return chain;
+  });
   chain.single = vi.fn(() => Promise.resolve({ data: (result.data as Row[])[0] ?? null, error: null }));
   chain.then = (resolve: (r: typeof result) => unknown) => Promise.resolve(result).then(resolve);
   return chain;
@@ -45,6 +49,8 @@ let failRpc: string | null = null;
 // A school-life area that loads but reports one failed step.
 let failStep: string | null = null;
 const ALL_RPC = ["seed_demo_activity", "seed_demo_finance", "seed_demo_school_life:academic", "seed_demo_school_life:finance", "seed_demo_school_life:boarding", "seed_demo_school_life:school"];
+// A foreign key error the database gives when something still points at the students being deleted.
+let blockStudentDelete: string | null = null;
 // Who is signed in while the seeder runs (the demo administrator is left out of the accounts it sends).
 let signedInEmail = "head.office@school.test";
 
@@ -70,6 +76,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 import DemoDataSeederPanel from "@/components/admin/DemoDataSeederPanel";
+import { Toaster } from "@/components/ui/toaster";
 import { DEMO_PASSWORDS, DEMO_STAFF_ACCOUNTS } from "@/lib/demoAccounts";
 import { AllocationProvider } from "@/contexts/AllocationContext";
 import { DemoPeopleProvider } from "@/contexts/DemoPeopleContext";
@@ -170,6 +177,39 @@ describe("Demo data seeder panel", () => {
     expect(rpcCalls).toEqual(ALL_RPC);
     expect(agentRuns).toHaveLength(1);
     failStep = null;
+  }, 30000);
+
+  it("Clear removes everything that points at the demo students before the students, and says when it cannot", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    writes.length = 0; invokes.length = 0; rpcCalls.length = 0; agentRuns.length = 0; saved.clear();
+    // The students are found by admission number, so give the fake database some to find.
+    saved.set("students", Array.from({ length: 5 }, (_, i) => ({ id: `s${i}`, admission_number: `STU000${i + 1}` })));
+    blockStudentDelete = 'update or delete on table "students" violates foreign key constraint "invoices_student_id_fkey" on table "invoices"';
+    render(
+      <AllocationProvider>
+        <DemoPeopleProvider>
+          <DemoDataSeederPanel />
+          <Toaster />
+        </DemoPeopleProvider>
+      </AllocationProvider>,
+    );
+    // Clear is offered once demo data is loaded.
+    fireEvent.click(screen.getByRole("button", { name: /(re-seed|load) demo data/i }));
+    await waitFor(() => expect(screen.getByText(/demo data loaded successfully/i)).toBeInTheDocument(), { timeout: 15000 });
+    fireEvent.click(screen.getByRole("button", { name: /^done$/i })); // close the summary
+    await waitFor(() => expect(screen.getByRole("button", { name: /clear demo data/i })).toBeInTheDocument());
+    writes.length = 0;
+    fireEvent.click(screen.getByRole("button", { name: /clear demo data/i }));
+    await waitFor(() => expect(screen.getByText(/demo students could not all be removed/i)).toBeInTheDocument(), { timeout: 15000 });
+    const order = writes.filter((w) => w.op === "delete").map((w) => w.table);
+    // Invoices (the database creates one per student automatically) and payments are removed before the students.
+    for (const table of ["payments", "invoices", "marks", "exam_results", "student_classes", "parent_students"]) {
+      expect(order.indexOf(table), `${table} is cleared`).toBeGreaterThanOrEqual(0);
+      expect(order.indexOf(table), `${table} before students`).toBeLessThan(order.indexOf("students"));
+    }
+    // The message names the blocking table instead of claiming everything was cleared.
+    expect(screen.getByText(/invoices_student_id_fkey/)).toBeInTheDocument();
+    blockStudentDelete = null;
   }, 30000);
 
   it("still finishes the load and says what is missing when fees cannot be loaded", async () => {
