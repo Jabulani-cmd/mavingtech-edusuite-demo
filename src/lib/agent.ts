@@ -59,6 +59,27 @@ export async function reviewFinding(id: string, status: FindingStatus, note?: st
   if (error) throw error;
 }
 
+export type DemoArea = "academic" | "finance" | "boarding" | "school";
+export type DemoAreaResult = { area: DemoArea; loaded: Record<string, number>; failed: { step: string; error: string }[] };
+
+/**
+ * Loads one area of the demo school (exams and report cards, finance records, boarding and inventory, or school
+ * life such as announcements and events). Each area is a separate call so none runs long, and a step that fails
+ * is reported here instead of stopping the others.
+ */
+export async function loadDemoSchoolLife(area: DemoArea) {
+  const { data, error } = await supabase.rpc("seed_demo_school_life", { _area: area });
+  if (error) throw error;
+  return data as unknown as DemoAreaResult;
+}
+
+/** Removes everything the demo school life loaders created. */
+export async function clearDemoSchoolLife() {
+  const { data, error } = await supabase.rpc("clear_demo_school_life");
+  if (error) throw error;
+  return data as { removed: number };
+}
+
 /** Loads demo fee structures, invoices (paid, part-paid and unpaid) and payments for the demo learners. */
 export async function loadDemoFinance() {
   const { data, error } = await supabase.rpc("seed_demo_finance");

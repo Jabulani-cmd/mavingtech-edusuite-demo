@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 /**
@@ -8,12 +8,16 @@ import { join } from "node:path";
  */
 const dir = "supabase/migrations";
 const file = readdirSync(dir).filter((f) => f.startsWith("20261106150000_")).map((f) => join(dir, f))[0];
-const sql = file ? readFileSync(file, "utf8") : "";
+const lifeFile = readdirSync(dir).filter((f) => f.startsWith("20261106160000_")).map((f) => join(dir, f))[0];
+// Both loader migrations are held to the same rules.
+const sql = [file, lifeFile].filter(Boolean).map((f) => readFileSync(f, "utf8")).join("\n");
 const code = sql.split("\n").filter((l) => !l.trim().startsWith("--")).join("\n"); // without comments
 
 describe("demo loader functions", () => {
   it("has the migration that replaces both loaders", () => {
     expect(file).toBeTruthy();
+    expect(lifeFile).toBeTruthy();
+    expect(sql).toContain("FUNCTION public.seed_demo_school_life(_area text)");
     expect(sql).toContain("FUNCTION public.seed_demo_activity()");
     expect(sql).toContain("FUNCTION public.seed_demo_finance()");
   });
@@ -34,5 +38,18 @@ describe("demo loader functions", () => {
 
   it("does not join a LATERAL sub-select after another join (the live failure)", () => {
     expect(code).not.toMatch(/\bLATERAL\b/i);
+  });
+
+  it("only links to demo images and documents that exist", () => {
+    const life = readFileSync(lifeFile, "utf8");
+    const links = [...life.matchAll(/'(\/demo\/[^']+)'/g)].map((m) => m[1]);
+    expect(links.length).toBeGreaterThanOrEqual(16); // 4 carousel + 8 gallery + 4 downloads
+    for (const link of links) expect(existsSync(join("public", link)), link).toBe(true);
+  });
+
+  it("loads the four areas and can clear everything it created", () => {
+    for (const area of ["academic", "finance", "boarding", "school"]) expect(sql).toContain(`_area = '${area}'`);
+    expect(sql).toContain("FUNCTION public.clear_demo_school_life()");
+    expect(sql).toContain("demo_seed_rows");
   });
 });

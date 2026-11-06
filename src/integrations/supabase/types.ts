@@ -4402,6 +4402,8 @@ export type Database = {
       }
       seed_demo_activity: { Args: never; Returns: Json }
       seed_demo_finance: { Args: never; Returns: Json }
+      seed_demo_school_life: { Args: { _area: string }; Returns: Json }
+      clear_demo_school_life: { Args: never; Returns: Json }
       submit_quiz: {
         Args: { _answers: Json; _assessment_id: string }
         Returns: Json

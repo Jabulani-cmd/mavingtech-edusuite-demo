@@ -42,6 +42,9 @@ function fakeQuery(table: string) {
 const rpcCalls: string[] = [];
 const agentRuns: string[] = [];
 let failRpc: string | null = null;
+// A school-life area that loads but reports one failed step.
+let failStep: string | null = null;
+const ALL_RPC = ["seed_demo_activity", "seed_demo_finance", "seed_demo_school_life:academic", "seed_demo_school_life:finance", "seed_demo_school_life:boarding", "seed_demo_school_life:school"];
 // Who is signed in while the seeder runs (the demo administrator is left out of the accounts it sends).
 let signedInEmail = "head.office@school.test";
 
@@ -49,11 +52,12 @@ vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: (table: string) => fakeQuery(table),
     auth: { getUser: vi.fn(async () => ({ data: { user: { email: signedInEmail } }, error: null })) },
-    rpc: vi.fn(async (name: string) => {
-      rpcCalls.push(name);
-      return name === failRpc
-        ? { data: null, error: { message: `${name} failed in the test` } }
-        : { data: { ok: true }, error: null };
+    rpc: vi.fn(async (name: string, args?: { _area?: string }) => {
+      const call = args?._area ? `${name}:${args._area}` : name;
+      rpcCalls.push(call);
+      if (call === failRpc) return { data: null, error: { message: `${name} failed in the test` } };
+      if (call === failStep) return { data: { area: args?._area, loaded: { exams: 3 }, failed: [{ step: "exam timetable", error: "column start_time is of type time" }] }, error: null };
+      return { data: name === "seed_demo_school_life" ? { area: args?._area, loaded: { rows: 10 }, failed: [] } : { ok: true }, error: null };
     }),
     functions: {
       invoke: vi.fn(async (name: string, { body }: { body: { accounts: Row[] } }) => {
@@ -114,7 +118,7 @@ describe("Demo data seeder panel", () => {
     expect(new Set(linked).size).toBe(500);
 
     // Demo records are loaded last, after the classes, teachers and logins they depend on.
-    expect(rpcCalls).toEqual(["seed_demo_activity", "seed_demo_finance"]);
+    expect(rpcCalls).toEqual(ALL_RPC);
     expect(agentRuns).toHaveLength(1);
 
     // Every student is placed in their own class by the seeder (not by a database trigger), with an enrolment record.
@@ -140,7 +144,7 @@ describe("Demo data seeder panel", () => {
       </AllocationProvider>,
     );
     fireEvent.click(screen.getByRole("button", { name: /(re-seed|load) demo data/i }));
-    await waitFor(() => expect(rpcCalls).toEqual(["seed_demo_activity", "seed_demo_finance"]), { timeout: 15000 });
+    await waitFor(() => expect(rpcCalls).toEqual(ALL_RPC), { timeout: 15000 });
     const accounts = invokes.flatMap((b) => b.accounts);
     // Updating the administrator's login ends their session on the server and every later call is refused.
     expect(accounts.some((a) => a.email === "admin@schooldemo.com")).toBe(false);
@@ -148,6 +152,24 @@ describe("Demo data seeder panel", () => {
     expect(accounts.filter((a) => a.role === "student")).toHaveLength(500);
     expect(accounts.filter((a) => DEMO_STAFF_ACCOUNTS.some((d) => d.role === a.role))).toHaveLength(DEMO_STAFF_ACCOUNTS.length);
     signedInEmail = "head.office@school.test";
+  }, 30000);
+
+  it("loads every area of the school and names a step that failed inside one", async () => {
+    writes.length = 0; invokes.length = 0; rpcCalls.length = 0; agentRuns.length = 0; saved.clear();
+    failStep = "seed_demo_school_life:academic";
+    render(
+      <AllocationProvider>
+        <DemoPeopleProvider>
+          <DemoDataSeederPanel />
+        </DemoPeopleProvider>
+      </AllocationProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /(re-seed|load) demo data/i }));
+    await waitFor(() => expect(screen.getByText(/exam timetable not loaded/i)).toBeInTheDocument(), { timeout: 15000 });
+    // The four areas each ran as their own call, in order, and the other areas were not stopped.
+    expect(rpcCalls).toEqual(ALL_RPC);
+    expect(agentRuns).toHaveLength(1);
+    failStep = null;
   }, 30000);
 
   it("still finishes the load and says what is missing when fees cannot be loaded", async () => {
@@ -163,7 +185,7 @@ describe("Demo data seeder panel", () => {
     fireEvent.click(screen.getByRole("button", { name: /(re-seed|load) demo data/i }));
     await waitFor(() => expect(screen.getByText(/fees, invoices and payments not loaded/i)).toBeInTheDocument(), { timeout: 15000 });
     // The other parts still ran, and the logins were all created.
-    expect(rpcCalls).toEqual(["seed_demo_activity", "seed_demo_finance"]);
+    expect(rpcCalls).toEqual(ALL_RPC);
     expect(agentRuns).toHaveLength(1);
     expect(invokes.flatMap((b) => b.accounts).filter((a) => a.role === "student")).toHaveLength(500);
     failRpc = null;
