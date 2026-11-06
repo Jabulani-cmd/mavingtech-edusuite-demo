@@ -87,6 +87,9 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [subjects, setSubjects] = useState<Tables<"subjects">[]>([]);
   const [students, setStudents] = useState<StudentRow[]>([]);
+  // Students in classes this teacher is assigned to. The database only lets a teacher record marks for these.
+  const [markStudents, setMarkStudents] = useState<StudentRow[]>([]);
+  const [hasAssignment, setHasAssignment] = useState(true);
   const [myMaterials, setMyMaterials] = useState<Material[]>([]);
   const [marks, setMarks] = useState<Mark[]>([]);
   const [aiResults, setAiResults] = useState<AiResult[]>([]);
@@ -132,12 +135,18 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
     // Filter classes to only those assigned to this teacher
     const allClasses = allClassRes.data || [];
     let teacherClasses = allClasses;
-    
+    let assignedIds: string[] = [];
+
     if (staffRes.data) {
       const staffId = staffRes.data.id;
       // Get classes assigned via class_subjects
       const { data: csData } = await supabase
         .from("class_subjects")
+        .select("class_id")
+        .eq("teacher_id", staffId);
+      // The weekly timetable also assigns a teacher to a class (kept in step with the database rule).
+      const { data: ttData } = await supabase
+        .from("timetable_entries")
         .select("class_id")
         .eq("teacher_id", staffId);
       
@@ -150,6 +159,10 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
       if (csData) {
         csData.forEach(cs => assignedClassIds.add(cs.class_id));
       }
+      if (ttData) {
+        ttData.forEach(t => assignedClassIds.add(t.class_id));
+      }
+      assignedIds = [...assignedClassIds];
       
       if (assignedClassIds.size > 0) {
         teacherClasses = allClasses.filter(c => assignedClassIds.has(c.id));
@@ -162,6 +175,16 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
 
     const { data: allStudents } = await supabase.from("students").select("id, full_name, form, stream, admission_number").eq("status", "active").order("full_name");
     if (allStudents) setStudents(allStudents);
+
+    // Only offer students from classes this teacher is assigned to when entering marks.
+    setHasAssignment(assignedIds.length > 0);
+    if (allStudents && assignedIds.length > 0) {
+      const { data: sc } = await supabase.from("student_classes").select("student_id").in("class_id", assignedIds).limit(5000);
+      const mine = new Set((sc ?? []).map(r => r.student_id));
+      setMarkStudents(allStudents.filter(st => mine.has(st.id)));
+    } else {
+      setMarkStudents([]);
+    }
 
     const { data: mats } = await materialsQuery(user!.id);
     if (mats) setMyMaterials(mats);
@@ -242,7 +265,16 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
     if (!student_id || !subject_id || !mark) { toast({ title: "Fill all required fields", variant: "destructive" }); return; }
     setMarkLoading(true);
     const { error } = await supabase.from("marks").insert({ student_id, subject_id, mark: parseInt(mark), term, assessment_type, comment: [description, comment].filter(Boolean).join(": ") || null, teacher_id: user!.id });
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+    if (error) {
+      const blocked = /row-level security/i.test(error.message);
+      toast({
+        title: blocked ? "You can't record a mark for this student" : "Error",
+        description: blocked
+          ? "Marks can only be recorded for students in classes you are assigned to. Choose a student from your own classes, or ask the administrator to assign you to this class."
+          : error.message,
+        variant: "destructive",
+      });
+    }
     else {
       toast({ title: `Mark submitted · Grade: ${gradeFor(parseInt(mark))}` });
       await supabase.from("notifications").insert({ user_id: user!.id, title: "Mark Recorded", message: `Grade ${gradeFor(parseInt(mark))} recorded for ${assessment_type}.`, type: "mark" });
@@ -450,8 +482,15 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                   <div className="space-y-2"><Label>Student *</Label>
                     <Select value={markForm.student_id} onValueChange={v => setMarkForm(p => ({ ...p, student_id: v }))}>
                       <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                      <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name} ({s.admission_number})</SelectItem>)}</SelectContent>
+                      <SelectContent>{markStudents.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name} ({s.admission_number})</SelectItem>)}</SelectContent>
                     </Select>
+                    {markStudents.length === 0 && (
+                      <p className="text-xs text-destructive">
+                        {hasAssignment
+                          ? "No students found in your classes yet."
+                          : "You are not assigned to any class yet, so you cannot record marks. Ask the administrator to assign you to your classes."}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2"><Label>Subject *</Label>
                     <Select value={markForm.subject_id} onValueChange={v => setMarkForm(p => ({ ...p, subject_id: v }))}>
@@ -542,7 +581,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                     </Card>
                   );
                 })()}
-                <BulkMarksUpload userId={user!.id} classes={classes} subjects={subjects} students={students} onMarksUploaded={refreshMarks} />
+                <BulkMarksUpload userId={user!.id} classes={classes} subjects={subjects} students={markStudents} onMarksUploaded={refreshMarks} />
               </div>
             </div>
             <TeacherMarksReport userId={user!.id} classes={classes} subjects={subjects} />
