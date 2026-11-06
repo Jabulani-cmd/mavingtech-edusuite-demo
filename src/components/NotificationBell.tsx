@@ -6,21 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string | null;
-  type: string;
-  is_read: boolean;
-  created_at: string;
-  link: string | null;
-}
+import NotificationDetail, { type Notification } from "@/components/NotificationDetail";
 
 export default function NotificationBell() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<Notification | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
@@ -126,7 +118,12 @@ export default function NotificationBell() {
                 notifications.map((n) => (
                   <button
                     key={n.id}
-                    onClick={() => markAsRead(n.id)}
+                    onClick={() => {
+                      if (!n.is_read) markAsRead(n.id);
+                      setSelected({ ...n, is_read: true });
+                      setOpen(false);
+                    }}
+                    aria-label={`Open notification: ${n.title}`}
                     className={`w-full border-b px-4 py-3 text-left transition-colors last:border-0 hover:bg-accent/50 ${
                       !n.is_read ? "bg-primary/5" : ""
                     }`}
@@ -136,7 +133,9 @@ export default function NotificationBell() {
                       <div className={!n.is_read ? "" : "pl-4"}>
                         <p className="text-sm font-medium text-foreground">{n.title}</p>
                         {n.message && <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{n.message}</p>}
-                        <p className="mt-1 text-[10px] text-muted-foreground">{format(new Date(n.created_at), "MMM d, h:mm a")}</p>
+                        <p className="mt-1 text-[10px] text-muted-foreground">
+                          {format(new Date(n.created_at), "MMM d, h:mm a")} · <span className="text-primary">Tap to read more</span>
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -146,6 +145,7 @@ export default function NotificationBell() {
           </motion.div>
         )}
       </AnimatePresence>
+      <NotificationDetail notification={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
