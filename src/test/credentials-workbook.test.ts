@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import ExcelJS from "exceljs";
 import { buildCredentialsWorkbook } from "@/lib/credentialsWorkbook";
 import { generateDemoSeed } from "@/lib/demoSeeder";
+import { DEMO_STAFF_ACCOUNTS } from "@/lib/demoAccounts";
 
 describe("login credentials workbook", () => {
   it("has a readable sheet per group with one row per person", async () => {
@@ -19,12 +20,16 @@ describe("login credentials workbook", () => {
     });
     await wb.xlsx.load(bytes);
 
-    expect(wb.worksheets.map((w) => w.name)).toEqual(["Overview", "Staff", "Students", "Parents"]);
+    expect(wb.worksheets.map((w) => w.name)).toEqual(["Overview", "Leadership & Office", "Staff", "Students", "Parents"]);
     const students = wb.getWorksheet("Students")!;
     expect(students.getRow(1).values).toEqual([undefined, "Admission No.", "Name", "Form", "Class", "Boarding", "Email (login)", "Password"]);
     expect(students.rowCount).toBe(1 + seed.students.length);
     expect(students.getRow(2).getCell(4).value).toBe("Form 1A");
     expect(students.getRow(1).getCell(1).font?.bold).toBe(true);
+    // One login for every staff portal, with the portal to choose on the sign-in page.
+    const leaders = wb.getWorksheet("Leadership & Office")!;
+    expect(leaders.rowCount).toBe(1 + DEMO_STAFF_ACCOUNTS.length);
+    expect(leaders.getRow(2).getCell(4).value).toBe("Administration");
     expect(wb.getWorksheet("Staff")!.rowCount).toBe(1 + 1 + seed.teachers.length);
     expect(wb.getWorksheet("Parents")!.rowCount).toBe(1 + seed.parents.length);
     const firstParent = wb.getWorksheet("Parents")!.getRow(2);

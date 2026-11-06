@@ -4400,6 +4400,7 @@ export type Database = {
         Returns: undefined
       }
       seed_demo_activity: { Args: never; Returns: Json }
+      seed_demo_finance: { Args: never; Returns: Json }
       submit_quiz: {
         Args: { _answers: Json; _assessment_id: string }
         Returns: Json

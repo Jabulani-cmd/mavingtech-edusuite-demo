@@ -10,6 +10,8 @@ import { useAllocation } from "@/contexts/AllocationContext";
 import { useDemoPeople } from "@/contexts/DemoPeopleContext";
 import { buildCredentialsWorkbook } from "@/lib/credentialsWorkbook";
 import { generateDemoSeed, DEMO_PERIODS, DEMO_EMAIL_DOMAIN, DEMO_PASSWORDS, type DemoSeed } from "@/lib/demoSeeder";
+import { DEMO_STAFF_ACCOUNTS, type DemoStaffRole } from "@/lib/demoAccounts";
+import { loadDemoActivity, loadDemoFinance, runAgent } from "@/lib/agent";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/errors";
@@ -22,6 +24,7 @@ const STEPS = [
   "Saving the school to the database",
   "Creating login accounts",
   "Linking parents to their children",
+  "Loading marks, attendance, homework, fees and alerts",
   "Publishing to all portals",
 ];
 
@@ -30,7 +33,8 @@ type AccountPayload = {
   email: string;
   password: string;
   full_name: string;
-  role: "admin" | "teacher" | "student" | "parent";
+  role: "admin" | "teacher" | "student" | "parent" | DemoStaffRole;
+  department?: string;
   admission_number?: string;
   children?: { admission_number: string; relationship: string }[];
 };
@@ -39,7 +43,7 @@ const ACCOUNTS_PER_CALL = 20;
 const PARALLEL_CALLS = 4;
 
 type AccountResult = { email: string; status: string; error?: string };
-type SavedIds = { subIdMap: Map<string, string>; classIdMap: Map<string, string>; staffIdMap: Map<string, string> };
+type SavedIds = { subIdMap: Map<string, string>; classIdMap: Map<string, string>; staffIdMap: Map<string, string>; warnings: string[] };
 type WriteResult = PromiseLike<{ error: { code?: string; message: string } | null }>;
 
 /**
@@ -121,7 +125,7 @@ export default function DemoDataSeederPanel() {
     }
     const subIdMap = new Map(seed.subjects.map((s) => [s.id, subByName.get(s.name)!]));
 
-    // Classes - before students, so the roster trigger links each student to their class.
+    // Classes - before students, so each student can be placed in their class afterwards.
     const classNames = seed.classes.map((c) => c.name);
     const { data: existingCls } = await supabase.from("classes").select("id, name").in("name", classNames);
     const clsByName = new Map((existingCls ?? []).map((c) => [c.name, c.id]));
@@ -212,14 +216,42 @@ export default function DemoDataSeederPanel() {
       if (error) throw error;
     }
 
-    return { subIdMap, classIdMap, staffIdMap };
+    // Rosters: every student is placed in their class here, not by a database trigger. A trigger can
+    // leave students unplaced (or in the wrong class), and then their timetable is empty and their
+    // teachers cannot enter marks for them. Existing placements for these students are replaced.
+    const warnings: string[] = [];
+    const idByAdmission = new Map<string, string>();
+    for (const nums of chunk(seed.students.map((st) => st.admissionNumber), 100)) {
+      const { data, error } = await supabase.from("students").select("id, admission_number").in("admission_number", nums);
+      if (error) throw error;
+      (data ?? []).forEach((r) => idByAdmission.set(String(r.admission_number), r.id));
+    }
+    const roster = seed.students
+      .map((st) => ({ student_id: idByAdmission.get(st.admissionNumber), class_id: classIdMap.get(st.classId) }))
+      .filter((r): r is { student_id: string; class_id: string } => !!r.student_id && !!r.class_id);
+    if (roster.length !== seed.students.length) {
+      throw new Error(`${seed.students.length - roster.length} students could not be placed in a class`);
+    }
+    for (const part of chunk(roster.map((r) => r.student_id), 100)) {
+      const { error } = await supabase.from("student_classes").delete().in("student_id", part);
+      if (error) throw error;
+      await supabase.from("enrollments").delete().in("student_id", part);
+    }
+    for (const rows of chunk(roster, 200)) {
+      const { error } = await supabase.from("student_classes").insert(rows);
+      if (error) throw error;
+      const enrol = await supabase.from("enrollments").insert(rows.map((r) => ({ ...r, academic_year: year, status: "active" })));
+      if (enrol.error) { warnings.push(`Enrolment records not saved: ${enrol.error.message}`); break; }
+    }
+
+    return { subIdMap, classIdMap, staffIdMap, warnings };
   }
 
   /**
    * Who teaches what, and both timetable views. Runs after the logins, and a
    * problem here is reported as a warning rather than stopping the load.
    */
-  async function persistTimetable(seed: Seed, { subIdMap, classIdMap, staffIdMap }: SavedIds): Promise<string[]> {
+  async function persistTimetable(seed: Seed, { subIdMap, classIdMap, staffIdMap }: Omit<SavedIds, "warnings">): Promise<string[]> {
     const year = String(new Date().getFullYear());
     const warnings: string[] = [];
 
@@ -289,11 +321,28 @@ export default function DemoDataSeederPanel() {
     return warnings;
   }
 
+  /**
+   * Eight weeks of attendance, class-test marks and homework, fees, invoices and payments, then a
+   * school agent run so teachers have alerts. Each part reports a warning rather than stopping the load.
+   */
+  async function loadDemoRecords(): Promise<string[]> {
+    const warnings: string[] = [];
+    const attempt = async (what: string, run: () => Promise<unknown>) => {
+      try { await run(); } catch (e) { warnings.push(`${what} not loaded: ${errorMessage(e, "unknown error")}`); }
+    };
+    await attempt("Marks, attendance and homework", loadDemoActivity);
+    await attempt("Fees, invoices and payments", loadDemoFinance);
+    await attempt("School agent alerts", () => runAgent("manual"));
+    return warnings;
+  }
+
   /** Every login, created in parallel batches. Parents go last so their children's logins already exist. */
   async function provisionAccounts(seed: Seed): Promise<{ total: number; failed: number; errors: string[] }> {
     const admission = new Map(seed.students.map((s) => [s.id, s.admissionNumber]));
     const staffAndStudents: AccountPayload[] = [
       { email: `admin@${DEMO_EMAIL_DOMAIN}`, password: DEMO_PASSWORDS.admin, full_name: "Demo Administrator", role: "admin" },
+      // One login for each leadership and office portal (principal, deputy, HOD, finance, bursar, ...).
+      ...DEMO_STAFF_ACCOUNTS.map((a) => ({ email: a.email, password: DEMO_PASSWORDS.staff, full_name: a.fullName, role: a.role, department: a.department })),
       ...seed.teachers.map((t) => ({ email: t.email, password: DEMO_PASSWORDS.teacher, full_name: t.name, role: "teacher" as const })),
       ...seed.students.map((s) => ({ email: s.email, password: s.password, full_name: s.fullName, role: "student" as const, admission_number: s.admissionNumber })),
     ];
@@ -359,10 +408,10 @@ export default function DemoDataSeederPanel() {
     }
     try {
       const { total, failed, errors } = await provisionAccounts(seed);
-      setStepIdx(6);
+      setStepIdx(7);
       toast(failed
         ? { title: `${failed} of ${total} logins could not be created`, description: errors[0], variant: "destructive" }
-        : { title: "All demo logins are ready", description: `${total} teachers, students and parents can now sign in.` });
+        : { title: "All demo logins are ready", description: `${total} logins (staff, teachers, students and parents) can now sign in.` });
     } catch (e) {
       toast({ title: "Creating logins failed", description: errorMessage(e), variant: "destructive" });
     } finally {
@@ -394,14 +443,17 @@ export default function DemoDataSeederPanel() {
       // Logins come before the timetable, so a timetable problem can never block them.
       setStepIdx(4);
       const { total, failed, errors } = await provisionAccounts(seed);
-      setStepIdx(6);
       let warnings: string[];
       try {
         warnings = await persistTimetable(seed, ids);
       } catch (e) {
         warnings = [`Timetable not saved: ${errorMessage(e, "unknown error")}`];
       }
-      setLoginErrors((prev) => [...prev, ...warnings]);
+      // Marks, attendance, homework, fees and agent alerts come last: they need the classes, teachers and logins above.
+      setStepIdx(6);
+      warnings = [...warnings, ...(await loadDemoRecords())];
+      setStepIdx(7);
+      setLoginErrors((prev) => [...prev, ...ids.warnings, ...warnings]);
 
       const summ = {
         students: seed.students.length,
@@ -440,6 +492,15 @@ export default function DemoDataSeederPanel() {
         const { data } = await supabase.from("students").select("id").in("admission_number", nums);
         ids.push(...(data ?? []).map((r) => r.id));
       }
+      // Marks, attendance, fees and agent alerts created by the demo load.
+      for (const part of chunk(ids, 100)) {
+        await supabase.from("agent_findings").delete().in("student_id", part);
+        await supabase.from("marks").delete().in("student_id", part).eq("comment", "demo-activity");
+        await supabase.from("attendance").delete().in("student_id", part).eq("notes", "demo-activity");
+        await supabase.from("payments").delete().in("student_id", part).eq("notes", "demo-finance");
+        await supabase.from("invoices").delete().in("student_id", part).eq("notes", "demo-finance");
+      }
+      await supabase.from("fee_structures").delete().like("description", "DEMO %");
       // Links without a foreign key to students are removed explicitly.
       for (const part of chunk(ids, 100)) {
         await supabase.from("parent_students").delete().in("student_id", part);
@@ -464,7 +525,7 @@ export default function DemoDataSeederPanel() {
         await supabase.from("classes").delete().in("id", emptyClasses);
       }
       await supabase.from("staff").delete().like("email", `%@${DEMO_EMAIL_DOMAIN}`);
-      toast({ title: "Demo data cleared", description: "Demo students, classes, staff and timetables were removed. Demo logins stay and are reused on the next load." });
+      toast({ title: "Demo data cleared", description: "Demo students, classes, staff, timetables, marks, attendance and fees were removed. Demo logins stay and are reused on the next load." });
     } catch (e) {
       toast({ title: "Some demo data could not be removed", description: errorMessage(e, "Unknown error"), variant: "destructive" });
     }
@@ -515,7 +576,8 @@ export default function DemoDataSeederPanel() {
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               One-click populate the entire system with realistic Zimbabwean school data (ZIMSEC O-Level and A-Level): students, parents,
-              teachers, subjects, classes, venues and a complete weekly timetable.
+              teachers, subjects, classes, venues and a complete weekly timetable, plus logins for the principal, deputy principal, HOD, finance, bursar,
+              finance clerk, registration and admin supervisor portals, eight weeks of marks, attendance and homework, and fees, invoices and payments.
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -612,7 +674,7 @@ export default function DemoDataSeederPanel() {
               <Row label="Subjects"            value={summary.subjects}  hint="Linked to relevant forms" />
               <Row label="Classes"             value={summary.classes}   hint="Form 1A–4C, plus Form 5A/5B and Form 6A/6B" />
               <Row label="Venues"              value={summary.rooms}     hint="Classrooms, labs, hall, sports field" />
-              <Row label="Login accounts"      value={summary.logins}    hint={summary.failedLogins ? `${summary.failedLogins} failed: ${summary.errors[0] ?? "unknown error"}. Use "Create missing logins" to retry` : "Admin, teachers, students and parents. All linked"} />
+              <Row label="Login accounts"      value={summary.logins}    hint={summary.failedLogins ? `${summary.failedLogins} failed: ${summary.errors[0] ?? "unknown error"}. Use "Create missing logins" to retry` : "Admin, 8 leadership and office staff, teachers, students and parents. All linked"} />
               <Row label="Timetable periods"   value={summary.periods}   hint="Lessons plus supervised study periods, with teacher, venue and time" />
             </div>
           )}
