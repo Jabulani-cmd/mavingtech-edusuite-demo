@@ -1,15 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-
-const waitFor = async (fn: () => void | Promise<void>, timeout = 1000) => {
-  const start = Date.now();
-  let lastErr: unknown;
-  while (Date.now() - start < timeout) {
-    try { await fn(); return; } catch (e) { lastErr = e; }
-    await new Promise((r) => setTimeout(r, 10));
-  }
-  throw lastErr;
-};
+import { renderHook, act, waitFor } from "@testing-library/react";
 
 /**
  * Realtime refresh test for useSubscription.

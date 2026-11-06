@@ -266,7 +266,7 @@ export default function PasswordManagement() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-heading text-lg">{done ? "New password set" : "Reset Password"}</DialogTitle>
-            {done && <DialogDescription>Pass these sign-in details on now. The password is not shown again.</DialogDescription>}
+            <DialogDescription>{done ? "Pass these sign-in details on now. The password is not shown again." : "Set a new password for this user. You will see it once after saving."}</DialogDescription>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4">
