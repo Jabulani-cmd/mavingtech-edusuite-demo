@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -256,7 +257,7 @@ export default function TimetableManagement() {
         s.start_time, s.end_time, s.subject_name ?? "", s.teacher_name ?? "", s.room ?? ""]);
     }
     const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = "timetables.csv"; a.click(); URL.revokeObjectURL(url);
   };

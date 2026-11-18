@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -204,7 +205,7 @@ export default function StudentManagement() {
     const result = studentFormSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach(e => { fieldErrors[e.path[0] as string] = e.message; });
+      result.error.issues.forEach(e => { fieldErrors[e.path[0] as string] = e.message; });
       setErrors(fieldErrors);
       return;
     }
@@ -382,7 +383,7 @@ export default function StudentManagement() {
     const headers = ["Admission #", "Full Name", "Form", "Stream", "Gender", "Guardian Phone", "Status"];
     const rows = filtered.map(s => [s.admission_number, s.full_name, s.form, s.stream || "", s.gender || "", s.guardian_phone || "", s.status]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url; a.download = "students.csv"; a.click();

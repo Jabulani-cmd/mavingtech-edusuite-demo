@@ -11,7 +11,7 @@ import { FileText, Download, Users, GraduationCap, Building, Printer, FileSpread
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+import { downloadWorkbook, csvBlob, type SheetSpec } from "@/lib/spreadsheet";
 import { SCHOOL_LOGO_URL, SCHOOL_NAME, urlToDataUrl } from "@/lib/finance/pdf";
 import { DEFAULT_FORM, FORM_LEVELS } from "@/lib/forms";
 import { SCHOOL_CONTACT_LINE } from "@/lib/school";
@@ -238,8 +238,8 @@ export default function EMISReports() {
     toast({ title: "PDF generated", description: `${reportType} report downloaded.` });
   };
 
-  const generateExcel = (reportType: string) => {
-    const wb = XLSX.utils.book_new();
+  const generateExcel = async (reportType: string) => {
+    const sheets: SheetSpec[] = [];
 
     if (reportType === "Student Enrollment") {
       const wsData = [
@@ -251,9 +251,7 @@ export default function EMISReports() {
         ...enrollmentData.map(r => [r.form, r.male, r.female, r.total]),
         ["TOTAL", enrollmentData.reduce((s, r) => s + r.male, 0), enrollmentData.reduce((s, r) => s + r.female, 0), totalStudents],
       ];
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
-      ws["!cols"] = [{ wch: 15 }, { wch: 10 }, { wch: 10 }, { wch: 10 }];
-      XLSX.utils.book_append_sheet(wb, ws, "Enrollment");
+      sheets.push({ name: "Enrollment", rows: wsData, colWidths: [15, 10, 10, 10] });
     } else if (reportType === "Staff Returns") {
       const wsData = [
         ["EMIS Staff Returns Report", "", "", ""],
@@ -266,8 +264,7 @@ export default function EMISReports() {
         [],
         [`Teacher-Student Ratio: 1:${staffSummary.teaching > 0 ? Math.round(totalStudents / staffSummary.teaching) : "N/A"}`],
       ];
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
-      XLSX.utils.book_append_sheet(wb, ws, "Staff Returns");
+      sheets.push({ name: "Staff Returns", rows: wsData });
     } else if (reportType === "Infrastructure") {
       const wsData = [
         ["EMIS Infrastructure Report", ""],
@@ -282,11 +279,10 @@ export default function EMISReports() {
         ["Inventory by Category", ""],
         ...inventorySummary.map(i => [i.name, i.quantity]),
       ];
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
-      XLSX.utils.book_append_sheet(wb, ws, "Infrastructure");
+      sheets.push({ name: "Infrastructure", rows: wsData });
     }
 
-    XLSX.writeFile(wb, `EMIS_${reportType.replace(/\s/g, "_")}_${academicYear}.xlsx`);
+    await downloadWorkbook(`EMIS_${reportType.replace(/\s/g, "_")}_${academicYear}.xlsx`, sheets);
     toast({ title: "Excel generated", description: `${reportType} spreadsheet downloaded.` });
   };
 
@@ -305,7 +301,7 @@ export default function EMISReports() {
       inventorySummary.forEach(i => { csv += `${i.name},${i.quantity}\n`; });
     }
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

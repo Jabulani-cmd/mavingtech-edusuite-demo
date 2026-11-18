@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Upload, FileSpreadsheet, CheckCircle, XCircle, Download, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import * as XLSX from "xlsx";
+import { readFirstSheet, downloadWorkbook } from "@/lib/spreadsheet";
 import { errorMessage } from "@/lib/errors";
 import PrivateFilesMigrationCard from "@/components/admin/PrivateFilesMigrationCard";
 import { saveStaffPrivate, splitStaffPrivate } from "@/lib/staff";
@@ -84,28 +84,19 @@ export default function DataMigration() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const data = evt.target?.result;
-        const workbook = XLSX.read(data, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json<ImportRow>(sheet);
-
+    readFirstSheet(file)
+      .then((json) => {
         if (json.length === 0) {
           toast({ title: "Empty file", description: "No data found in the uploaded file.", variant: "destructive" });
           return;
         }
-
         setRawData(json);
         setStep("validate");
         validateData(json);
-      } catch {
-        toast({ title: "Error reading file", description: "Please upload a valid Excel or CSV file.", variant: "destructive" });
-      }
-    };
-    reader.readAsBinaryString(file);
+      })
+      .catch((err: Error) => {
+        toast({ title: "Error reading file", description: err.message || "Please upload a valid .xlsx or .csv file.", variant: "destructive" });
+      });
   };
 
   const validateData = (data: ImportRow[]) => {
@@ -213,10 +204,7 @@ export default function DataMigration() {
 
   const downloadTemplate = () => {
     const config = TARGET_CONFIGS[target];
-    const ws = XLSX.utils.aoa_to_sheet([config.requiredFields]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, target);
-    XLSX.writeFile(wb, `${target}_template.xlsx`);
+    void downloadWorkbook(`${target}_template.xlsx`, [{ name: target, rows: [config.requiredFields] }]);
   };
 
   const reset = () => {
@@ -281,7 +269,7 @@ export default function DataMigration() {
                 <Label htmlFor="migration-file" className="mt-4 inline-block cursor-pointer">
                   <Button asChild variant="default"><span>Choose File</span></Button>
                 </Label>
-                <Input id="migration-file" type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleFileUpload} />
+                <Input id="migration-file" type="file" accept=".xlsx,.csv" className="hidden" onChange={handleFileUpload} />
               </div>
             </div>
           )}

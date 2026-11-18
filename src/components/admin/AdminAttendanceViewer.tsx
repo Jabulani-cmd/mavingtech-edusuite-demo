@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -97,7 +98,7 @@ export default function AdminAttendanceViewer() {
     const rows = filtered.map(r =>
       `"${r.students?.full_name || ""}","${r.students?.admission_number || ""}","${r.date}","${r.status}","${r.notes || ""}"`
     ).join("\n");
-    const blob = new Blob([header + rows], { type: "text/csv" });
+    const blob = csvBlob(header + rows);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

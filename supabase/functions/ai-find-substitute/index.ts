@@ -1,5 +1,6 @@
 // AI substitute suggestion: pick the best available teacher.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { requireRole } from "../_shared/auth.ts";
 
 // AI text never shows em dashes: the model is told not to use them, and any that slip through are replaced.
 const NO_EM_DASH = " Never use em dash characters; use commas, colons or full stops instead.";
@@ -7,6 +8,8 @@ const noEmDash = (s: string) => s.replace(/ \u2014 /g, ", ").replace(/\u2014/g, 
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const denied = await requireRole(req, corsHeaders);
+  if (denied) return denied;
   try {
     const { absentTeacher, subject, day, period, candidates } = await req.json();
     // candidates: [{ name, subjects: string[], periodsThisWeek: number, busyAt: [{day,period}] }]

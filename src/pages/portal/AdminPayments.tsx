@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -412,7 +413,7 @@ export default function AdminPayments() {
                   <Button variant="outline" onClick={() => {
                     const csv = ["Date,Plan,Amount,Method,Status",
                       ...payments.map(p => `${p.created_at},${p.payment_method},${p.amount},${p.payment_method},${p.payment_status}`)].join("\n");
-                    const blob = new Blob([csv], { type: "text/csv" });
+                    const blob = csvBlob(csv);
                     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "payments.csv"; a.click();
                   }}>
                     <FileSpreadsheet className="w-4 h-4 mr-2" /> Export CSV
