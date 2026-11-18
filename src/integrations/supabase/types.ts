@@ -1091,6 +1091,24 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_seed_rows: {
+        Row: {
+          row_id: string
+          seq: number
+          table_name: string
+        }
+        Insert: {
+          row_id: string
+          seq?: number
+          table_name: string
+        }
+        Update: {
+          row_id?: string
+          seq?: number
+          table_name?: string
+        }
+        Relationships: []
+      }
       downloads: {
         Row: {
           category: string
@@ -4295,12 +4313,14 @@ export type Database = {
         Args: { _student_id: string; _uid: string }
         Returns: boolean
       }
+      clear_demo_school_life: { Args: never; Returns: Json }
       delete_class_cascade: { Args: { _class_id: string }; Returns: undefined }
       delete_staff_cascade: { Args: { _staff_id: string }; Returns: undefined }
       delete_student_cascade: {
         Args: { _student_id: string }
         Returns: undefined
       }
+      demo_forget: { Args: { _tables: string[] }; Returns: undefined }
       get_contact_directory: {
         Args: { _limit?: number; _search?: string }
         Returns: {
@@ -4403,7 +4423,6 @@ export type Database = {
       seed_demo_activity: { Args: never; Returns: Json }
       seed_demo_finance: { Args: never; Returns: Json }
       seed_demo_school_life: { Args: { _area: string }; Returns: Json }
-      clear_demo_school_life: { Args: never; Returns: Json }
       submit_quiz: {
         Args: { _answers: Json; _assessment_id: string }
         Returns: Json
