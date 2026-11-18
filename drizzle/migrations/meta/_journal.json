@@ -190,6 +190,13 @@
       "when": 1793957595409,
       "tag": "0026_scope_open_read_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1794991278440,
+      "tag": "0027_close_open_write_policies",
+      "breakpoints": true
     }
   ]
 }
