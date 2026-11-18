@@ -1,4 +1,5 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { requireRole } from "../_shared/auth.ts";
 
 // AI text never shows em dashes: the model is told not to use them, and any that slip through are replaced.
 const NO_EM_DASH = " Never use em dash characters; use commas, colons or full stops instead.";
@@ -15,6 +16,8 @@ interface Body {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const denied = await requireRole(req, corsHeaders);
+  if (denied) return denied;
 
   try {
     const key = Deno.env.get('LOVABLE_API_KEY');

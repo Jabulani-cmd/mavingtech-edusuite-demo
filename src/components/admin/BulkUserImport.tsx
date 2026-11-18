@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -181,7 +182,7 @@ export default function BulkUserImport({ onImportComplete }: { onImportComplete?
       csv += "Mr. T. Banda,tbanda@mavingtech.com,Teacher2026!,teacher,teacher,Sciences,+263 77 234 5678\n";
       csv += "Mrs. S. Ncube,sncube@mavingtech.com,Teacher2026!,teacher,hod,Mathematics,\n";
     }
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

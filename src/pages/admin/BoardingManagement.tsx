@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -240,7 +241,7 @@ export default function BoardingManagement() {
     const header = "Admission #,Name,Form,Hostel,Room,Bed,Guardian Phone,Emergency Contact";
     const rows = boarders.map(b => `${b.student?.admission_number},"${b.student?.full_name}",${b.student?.form},${b.hostel?.name || ""},${b.room?.room_number || ""},${b.bed_number || ""},${b.student?.guardian_phone || ""},${b.student?.emergency_contact || ""}`);
     const csv = [header, ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `boarders-${new Date().toISOString().split("T")[0]}.csv`; a.click();
     URL.revokeObjectURL(url);

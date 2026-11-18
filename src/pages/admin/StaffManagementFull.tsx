@@ -1,3 +1,4 @@
+import { csvBlob } from "@/lib/spreadsheet";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { emptyToNull } from "@/lib/utils";
@@ -338,7 +339,7 @@ export default function StaffManagementFull() {
     const result = staffFormSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((e) => {
+      result.error.issues.forEach((e) => {
         fieldErrors[e.path[0] as string] = e.message;
       });
       setErrors(fieldErrors);
@@ -550,7 +551,7 @@ export default function StaffManagementFull() {
       s.status || "",
     ]);
     const csv = [headers, ...rows].map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = csvBlob(csv);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

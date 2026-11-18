@@ -1,3 +1,4 @@
+import { requireRole } from "../_shared/auth.ts";
 
 // AI text never shows em dashes: the model is told not to use them, and any that slip through are replaced.
 const NO_EM_DASH = " Never use em dash characters; use commas, colons or full stops instead.";
@@ -22,6 +23,8 @@ const MODEL_MAP: Record<string, { id: string; note?: string }> = {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const denied = await requireRole(req, corsHeaders);
+  if (denied) return denied;
 
   try {
     const { messages, model = "gemini-flash", task = "general" } = await req.json();

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireRole } from "../_shared/auth.ts";
 
 // AI text never shows em dashes: the model is told not to use them, and any that slip through are replaced.
 const NO_EM_DASH = " Never use em dash characters; use commas, colons or full stops instead.";
@@ -23,6 +24,8 @@ interface Body {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const denied = await requireRole(req, corsHeaders);
+  if (denied) return denied;
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) return j({ error: "LOVABLE_API_KEY not configured" }, 500);

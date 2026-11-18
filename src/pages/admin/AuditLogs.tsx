@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import type { BadgeProps } from "@/components/ui/badge";
 import { Search, Download, Eye, RefreshCw, Shield, Filter } from "lucide-react";
-import * as XLSX from "xlsx";
+import { downloadWorkbook } from "@/lib/spreadsheet";
 
 type AuditLog = Tables<"audit_logs">;
 
@@ -89,8 +89,7 @@ export default function AuditLogs() {
     );
   });
 
-  const exportCSV = () => {
-    const wb = XLSX.utils.book_new();
+  const exportCSV = async () => {
     const wsData = [
       ["Timestamp", "User", "Action", "Table", "Record ID", "IP Address"],
       ...filteredLogs.map(l => [
@@ -102,9 +101,7 @@ export default function AuditLogs() {
         l.ip_address || "",
       ]),
     ];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, "Audit Logs");
-    XLSX.writeFile(wb, `audit_logs_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    await downloadWorkbook(`audit_logs_${new Date().toISOString().slice(0, 10)}.xlsx`, [{ name: "Audit Logs", rows: wsData }]);
     toast({ title: "Audit log exported" });
   };
 
