@@ -56,7 +56,7 @@ export default function Admissions() {
         </div>
       </section>
 
-      <section className="bg-muted/40 py-20 md:py-28">
+      <section className="bg-ochre-soft py-20 md:py-28">
         <div className="container max-w-2xl">
           <div className="mb-10">
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">{t("admissions.form.title")}</h2>

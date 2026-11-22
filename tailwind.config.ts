@@ -86,6 +86,7 @@ export default {
         },
         lit: "hsl(var(--stone-lit))",
         raised: "hsl(var(--raised))",
+        field: "hsl(var(--field))",
       },
       borderRadius: {
         lg: "var(--radius)",

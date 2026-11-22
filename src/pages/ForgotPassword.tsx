@@ -39,7 +39,7 @@ export default function ForgotPassword() {
   if (sent) {
     return (
       <Layout>
-        <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+        <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
           <Card className="w-full max-w-md mx-4 shadow-maroon">
             <CardContent className="pt-6 text-center space-y-4">
               <CheckCircle className="mx-auto h-12 w-12 text-green-600 dark:text-green-300" />
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
   return (
     <Layout>
-      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+      <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
         <div className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">

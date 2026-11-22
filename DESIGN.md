@@ -2,13 +2,13 @@
 name: MavingTech EduSuite
 description: A dry-stone school wall in the Great Zimbabwe tradition. Coursed granite, a chevron band at the crown, and gateways you walk through.
 colors:
-  sunlit-granite: "#e7e6e4"
-  stone-lit: "#f6f5f4"
-  stone-card: "#f3f3f1"
-  stone-muted: "#dbdad6"
-  stone-hover: "#d4d2ce"
-  joint-line: "#bbb9b4"
-  joint-input: "#adaaa4"
+  sunlit-granite: "#f1f4f8"
+  stone-lit: "#f8fafc"
+  stone-card: "#ffffff"
+  stone-muted: "#e6ebf2"
+  stone-hover: "#dae2ed"
+  joint-line: "#c3cdda"
+  joint-input: "#9ba7ba"
   shadow-ink: "#171a21"
   stone-text-soft: "#464a53"
   shadow-stone: "#15181e"
@@ -16,7 +16,7 @@ colors:
   logo-blue: "#0047a3"
   logo-navy: "#0d1f4a"
   lichen-ochre: "#ca9121"
-  lichen-ochre-soft: "#ebd6ad"
+  lichen-ochre-soft: "#efdcb2"
   kiln-red: "#af2b1d"
 typography:
   display:
@@ -140,7 +140,7 @@ The system is built and verified on the public home page and the login screen. T
 
 ## Colors
 
-Warm-grey stone ground, charcoal ink, two logo blues for action, one ochre marker. Values below are the token hex; the build defines them as HSL custom properties in `src/index.css`.
+A cool, logo-tinted ground, charcoal ink, two logo blues for action, and ochre both as a marker and as a whole-section field. Dark granite stays for stone, lintels and the footer. Values below are the token hex; the build defines them as HSL custom properties in `src/index.css`.
 
 ### Primary
 - **Logo Blue** (#0047a3, `--primary`): default button fill, text links, the Apply gateway, focus ring and caret. Taken from the supplied MavingTech logo. In dark mode it lifts to #529dff.
@@ -148,7 +148,8 @@ Warm-grey stone ground, charcoal ink, two logo blues for action, one ochre marke
 
 ### Secondary
 - **Lichen Ochre** (#ca9121, `--ochre`): the only marker colour. Active nav underline (3px), the 6px top edge on gateways and the login slab, text-link underline, chevron band fill, `::selection`, and footer headings and icons on shadow stone.
-- **Pale Ochre** (#ebd6ad, `--ochre-soft`): hover fill for light gateways and the light button on navy.
+- **Pale Ochre** (#efdcb2, `--ochre-soft`, the sand field): a whole-section ground (the home intro, the About stats band, form sections on Admissions and Contact, the auth screens) and the Pay gateway. Ink text on it passes 4.5:1. In dark mode it deepens to a dark brown (#3a3223) and text flips to light.
+- **Logo Blue field** (`--field`): a whole-section ground in logo blue (the principal's message on the home page); in dark mode it becomes navy. Text on it is stone-lit.
 
 ### Neutral
 - **Sunlit Granite** (#e7e6e4, `--background`): page ground.
@@ -161,7 +162,9 @@ Warm-grey stone ground, charcoal ink, two logo blues for action, one ochre marke
 - **Kiln Red** (#af2b1d, `--destructive`): errors and destructive actions only.
 
 ### Named Rules
-**The One Marker Rule.** Ochre is the only marker colour. It marks a place (where you are, where a gateway opens, which link is a link); it never fills a surface, never carries body text on light ground, and never appears with a second accent.
+**The Colour Field Rule.** A page is a sequence of whole-colour fields, not grey with accents. The home page runs dark photo window, sand, white, logo-blue field, full-ochre field, navy. Each field owns the full width of its section and a chevron band sits on the seam. Full ochre may own one field per page, with shadow-stone ink on it; sand and blue may repeat. Fields never nest and a second accent hue is never added.
+
+**The Marker Rule.** Ochre also marks a place (where you are, where a gateway opens, which link is a link). It never carries body text on light ground.
 
 **The Logo Carries Action Rule.** Every control that does something is logo blue or navy. Stone, ochre and charcoal never stand in for a primary action.
 
@@ -275,7 +278,7 @@ Dark mode is defined in `src/index.css` under `.dark` and was reviewed on the ho
 - `--raised` is the surface that flips with the theme (nav, mobile menu, slabs, portal headers, gateway tiles): stone-lit in light mode, a raised dark stone in dark mode. `--stone-lit` and `text-lit` never flip; use them for fixed light things such as text on navy or shadow bands, the logo plaque and the affiliation tiles.
 - The supplied logos are dark on transparent, so in dark mode every `mavingtech-logo` image sits on a light plaque.
 - Status colours carry a dark variant: text 600 to 800 gets `dark:text-*-300`, tinted fills 50 or 100 get `dark:bg-*-950/40`.
-- Legacy tint tokens (`maroon-light`, `silver-light`, `gold-light`, `ochre-soft`) have dark values.
+- Legacy tint tokens (`maroon-light`, `silver-light`, `gold-light`, `ochre-soft`) have dark values; `--field` is navy in dark mode and the sand field deepens so grey text on it keeps 4.5:1.
 - A contrast probe over visible text found no failures on the reviewed pages after these fixes. Printed documents and the QR code stay light on purpose.
 
 ### Not yet carried
@@ -304,7 +307,7 @@ There is one authored motion: **course-lay**. On load, each hero course rises 18
 - **Don't** use gradients on surfaces or text, gradient text, or glassy blur.
 - **Don't** use cards as the structure of a page. Do not build repeated rounded, shadowed, equal-sized card grids with icon, title and text; use masonry blocks, rows, rules and gateways instead.
 - **Don't** round corners, add pill shapes, or use soft glow shadows.
-- **Don't** fill a surface with ochre or set ochre body text on light ground.
+- **Don't** set ochre body text on a light ground, or put more than one full-ochre field on a page.
 - **Don't** add a second accent colour, or revive maroon and gold.
 - **Don't** add a hero carousel, a quick-link icon bar, or a floating stat-card strip.
 - **Don't** add motion beyond course-lay; no scroll reveals, parallax or looping animation.

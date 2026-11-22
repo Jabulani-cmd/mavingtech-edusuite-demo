@@ -44,13 +44,13 @@
 */
 @layer base {
   :root {
-    --background: 40 6% 90%;
+    --background: 214 36% 96%;
     --foreground: 220 18% 11%;
 
-    --card: 40 8% 95%;
+    --card: 0 0% 100%;
     --card-foreground: 220 18% 11%;
 
-    --popover: 40 8% 96%;
+    --popover: 0 0% 100%;
     --popover-foreground: 220 18% 11%;
 
     /* Logo blue */
@@ -61,18 +61,18 @@
     --secondary: 222 70% 17%;
     --secondary-foreground: 40 8% 96%;
 
-    --muted: 40 6% 85%;
-    --muted-foreground: 220 9% 30%;
+    --muted: 214 28% 92%;
+    --muted-foreground: 215 14% 31%;
 
     /* Hover and selected surfaces are stone, never a loud colour */
-    --accent: 40 6% 82%;
+    --accent: 214 32% 89%;
     --accent-foreground: 220 18% 11%;
 
     --destructive: 6 72% 40%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 5% 72%;
-    --input: 40 5% 66%;
+    --border: 214 22% 80%;
+    --input: 214 18% 66%;
     --ring: 214 100% 32%;
 
     --radius: 0.125rem;
@@ -82,10 +82,12 @@
     --footer-fg: 40 8% 90%;
     --shadow-stone: 220 18% 10%;
     --shadow-stone-soft: 220 14% 16%;
-    --stone-lit: 40 8% 96%;
-    --raised: 40 8% 96%;
+    --stone-lit: 214 40% 98%;
+    --raised: 0 0% 100%;
     --ochre: 40 72% 46%;
-    --ochre-soft: 40 60% 80%;
+    --ochre-soft: 40 66% 82%;
+    /* A whole-section colour field: logo blue in light mode, navy in dark mode */
+    --field: 214 100% 32%;
     --navy: 222 70% 17%;
 
     --sidebar-background: 220 18% 11%;
@@ -137,10 +139,11 @@
     --sidebar-ring: 214 100% 66%;
 
     --raised: 220 14% 15%;
-    --ochre-soft: 40 28% 25%;
+    --field: 222 55% 20%;
+    --ochre-soft: 40 26% 18%;
     --maroon-light: 214 32% 21%;
     --silver-light: 220 10% 22%;
-    --gold-light: 40 28% 25%;
+    --gold-light: 40 26% 18%;
   }
 }
 
@@ -264,6 +267,7 @@
     -webkit-mask-size: 8px 8px;
     mask-size: 8px 8px;
   }
+  .chevron-band-navy { background-color: hsl(var(--navy)); }
   .chevron-band-stone { background-color: hsl(var(--foreground) / 0.28); }
   .chevron-band-shadow { background-color: hsl(var(--shadow-stone-soft)); }
 

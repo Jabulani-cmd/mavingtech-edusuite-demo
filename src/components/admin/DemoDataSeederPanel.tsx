@@ -591,9 +591,9 @@ export default function DemoDataSeederPanel() {
   const stats = [
     { icon: GraduationCap, label: "Students",  value: people.students.length, color: "text-primary" },
     { icon: UserCog,       label: "Parents",   value: people.parents.length,  color: "text-primary" },
-    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-600 dark:text-emerald-300" },
-    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-600 dark:text-amber-300" },
-    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-600 dark:text-rose-300" },
+    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-700 dark:text-emerald-300" },
+    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-700 dark:text-amber-300" },
+    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-700 dark:text-rose-300" },
     { icon: CalendarClock, label: "Periods",   value: seeded ? alloc.slots.filter(s => s.subjectId).length : 0, color: "text-primary" },
   ];
 

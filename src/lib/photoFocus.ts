@@ -22,7 +22,7 @@ export const focus = {
   currSci: { d: "50% 30%" },
   currArts: { d: "50% 22%" },
   currPerf: { d: "50% 25%" },
-  actSports: { d: "50% 14%" },
+  actSports: { d: "50% 46%" },
   actMusic: { d: "50% 20%" },
   actArts: { d: "50% 15%" },
   actClubs: { d: "50% 38%" },
