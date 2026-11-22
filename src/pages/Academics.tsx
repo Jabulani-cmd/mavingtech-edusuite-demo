@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
@@ -6,11 +5,6 @@ import { BookOpen, FlaskConical, Languages, Calculator, Palette, Laptop } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import achievementsImg from "@/assets/achievements.png";
 import hero from "@/assets/academics-computers.jpg";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6 } }),
-};
 
 export default function Academics() {
   const { t } = useTranslation();
@@ -36,14 +30,12 @@ export default function Academics() {
       <section className="py-20 md:py-28">
         <div className="container">
           <div className="grid items-end gap-8 lg:grid-cols-2">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("academics.programmesEyebrow")}</span>
+            <div>
               <h2 className="mt-3 font-heading text-3xl font-bold leading-tight text-foreground md:text-5xl">{t("academics.programmesTitle")}</h2>
-              <div className="mt-5 h-[3px] w-12 bg-primary" />
-            </motion.div>
-            <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="leading-relaxed text-muted-foreground">
+            </div>
+            <p className="leading-relaxed text-muted-foreground">
               {t("academics.intro")}
-            </motion.p>
+            </p>
           </div>
 
           <Tabs defaultValue="curriculum" className="mt-14">
@@ -55,14 +47,14 @@ export default function Academics() {
             <TabsContent value="curriculum">
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {subjects.map((s, i) => (
-                  <motion.div key={s.name} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                    className="group rounded-lg bg-card p-6 shadow-sm ring-1 ring-border/60 transition-shadow hover:shadow-lg">
+                  <div key={s.name}
+                    className="group bg-card p-6 border border-border transition-colors hover:bg-lit">
                     <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
                       <s.icon className="h-5 w-5 text-primary" />
                     </div>
                     <h3 className="mt-4 font-heading text-lg font-bold text-foreground">{s.name}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </TabsContent>
@@ -71,7 +63,6 @@ export default function Academics() {
               <div className="grid items-center gap-12 lg:grid-cols-2">
                 <div>
                   <h3 className="font-heading text-2xl font-bold text-foreground">{t("academics.results.title")}</h3>
-                  <div className="mt-4 h-[3px] w-12 bg-primary" />
                   <p className="mt-6 leading-relaxed text-muted-foreground">{t("academics.results.body")}</p>
                   <div className="mt-8 overflow-hidden rounded-lg ring-1 ring-border/60">
                     <table className="w-full text-sm">
@@ -96,7 +87,7 @@ export default function Academics() {
                     </table>
                   </div>
                 </div>
-                <img src={achievementsImg} alt={t("academics.results.title")} className="rounded-lg shadow-lg" />
+                <img src={achievementsImg} alt={t("academics.results.title")} className="shadow-maroon" />
               </div>
             </TabsContent>
           </Tabs>

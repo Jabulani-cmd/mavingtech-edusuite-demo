@@ -25,7 +25,7 @@ export default function Awards() {
 
   return (
     <Layout>
-      <section className="bg-gradient-to-br from-primary to-secondary py-16 text-primary-foreground">
+      <section className="bg-muted/60 from-primary to-secondary py-16 text-primary-foreground">
         <div className="container text-center">
           <img src={schoolLogo} alt="MavingTech" className="mx-auto mb-4 h-auto w-36 object-contain" />
           <h1 className="font-heading text-4xl font-bold">{t("awards.title")}</h1>
@@ -38,7 +38,7 @@ export default function Awards() {
           <h2 className="mb-6 font-heading text-2xl font-bold text-primary">{t("awards.galleryTitle")}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {photos.map((photo) => (
-              <div key={photo.id} className="group overflow-hidden rounded-xl border shadow-sm">
+              <div key={photo.id} className="group overflow-hidden border shadow-sm">
                 <div className="aspect-video overflow-hidden">
                   <img src={photo.image_url} alt={photo.caption || "Awards photo"} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                 </div>
@@ -54,7 +54,7 @@ export default function Awards() {
         {awards.length === 0 ? (
           <p className="text-muted-foreground">{t("awards.empty")}</p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border">
+          <div className="overflow-x-auto border">
             <table className="w-full text-sm">
               <thead className="bg-primary text-primary-foreground">
                 <tr>

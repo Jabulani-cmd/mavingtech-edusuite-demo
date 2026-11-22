@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,7 +116,7 @@ export default function Register() {
   return (
     <Layout>
       <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg px-4">
+        <div className="w-full max-w-lg px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
               <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-40 object-contain" />
@@ -191,7 +190,7 @@ export default function Register() {
               </form>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </section>
     </Layout>
   );

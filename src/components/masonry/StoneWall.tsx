@@ -72,7 +72,7 @@ export default function StoneWall({
   } as CSSProperties;
 
   return (
-    <div className={`relative isolate overflow-hidden bg-shadow ${className}`} style={vars} role="img" aria-label={alt}>
+    <div className={`relative isolate overflow-hidden bg-shadow ${className}`} style={vars} {...(alt ? { role: "img", "aria-label": alt } : { "aria-hidden": true })}>
       {courses.map((c, i) => (
         <div
           key={i}

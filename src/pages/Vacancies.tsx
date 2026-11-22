@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,25 +18,26 @@ export default function Vacancies() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
             {t("vacancies.title")}
-          </motion.h1>
+          </h1>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-16">
         <div className="container max-w-4xl">
-          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          <p
             className="mb-8 text-center text-lg text-muted-foreground">
             {t("vacancies.intro")}
-          </motion.p>
+          </p>
 
           {docs.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
               {docs.map((d, i) => (
-                <motion.div key={d.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <div key={d.id}>
                   <Card className="h-full transition-shadow hover:shadow-maroon">
                     <CardContent className="flex items-start gap-4 p-5">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-maroon-light">
@@ -52,7 +52,7 @@ export default function Vacancies() {
                       </a>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,11 +13,6 @@ type FacilityImage = {
 };
 
 const facilityTypeKeys = ["boarding","classrooms","sports","labs","library","clubs","ict","dining","assembly","general"];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
-};
 
 export default function Facilities() {
   const { t } = useTranslation();
@@ -38,19 +32,20 @@ export default function Facilities() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
             {t("facilities.title")}
-          </motion.h1>
+          </h1>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-12">
         <div className="container max-w-3xl text-center">
-          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-lg leading-relaxed text-muted-foreground">
+          <p className="text-lg leading-relaxed text-muted-foreground">
             {t("facilities.intro")}
-          </motion.p>
+          </p>
         </div>
       </section>
 
@@ -80,13 +75,13 @@ export default function Facilities() {
           <h2 className="mb-8 text-center font-heading text-3xl font-bold text-primary">{t("facilities.lifeTitle")}</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {lifeItems.map((item, i) => (
-              <motion.div key={item.key} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <div key={item.key}>
                 <Card className="h-full border-none shadow-maroon">
                   <CardContent className="p-6">
                     <h3 className="font-heading text-lg font-semibold text-primary">{t(`facilities.types.${item.key}`)}</h3>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -99,12 +94,12 @@ function FacilityGrid({ images }: { images: FacilityImage[] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {images.map((img, i) => (
-        <motion.div key={img.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-          <div className="overflow-hidden rounded-xl shadow-maroon">
+        <div key={img.id}>
+          <div className="overflow-hidden shadow-maroon">
             <img src={img.image_url} alt={img.caption || "Facility"} className="h-56 w-full object-cover transition-transform hover:scale-105" />
           </div>
           {img.caption && <p className="mt-2 text-center text-xs text-muted-foreground">{img.caption}</p>}
-        </motion.div>
+        </div>
       ))}
     </div>
   );

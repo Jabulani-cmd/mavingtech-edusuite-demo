@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,30 +24,31 @@ export default function Fees() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
             {t("fees.title")}
-          </motion.h1>
+          </h1>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-16">
         <div className="container max-w-4xl">
-          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-4 text-center text-lg text-muted-foreground">
+          <p className="mb-4 text-center text-lg text-muted-foreground">
             {t("fees.intro")}
-          </motion.p>
+          </p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <Button size="lg" className="gap-2" onClick={() => navigate("/pay-online?type=fees")}>
               <CreditCard className="h-5 w-5" /> {t("fees.payOnline")}
             </Button>
-          </motion.div>
+          </div>
 
           {docs.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
               {docs.map((d, i) => (
-                <motion.div key={d.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <div key={d.id}>
                   <Card className="h-full transition-shadow hover:shadow-maroon">
                     <CardContent className="flex items-start gap-4 p-5">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-maroon-light">
@@ -63,7 +63,7 @@ export default function Fees() {
                       </a>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (

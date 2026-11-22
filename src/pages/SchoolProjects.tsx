@@ -1,18 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.12, duration: 0.5 } }),
-};
 
 export default function SchoolProjects() {
   const { t } = useTranslation();
@@ -29,13 +23,13 @@ export default function SchoolProjects() {
     <Layout>
       <section className="bg-section-warm py-16">
         <div className="container text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-foreground md:text-5xl">
+          <h1 className="font-heading text-4xl font-bold text-foreground md:text-5xl">
             {t("projectsPage.title")}
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          </h1>
+          <p
             className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             {t("projectsPage.subtitle")}
-          </motion.p>
+          </p>
         </div>
       </section>
 
@@ -44,7 +38,7 @@ export default function SchoolProjects() {
           {projects.length > 0 ? (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((p, i) => (
-                <motion.div key={p.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                <div key={p.id}>
                   <Card className="h-full overflow-hidden border-none shadow-maroon transition-transform hover:-translate-y-1">
                     {p.image_url && (
                       <div className="aspect-video w-full overflow-hidden">
@@ -64,7 +58,7 @@ export default function SchoolProjects() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (

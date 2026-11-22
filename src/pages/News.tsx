@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,19 +41,20 @@ export default function News() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
             {t("news.title")}
-          </motion.h1>
+          </h1>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-16">
         <div className="container max-w-3xl">
-          <AnimatePresence mode="wait">
+          <>
             {selected ? (
-              <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <div key="detail">
                 <Button variant="ghost" onClick={() => setSelectedId(null)} className="mb-6 text-primary">
                   <ArrowLeft className="mr-2 h-4 w-4" /> {t("news.back")}
                 </Button>
@@ -65,11 +65,11 @@ export default function News() {
                   <h2 className="mt-2 font-heading text-3xl font-bold text-primary">{selected.title}</h2>
                   <p className="mt-6 leading-relaxed text-muted-foreground">{selected.body}</p>
                 </article>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <div key="list" className="space-y-4">
                 {newsItems.map((n, i) => (
-                  <motion.div key={n.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
+                  <div key={n.id}>
                     <Card
                       className="cursor-pointer transition-all hover:shadow-maroon hover:-translate-y-0.5"
                       onClick={() => setSelectedId(n.id)}
@@ -82,11 +82,11 @@ export default function News() {
                         <p className="mt-1 text-sm text-muted-foreground">{n.excerpt}</p>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </>
         </div>
       </section>
     </Layout>
