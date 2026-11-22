@@ -14,7 +14,7 @@ export const focus = {
   heroSchool: { d: "50% 55%" },
   academicsComputers: { d: "50% 20%" },
   achievements: { d: "50% 52%", m: "50% 50%" },
-  classroom: { d: "50% 36%" },
+  classroom: { d: "50% 40%" },
   sports: { d: "50% 12%" },
   currCs: { d: "50% 22%" },
   currMath: { d: "50% 45%" },

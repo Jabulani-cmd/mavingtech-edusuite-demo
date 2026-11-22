@@ -244,7 +244,7 @@ The hero and every page opener set the photograph into the wall like a window (`
 `StoneWall` (the photograph sliced into courses with joints over it) is no longer used on a page; it cut across faces. Keep it only if a surface has no people in the photograph.
 
 ### Photo focus
-Every photograph has a measured focal point in `src/lib/photoFocus.ts` (CSS `object-position`, desktop and phone), so a wide or short crop never cuts off heads. Faces were found with face detection and checked by eye. Add an entry when a photograph is added or replaced and pass it to `PageHero` (`focus`), `StoneOpening` or the block's `pos`. Photographs people upload through the admin tools have no measured focus and use `UPLOAD_POSITION` (50% 25%), biased towards the top where heads are.
+Every photograph has a measured focal point in `src/lib/photoFocus.ts` (CSS `object-position`, desktop and phone), so a wide or short crop never cuts off heads. Faces were found with face detection and checked by eye. Square photographs (`classroom`, `sports`, `achievements`) crop to a thin strip in a wide window, so pass `tall` to `PageHero` for them: it gives the window about 58vh on desktop. Add an entry when a photograph is added or replaced and pass it to `PageHero` (`focus`), `StoneOpening` or the block's `pos`. Photographs people upload through the admin tools have no measured focus and use `UPLOAD_POSITION` (50% 25%), biased towards the top where heads are.
 
 ### Picture block
 A photograph filling a grid cell on shadow stone, captioned by a slab at its lower left, with a slow 700ms zoom to 1.04 on hover (disabled under reduced motion). Heights are 240 to 256px on phones, 304 to 384px at lg.

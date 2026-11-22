@@ -24,7 +24,7 @@ export default function SchoolProjects() {
 
   return (
     <Layout>
-      <PageHero title={t("projectsPage.title")} subtitle={t("projectsPage.subtitle")} image={heroImg} focus={focus.classroom} />
+      <PageHero title={t("projectsPage.title")} subtitle={t("projectsPage.subtitle")} image={heroImg} focus={focus.classroom} tall />
 
       <section className="py-16">
         <div className="container">

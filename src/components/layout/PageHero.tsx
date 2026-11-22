@@ -9,10 +9,12 @@ interface PageHeroProps {
   image: string;
   /** Where the faces sit in the photo, so the crop never cuts off heads. */
   focus?: Focus;
+  /** A taller window for square photographs, which a wide window would otherwise crop to a thin strip. */
+  tall?: boolean;
 }
 
 /** Page opener: the page photograph set into the wall like a window, the title on a navy lintel, a chevron band below. */
-export default function PageHero({ title, subtitle, image, focus = { d: "50% 35%" } }: PageHeroProps) {
+export default function PageHero({ title, subtitle, image, focus = { d: "50% 35%" }, tall = false }: PageHeroProps) {
   const seed = Array.from(title).reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7);
   return (
     <section>
@@ -20,7 +22,7 @@ export default function PageHero({ title, subtitle, image, focus = { d: "50% 35%
         src={image}
         focus={focus}
         seed={seed}
-        photoClassName="h-[220px] sm:h-[38vh] sm:min-h-[300px] lg:h-[clamp(300px,40vh,460px)]"
+        photoClassName={tall ? "h-[240px] sm:h-[48vh] sm:min-h-[380px] lg:h-[clamp(420px,58vh,640px)]" : "h-[220px] sm:h-[38vh] sm:min-h-[300px] lg:h-[clamp(300px,40vh,460px)]"}
         lintel="h-10 sm:h-14"
         sill="h-3 sm:h-4"
       >

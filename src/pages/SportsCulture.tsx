@@ -35,7 +35,7 @@ export default function SportsCulture() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} focus={focus.sports} />
+      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} focus={focus.sports} tall />
 
       <section className="py-16">
         <div className="container">
