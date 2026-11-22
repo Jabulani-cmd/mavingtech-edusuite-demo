@@ -2,91 +2,138 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted variable fonts: one file per subset serves every weight. */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/archivo-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/public-sans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/public-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+  Great Zimbabwe masonry world.
+  Sunlit granite is the ground, shadow granite is the ink and the dark courses,
+  navy and blue come from the supplied MavingTech logo and carry every action,
+  lichen ochre is the only marker colour.
+*/
 @layer base {
   :root {
-    /* Champion School Template - White + Indigo Palette */
-    --background: 0 0% 100%;
-    --foreground: 222 25% 12%;
+    --background: 40 6% 90%;
+    --foreground: 220 18% 11%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 25% 12%;
+    --card: 40 8% 95%;
+    --card-foreground: 220 18% 11%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 25% 12%;
+    --popover: 40 8% 96%;
+    --popover-foreground: 220 18% 11%;
 
-    /* Indigo accent (~#5e35f2) */
-    --primary: 254 87% 58%;
+    /* Logo blue */
+    --primary: 214 100% 32%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 254 87% 58%;
-    --secondary-foreground: 0 0% 100%;
+    /* Logo navy */
+    --secondary: 222 70% 17%;
+    --secondary-foreground: 40 8% 96%;
 
-    --muted: 220 20% 96%;
-    --muted-foreground: 220 10% 40%;
+    --muted: 40 6% 85%;
+    --muted-foreground: 220 9% 30%;
 
-    --accent: 254 87% 58%;
-    --accent-foreground: 0 0% 100%;
+    /* Hover and selected surfaces are stone, never a loud colour */
+    --accent: 40 6% 82%;
+    --accent-foreground: 220 18% 11%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 6 72% 40%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 254 87% 58%;
+    --border: 40 5% 72%;
+    --input: 40 5% 66%;
+    --ring: 214 100% 32%;
 
-    --radius: 0.375rem;
+    --radius: 0.125rem;
 
-    /* Footer / dark sections */
-    --footer-bg: 240 30% 14%;
-    --footer-fg: 0 0% 95%;
+    /* Shadow granite: footer, hero wall, dark courses */
+    --footer-bg: 220 18% 10%;
+    --footer-fg: 40 8% 90%;
+    --shadow-stone: 220 18% 10%;
+    --shadow-stone-soft: 220 14% 16%;
+    --stone-lit: 40 8% 96%;
+    --ochre: 40 72% 46%;
+    --ochre-soft: 40 60% 80%;
+    --navy: 222 70% 17%;
 
-    --sidebar-background: 240 30% 14%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 254 87% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 30% 20%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 240 30% 24%;
-    --sidebar-ring: 254 87% 58%;
+    --sidebar-background: 220 18% 11%;
+    --sidebar-foreground: 40 8% 90%;
+    --sidebar-primary: 214 100% 66%;
+    --sidebar-primary-foreground: 220 18% 8%;
+    --sidebar-accent: 220 14% 19%;
+    --sidebar-accent-foreground: 40 8% 96%;
+    --sidebar-border: 220 12% 24%;
+    --sidebar-ring: 214 100% 66%;
 
-    /* Custom tokens kept for legacy */
-    --maroon: 254 87% 58%;
-    --maroon-dark: 254 87% 42%;
-    --maroon-light: 254 60% 95%;
-    --silver: 0 0% 75%;
-    --silver-light: 0 0% 92%;
-    --gold: 42 80% 50%;
-    --gold-light: 42 60% 85%;
+    /* Legacy token names still used across the portals, remapped to the new world */
+    --maroon: 214 100% 32%;
+    --maroon-dark: 222 70% 17%;
+    --maroon-light: 214 34% 90%;
+    --silver: 40 5% 72%;
+    --silver-light: 40 6% 88%;
+    --gold: 40 72% 46%;
+    --gold-light: 40 60% 80%;
   }
 
   .dark {
-    --background: 0 0% 6%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 345 60% 40%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 345 60% 40%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 345 60% 40%;
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 345 60% 40%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 345 60% 40%;
+    --background: 220 16% 9%;
+    --foreground: 40 8% 92%;
+    --card: 220 14% 13%;
+    --card-foreground: 40 8% 92%;
+    --popover: 220 14% 13%;
+    --popover-foreground: 40 8% 92%;
+    --primary: 214 100% 66%;
+    --primary-foreground: 220 18% 8%;
+    --secondary: 222 40% 26%;
+    --secondary-foreground: 40 8% 96%;
+    --muted: 220 12% 17%;
+    --muted-foreground: 40 6% 66%;
+    --accent: 220 12% 20%;
+    --accent-foreground: 40 8% 92%;
+    --destructive: 6 70% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 24%;
+    --input: 220 10% 28%;
+    --ring: 214 100% 66%;
+    --sidebar-background: 220 18% 7%;
+    --sidebar-foreground: 40 8% 90%;
+    --sidebar-primary: 214 100% 66%;
+    --sidebar-primary-foreground: 220 18% 8%;
+    --sidebar-accent: 220 12% 15%;
+    --sidebar-accent-foreground: 40 8% 96%;
+    --sidebar-border: 220 10% 20%;
+    --sidebar-ring: 214 100% 66%;
   }
 }
 
@@ -95,42 +142,102 @@
     @apply border-border;
   }
 
+  html {
+    scrollbar-color: hsl(var(--border)) hsl(var(--background));
+    scrollbar-width: thin;
+  }
+
   body {
     @apply bg-background text-foreground font-body antialiased;
+    caret-color: hsl(var(--primary));
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: hsl(var(--ochre));
+    color: hsl(var(--shadow-stone));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+
+  table, .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer utilities {
+  /* Legacy utilities, kept for the portals but rebuilt without gradients */
   .text-gradient-maroon {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(345 70% 30%), hsl(345 70% 45%));
+    color: hsl(var(--primary));
   }
 
   .bg-maroon-gradient {
-    background: linear-gradient(135deg, hsl(0 0% 5%), hsl(0 0% 12%));
+    background: hsl(var(--shadow-stone));
   }
 
   .bg-hero-overlay {
-    background: linear-gradient(
-      to bottom,
-      hsla(0, 0%, 0%, 0.65) 0%,
-      hsla(0, 0%, 0%, 0.8) 100%
-    );
+    background: hsl(var(--shadow-stone) / 0.72);
   }
 
   .bg-section-warm {
-    background: linear-gradient(
-      180deg,
-      hsl(30 20% 98%) 0%,
-      hsl(30 15% 95%) 100%
-    );
+    background: hsl(var(--background));
   }
 
   .shadow-maroon {
-    box-shadow: 0 10px 30px -10px hsla(345, 70%, 30%, 0.25);
+    box-shadow:
+      0 1px 2px hsl(220 25% 8% / 0.18),
+      0 14px 30px -14px hsl(220 25% 8% / 0.45);
+  }
+
+  /* A slab of stone set on the wall: a hairline top light and a real drop shadow */
+  .slab {
+    background: hsl(var(--stone-lit));
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.7),
+      0 2px 3px hsl(220 25% 8% / 0.2),
+      0 18px 32px -18px hsl(220 25% 8% / 0.5);
+  }
+
+  /*
+    The chevron band: two courses of slanted blocks, the decoration that crowns the
+    Great Enclosure wall. Painted with a mask so any colour can fill it.
+  */
+  .chevron-band {
+    height: 16px;
+    background-color: hsl(var(--ochre));
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M0 7 L4 0 L8 0 L4 7 Z M0 9 L4 9 L8 16 L4 16 Z'/%3E%3C/svg%3E") repeat-x left center / 10px 16px;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M0 7 L4 0 L8 0 L4 7 Z M0 9 L4 9 L8 16 L4 16 Z'/%3E%3C/svg%3E") repeat-x left center / 10px 16px;
+  }
+  .chevron-band-sm {
+    height: 8px;
+    -webkit-mask-size: 5px 8px;
+    mask-size: 5px 8px;
+  }
+  .chevron-band-stone { background-color: hsl(var(--foreground) / 0.28); }
+  .chevron-band-shadow { background-color: hsl(var(--shadow-stone-soft)); }
+
+  /* One authored moment: the hero wall is laid course by course, from the ground up. */
+  @keyframes course-lay {
+    from { opacity: 0; transform: translateY(18px); clip-path: inset(0 0 100% 0); }
+    to   { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+  }
+  .course-lay {
+    animation: course-lay 760ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(var(--lay-i, 0) * 110ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .course-lay { animation: none; }
   }
 }

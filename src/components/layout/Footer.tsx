@@ -8,106 +8,94 @@ import cambridgeLogo from "@/assets/cambridge-logo.png";
 import { SCHOOL_ADDRESS, SCHOOL_EMAIL, SCHOOL_PHONE, SCHOOL_PHONE_LINK } from "@/lib/school";
 import InstallAppButton from "@/components/pwa/InstallAppButton";
 
+const footLink = "inline-block py-1.5 transition-colors hover:text-ochre";
+const social =
+  "flex h-11 w-11 items-center justify-center border border-white/25 transition-colors hover:border-ochre hover:text-ochre";
+
 export default function Footer() {
   const { t } = useTranslation();
+  const affiliations = [
+    { logo: ministryLogo, alt: "Coat of arms of Zimbabwe", name: t("footer.moe") },
+    { logo: zimsecLogo, alt: "ZIMSEC logo", name: "Zimbabwe School Examinations Council" },
+    { logo: cambridgeLogo, alt: "University of Cambridge logo", name: "Cambridge International Education" },
+  ];
+
   return (
     <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
-      <div className="bg-background py-14 border-t border-border">
-        <div className="container">
-          <p className="mb-10 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            {t("footer.affiliations")}
-          </p>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 sm:grid-cols-3">
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex h-40 items-center justify-center">
-                <img src={ministryLogo} alt="Coat of arms of Zimbabwe" className="max-h-[125px] w-auto object-contain" />
-              </div>
-              <span className="max-w-[220px] text-center text-xs font-medium leading-tight text-muted-foreground">
-                {t("footer.moe")}
-              </span>
+      {/* Affiliations: three slabs set in one course */}
+      <div className="bg-shadow">
+        <div className="grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-3">
+          {affiliations.map((a) => (
+            <div key={a.name} className="flex items-center gap-5 bg-lit px-6 py-6 text-foreground sm:flex-col sm:items-start sm:gap-4 lg:flex-row lg:items-center">
+              <img src={a.logo} alt={a.alt} className="h-20 w-20 shrink-0 object-contain" />
+              <span className="text-sm font-semibold leading-snug">{a.name}</span>
             </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex h-40 items-center justify-center">
-                <img src={zimsecLogo} alt="ZIMSEC logo" className="max-h-[125px] w-auto object-contain" />
-              </div>
-              <span className="max-w-[220px] text-center text-xs font-medium leading-tight text-muted-foreground">
-                Zimbabwe School Examinations Council
-              </span>
-            </div>
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex h-40 items-center justify-center">
-                <img src={cambridgeLogo} alt="University of Cambridge logo" className="max-h-[125px] w-auto object-contain" />
-              </div>
-              <span className="max-w-[220px] text-center text-xs font-medium leading-tight text-muted-foreground">
-                Cambridge International Education
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-
+      <div className="chevron-band chevron-band-sm" aria-hidden="true" />
 
       <div className="container py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="mb-4 flex items-center gap-3">
-              <img src={schoolLogo} alt="MavingTech" className="h-auto w-24 object-contain" />
-              <span className="font-heading text-xl font-bold">{t("brand.schoolName")}</span>
+            <div className="mb-5 inline-block bg-lit px-4 py-3">
+              <img src={schoolLogo} alt="MavingTech" className="h-auto w-28 object-contain" />
             </div>
-            <p className="text-sm leading-relaxed text-white/70">{t("footer.description")}</p>
-            <div className="mt-5 flex items-center gap-3">
-              <a href="#" aria-label="Twitter" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Twitter className="h-4 w-4" /></a>
-              <a href="#" aria-label="Facebook" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Facebook className="h-4 w-4" /></a>
-              <a href="#" aria-label="Instagram" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><Instagram className="h-4 w-4" /></a>
-              <a href="https://wa.me/263242550123" aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 transition-colors hover:border-primary hover:text-primary"><MessageCircle className="h-4 w-4" /></a>
+            <p className="font-heading text-xl font-bold">{t("brand.schoolName")}</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/75">{t("footer.description")}</p>
+            <div className="mt-6 flex items-center gap-2">
+              <a href="#" aria-label="Twitter" className={social}><Twitter className="h-4 w-4" /></a>
+              <a href="#" aria-label="Facebook" className={social}><Facebook className="h-4 w-4" /></a>
+              <a href="#" aria-label="Instagram" className={social}><Instagram className="h-4 w-4" /></a>
+              <a href="https://wa.me/263242550123" aria-label="WhatsApp" className={social}><MessageCircle className="h-4 w-4" /></a>
             </div>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.quickLinks")}</h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link to="/about" className="transition-colors hover:text-primary">{t("footer.aboutUs")}</Link></li>
-              <li><Link to="/academics" className="transition-colors hover:text-primary">{t("nav.academics")}</Link></li>
-              <li><Link to="/admissions" className="transition-colors hover:text-primary">{t("nav.admissions")}</Link></li>
-              <li><Link to="/school-life" className="transition-colors hover:text-primary">{t("nav.schoolLife")}</Link></li>
-              <li><Link to="/news" className="transition-colors hover:text-primary">{t("nav.news")}</Link></li>
+            <h4 className="mb-3 font-heading text-base font-bold text-ochre">{t("footer.quickLinks")}</h4>
+            <ul className="text-sm text-white/80">
+              <li><Link to="/about" className={footLink}>{t("footer.aboutUs")}</Link></li>
+              <li><Link to="/academics" className={footLink}>{t("nav.academics")}</Link></li>
+              <li><Link to="/admissions" className={footLink}>{t("nav.admissions")}</Link></li>
+              <li><Link to="/school-life" className={footLink}>{t("nav.schoolLife")}</Link></li>
+              <li><Link to="/news" className={footLink}>{t("nav.news")}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.programs")}</h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link to="/sports-culture" className="transition-colors hover:text-primary">{t("nav.sportsCulture")}</Link></li>
-              <li><Link to="/awards" className="transition-colors hover:text-primary">{t("nav.awards")}</Link></li>
-              <li><Link to="/facilities" className="transition-colors hover:text-primary">{t("nav.facilities")}</Link></li>
-              <li><Link to="/boarding" className="transition-colors hover:text-primary">{t("nav.boarding")}</Link></li>
-              <li><Link to="/fees" className="transition-colors hover:text-primary">{t("nav.fees")}</Link></li>
+            <h4 className="mb-3 font-heading text-base font-bold text-ochre">{t("footer.programs")}</h4>
+            <ul className="text-sm text-white/80">
+              <li><Link to="/sports-culture" className={footLink}>{t("nav.sportsCulture")}</Link></li>
+              <li><Link to="/awards" className={footLink}>{t("nav.awards")}</Link></li>
+              <li><Link to="/facilities" className={footLink}>{t("nav.facilities")}</Link></li>
+              <li><Link to="/boarding" className={footLink}>{t("nav.boarding")}</Link></li>
+              <li><Link to="/fees" className={footLink}>{t("nav.fees")}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-heading text-base font-semibold">{t("footer.contact")}</h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <h4 className="mb-3 font-heading text-base font-bold text-ochre">{t("footer.contact")}</h4>
+            <ul className="space-y-1 text-sm text-white/80">
+              <li className="flex items-start gap-3 py-1.5">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ochre" />
                 <span>{SCHOOL_ADDRESS}</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <a href={SCHOOL_PHONE_LINK} className="transition-colors hover:text-primary">{SCHOOL_PHONE}</a>
+                <Phone className="h-4 w-4 shrink-0 text-ochre" />
+                <a href={SCHOOL_PHONE_LINK} className={footLink}>{SCHOOL_PHONE}</a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <a href={`mailto:${SCHOOL_EMAIL}`} className="transition-colors hover:text-primary">{SCHOOL_EMAIL}</a>
+                <Mail className="h-4 w-4 shrink-0 text-ochre" />
+                <a href={`mailto:${SCHOOL_EMAIL}`} className={footLink}>{SCHOOL_EMAIL}</a>
               </li>
               <li>
-                <InstallAppButton className="inline-flex items-center gap-3 transition-colors hover:text-primary" />
+                <InstallAppButton className="inline-flex items-center gap-3 py-1.5 transition-colors hover:text-ochre" />
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/50">
+        <div className="mt-14 border-t border-white/15 pt-6 text-xs text-white/65">
           <p>© {new Date().getFullYear()} {t("brand.schoolName")}. {t("footer.rights")}</p>
         </div>
       </div>
