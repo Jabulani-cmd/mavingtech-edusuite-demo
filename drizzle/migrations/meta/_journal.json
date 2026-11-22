@@ -197,6 +197,20 @@
       "when": 1794991278440,
       "tag": "0027_close_open_write_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795362140873,
+      "tag": "0028_sync_school_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795362215339,
+      "tag": "0029_sync_school_links_fix",
+      "breakpoints": true
     }
   ]
 }

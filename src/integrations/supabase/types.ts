@@ -4420,6 +4420,7 @@ export type Database = {
         Args: { _id: string; _note?: string; _status: string }
         Returns: undefined
       }
+      school_data_health: { Args: never; Returns: Json }
       seed_demo_activity: { Args: never; Returns: Json }
       seed_demo_finance: { Args: never; Returns: Json }
       seed_demo_school_life: { Args: { _area: string }; Returns: Json }
@@ -4427,6 +4428,7 @@ export type Database = {
         Args: { _answers: Json; _assessment_id: string }
         Returns: Json
       }
+      sync_school_links: { Args: never; Returns: Json }
       teaches_class: {
         Args: { _class_id: string; _uid: string }
         Returns: boolean

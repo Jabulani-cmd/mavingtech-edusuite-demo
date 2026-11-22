@@ -40,6 +40,8 @@ function fakeQuery(table: string) {
 
 // Records loaded after the school itself is saved: marks and attendance, fees and invoices, then an agent run.
 const rpcCalls: string[] = [];
+// The data-health check and the final re-link, recorded apart from the loaders.
+const healthCalls: string[] = [];
 const agentRuns: string[] = [];
 let failRpc: string | null = null;
 // A school-life area that loads but reports one failed step.
@@ -54,6 +56,11 @@ vi.mock("@/integrations/supabase/client", () => ({
     auth: { getUser: vi.fn(async () => ({ data: { user: { email: signedInEmail } }, error: null })) },
     rpc: vi.fn(async (name: string, args?: { _area?: string }) => {
       const call = args?._area ? `${name}:${args._area}` : name;
+      if (name === "school_data_health" || name === "sync_school_links") {
+        healthCalls.push(name);
+        const zero = { teachers_without_class: 0, classes_without_subject_teacher: 0, classes_without_class_teacher: 0, subjects_without_teacher: 0, students_without_class: 0, logins_not_linked: 0, logins_without_profile: 0 };
+        return { data: name === "sync_school_links" ? { health: zero, linked: {}, created: {} } : zero, error: null };
+      }
       rpcCalls.push(call);
       if (call === failRpc) return { data: null, error: { message: `${name} failed in the test` } };
       if (call === failStep) return { data: { area: args?._area, loaded: { exams: 3 }, failed: [{ step: "exam timetable", error: "column start_time is of type time" }] }, error: null };
@@ -120,6 +127,8 @@ describe("Demo data seeder panel", () => {
     // Demo records are loaded last, after the classes, teachers and logins they depend on.
     expect(rpcCalls).toEqual(ALL_RPC);
     expect(agentRuns).toHaveLength(1);
+    // Everything is re-linked once at the end of the load.
+    expect(healthCalls.filter((n) => n === "sync_school_links")).toHaveLength(1);
 
     // Every student is placed in their own class by the seeder (not by a database trigger), with an enrolment record.
     const roster = writes.filter((w) => w.table === "student_classes" && w.op === "insert").flatMap((w) => w.rows);

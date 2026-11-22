@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { generateDemoSeed } from "@/lib/demoSeeder";
 import { DEMO_EMAIL_DOMAIN, DEMO_PASSWORDS, DEMO_STAFF_ACCOUNTS } from "@/lib/demoAccounts";
 import { PORTALS } from "@/lib/portals";
@@ -92,5 +92,41 @@ describe("demo staff logins", () => {
     const fn = read("supabase/functions/seed-demo-accounts/index.ts");
     const listed = [...(fn.match(/const STAFF_ROLES = \[([^\]]+)\]/)?.[1] ?? "").matchAll(/"(\w+)"/g)].map((m) => m[1]).sort();
     expect(listed).toEqual(DEMO_STAFF_ACCOUNTS.map((a) => a.role).sort());
+  });
+});
+
+describe("keeping teachers, students, classes and logins in step", () => {
+  const migrations = readdirSync("drizzle/migrations").filter((f) => f.endsWith(".sql"));
+  const sync = migrations.filter((f) => f.includes("sync_school_links")).map((f) => read(`drizzle/migrations/${f}`)).join("\n");
+
+  it("every seeded login can be linked to its record", () => {
+    const teacherEmails = new Set(seed.teachers.map((t) => t.email.toLowerCase()));
+    expect(teacherEmails.size).toBe(seed.teachers.length);
+    const admissions = new Set(seed.students.map((s) => s.admissionNumber));
+    expect(admissions.size).toBe(seed.students.length);
+    const studentIds = new Set(seed.students.map((s) => s.id));
+    for (const p of seed.parents) expect(p.childIds.every((id) => studentIds.has(id)), p.email).toBe(true);
+  });
+
+  it("has a re-link function that links by email, fills rosters and subject teachers, and reports what is left", () => {
+    expect(sync).toContain("FUNCTION public.sync_school_links()");
+    expect(sync).toMatch(/lower\(u\.email\) = lower\(s\.email\)/);
+    expect(sync).toContain("INSERT INTO student_classes");
+    expect(sync).toContain("UPDATE class_subjects cs SET teacher_id = te.teacher_id");
+    for (const k of ["teachers_without_class", "classes_without_class_teacher", "students_without_class", "logins_not_linked"]) expect(sync).toContain(`'${k}'`);
+    expect(sync).toMatch(/is_school_admin\(auth\.uid\(\)\)/);
+  });
+
+  it("puts a WHERE clause on every UPDATE and DELETE (the live database refuses them otherwise)", () => {
+    const writes = [...sync.matchAll(/(?:^|\n)\s*((?:UPDATE\s+\S+(?:\s+\w+)?\s+SET|DELETE\s+FROM)\b[^;]*);/gi)].map((m) => m[1]);
+    expect(writes.length).toBeGreaterThan(5);
+    for (const w of writes) expect(w, w.slice(0, 80)).toMatch(/\bWHERE\b/i);
+  });
+
+  it("links records automatically when a login or record is added", () => {
+    expect(sync).toContain("ON auth.users");
+    expect(sync).toContain("ON public.staff");
+    expect(sync).toContain("ON public.students");
+    expect(sync).toContain("ON public.class_subjects");
   });
 });

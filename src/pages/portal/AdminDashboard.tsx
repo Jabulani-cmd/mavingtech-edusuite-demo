@@ -17,6 +17,7 @@ import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableW
 import AISmartTimetable from "@/components/timetable/AISmartTimetable";
 import AITimetableBuilderAgent from "@/components/timetable/AITimetableBuilderAgent";
 import DemoDataSeederPanel from "@/components/admin/DemoDataSeederPanel";
+import DataHealthPanel from "@/components/admin/DataHealthPanel";
 import EMISReports from "@/pages/admin/EMISReports";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -589,6 +590,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
               <TabsTrigger value="reports" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ClipboardList className="mr-1 h-3.5 w-3.5" /> Reports</TabsTrigger>
               <TabsTrigger value="audit" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Audit</TabsTrigger>
               <TabsTrigger value="migration" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Database className="mr-1 h-3.5 w-3.5" /> Migration</TabsTrigger>
+              <TabsTrigger value="health" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Data health</TabsTrigger>
               <TabsTrigger value="golive" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Rocket className="mr-1 h-3.5 w-3.5" /> Go-Live</TabsTrigger>
               <TabsTrigger value="staff-leave" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><CalendarOff className="mr-1 h-3.5 w-3.5" /> Staff Leave</TabsTrigger>
               <TabsTrigger value="agent" className="text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Bot className="mr-1 h-3.5 w-3.5" /> AI Agent</TabsTrigger>
@@ -984,6 +986,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
           </TabsContent>
 
           {/* Go-Live Checklist Tab */}
+          <TabsContent value="health"><DataHealthPanel /></TabsContent>
           <TabsContent value="golive">
             <GoLiveChecklist />
           </TabsContent>

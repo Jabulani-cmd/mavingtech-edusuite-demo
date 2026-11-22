@@ -15,6 +15,8 @@ import { clearDemoSchoolLife, loadDemoActivity, loadDemoFinance, loadDemoSchoolL
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/errors";
+import { relinkEverything, healthIssues } from "@/lib/dataHealth";
+import DataHealthPanel from "@/components/admin/DataHealthPanel";
 import type { TablesInsert } from "@/integrations/supabase/types";
 
 const STEPS = [
@@ -47,18 +49,20 @@ type SavedIds = { subIdMap: Map<string, string>; classIdMap: Map<string, string>
 type WriteResult = PromiseLike<{ error: { code?: string; message: string } | null }>;
 
 /**
- * Saves rows that name a teacher. If the database says a teacher record is missing
- * (foreign key error), the rows are saved without teachers and a warning is noted.
+ * Saves rows that name a teacher. A missing teacher record is never saved as a blank teacher:
+ * the rows are skipped and the problem is reported in the panel.
  */
 async function writeWithoutMissingTeachers<T extends { teacher_id: string | null }>(
   rows: T[], warnings: string[], what: string, write: (rows: T[]) => WriteResult,
 ) {
-  const { error } = await write(rows);
+  const missing = rows.filter((r) => !r.teacher_id).length;
+  const good = rows.filter((r) => r.teacher_id);
+  if (missing) warnings.push(`${missing} ${what} had no teacher record and were not saved. Use "Re-link everything" after fixing the staff list.`);
+  if (!good.length) return;
+  const { error } = await write(good);
   if (!error) return;
   if (error.code !== "23503") throw error;
-  const retry = await write(rows.map((r) => ({ ...r, teacher_id: null })));
-  if (retry.error) throw retry.error;
-  warnings.push(`Some ${what} were left blank: ${error.message}`);
+  warnings.push(`Some ${what} were not saved because their teacher record is missing: ${error.message}`);
 }
 
 /** The message an edge function sent back with a failed call (not just "non-2xx status"). */
@@ -103,6 +107,7 @@ export default function DemoDataSeederPanel() {
     subjects: number; classes: number; rooms: number; periods: number; records: number;
   }>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [healthKey, setHealthKey] = useState(0);
 
   const seeded = people.loadedAt != null;
 
@@ -483,6 +488,15 @@ export default function DemoDataSeederPanel() {
       setStepIdx(6);
       const extra = await loadDemoRecords();
       warnings = [...warnings, ...extra.warnings];
+      // Last: line up rosters, subject teachers, roles and profiles, and report anything left over.
+      try {
+        const sync = await relinkEverything();
+        const left = healthIssues(sync.health);
+        if (left.length) warnings.push(`Still out of step after loading: ${left.map((c) => `${c.label} (${sync.health[c.key]})`).join(", ")}`);
+      } catch (e) {
+        warnings.push(`Re-linking failed: ${errorMessage(e)}`);
+      }
+      setHealthKey((k) => k + 1);
       setStepIdx(7);
       setLoginErrors((prev) => [...prev, ...ids.warnings, ...warnings]);
 
@@ -681,6 +695,8 @@ export default function DemoDataSeederPanel() {
               </ul>
             </div>
           )}
+
+          <div className="mt-4"><DataHealthPanel compact refreshKey={healthKey} /></div>
 
           {seeded && (
             <p className="text-xs text-muted-foreground mt-3">

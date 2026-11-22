@@ -193,18 +193,67 @@ async function linkRecords(admin: SupabaseClient, linked: { account: Account; ui
   return problems;
 }
 
+/** Ids from one column of a table, read in pages. */
+async function idSet(admin: SupabaseClient, table: string, column: string): Promise<Set<string>> {
+  const out = new Set<string>();
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await admin.from(table).select(column).not(column, "is", null).range(from, from + 999);
+    if (error) throw error;
+    for (const r of (data ?? []) as Record<string, string>[]) out.add(r[column]);
+    if (!data || data.length < 1000) break;
+  }
+  return out;
+}
+
+/**
+ * Deletes demo-domain logins. With orphansOnly, only those whose staff, student or parent record is gone.
+ * Never deletes the caller or a login outside the demo domain.
+ */
+async function removeDemoLogins(admin: SupabaseClient, callerId: string, orphansOnly: boolean) {
+  const [staff, students, parents, parentLinks] = await Promise.all([
+    idSet(admin, "staff", "user_id"), idSet(admin, "students", "user_id"),
+    idSet(admin, "parent_students", "parent_id"), idSet(admin, "parent_student_links", "parent_id"),
+  ]);
+  let removed = 0; const errors: string[] = [];
+  const doomed: string[] = [];
+  for (let page = 1; page <= USER_PAGES; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) throw error;
+    for (const u of data.users) {
+      if (!u.email || !isDemoEmail(u.email) || u.id === callerId) continue;
+      if (u.email.toLowerCase() === DEMO_ADMIN.email && orphansOnly) continue;
+      const linked = staff.has(u.id) || students.has(u.id) || parents.has(u.id) || parentLinks.has(u.id);
+      if (orphansOnly && linked) continue;
+      doomed.push(u.id);
+    }
+    if (data.users.length < 1000) break;
+  }
+  for (const id of doomed) {
+    const { error } = await admin.auth.admin.deleteUser(id);
+    if (error) errors.push(error.message); else removed++;
+  }
+  return { ok: errors.length === 0, removed, failed: errors.length, errors: errors.slice(0, 5) };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  // Before a real school goes live, set the DEMO_MODE secret to "off": the known
-  // demo administrator login and demo seeding are then refused.
-  if ((Deno.env.get("DEMO_MODE") ?? "on").toLowerCase() === "off") {
-    return json({ error: "Demo mode is switched off for this school." }, 403);
-  }
 
   try {
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const body = await req.json().catch(() => ({}));
+
+    // Removing demo logins is allowed even with demo mode off (part of going live).
+    if (body?.action === "remove_demo_logins") {
+      const callerId = await schoolAdminCallerId(req, admin);
+      if (!callerId) return json({ error: "Only a school administrator can remove demo logins" }, 403);
+      return json(await removeDemoLogins(admin, callerId, body?.orphansOnly !== false));
+    }
+
+    // Before a real school goes live, set the DEMO_MODE secret to "off": the known
+    // demo administrator login and demo seeding are then refused.
+    if ((Deno.env.get("DEMO_MODE") ?? "on").toLowerCase() === "off") {
+      return json({ error: "Demo mode is switched off for this school." }, 403);
+    }
     const requested: unknown[] = Array.isArray(body?.accounts) ? body.accounts : [];
 
     let accounts: Account[];
@@ -259,8 +308,12 @@ Deno.serve(async (req) => {
       if (problem && r.status !== "error") Object.assign(r, { status: "error", error: `login created but not linked: ${problem}` });
     }
 
+    // Line everything up last: rosters, subject teachers, roles and profiles.
+    const { data: sync, error: syncErr } = await admin.rpc("sync_school_links");
+
     return json({
       ok: true,
+      sync: syncErr ? { error: syncErr.message } : sync,
       created: results.filter((r) => r.status === "created").length,
       updated: results.filter((r) => r.status === "updated").length,
       errors: results.filter((r) => r.status === "error").length,

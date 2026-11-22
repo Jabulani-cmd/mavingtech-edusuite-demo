@@ -126,9 +126,18 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
       supabase.from("profiles").select("*").eq("id", user!.id).single(),
       supabase.from("subjects").select("*").order("name"),
       supabase.from("classes").select("*").order("name"),
-      supabase.from("staff").select("id, full_name, staff_number, department, role").eq("user_id", user!.id).single(),
+      supabase.from("staff").select("id, full_name, staff_number, department, role").eq("user_id", user!.id).maybeSingle(),
     ]);
     if (profRes.data) setProfile(profRes.data);
+    // No staff record linked to this login yet: find it by the same email and link it.
+    if (!staffRes.data && user?.email) {
+      const { data: byEmail } = await supabase.from("staff").select("id, full_name, staff_number, department, role, user_id")
+        .ilike("email", user.email).limit(1).maybeSingle();
+      if (byEmail) {
+        if (!byEmail.user_id) await supabase.from("staff").update({ user_id: user.id }).eq("id", byEmail.id);
+        staffRes.data = byEmail;
+      }
+    }
     if (staffRes.data) setStaffInfo(staffRes.data);
     if (subRes.data) setSubjects(subRes.data);
 
@@ -164,9 +173,9 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
       }
       assignedIds = [...assignedClassIds];
       
-      if (assignedClassIds.size > 0) {
-        teacherClasses = allClasses.filter(c => assignedClassIds.has(c.id));
-      }
+      teacherClasses = allClasses.filter(c => assignedClassIds.has(c.id));
+    } else {
+      teacherClasses = [];
     }
 
     setClasses(teacherClasses);
@@ -466,7 +475,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
 
           {/* ASSESSMENTS - New */}
           <TabsContent value="assessments">
-            <AssessmentsTab userId={user!.id} classes={classes} subjects={subjects} students={students} />
+            <AssessmentsTab userId={user!.id} classes={classes} subjects={subjects} students={markStudents} />
           </TabsContent>
           {/* EXAM RESULTS UPLOAD */}
           <TabsContent value="exam-results">
