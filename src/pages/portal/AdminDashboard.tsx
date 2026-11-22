@@ -448,16 +448,16 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
     <div className="min-h-screen bg-background">
       <header className="portal-header sticky top-0 z-50">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
-          <div className="flex items-center gap-2">
-            <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
-            <span className="font-heading text-sm sm:text-lg font-bold text-primary">{displayTitle}</span>
+          <div className="flex min-w-0 items-center gap-2">
+            <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 shrink-0 object-contain sm:w-40" />
+            <span className="truncate font-heading text-sm sm:text-lg font-bold text-primary">{displayTitle}</span>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <span className="hidden sm:inline text-sm text-muted-foreground">{displayRole}</span>
             <LanguageSelect />
             <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex"><LogOut className="mr-1 h-4 w-4" /> Logout</Button>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-8 w-8"><LogOut className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-11 w-11"><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>

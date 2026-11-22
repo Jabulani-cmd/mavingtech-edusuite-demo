@@ -600,8 +600,8 @@ export default function DemoDataSeederPanel() {
   return (
     <>
       <Card className="border-2 border-primary/40 bg-muted/60">
-        <CardHeader className="flex flex-row items-start justify-between gap-3">
-          <div>
+        <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+          <div className="min-w-0">
             <CardTitle className="font-heading flex items-center gap-2">
               <Database className="h-5 w-5 text-primary" />
               Demo Data Seeder
@@ -615,20 +615,20 @@ export default function DemoDataSeederPanel() {
               cards, fees, invoices, payments and expenses, boarding, inventory, announcements, events, awards and more, so every portal has data to show.
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <Button onClick={handleLoad} disabled={running} className="bg-primary hover:opacity-90">
+          <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:max-w-[22rem] sm:justify-end">
+            <Button onClick={handleLoad} disabled={running} className="h-auto min-h-10 max-w-full whitespace-normal py-2 text-left">
               {running ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
               {seeded ? "Re-seed Demo Data" : "Load Demo Data"}
             </Button>
-            <Button onClick={handleCreateLogins} disabled={running} variant="outline" size="sm" title="Create or repair the sign-in accounts for the demo teachers, students and parents already loaded">
+            <Button onClick={handleCreateLogins} disabled={running} variant="outline" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left" title="Create or repair the sign-in accounts for the demo teachers, students and parents already loaded">
               <KeyRound className="h-4 w-4 mr-1" /> Create missing logins
             </Button>
             {seeded && (
               <>
-                <Button onClick={downloadCredentials} variant="outline" size="sm">
+                <Button onClick={downloadCredentials} variant="outline" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left">
                   <Download className="h-4 w-4 mr-1" /> Login credentials (Excel)
                 </Button>
-                <Button onClick={handleClear} variant="destructive" size="sm">
+                <Button onClick={handleClear} variant="destructive" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left">
                   <Trash2 className="h-4 w-4 mr-1" /> Clear Demo Data
                 </Button>
               </>
