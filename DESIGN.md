@@ -211,7 +211,7 @@ Photography is shown through stone: the `StoneWall` overlay darkens or lightens 
 ### Named Rules
 **The Real Shadow Rule.** Shadows are offset downward with a tight core and a long soft tail, as if cast by sun from above. No centered glows, no coloured shadows, no blur used as decoration.
 
-**The No Gradient Rule.** Surfaces are flat fills. The legacy `bg-maroon-gradient` and `text-gradient-maroon` utilities are kept for old portal markup but render as solid shadow stone and solid blue.
+**The No Gradient Rule.** Surfaces are flat fills. The legacy `bg-maroon-gradient` and `text-gradient-maroon` utilities are kept for old markup but render as solid shadow stone and solid blue.
 
 ## Shapes
 
@@ -253,8 +253,17 @@ Shadow stone with granite grain. A row of three light affiliation slabs (Ministr
 ### Inputs and fields
 Inherited from the base `Input`, `Select` and `Label` components, which pick up the stone tokens (joint-input stroke, square corners, logo-blue focus ring). Login shows them on a slab with a 44px-wide password reveal. Not individually redesigned.
 
+### Portals (Operate)
+Every portal (student, parent, teacher, finance, principal, deputy principal, HOD, registration, admin, admin supervisor) and the admin tools carry the world through four things only: palette, type, density and one signature move. Layout, navigation and controls stay the standard ones. The signature move is the chevron trim: every portal header uses `.portal-header`, a stone-lit bar with an 8px ochre chevron band hanging from its lower edge. Other portal rules:
+- **Tabs:** the active tab sits on a card with a 3px ochre underline (an inset shadow), the same marker as the public nav.
+- **Cards:** square, hairline border, a soft two-layer shadow. Card titles are bold Archivo, not semibold.
+- **Tables:** a stone-muted head row, bold small headers and a 2px rule under it. Numerals are tabular everywhere.
+- **Badges and chips:** square, not pills.
+- **Colour jobs:** logo blue and navy for action and selection; green, amber and red remain for status only (paid, due, overdue, alerts); ochre never carries status. The former teal, purple, pink and indigo accents and every gradient in portal markup were replaced with these tokens.
+- **Printed documents:** report cards, receipts, invoices and the finance print window keep their own print palette and fonts on purpose and are outside this system.
+
 ### Not yet carried
-The home page and login are the only screens designed to this system. The 18 public pages and every portal (student, parent, teacher, finance, principal, deputy principal, HOD, registration, admin, admin supervisor) inherit colours, type families, square corners and button and input styling through tokens only. They have not been recomposed into courses, gateways and slabs, so many still use card-grid, table and dashboard layouts from before. Dark mode tokens are defined in `src/index.css` but were not reviewed visually. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
+The 17 public pages other than the home page still inherit tokens only and use their earlier page layouts. Inside the portals, the dashboards' internal layouts (stat tiles, tab strips, data tables) were re-skinned, not recomposed. Dark mode tokens are defined in `src/index.css` but were not reviewed visually. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
 
 ## Motion
 

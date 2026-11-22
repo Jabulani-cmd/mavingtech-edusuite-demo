@@ -129,7 +129,7 @@ export default function AdminSupervisorDashboard() {
 
   return (
     <div className="min-h-screen bg-section-warm">
-      <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
+      <header className="portal-header sticky top-0 z-30">
         <div className="container mx-auto flex items-center justify-between px-3 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />

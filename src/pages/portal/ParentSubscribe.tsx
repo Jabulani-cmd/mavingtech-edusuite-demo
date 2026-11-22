@@ -296,21 +296,21 @@ export default function ParentSubscribe() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50/30 dark:from-slate-950 dark:via-teal-950/20 dark:to-blue-950/20">
+    <div className="min-h-screen bg-muted/60">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <Button variant="ghost" onClick={() => (step === "plans" ? nav(-1) : setStep("plans"))} className="mb-4">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back
         </Button>
 
         <div className="text-center mb-8">
-          <Badge variant="outline" className="mb-3 border-teal-500/40 text-teal-700 dark:text-teal-300">
+          <Badge variant="outline" className="mb-3 border-primary/40 text-primary">
             <Sparkles className="w-3 h-3 mr-1" /> Parent Portal Access
           </Badge>
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
             {children.length === 0 ? (
-              <>Unlock access for <span className="text-teal-600">your child</span></>
+              <>Unlock access for <span className="text-primary">your child</span></>
             ) : (
-              <>Unlock access for <span className="text-teal-600">{childName}</span></>
+              <>Unlock access for <span className="text-primary">{childName}</span></>
             )}
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -397,9 +397,9 @@ function PlansView({ plans, onPick }: { plans: Plan[]; onPick: (p: Plan) => void
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
       {plans.map((p) => (
-        <Card key={p.id} className={`relative overflow-hidden ${p.is_recommended ? "border-teal-500 border-2 shadow-xl" : ""}`}>
+        <Card key={p.id} className={`relative overflow-hidden ${p.is_recommended ? "border-primary/40 border-2 shadow-xl" : ""}`}>
           {p.is_recommended && (
-            <div className="absolute top-0 right-0 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
+            <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
               <Crown className="w-3 h-3" /> BEST VALUE
             </div>
           )}
@@ -413,12 +413,12 @@ function PlansView({ plans, onPick }: { plans: Plan[]; onPick: (p: Plan) => void
             <ul className="mt-5 space-y-2">
               {planFeatures(p).slice(0, 10).map((f) => (
                 <li key={f} className="flex gap-2 text-sm">
-                  <Check className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" /><span>{f}</span>
+                  <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /><span>{f}</span>
                 </li>
               ))}
             </ul>
             <Button
-              className={`w-full mt-6 ${p.is_recommended ? "bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90" : ""}`}
+              className={`w-full mt-6 ${p.is_recommended ? "bg-primary hover:opacity-90" : ""}`}
               size="lg" onClick={() => onPick(p)}
             >Choose {p.name}</Button>
           </CardContent>
@@ -491,8 +491,8 @@ function MethodView({ plan, onPick }: { plan: Plan; onPick: (m: PaymentMethod) =
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {methods.map((m) => (
           <button key={m.id} onClick={() => onPick(m.id)}
-            className="p-5 rounded-xl border-2 border-border hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/20 transition text-left group">
-            <m.icon className="w-7 h-7 mb-2 text-teal-600 group-hover:scale-110 transition" />
+            className="p-5 rounded-xl border-2 border-border hover:border-primary/40 hover:bg-primary/15 transition text-left group">
+            <m.icon className="w-7 h-7 mb-2 text-primary group-hover:scale-110 transition" />
             <div className="font-semibold">{m.label}</div>
             <div className="text-xs text-muted-foreground">{m.note}</div>
           </button>
@@ -517,7 +517,7 @@ function CardView({ plan, cardNumber, setCardNumber, cardName, setCardName, card
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto">
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-1">
-          <Lock className="w-5 h-5 text-teal-600" />
+          <Lock className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-lg">Paynow Zimbabwe: Card Payment</h3>
         </div>
         <p className="text-xs text-muted-foreground mb-4">3D Secure protected · PCI-DSS Level 1</p>
@@ -560,7 +560,7 @@ function CardView({ plan, cardNumber, setCardNumber, cardName, setCardName, card
           </div>
         ) : (
           <div className="text-center py-8">
-            <Loader2 className="w-10 h-10 animate-spin mx-auto text-teal-600" />
+            <Loader2 className="w-10 h-10 animate-spin mx-auto text-primary" />
             <div className="font-medium mt-4">Contacting your bank…</div>
             <div className="text-sm text-muted-foreground mt-1">Authenticating 3D Secure</div>
             <Progress value={70} className="mt-4" />
@@ -575,7 +575,7 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto">
       <Card className="p-6 text-center">
-        <Building2 className="w-12 h-12 mx-auto mb-3 text-teal-600" />
+        <Building2 className="w-12 h-12 mx-auto mb-3 text-primary" />
         <h3 className="font-semibold text-lg">Paynow Zimbabwe: Internet Banking (ZIPIT)</h3>
         <p className="text-sm text-muted-foreground mt-1 mb-5">
           You will be redirected to your bank to authorise a {formatMoney(plan.amount_usd)} payment.
@@ -589,7 +589,7 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
 
         {processing ? (
           <div className="py-3">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
             <div className="text-sm mt-2">Redirecting to your bank…</div>
           </div>
         ) : (
@@ -602,11 +602,11 @@ function GatewayView({ plan, processing, onStart, forceOutcome, setForceOutcome 
 
 function QrView({ plan, method, processing, onConfirm, forceOutcome, setForceOutcome }: OutcomeControls & { plan: Plan; method: PaymentMethod; processing: boolean; onConfirm: () => void }) {
   const brand = method === "ecocash" ? "EcoCash" : "OneMoney";
-  const brandColor = method === "ecocash" ? "from-sky-500 to-blue-600" : "from-emerald-500 to-teal-600";
+  const brandColor = method === "ecocash" ? "bg-primary" : "bg-emerald-700";
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-md mx-auto">
       <Card className="p-6 text-center">
-        <div className={`inline-block bg-gradient-to-br ${brandColor} text-white text-xs font-bold px-3 py-1 rounded-full mb-3`}>
+        <div className={`inline-block ${brandColor} text-white text-xs font-bold px-3 py-1 rounded-full mb-3`}>
           {brand}
         </div>
         <h3 className="font-semibold text-lg">Paynow Zimbabwe: {brand}</h3>
@@ -635,7 +635,7 @@ function QrView({ plan, method, processing, onConfirm, forceOutcome, setForceOut
 
         {processing ? (
           <div className="py-3">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
             <div className="text-sm mt-2">Waiting for {brand} confirmation…</div>
           </div>
         ) : (
@@ -654,7 +654,7 @@ function BankView({ bank, proof, setProof, onSubmit, processing, error, plan }: 
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-xl mx-auto">
       <Card className="p-6">
         <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-teal-600" /> Bank Transfer (RTGS)
+          <Building2 className="w-5 h-5 text-primary" /> Bank Transfer (RTGS)
         </h3>
         {bank ? (
           <div className="bg-muted/40 rounded-lg p-4 space-y-1 text-sm">
@@ -678,7 +678,7 @@ function BankView({ bank, proof, setProof, onSubmit, processing, error, plan }: 
 
         <div className="mt-5">
           <Label>Upload proof of payment</Label>
-          <div className="mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-teal-500 transition">
+          <div className="mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-primary/40 transition">
             <input type="file" accept="image/*,application/pdf" onChange={(e) => setProof(e.target.files?.[0] || null)} className="hidden" id="proof-upload" />
             <label htmlFor="proof-upload" className="cursor-pointer">
               <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
@@ -701,14 +701,14 @@ function FailedView({ reason, onRetry, onChangeMethod }: { reason: string; onRet
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto text-center">
       <Card className="p-8">
-        <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center mb-4">
+        <div className="w-20 h-20 mx-auto rounded-full bg-destructive flex items-center justify-center mb-4">
           <X className="w-10 h-10 text-white" strokeWidth={3} />
         </div>
         <h2 className="text-2xl font-bold font-display mb-1">Payment Declined</h2>
         <p className="text-muted-foreground text-sm mb-5">{reason}</p>
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" onClick={onChangeMethod}>Change Method</Button>
-          <Button onClick={onRetry} className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">Try Again</Button>
+          <Button onClick={onRetry} className="bg-primary hover:opacity-90">Try Again</Button>
         </div>
       </Card>
     </motion.div>
@@ -720,7 +720,7 @@ function SuccessView({ data, onDownload, onPortal }: { data: CompletedPayment; o
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto text-center">
       <Card className="p-8">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }}
-          className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-4">
+          className="w-20 h-20 mx-auto rounded-full bg-emerald-700 flex items-center justify-center mb-4">
           <Check className="w-10 h-10 text-white" strokeWidth={3} />
         </motion.div>
         <h2 className="text-2xl font-bold font-display mb-1">Payment Successful 🎉</h2>
@@ -736,7 +736,7 @@ function SuccessView({ data, onDownload, onPortal }: { data: CompletedPayment; o
 
         <div className="grid grid-cols-2 gap-2 mt-5">
           <Button variant="outline" onClick={onDownload}><Receipt className="w-4 h-4 mr-2" /> Download Receipt</Button>
-          <Button onClick={onPortal} className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">Go to Portal</Button>
+          <Button onClick={onPortal} className="bg-primary hover:opacity-90">Go to Portal</Button>
         </div>
       </Card>
     </motion.div>

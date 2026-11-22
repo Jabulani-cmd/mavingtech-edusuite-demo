@@ -18,8 +18,8 @@ const STATUS_STYLES: Record<string, { label: string; cls: string; icon: LucideIc
   awaiting_verification: { label: "Awaiting verification", cls: "bg-amber-100 text-amber-700", icon: Clock },
   failed: { label: "Failed", cls: "bg-red-100 text-red-700", icon: XCircle },
   rejected: { label: "Rejected", cls: "bg-red-100 text-red-700", icon: XCircle },
-  cancelled: { label: "Cancelled", cls: "bg-slate-100 text-slate-700", icon: XCircle },
-  refunded: { label: "Refunded", cls: "bg-slate-100 text-slate-700", icon: AlertCircle },
+  cancelled: { label: "Cancelled", cls: "bg-muted text-foreground", icon: XCircle },
+  refunded: { label: "Refunded", cls: "bg-muted text-foreground", icon: AlertCircle },
 };
 
 type SubscriptionPayment = Tables<"payments"> & {
@@ -59,13 +59,13 @@ export default function ParentPaymentHistory() {
             <h1 className="font-display text-3xl font-bold">Payment History</h1>
             <p className="text-muted-foreground text-sm">Your past payments, receipts, and subscription status.</p>
           </div>
-          <Button onClick={() => nav("/portal/parent/subscribe")} className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
+          <Button onClick={() => nav("/portal/parent/subscribe")} className="bg-primary hover:opacity-90">
             <Sparkles className="w-4 h-4 mr-2" /> {sub.status === "expired" ? "Renew Now" : "New Subscription"}
           </Button>
         </div>
 
         {sub.isActive && (
-          <Card className="mb-6 border-teal-500/40 bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/20 dark:to-blue-950/20">
+          <Card className="mb-6 border-primary/40 bg-muted/60">
             <CardContent className="p-5 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <div className="text-sm text-muted-foreground">Current plan</div>

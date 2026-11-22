@@ -15,7 +15,7 @@ const statusConfig: Record<string, { color: string; bg: string; icon: LucideIcon
   present: { color: "text-green-700", bg: "bg-green-100", icon: CheckCircle },
   absent: { color: "text-red-700", bg: "bg-red-100", icon: CalendarX },
   late: { color: "text-yellow-700", bg: "bg-yellow-100", icon: Clock },
-  excused: { color: "text-blue-700", bg: "bg-blue-100", icon: CalendarCheck },
+  excused: { color: "text-primary", bg: "bg-primary/10", icon: CalendarCheck },
 };
 
 export default function StudentAttendanceTab({ studentId }: Props) {
@@ -62,7 +62,7 @@ export default function StudentAttendanceTab({ studentId }: Props) {
   return (
     <div className="space-y-4">
       {/* Summary */}
-      <Card className="border-none shadow-sm bg-gradient-to-r from-secondary/10 to-secondary/5">
+      <Card className="border-none shadow-sm bg-muted/60">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>

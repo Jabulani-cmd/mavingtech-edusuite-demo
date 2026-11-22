@@ -229,7 +229,7 @@ export default function RegistrationDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b bg-card shadow-sm">
+      <header className="portal-header sticky top-0 z-30">
         <div className="container flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={schoolLogo} alt="MHS" className="h-auto w-16 object-contain sm:w-20" />

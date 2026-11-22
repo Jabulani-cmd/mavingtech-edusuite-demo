@@ -190,7 +190,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
+      <header className="portal-header sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between gap-2 px-3 sm:h-20 sm:px-4">
           <div className="flex items-center gap-2">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -223,8 +223,8 @@ export default function StudentDashboard() {
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? "bg-secondary text-secondary-foreground"
+ activeTab === item.id
+ ? "bg-secondary text-secondary-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
@@ -349,9 +349,9 @@ function TabContent({
             <button
               key={t.id}
               onClick={() => setHomeSubTab(t.id)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
-                homeSubTab === t.id
-                  ? "bg-secondary text-secondary-foreground"
+              className={`rounded-sm px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
+ homeSubTab === t.id
+ ? "bg-secondary text-secondary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >

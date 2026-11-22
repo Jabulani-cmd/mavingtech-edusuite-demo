@@ -29,7 +29,7 @@ const KIND_ICON: Record<string, typeof AlertTriangle> = {
 const SEVERITY_STYLE: Record<string, string> = {
   high: "bg-red-100 text-red-800 border-red-200",
   medium: "bg-amber-100 text-amber-800 border-amber-200",
-  low: "bg-slate-100 text-slate-700 border-slate-200",
+  low: "bg-muted text-foreground border-border",
 };
 const SEVERITY_LABEL: Record<string, string> = { high: "High priority", medium: "Medium", low: "Low" };
 

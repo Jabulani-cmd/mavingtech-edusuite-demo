@@ -409,7 +409,7 @@ export default function TeacherMarksReport({ userId, classes, subjects }: Props)
                       <td className="px-3 py-2 text-center">{r.term}</td>
                       <td className="px-3 py-2 text-center">
                         {r.source === "ai" ? (
-                          <Badge variant="outline" className="bg-violet-50 text-violet-700 border-violet-300">
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/40">
                             <Sparkles className="h-3 w-3 mr-1" />AI
                           </Badge>
                         ) : (

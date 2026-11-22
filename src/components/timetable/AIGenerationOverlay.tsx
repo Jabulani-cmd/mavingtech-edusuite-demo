@@ -22,8 +22,8 @@ export default function AIGenerationOverlay({ active }: { active: boolean }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-background/90 backdrop-blur flex items-center justify-center">
-      <div className="max-w-md w-full p-8 rounded-2xl border-2 border-purple-200 dark:border-purple-900 bg-gradient-to-br from-purple-50 to-fuchsia-50 dark:from-purple-950/40 dark:to-fuchsia-950/40 shadow-xl">
-        <div className="flex items-center gap-2 mb-6 text-purple-600 dark:text-purple-400">
+      <div className="max-w-md w-full p-8 rounded-2xl border-2 border-primary/40 bg-muted/60 shadow-xl">
+        <div className="flex items-center gap-2 mb-6 text-primary">
           <Sparkles className="h-6 w-6 animate-pulse" />
           <h3 className="text-xl font-bold">AI is building your timetable…</h3>
         </div>
@@ -36,7 +36,7 @@ export default function AIGenerationOverlay({ active }: { active: boolean }) {
               className="flex items-center gap-3 text-sm"
             >
               {i < idx ? <CheckCircle2 className="h-4 w-4 text-green-600" /> :
-                i === idx ? <Loader2 className="h-4 w-4 animate-spin text-purple-600" /> :
+                i === idx ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> :
                 <div className="h-4 w-4 rounded-full border-2 border-muted" />}
               <span>{s}</span>
             </motion.div>

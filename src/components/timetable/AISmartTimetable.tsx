@@ -85,7 +85,7 @@ export default function AISmartTimetable() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <Card className="border-primary/30 bg-muted/60">
         <CardHeader className="flex flex-row items-start justify-between gap-3 flex-wrap">
           <div>
             <CardTitle className="font-heading text-2xl flex items-center gap-2">

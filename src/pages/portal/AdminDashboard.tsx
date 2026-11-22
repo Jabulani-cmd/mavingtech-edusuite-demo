@@ -445,7 +445,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
+      <header className="portal-header sticky top-0 z-50">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -781,7 +781,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
                   <Card key={m.id}>
                     <CardContent className="flex items-start justify-between p-4">
                       <div>
-                        <span className="inline-block rounded-full bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary">{meetingTypeLabels[m.meeting_type] || m.meeting_type}</span>
+                        <span className="inline-block rounded-sm bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary">{meetingTypeLabels[m.meeting_type] || m.meeting_type}</span>
                         <h3 className="mt-1 font-semibold">{m.title}</h3>
                         <p className="text-sm text-muted-foreground">{new Date(m.meeting_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>
                         {m.location && <p className="text-xs text-accent">📍 {m.location}</p>}

@@ -150,7 +150,7 @@ export default function FacilitiesManagement() {
                 <div key={img.id} className="group relative overflow-hidden rounded-lg border">
                   <img src={img.image_url} alt={img.caption || "Facility"} className="h-36 w-full object-cover" />
                   <div className="p-2">
-                    <span className="inline-block rounded-full bg-maroon-light px-2 py-0.5 text-xs font-medium text-primary">{typeLabel(img.facility_type)}</span>
+                    <span className="inline-block rounded-sm bg-maroon-light px-2 py-0.5 text-xs font-medium text-primary">{typeLabel(img.facility_type)}</span>
                     {img.caption && <p className="mt-1 text-xs text-muted-foreground truncate">{img.caption}</p>}
                   </div>
                   <Button variant="destructive" size="icon" className="absolute right-2 top-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteImage(img.id)}>

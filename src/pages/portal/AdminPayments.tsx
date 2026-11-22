@@ -231,7 +231,7 @@ export default function AdminPayments() {
           <div className="flex gap-2 flex-wrap">
             <Dialog open={aiOpen} onOpenChange={setAiOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90">
+                <Button className="bg-primary hover:opacity-90">
                   <Sparkles className="w-4 h-4 mr-2" /> Send Reminders ✨
                 </Button>
               </DialogTrigger>
@@ -281,12 +281,12 @@ export default function AdminPayments() {
 
         {/* Metric cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-          <Metric icon={DollarSign} label="Revenue (term)" value={formatMoney(totalRevenueTerm)} tint="from-emerald-500 to-teal-600" />
-          <Metric icon={TrendingUp} label="Revenue (month)" value={formatMoney(totalRevenueMonth)} tint="from-teal-500 to-cyan-600" />
-          <Metric icon={Users} label="Active subs" value={activeCount} tint="from-blue-500 to-indigo-600" />
-          <Metric icon={AlertTriangle} label="Expired" value={expiredCount} tint="from-amber-500 to-orange-600" />
-          <Metric icon={Clock} label="Pending verify" value={pendingVerifications} tint="from-purple-500 to-pink-600" />
-          <Metric icon={Gift} label="Comp grants" value={grants.filter((g) => g.grant_type === "complimentary" && g.is_active).length} tint="from-rose-500 to-pink-600" />
+          <Metric icon={DollarSign} label="Revenue (term)" value={formatMoney(totalRevenueTerm)} tint="bg-emerald-700" />
+          <Metric icon={TrendingUp} label="Revenue (month)" value={formatMoney(totalRevenueMonth)} tint="bg-primary" />
+          <Metric icon={Users} label="Active subs" value={activeCount} tint="bg-secondary" />
+          <Metric icon={AlertTriangle} label="Expired" value={expiredCount} tint="bg-amber-700" />
+          <Metric icon={Clock} label="Pending verify" value={pendingVerifications} tint="bg-primary" />
+          <Metric icon={Gift} label="Comp grants" value={grants.filter((g) => g.grant_type === "complimentary" && g.is_active).length} tint="bg-destructive" />
         </div>
 
         <Tabs defaultValue="subs">
@@ -365,7 +365,7 @@ export default function AdminPayments() {
                     <div>
                       <div className="font-semibold">{formatMoney(p.amount_usd ?? p.amount)} · {p.payment_method}</div>
                       <div className="text-xs text-muted-foreground">Parent {p.parent_id.slice(0, 8)} · {new Date(p.created_at).toLocaleString()}</div>
-                      {p.proof_of_payment_url && <a href={p.proof_of_payment_url} className="text-xs text-blue-600 underline" target="_blank" rel="noreferrer">View proof</a>}
+                      {p.proof_of_payment_url && <a href={p.proof_of_payment_url} className="text-xs text-primary underline" target="_blank" rel="noreferrer">View proof</a>}
                     </div>
                     <div className="flex gap-2">
                       <Button size="sm" onClick={() => verifyPayment(p.id, p.subscription_id, true)}><CheckCircle2 className="w-4 h-4 mr-1" />Approve</Button>
@@ -433,7 +433,7 @@ function Metric({ icon: Icon, label, value, tint }: { icon: LucideIcon; label: s
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
       <Card>
         <CardContent className="p-4">
-          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${tint} text-white flex items-center justify-center mb-2`}>
+          <div className={`w-9 h-9 rounded-sm ${tint} text-white flex items-center justify-center mb-2`}>
             <Icon className="w-5 h-5" />
           </div>
           <div className="text-xs text-muted-foreground">{label}</div>
