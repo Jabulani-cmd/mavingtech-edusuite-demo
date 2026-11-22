@@ -51,7 +51,7 @@ export default function ForceChangePassword() {
 
   return (
     <Layout>
-      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+      <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
         <div className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">

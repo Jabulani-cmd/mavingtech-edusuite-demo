@@ -67,8 +67,8 @@ export default function Home() {
 
   const gateways = [
     { to: "/admissions", label: t("home.cta.button"), tone: "bg-primary text-primary-foreground hover:bg-navy" },
-    { to: "/contact", label: t("home.quick.visit", "Visit Us"), tone: "bg-raised text-foreground hover:bg-accent" },
-    { to: "/pay-online", label: t("fees.payOnline"), tone: "bg-raised text-foreground hover:bg-accent" },
+    { to: "/contact", label: t("home.quick.visit", "Visit Us"), tone: "bg-ochre text-shadow hover:bg-ochre-soft" },
+    { to: "/pay-online", label: t("fees.payOnline"), tone: "bg-ochre-soft text-foreground hover:bg-ochre hover:text-shadow" },
     { to: "/login", label: t("nav.portalLogin"), tone: "bg-navy text-lit hover:bg-primary" },
   ];
 
@@ -130,16 +130,18 @@ export default function Home() {
         </nav>
       </section>
 
-      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
+      <div className="bg-ochre-soft" aria-hidden="true">
+        <div className="chevron-band chevron-band-lg chevron-band-navy" />
+      </div>
 
-      {/* INTRO */}
-      <section className="py-20 md:py-28">
+      {/* INTRO: a sand field */}
+      <section className="bg-ochre-soft py-20 md:py-28">
         <div className="container grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-6">
             <h2 className="text-4xl font-extrabold leading-[1.02] text-foreground sm:text-5xl lg:text-7xl">{t("home.learning.title")}</h2>
             <dl className="tabular mt-12 max-w-lg border-t-2 border-foreground lg:mt-16">
               {stats.map((s) => (
-                <div key={s.label} className="flex items-baseline justify-between gap-4 border-b border-border py-3.5">
+                <div key={s.label} className="flex items-baseline justify-between gap-4 border-b border-foreground/25 py-3.5">
                   <dt className="text-sm font-medium text-muted-foreground">{s.label}</dt>
                   <dd className="font-heading text-3xl font-extrabold text-foreground">{s.value}</dd>
                 </div>
@@ -149,7 +151,7 @@ export default function Home() {
           <div className="lg:col-span-5 lg:col-start-8 lg:pt-3">
             <p className="max-w-prose text-lg leading-relaxed text-foreground md:text-xl">{t("home.learning.p1")}</p>
             <p className="mt-5 max-w-prose leading-relaxed text-muted-foreground">{t("home.learning.p2")}</p>
-            <Link to="/about" className={`mt-8 ${textLink}`}>
+            <Link to="/about" className={`mt-8 ${textLink} !border-secondary`}>
               {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -157,7 +159,7 @@ export default function Home() {
       </section>
 
       {/* ACADEMICS: six blocks in two courses */}
-      <section className="pb-20 md:pb-28">
+      <section className="py-20 md:py-28">
         <div className="container">
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
             <div className="max-w-2xl">
@@ -177,7 +179,7 @@ export default function Home() {
       </section>
 
       {/* PRINCIPAL */}
-      <section className="granite bg-shadow py-20 text-lit md:py-28">
+      <section className="bg-field py-20 text-lit md:py-28">
         <div className="container grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
             <div className="border-x-[10px] border-b-[10px] border-lit bg-lit">
@@ -193,18 +195,20 @@ export default function Home() {
             <blockquote className="font-heading text-2xl font-semibold leading-[1.25] text-lit sm:text-3xl lg:text-4xl">
               “{t("home.director.quote")}”
             </blockquote>
-            <p className="mt-8 max-w-prose leading-relaxed text-lit/80">{t("home.director.body")}</p>
+            <p className="mt-8 max-w-prose leading-relaxed text-lit/90">{t("home.director.body")}</p>
           </div>
         </div>
       </section>
-      <div className="chevron-band chevron-band-lg chevron-band-shadow bg-shadow" aria-hidden="true" />
+      <div className="bg-field" aria-hidden="true">
+        <div className="chevron-band chevron-band-lg" />
+      </div>
 
-      {/* SCHOOL LIFE */}
-      <section className="py-20 md:py-28">
+      {/* SCHOOL LIFE: an ochre field */}
+      <section className="bg-ochre py-20 text-shadow md:py-28">
         <div className="container">
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-            <h2 className="max-w-2xl text-3xl font-extrabold leading-[1.05] text-foreground sm:text-4xl lg:text-5xl">{t("home.activities.title")}</h2>
-            <Link to="/school-life" className={textLink}>
+            <h2 className="max-w-2xl text-3xl font-extrabold leading-[1.05] text-shadow sm:text-4xl lg:text-5xl">{t("home.activities.title")}</h2>
+            <Link to="/school-life" className={`${textLink} !border-shadow !text-shadow hover:!text-secondary`}>
               {t("home.quick.life", "School Life")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

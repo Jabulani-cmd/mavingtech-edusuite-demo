@@ -49,7 +49,7 @@ export default function Facilities() {
         </div>
       </section>
 
-      <section className="bg-section-warm py-16">
+      <section className="bg-ochre-soft py-16">
         <div className="container">
           {typesWithImages.length > 0 ? (
             <Tabs defaultValue={typesWithImages[0]?.value || "boarding"} className="space-y-8">

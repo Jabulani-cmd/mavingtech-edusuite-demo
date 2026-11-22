@@ -41,7 +41,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="bg-muted/60 py-16 md:py-20">
+      <section className="bg-ochre-soft py-16 md:py-20">
         <div className="container grid grid-cols-1 gap-8 sm:grid-cols-3">
           {stats.map((s, i) => (
             <div key={i} className="border-t-2 border-foreground pt-5">

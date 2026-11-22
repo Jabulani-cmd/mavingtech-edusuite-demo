@@ -55,7 +55,7 @@ export default function Staff() {
       )}
 
       {staffByCategory.map((group, sectionIdx) => (
-        <section key={group.category} className={sectionIdx % 2 === 0 ? "bg-section-warm py-16" : "py-16"}>
+        <section key={group.category} className={sectionIdx % 2 === 0 ? "bg-ochre-soft py-16" : "py-16"}>
           <div className="container">
             <h2 className="mb-10 font-heading text-3xl font-bold text-primary">{categoryTitles[group.category]}</h2>
             <div className={`grid gap-8 ${group.category === "leadership" ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4"}`}>

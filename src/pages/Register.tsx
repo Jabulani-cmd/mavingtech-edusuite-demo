@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ interface ChildEntry {
 
 export default function Register() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { signUp } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -115,13 +117,13 @@ export default function Register() {
 
   return (
     <Layout>
-      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+      <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
         <div className="w-full max-w-lg px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
               <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-40 object-contain" />
               <CardTitle className="font-heading text-2xl text-primary">Parent Registration</CardTitle>
-              <p className="text-xs italic text-muted-foreground">Empowering Your Business Through Technology</p>
+              <p className="text-xs text-muted-foreground">{t("brand.tagline")}</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
