@@ -301,7 +301,7 @@ export default function BoardingManagement() {
                 {detailRooms.map(room => {
                   const roomAllocs = allocations.filter(a => a.room_id === room.id);
                   const occupancyPct = room.capacity > 0 ? (roomAllocs.length / room.capacity) * 100 : 0;
-                  const color = occupancyPct >= 100 ? "bg-destructive/10 border-destructive/30" : occupancyPct >= 75 ? "bg-orange-50 dark:bg-orange-950/40 border-orange-200" : "bg-green-50 dark:bg-green-950/40 border-green-200";
+                  const color = occupancyPct >= 100 ? "bg-destructive/10 border-destructive/30" : occupancyPct >= 75 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200";
                   const isDropTarget = dropTargetRoom === room.id && dragAlloc?.room_id !== room.id;
                   return (
                     <Card

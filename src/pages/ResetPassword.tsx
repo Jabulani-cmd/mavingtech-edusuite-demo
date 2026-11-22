@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,7 +66,7 @@ export default function ResetPassword() {
   if (!isRecovery) {
     return (
       <Layout>
-        <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
+        <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
           <Card className="w-full max-w-md mx-4 shadow-maroon">
             <CardContent className="pt-6 text-center space-y-4">
               <p className="text-muted-foreground">Invalid or expired password reset link.</p>
@@ -80,10 +81,10 @@ export default function ResetPassword() {
   if (success) {
     return (
       <Layout>
-        <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
+        <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
           <Card className="w-full max-w-md mx-4 shadow-maroon">
             <CardContent className="pt-6 text-center space-y-4">
-              <CheckCircle className="mx-auto h-12 w-12 text-green-600 dark:text-green-300" />
+              <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
               <h2 className="font-heading text-xl text-primary">Password Updated!</h2>
               <p className="text-sm text-muted-foreground">Redirecting you to login…</p>
             </CardContent>
@@ -95,8 +96,8 @@ export default function ResetPassword() {
 
   return (
     <Layout>
-      <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
-        <div className="w-full max-w-md px-4">
+      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
               <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-44 object-contain sm:w-48" />
@@ -122,7 +123,7 @@ export default function ResetPassword() {
               </form>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </section>
     </Layout>
   );

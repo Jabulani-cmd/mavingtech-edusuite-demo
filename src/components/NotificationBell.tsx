@@ -125,7 +125,7 @@ export default function NotificationBell() {
                     }}
                     aria-label={`Open notification: ${n.title}`}
                     className={`w-full border-b px-4 py-3 text-left transition-colors last:border-0 hover:bg-accent/50 ${
- !n.is_read ? "bg-primary/5" : ""
+                      !n.is_read ? "bg-primary/5" : ""
                     }`}
                   >
                     <div className="flex items-start gap-2">

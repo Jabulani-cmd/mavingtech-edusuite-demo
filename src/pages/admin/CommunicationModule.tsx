@@ -316,10 +316,10 @@ export default function CommunicationModule() {
 
   const statusBadge = (status: string) => {
     switch (status) {
-      case "sent": return <Badge className="bg-green-600/10 text-green-700 dark:text-green-300 border-green-200">Sent</Badge>;
+      case "sent": return <Badge className="bg-green-600/10 text-green-700 border-green-200">Sent</Badge>;
       case "pending": return <Badge variant="secondary">Pending</Badge>;
       case "failed": return <Badge variant="destructive">Failed</Badge>;
-      case "scheduled": return <Badge className="bg-primary text-primary border-primary/40">Scheduled</Badge>;
+      case "scheduled": return <Badge className="bg-blue-500/10 text-blue-700 border-blue-200">Scheduled</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
   };
@@ -339,9 +339,9 @@ export default function CommunicationModule() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Templates", value: templates.length, icon: FileText, color: "text-primary" },
-          { label: "Messages Sent", value: logs.filter(l => l.status === "sent").length, icon: Send, color: "text-green-600 dark:text-green-300" },
+          { label: "Messages Sent", value: logs.filter(l => l.status === "sent").length, icon: Send, color: "text-green-600" },
           { label: "Pending", value: logs.filter(l => l.status === "pending").length, icon: Clock, color: "text-orange-500" },
-          { label: "Total Notifications", value: notifications.length, icon: Bell, color: "text-primary" },
+          { label: "Total Notifications", value: notifications.length, icon: Bell, color: "text-blue-500" },
         ].map((s, i) => (
           <Card key={i} className="border-none shadow-maroon">
             <CardContent className="flex items-center gap-4 p-5">
@@ -368,7 +368,7 @@ export default function CommunicationModule() {
         {/* Compose Tab */}
         <TabsContent value="compose">
           <div className="grid gap-6 lg:grid-cols-3">
-            <div className="min-w-0 space-y-4 lg:col-span-2">
+            <div className="lg:col-span-2 space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle>Compose Message</CardTitle>
@@ -403,7 +403,7 @@ export default function CommunicationModule() {
                   {/* Channel */}
                   <div>
                     <Label>Channel</Label>
-                    <div className="mt-1 flex flex-wrap gap-2">
+                    <div className="flex gap-2 mt-1">
                       {channelOptions.map(ch => (
                         <Button
                           key={ch.value}
@@ -456,7 +456,7 @@ export default function CommunicationModule() {
                   </div>
 
                   {(channel === "sms" || channel === "email") && (
-                    <div className="rounded-lg border border-orange-200 bg-orange-50 dark:bg-orange-950/40 p-3 text-sm text-orange-800 dark:text-orange-300">
+                    <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-800">
                       <AlertCircle className="inline mr-1 h-4 w-4" />
                       <strong>Note:</strong> SMS/Email provider not yet configured. Messages will be logged for sending once a provider (e.g., Africa's Talking, Twilio) is connected.
                     </div>
@@ -655,7 +655,7 @@ export default function CommunicationModule() {
                 </Card>
                 <Card className="border">
                   <CardContent className="p-3 text-center">
-                    <p className="text-xl font-bold text-green-600 dark:text-green-300">{notifications.filter(n => n.is_read).length}</p>
+                    <p className="text-xl font-bold text-green-600">{notifications.filter(n => n.is_read).length}</p>
                     <p className="text-xs text-muted-foreground">Read</p>
                   </CardContent>
                 </Card>

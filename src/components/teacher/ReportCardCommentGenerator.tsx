@@ -91,7 +91,7 @@ export default function ReportCardCommentGenerator({ students, marks, subjects, 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="border-primary/30 bg-muted/60">
+        <Button variant="outline" className="border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10">
           <Sparkles className="mr-2 h-4 w-4 text-primary" /> {triggerLabel}
         </Button>
       </DialogTrigger>
@@ -147,7 +147,7 @@ export default function ReportCardCommentGenerator({ students, marks, subjects, 
             <Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Struggled with algebra mid-term but rallied after extra sessions." />
           </div>
 
-          <Button onClick={generate} disabled={loading} className="w-full bg-muted/60">
+          <Button onClick={generate} disabled={loading} className="w-full bg-gradient-to-r from-primary to-accent">
             {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Sparkles className="mr-2 h-4 w-4" /> Generate Comment</>}
           </Button>
 
@@ -155,7 +155,7 @@ export default function ReportCardCommentGenerator({ students, marks, subjects, 
             <div className="space-y-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="bg-muted/60">
+                  <Badge variant="secondary" className="bg-gradient-to-r from-primary/20 to-accent/20">
                     <Sparkles className="mr-1 h-3 w-3" /> AI Generated{edited ? " · edited" : ""}
                   </Badge>
                 </div>

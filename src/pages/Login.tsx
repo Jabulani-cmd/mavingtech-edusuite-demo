@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import StoneOpening from "@/components/masonry/StoneOpening";
-import hero1 from "@/assets/hero-students-1.jpg";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PORTALS, isPortalKey, type PortalKey } from "@/lib/portals";
@@ -102,82 +102,72 @@ export default function Login() {
 
   return (
     <Layout>
-      <section className="grid min-h-[72vh] lg:grid-cols-12">
-        <div className="lg:col-span-5">
-          <StoneOpening
-            src={hero1}
-            focus={{ d: "74% 20%", m: "55% 20%" }}
-            seed={19}
-            className="h-full"
-            photoClassName="h-48 sm:h-64 lg:h-full lg:min-h-[560px]"
-          >
-            <div className="relative z-10 bg-navy px-6 py-5 text-lit lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-8 lg:py-7">
-              <p className="font-heading text-2xl font-extrabold leading-tight lg:text-3xl">{t("login.title")}</p>
-              <p className="mt-1.5 text-sm leading-snug text-lit/80">{t("brand.tagline")}</p>
-            </div>
-          </StoneOpening>
-        </div>
-
-        <div className="flex items-start justify-center px-4 py-10 sm:px-8 lg:col-span-7 lg:items-center lg:py-16">
-          <div className="slab w-full max-w-md border-t-[6px] border-ochre p-6 sm:p-8">
-            <img src={schoolLogo} alt="MavingTech High School" className="mb-5 h-auto w-44 object-contain" />
-            <p className="text-sm text-muted-foreground">{t("login.subtitle")}</p>
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="portal">{t("login.choosePortal", "Sign in to")}</Label>
-                <Select value={portal} onValueChange={(v) => setPortal(v as PortalKey)}>
-                  <SelectTrigger id="portal">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PORTALS.map(({ key, label }) => (
-                      <SelectItem key={key} value={key}>{t(`login.portal.${key}`, label)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">{t("auth.emailLabel")}</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("login.emailPlaceholder")} required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">{t("auth.passwordLabel")}</Label>
-                <div className="relative">
-                  <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    className="absolute right-0 top-0 flex h-10 w-11 items-center justify-center text-muted-foreground hover:text-foreground">
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
+          <Card className="shadow-maroon">
+            <CardHeader className="text-center">
+              <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-52 object-contain sm:w-72" />
+              <CardTitle className="font-heading text-2xl text-primary">{t("login.title")}</CardTitle>
+              <p className="text-xs italic text-muted-foreground">{t("login.tagline")}</p>
+              <p className="text-sm text-muted-foreground">{t("login.subtitle")}</p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="portal">{t("login.choosePortal", "Sign in to")}</Label>
+                  <Select value={portal} onValueChange={(v) => setPortal(v as PortalKey)}>
+                    <SelectTrigger id="portal">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PORTALS.map(({ key, label }) => (
+                        <SelectItem key={key} value={key}>{t(`login.portal.${key}`, label)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                {loading ? t("login.signingIn") : t("login.signIn")}
-              </Button>
-
-              <div className="border border-border bg-muted p-3 text-center">
-                <p className="mb-2 text-sm text-foreground/80">{t("login.demoNote")}</p>
-                <Button type="button" variant="outline" size="sm" onClick={handleSeedDemoAdmin} disabled={seedingDemo} className="h-auto w-full whitespace-normal py-2 leading-snug">
-                  {seedingDemo ? t("login.provisioning") : t("login.provisionAdmin")}
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t("auth.emailLabel")}</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("login.emailPlaceholder")} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">{t("auth.passwordLabel")}</Label>
+                  <div className="relative">
+                    <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" tabIndex={-1}>
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                  {loading ? t("login.signingIn") : t("login.signIn")}
                 </Button>
-              </div>
 
-              <div className="space-y-1 text-center">
-                <Link to="/forgot-password" className="inline-block py-1 text-sm font-semibold text-primary underline-offset-4 hover:underline">{t("login.forgot")}</Link>
-                <p className="text-sm text-muted-foreground">
-                  {t("login.parentPrompt")}{" "}
-                  <Link to="/register" className="font-semibold text-primary underline-offset-4 hover:underline">{t("login.registerHere")}</Link>
-                </p>
-                <p className="text-xs text-muted-foreground">{t("login.studentTeacherNote")}</p>
-                <Link to="/">
-                  <Button variant="outline" size="sm" className="mt-2 gap-2">
-                    <Home className="h-4 w-4" /> {t("login.backHome")}
+                <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-2">{t("login.demoNote")}</p>
+                  <Button type="button" variant="outline" size="sm" onClick={handleSeedDemoAdmin} disabled={seedingDemo} className="h-auto w-full whitespace-normal py-2 leading-snug">
+                    {seedingDemo ? t("login.provisioning") : t("login.provisionAdmin")}
                   </Button>
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
+                </div>
+
+                <div className="text-center space-y-1">
+                  <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">{t("login.forgot")}</Link>
+                  <p className="text-sm text-muted-foreground">
+                    {t("login.parentPrompt")}{" "}
+                    <Link to="/register" className="text-primary font-medium hover:underline">{t("login.registerHere")}</Link>
+                  </p>
+                  <p className="text-xs text-muted-foreground">{t("login.studentTeacherNote")}</p>
+                  <Link to="/">
+                    <Button variant="outline" size="sm" className="mt-2 gap-2">
+                      <Home className="h-4 w-4" /> {t("login.backHome")}
+                    </Button>
+                  </Link>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
       </section>
     </Layout>
   );

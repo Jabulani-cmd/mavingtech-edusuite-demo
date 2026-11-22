@@ -38,7 +38,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Bell, Image, Calendar, LogOut, Plus, Trash2, Upload, Layers, GraduationCap, Download, FileText, HandshakeIcon, Settings, UserCheck, Building, FolderKanban, BookOpen, Briefcase, DollarSign, Shield, BedDouble, Package, MessageSquare, ClipboardList, ShieldCheck, Database, Rocket, Megaphone, Trophy, ShieldAlert, CheckCircle2, CalendarOff, Bot } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -446,18 +445,17 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="portal-header sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
-          <div className="flex min-w-0 items-center gap-2">
-            <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 shrink-0 object-contain sm:w-40" />
-            <span className="truncate font-heading text-sm sm:text-lg font-bold text-primary">{displayTitle}</span>
+          <div className="flex items-center gap-2">
+            <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
+            <span className="font-heading text-sm sm:text-lg font-bold text-primary">{displayTitle}</span>
           </div>
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden sm:inline text-sm text-muted-foreground">{displayRole}</span>
             <LanguageSelect />
-            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex"><LogOut className="mr-1 h-4 w-4" /> Logout</Button>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-11 w-11"><LogOut className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-8 w-8"><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>
@@ -783,7 +781,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
                   <Card key={m.id}>
                     <CardContent className="flex items-start justify-between p-4">
                       <div>
-                        <span className="inline-block rounded-sm bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary">{meetingTypeLabels[m.meeting_type] || m.meeting_type}</span>
+                        <span className="inline-block rounded-full bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary">{meetingTypeLabels[m.meeting_type] || m.meeting_type}</span>
                         <h3 className="mt-1 font-semibold">{m.title}</h3>
                         <p className="text-sm text-muted-foreground">{new Date(m.meeting_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>
                         {m.location && <p className="text-xs text-accent">📍 {m.location}</p>}

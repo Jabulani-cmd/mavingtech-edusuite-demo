@@ -129,7 +129,7 @@ export default function GoLiveChecklist() {
           </div>
           <Progress value={progressPct} className="mt-2" />
           {progressPct === 100 && (
-            <p className="mt-2 text-center text-sm font-medium text-green-600 dark:text-green-300">🎉 All checks complete! Ready for go-live.</p>
+            <p className="mt-2 text-center text-sm font-medium text-green-600">🎉 All checks complete! Ready for go-live.</p>
           )}
         </CardContent>
       </Card>
@@ -159,7 +159,7 @@ export default function GoLiveChecklist() {
                     </Badge>
                   )}
                 </div>
-                {checked[item.id] ? <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-300" /> : <Circle className="h-5 w-5 text-muted-foreground/30" />}
+                {checked[item.id] ? <CheckCircle className="h-5 w-5 text-green-600" /> : <Circle className="h-5 w-5 text-muted-foreground/30" />}
               </div>
             ))}
           </CardContent>

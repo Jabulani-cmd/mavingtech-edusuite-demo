@@ -6,7 +6,6 @@ import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { PORTALS } from "@/lib/portals";
 
@@ -80,8 +79,8 @@ function DesktopDropdown({ item }: { item: NavItem }) {
     >
       <Link
         to={item.path}
-        className={`flex items-center gap-1 whitespace-nowrap border-b-[3px] px-2.5 py-2.5 text-sm font-semibold leading-none transition-colors hover:text-primary 2xl:px-3.5 ${
-          isActive ? "border-ochre text-foreground" : "border-transparent text-foreground/80"
+        className={`flex items-center gap-1 whitespace-nowrap px-2 py-2 text-xs font-medium leading-none transition-colors hover:text-primary 2xl:px-3 2xl:text-sm ${
+          isActive ? "text-primary" : "text-foreground/80"
         }`}
       >
         {item.label}
@@ -94,14 +93,14 @@ function DesktopDropdown({ item }: { item: NavItem }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="slab absolute left-0 top-full z-50 mt-1 min-w-[220px] border-t-[3px] border-ochre p-1"
+            className="absolute left-0 top-full z-50 mt-1 min-w-[220px] rounded-md border border-border bg-popover p-1 shadow-lg"
           >
             {children.map((child) => (
               <Link
                 key={child.path}
                 to={child.path}
                 onClick={() => setOpen(false)}
-                className={`block whitespace-nowrap px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-primary ${
+                className={`block whitespace-nowrap rounded-sm px-3 py-2 text-sm transition-colors hover:bg-muted hover:text-primary ${
                   location.pathname === child.path ? "font-semibold text-primary" : "text-foreground/80"
                 }`}
               >
@@ -126,7 +125,7 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
         <Link
           to={item.path}
           onClick={onClose}
-          className={`flex-1 px-3 py-3.5 text-base font-semibold ${
+          className={`flex-1 px-3 py-3 text-sm font-medium ${
             location.pathname === item.path ? "text-primary" : "text-foreground"
           }`}
         >
@@ -134,7 +133,7 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
         </Link>
         <button
           onClick={() => setOpen(!open)}
-          className="p-3.5 text-foreground/70 hover:text-primary"
+          className="p-3 text-foreground/60 hover:text-primary"
           aria-label={`Expand ${item.label}`}
         >
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -153,7 +152,7 @@ function MobileAccordion({ item, onClose }: { item: NavItem; onClose: () => void
                 key={child.path}
                 to={child.path}
                 onClick={onClose}
-                className={`block px-3 py-3 text-sm ${
+                className={`block px-3 py-2.5 text-sm ${
                   location.pathname === child.path ? "font-semibold text-primary" : "text-foreground/70"
                 }`}
               >
@@ -176,20 +175,20 @@ export default function Navbar() {
 
 
   return (
-    <nav className="sticky top-0 z-50 bg-raised shadow-[0_1px_0_hsl(var(--border)),0_10px_24px_-18px_hsl(220_25%_8%/0.5)]">
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex items-center justify-between gap-4 py-3">
         {/* Logo left */}
-        <Link to="/" className="flex min-w-0 flex-shrink-0 items-center gap-4 outline-none transition-opacity focus-visible:opacity-70 2xl:gap-5">
+        <Link to="/" className="flex min-w-0 flex-shrink-0 items-center gap-4 rounded-lg outline-none transition-opacity focus-visible:opacity-70 2xl:gap-5">
           <img
             src={schoolLogo}
             alt="MavingTech High School"
-            className="h-auto w-20 flex-shrink-0 object-contain sm:w-24 xl:w-28"
+            className="h-auto w-24 flex-shrink-0 object-contain sm:w-28 xl:w-32 2xl:w-36"
           />
           <div className="hidden flex-col leading-tight sm:flex">
-            <span className="font-heading text-2xl font-extrabold tracking-tight text-foreground md:text-3xl 2xl:text-4xl">
+            <span className="font-heading text-2xl font-extrabold tracking-tight text-foreground md:text-4xl 2xl:text-5xl">
               MavingTech
             </span>
-            <span className="text-sm font-bold tracking-[0.12em] text-primary md:text-base">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-primary md:text-base 2xl:text-lg">
               High School
             </span>
           </div>
@@ -204,8 +203,8 @@ export default function Navbar() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`whitespace-nowrap border-b-[3px] px-2.5 py-2.5 text-sm font-semibold leading-none transition-colors hover:text-primary 2xl:px-3.5 ${
-                  location.pathname === item.path ? "border-ochre text-foreground" : "border-transparent text-foreground/80"
+                className={`whitespace-nowrap px-2 py-2 text-xs font-medium leading-none transition-colors hover:text-primary 2xl:px-3 2xl:text-sm ${
+                  location.pathname === item.path ? "text-primary" : "text-foreground/80"
                 }`}
               >
                 {item.label}
@@ -217,10 +216,9 @@ export default function Navbar() {
         {/* Right side: portal + language */}
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSelect />
-          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="default" className="hidden gap-1 whitespace-nowrap sm:inline-flex">
+              <Button size="sm" className="hidden gap-1 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 sm:inline-flex">
                 {t("nav.portalLogin")} <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -234,7 +232,7 @@ export default function Navbar() {
           </DropdownMenu>
 
           <button
-            className="flex h-11 w-11 items-center justify-center text-foreground hover:bg-accent xl:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted xl:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={t("nav.menu")}
           >
@@ -243,15 +241,13 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="chevron-band chevron-band-sm" aria-hidden="true" />
-
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border bg-raised xl:hidden"
+            className="overflow-hidden border-t border-border bg-background xl:hidden"
           >
             <div className="container flex flex-col py-2">
               {navLinks.map((item) =>
@@ -262,7 +258,7 @@ export default function Navbar() {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileOpen(false)}
-                    className={`border-b border-border/60 px-3 py-3.5 text-base font-semibold ${
+                    className={`border-b border-border/60 px-3 py-3 text-sm font-medium ${
                       location.pathname === item.path ? "text-primary" : "text-foreground"
                     }`}
                   >
@@ -271,14 +267,14 @@ export default function Navbar() {
                 )
               )}
               <Button
-                className="mt-3 w-full gap-1"
+                className="mt-3 w-full gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
                 onClick={() => setPortalOpen(!portalOpen)}
                 aria-expanded={portalOpen}
               >
                 {t("nav.portalLogin")} <ChevronDown className={`h-4 w-4 transition-transform ${portalOpen ? "rotate-180" : ""}`} />
               </Button>
               {portalOpen && (
-                <div className="mt-1 flex flex-col border border-border">
+                <div className="mt-1 flex flex-col rounded-md border border-border">
                   {PORTALS.map(({ key, label }) => (
                     <Link
                       key={key}

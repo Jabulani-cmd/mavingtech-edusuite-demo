@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, CalendarIcon, Send, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { z } from "zod";
@@ -21,7 +22,6 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import hero from "@/assets/hero-students-5.jpg";
-import { focus } from "@/lib/photoFocus";
 import { SCHOOL_ADDRESS, SCHOOL_EMAIL, SCHOOL_PHONE } from "@/lib/school";
 
 const contactSchema = z.object({
@@ -108,12 +108,14 @@ export default function Contact() {
 
   return (
     <Layout>
-      <PageHero eyebrow={t("contact.eyebrow")} title={t("contact.title")} subtitle={t("contact.subtitle")} image={hero} focus={focus.heroStudents5} />
+      <PageHero eyebrow={t("contact.eyebrow")} title={t("contact.title")} subtitle={t("contact.subtitle")} image={hero} />
 
       <section className="py-20 md:py-24">
         <div className="container">
-          <div className="mb-14">
+          <div className="mb-14 text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("contact.detailsEyebrow")}</span>
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-5xl">{t("contact.detailsTitle")}</h2>
+            <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -122,23 +124,25 @@ export default function Contact() {
               { icon: Mail, title: t("contact.cards.email"), text: SCHOOL_EMAIL },
               { icon: Clock, title: t("contact.cards.hours"), text: t("contact.cards.hoursText") },
             ].map((item, i) => (
-              <div key={i}
-                className="bg-card p-6 text-center border border-border">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center bg-primary/10">
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="rounded-lg bg-card p-6 text-center shadow-sm ring-1 ring-border/60">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <item.icon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-heading text-base font-bold text-foreground">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-ochre-soft py-20 md:py-28">
+      <section className="bg-muted/40 py-20 md:py-28">
         <div className="container max-w-4xl">
-          <div className="mb-10">
+          <div className="mb-10 text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("contact.formsEyebrow")}</span>
             <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">{t("contact.formsTitle")}</h2>
+            <div className="mx-auto mt-4 h-[3px] w-12 bg-primary" />
           </div>
           <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">

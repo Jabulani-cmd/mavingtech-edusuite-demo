@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { errorMessage } from "@/lib/errors";
 import type { TablesInsert } from "@/integrations/supabase/types";
 import { DEFAULT_FORM, FORM_LEVELS } from "@/lib/forms";
@@ -230,7 +229,7 @@ export default function RegistrationDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="portal-header sticky top-0 z-30">
+      <header className="sticky top-0 z-30 border-b bg-card shadow-sm">
         <div className="container flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={schoolLogo} alt="MHS" className="h-auto w-16 object-contain sm:w-20" />
@@ -241,7 +240,6 @@ export default function RegistrationDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageSelect />
-            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs sm:text-sm">
               <LogOut className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">Sign Out</span>
             </Button>

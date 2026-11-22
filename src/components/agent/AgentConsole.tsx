@@ -105,7 +105,7 @@ export default function AgentConsole() {
               marks or homework have slipped; registers not taken; marks not entered; and overdue fees. Class teachers,
               HODs and office staff see their items in their own portals.
             </CardDescription>
-            <p className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${scheduled === false ? "bg-amber-100 dark:bg-amber-950/40 text-amber-900" : "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"}`}>
+            <p className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${scheduled === false ? "bg-amber-100 text-amber-900" : "bg-green-100 text-green-800"}`}>
               <Clock className="h-3.5 w-3.5" />
               {scheduled === false
                 ? `Automatic schedule not active yet: running every ${AGENT_INTERVAL_MINUTES} minutes while this page is open`
@@ -135,7 +135,7 @@ export default function AgentConsole() {
             <p className="mt-2 text-xs text-muted-foreground">Thresholds follow the Ministry proposal and should be approved and checked for fairness before real use.</p>
           </div>
           <div className="rounded-lg border p-3 text-sm">
-            <p className="mb-2 flex items-center gap-1 font-medium"><ShieldCheck className="h-4 w-4 text-green-600 dark:text-green-300" /> Responsible AI</p>
+            <p className="mb-2 flex items-center gap-1 font-medium"><ShieldCheck className="h-4 w-4 text-green-600" /> Responsible AI</p>
             <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
               <li>Rules decide who is flagged; AI only writes the explanation and next steps.</li>
               <li>No names or ID numbers are sent to the AI, only form and the numbers behind the flag.</li>

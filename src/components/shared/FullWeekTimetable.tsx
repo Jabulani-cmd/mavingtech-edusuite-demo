@@ -153,7 +153,7 @@ export default function FullWeekTimetable({
                   <TableHead
                     key={d}
                     className={`text-center text-xs font-semibold ${
- today === i + 1 ? "bg-secondary/10 text-secondary" : ""
+                      today === i + 1 ? "bg-secondary/10 text-secondary" : ""
                     }`}
                   >
                     {d}
@@ -213,7 +213,7 @@ export default function FullWeekTimetable({
                         <TableCell
                           key={di}
                           className={`py-2 text-center text-xs align-top ${
- today === di + 1 ? "bg-secondary/5" : ""
+                            today === di + 1 ? "bg-secondary/5" : ""
                           }`}
                         >
                           {entry ? (

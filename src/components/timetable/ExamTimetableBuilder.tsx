@@ -107,8 +107,8 @@ export default function ExamTimetableBuilder({ definitionId, startDate, endDate,
         <div className="flex items-center gap-2">
           <Button size="sm" onClick={add}><Plus className="h-3 w-3 mr-1" />Add exam</Button>
           {aiMode && (
-            <Button size="sm" variant="outline" onClick={generateAI} disabled={busy} className="border-primary/40">
-              {busy ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1 text-primary" />}
+            <Button size="sm" variant="outline" onClick={generateAI} disabled={busy} className="border-purple-300">
+              {busy ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1 text-purple-500" />}
               Generate with AI
             </Button>
           )}

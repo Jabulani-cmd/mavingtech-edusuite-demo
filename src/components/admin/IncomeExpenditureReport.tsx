@@ -213,10 +213,10 @@ export default function IncomeExpenditureReport() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="h-4 w-4 text-green-700 dark:text-green-300" />
+              <TrendingUp className="h-4 w-4 text-green-700" />
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Income</p>
             </div>
-            <p className="text-xl font-bold font-mono text-green-700 dark:text-green-300">{fmt(totalIncomeUsd)}</p>
+            <p className="text-xl font-bold font-mono text-green-700">{fmt(totalIncomeUsd)}</p>
             <p className="text-sm font-mono text-muted-foreground">{fmtZ(totalIncomeZig)}</p>
           </CardContent>
         </Card>
@@ -236,7 +236,7 @@ export default function IncomeExpenditureReport() {
               <BarChart3 className="h-4 w-4" />
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Net</p>
             </div>
-            <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700 dark:text-green-300" : "text-destructive"}`}>{fmt(netUsd)}</p>
+            <p className={`text-xl font-bold font-mono ${netUsd >= 0 ? "text-green-700" : "text-destructive"}`}>{fmt(netUsd)}</p>
             <p className="text-sm font-mono text-muted-foreground">{fmtZ(netZig)}</p>
           </CardContent>
         </Card>
@@ -271,7 +271,7 @@ export default function IncomeExpenditureReport() {
       {/* Income Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="font-heading text-green-700 dark:text-green-300">Income: {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
+          <CardTitle className="font-heading text-green-700">Income: {months[Number(selectedMonth)]} {selectedYear}</CardTitle>
           <CardDescription>{searchedPayments.length} payment(s) totalling {fmt(totalIncomeUsd)}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -297,7 +297,7 @@ export default function IncomeExpenditureReport() {
                       <TableCell className="font-mono text-xs">{p.receipt_number}</TableCell>
                       <TableCell>{p.students?.full_name || "-"}</TableCell>
                       <TableCell>{p.payment_method}</TableCell>
-                      <TableCell className="text-right font-mono text-green-700 dark:text-green-300">{formatMoney(p.amount_usd)}</TableCell>
+                      <TableCell className="text-right font-mono text-green-700">{formatMoney(p.amount_usd)}</TableCell>
                       <TableCell className="text-xs">{p.reference_number || "-"}</TableCell>
                     </TableRow>
                   ))}

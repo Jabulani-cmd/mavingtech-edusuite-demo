@@ -122,9 +122,9 @@ const genReceiptNum = () =>
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
-    paid: "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300",
-    partial: "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300",
-    unpaid: "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300",
+    paid: "bg-green-100 text-green-800 border-green-300",
+    partial: "bg-amber-100 text-amber-800 border-amber-300",
+    unpaid: "bg-red-100 text-red-800 border-red-300",
     overdue: "bg-red-200 text-red-900 border-red-400",
   };
   return (
@@ -1560,15 +1560,15 @@ export default function FinanceManagement() {
             usd: totalCollectedUsd,
             zig: totalCollectedZig,
             icon: DollarSign,
-            color: "text-green-600 dark:text-green-300",
+            color: "text-green-600",
           },
-          { label: "Outstanding", usd: totalOwedUsd, zig: totalOwedZig, icon: AlertTriangle, color: "text-red-600 dark:text-red-300" },
+          { label: "Outstanding", usd: totalOwedUsd, zig: totalOwedZig, icon: AlertTriangle, color: "text-red-600" },
           {
             label: "Expenses",
             usd: totalExpensesUsd,
             zig: totalExpensesZig,
             icon: TrendingUp,
-            color: "text-amber-600 dark:text-amber-300",
+            color: "text-amber-600",
           },
           {
             label: "Net Income",
@@ -1812,7 +1812,7 @@ export default function FinanceManagement() {
                             {(() => {
                               const balance = inv.total_usd - inv.paid_usd;
                               if (balance < 0) {
-                                return <span className="text-green-600 dark:text-green-300">({fmt(Math.abs(balance))} credit)</span>;
+                                return <span className="text-green-600">({fmt(Math.abs(balance))} credit)</span>;
                               }
                               return fmt(balance);
                             })()}
@@ -2003,11 +2003,11 @@ export default function FinanceManagement() {
               </Card>
               <Card className="border-amber-300/50 bg-amber-50/50">
                 <CardContent className="p-5">
-                  <p className="text-xs text-amber-700 dark:text-amber-300 font-medium uppercase tracking-wider">Partial Payments</p>
-                  <p className="text-xl font-bold text-amber-800 dark:text-amber-300">
+                  <p className="text-xs text-amber-700 font-medium uppercase tracking-wider">Partial Payments</p>
+                  <p className="text-xl font-bold text-amber-800">
                     {debtors.filter((d) => d.status === "partial").length}
                   </p>
-                  <p className="text-sm text-amber-600 dark:text-amber-300">students</p>
+                  <p className="text-sm text-amber-600">students</p>
                 </CardContent>
               </Card>
               <Card className="border-destructive/40 bg-destructive/10">
@@ -2175,7 +2175,7 @@ export default function FinanceManagement() {
                     <div className="grid gap-4 sm:grid-cols-3">
                       <div className="rounded-lg border p-4">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Deposits</p>
-                        <p className="text-xl font-bold font-mono text-green-700 dark:text-green-300">{fmt(depositsUsd)}</p>
+                        <p className="text-xl font-bold font-mono text-green-700">{fmt(depositsUsd)}</p>
                         <p className="text-sm font-mono text-muted-foreground">ZiG {fmt(depositsZig)}</p>
                       </div>
                       <div className="rounded-lg border p-4">
@@ -2188,7 +2188,7 @@ export default function FinanceManagement() {
                       >
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">Float Balance</p>
                         <p
-                          className={`text-xl font-bold font-mono ${balUsd >= 0 ? "text-green-700 dark:text-green-300" : "text-destructive"}`}
+                          className={`text-xl font-bold font-mono ${balUsd >= 0 ? "text-green-700" : "text-destructive"}`}
                         >
                            US$ {fmt(balUsd)}
                         </p>
@@ -2219,8 +2219,8 @@ export default function FinanceManagement() {
                                     variant="outline"
                                     className={
                                       pc.transaction_type === "deposit"
-                                        ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300"
-                                        : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"
+                                        ? "bg-green-100 text-green-800 border-green-300"
+                                        : "bg-red-100 text-red-800 border-red-300"
                                     }
                                   >
                                     {pc.transaction_type === "deposit" ? "Deposit" : "Withdrawal"}
@@ -2228,7 +2228,7 @@ export default function FinanceManagement() {
                                 </TableCell>
                                 <TableCell className="max-w-[250px] truncate">{pc.description}</TableCell>
                                 <TableCell
-                                  className={`text-right font-mono ${pc.transaction_type === "deposit" ? "text-green-700 dark:text-green-300" : "text-destructive"}`}
+                                  className={`text-right font-mono ${pc.transaction_type === "deposit" ? "text-green-700" : "text-destructive"}`}
                                 >
                                   {pc.transaction_type === "deposit" ? "+" : "-"}
                                   {formatMoney(pc.amount_usd)}
@@ -2333,7 +2333,7 @@ export default function FinanceManagement() {
                             <TableCell className="text-xs">{si.due_date || "-"}</TableCell>
                             <TableCell className="max-w-[200px] truncate">{si.description || "-"}</TableCell>
                             <TableCell className="text-right font-mono">{formatMoney(si.amount_usd)}</TableCell>
-                            <TableCell className="text-right font-mono text-green-700 dark:text-green-300">{fmt(si.paid_usd)}</TableCell>
+                            <TableCell className="text-right font-mono text-green-700">{fmt(si.paid_usd)}</TableCell>
                             <TableCell className="text-right font-mono text-destructive">
                               {formatMoney(Number(si.amount_usd) - Number(si.paid_usd))}
                             </TableCell>
@@ -2358,7 +2358,7 @@ export default function FinanceManagement() {
                                       });
                                     }}
                                   >
-                                    <CreditCard className="h-4 w-4 text-green-700 dark:text-green-300" />
+                                    <CreditCard className="h-4 w-4 text-green-700" />
                                   </Button>
                                 )}
                                 <Button variant="ghost" size="icon" onClick={() => deleteSupplierInvoice(si.id)}>
@@ -2526,26 +2526,26 @@ export default function FinanceManagement() {
                         <Card>
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Total Paid</p>
-                            <p className="font-bold font-mono text-green-700 dark:text-green-300">{fmt(tPaidUsd)}</p>
+                            <p className="font-bold font-mono text-green-700">{fmt(tPaidUsd)}</p>
                             <p className="text-sm text-muted-foreground font-mono">ZiG {fmt(tPaidZig)}</p>
                           </CardContent>
                         </Card>
                         <Card
                           className={
-                            isCredit ? "bg-green-50 dark:bg-green-950/40 border-green-200" : balUsd > 0 ? "bg-destructive/5" : "bg-muted"
+                            isCredit ? "bg-green-50 border-green-200" : balUsd > 0 ? "bg-destructive/5" : "bg-muted"
                           }
                         >
                           <CardContent className="p-4">
                             <p className="text-xs text-muted-foreground uppercase">Balance</p>
                             <p
-                              className={`font-bold font-mono ${isCredit ? "text-green-700 dark:text-green-300" : balUsd > 0 ? "text-destructive" : "text-muted-foreground"}`}
+                              className={`font-bold font-mono ${isCredit ? "text-green-700" : balUsd > 0 ? "text-destructive" : "text-muted-foreground"}`}
                             >
                                US$ {isCredit ? fmt(Math.abs(balUsd)) : fmt(balUsd)}
                             </p>
                             <p className="text-sm text-muted-foreground font-mono">
                               ZiG {balZig < 0 ? fmt(Math.abs(balZig)) : fmt(balZig)}
                             </p>
-                            {isCredit && <span className="text-xs text-green-600 dark:text-green-300">(credit)</span>}
+                            {isCredit && <span className="text-xs text-green-600">(credit)</span>}
                           </CardContent>
                         </Card>
                       </div>
@@ -2762,11 +2762,11 @@ export default function FinanceManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-lg border p-4">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Total USD Collected</p>
-                    <p className="text-lg font-bold text-green-700 dark:text-green-300">{formatMoney(totalCollectedUsd)}</p>
+                    <p className="text-lg font-bold text-green-700">{formatMoney(totalCollectedUsd)}</p>
                   </div>
                   <div className="rounded-lg border p-4">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Current ZiG Collected</p>
-                    <p className="text-2xl font-bold text-green-700 dark:text-green-300">ZiG {fmt(totalCollectedZig)}</p>
+                    <p className="text-2xl font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -2797,16 +2797,16 @@ export default function FinanceManagement() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Income (US$)</span>
-                    <span className="font-mono font-bold text-green-700 dark:text-green-300">{formatMoney(totalCollectedUsd)}</span>
+                    <span className="font-mono font-bold text-green-700">{formatMoney(totalCollectedUsd)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expenses (US$)</span>
-                    <span className="font-mono font-bold text-red-600 dark:text-red-300">{formatMoney(totalExpensesUsd)}</span>
+                    <span className="font-mono font-bold text-red-600">{formatMoney(totalExpensesUsd)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
                     <span className="text-sm font-semibold">Net (US$)</span>
                     <span
-                      className={`font-mono font-bold ${totalCollectedUsd - totalExpensesUsd >= 0 ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-300"}`}
+                      className={`font-mono font-bold ${totalCollectedUsd - totalExpensesUsd >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
                       {formatMoney(totalCollectedUsd - totalExpensesUsd)}
                     </span>
@@ -2815,16 +2815,16 @@ export default function FinanceManagement() {
                 <div className="border-t pt-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Income (ZiG)</span>
-                    <span className="font-mono font-bold text-green-700 dark:text-green-300">ZiG {fmt(totalCollectedZig)}</span>
+                    <span className="font-mono font-bold text-green-700">ZiG {fmt(totalCollectedZig)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expenses (US$)</span>
-                    <span className="font-mono font-bold text-red-600 dark:text-red-300">ZiG {fmt(totalExpensesZig)}</span>
+                    <span className="font-mono font-bold text-red-600">ZiG {fmt(totalExpensesZig)}</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between items-center">
                     <span className="text-sm font-semibold">Net (US$)</span>
                     <span
-                      className={`font-mono font-bold ${totalCollectedZig - totalExpensesZig >= 0 ? "text-green-700 dark:text-green-300" : "text-red-600 dark:text-red-300"}`}
+                      className={`font-mono font-bold ${totalCollectedZig - totalExpensesZig >= 0 ? "text-green-700" : "text-red-600"}`}
                     >
                       ZiG {fmt(totalCollectedZig - totalExpensesZig)}
                     </span>
@@ -3931,11 +3931,11 @@ export default function FinanceManagement() {
                 No invoice items are linked to this fee structure. It can be safely deleted.
               </p>
             ) : (
-              <div className="rounded-md border border-amber-300 bg-amber-50 dark:bg-amber-950/40 p-3">
-                <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+              <div className="rounded-md border border-amber-300 bg-amber-50 p-3">
+                <p className="text-sm font-semibold text-amber-800">
                   {deleteImpactCount} invoice item{deleteImpactCount !== 1 ? "s" : ""} will be unlinked
                 </p>
-                <p className="text-xs text-amber-700 dark:text-amber-300">
+                <p className="text-xs text-amber-700">
                   These invoice items will remain on their invoices but their fee structure reference will be cleared.
                 </p>
               </div>

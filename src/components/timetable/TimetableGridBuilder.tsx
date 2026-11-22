@@ -215,8 +215,8 @@ export default function TimetableGridBuilder({
             {onAIRegenerate && (
               <div className="flex items-center gap-1">
                 <Input value={aiFeedback} onChange={(e) => setAiFeedback(e.target.value)} placeholder="Tell AI what to change…" className="h-8 w-64" />
-                <Button size="sm" variant="outline" onClick={() => onAIRegenerate(aiFeedback)} className="border-primary/40">
-                  <Sparkles className="h-3 w-3 mr-1 text-primary" />Regenerate
+                <Button size="sm" variant="outline" onClick={() => onAIRegenerate(aiFeedback)} className="border-purple-300">
+                  <Sparkles className="h-3 w-3 mr-1 text-purple-500" />Regenerate
                 </Button>
               </div>
             )}

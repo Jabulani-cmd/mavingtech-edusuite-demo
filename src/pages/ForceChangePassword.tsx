@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,13 +52,13 @@ export default function ForceChangePassword() {
 
   return (
     <Layout>
-      <section className="flex min-h-[70vh] items-center justify-center bg-ochre-soft py-16">
-        <div className="w-full max-w-md px-4">
+      <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md px-4">
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
               <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-44 object-contain sm:w-48" />
-              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950/40">
-                <ShieldAlert className="h-6 w-6 text-amber-600 dark:text-amber-300" />
+              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                <ShieldAlert className="h-6 w-6 text-amber-600" />
               </div>
               <CardTitle className="font-heading text-2xl text-primary">Change Your Password</CardTitle>
               <p className="text-sm text-muted-foreground">
@@ -104,7 +105,7 @@ export default function ForceChangePassword() {
               </form>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </section>
     </Layout>
   );

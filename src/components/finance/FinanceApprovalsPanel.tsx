@@ -140,16 +140,16 @@ export default function FinanceApprovalsPanel() {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="rounded-md border bg-amber-50 dark:bg-amber-950/40 p-2">
-            <div className="font-bold text-amber-700 dark:text-amber-300 text-lg">{pendingCount}</div>
+          <div className="rounded-md border bg-amber-50 p-2">
+            <div className="font-bold text-amber-700 text-lg">{pendingCount}</div>
             <div className="text-amber-700/80">Pending</div>
           </div>
-          <div className="rounded-md border bg-emerald-50 dark:bg-emerald-950/40 p-2">
-            <div className="font-bold text-emerald-700 dark:text-emerald-300 text-lg">{approvedCount}</div>
+          <div className="rounded-md border bg-emerald-50 p-2">
+            <div className="font-bold text-emerald-700 text-lg">{approvedCount}</div>
             <div className="text-emerald-700/80">Approved</div>
           </div>
-          <div className="rounded-md border bg-red-50 dark:bg-red-950/40 p-2">
-            <div className="font-bold text-red-700 dark:text-red-300 text-lg">{rejectedCount}</div>
+          <div className="rounded-md border bg-red-50 p-2">
+            <div className="font-bold text-red-700 text-lg">{rejectedCount}</div>
             <div className="text-red-700/80">Rejected</div>
           </div>
         </div>
@@ -215,17 +215,17 @@ export default function FinanceApprovalsPanel() {
                     <TableCell className="text-sm max-w-[300px] truncate">{req.description}</TableCell>
                     <TableCell>
                       {req.status === "pending" && (
-                        <Badge className="bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300">
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-300">
                           <Clock className="h-3 w-3 mr-1" /> Pending
                         </Badge>
                       )}
                       {req.status === "approved" && (
-                        <Badge className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300">
+                        <Badge className="bg-green-100 text-green-800 border-green-300">
                           <CheckCircle className="h-3 w-3 mr-1" /> Approved
                         </Badge>
                       )}
                       {req.status === "rejected" && (
-                        <Badge className="bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300">
+                        <Badge className="bg-red-100 text-red-800 border-red-300">
                           <XCircle className="h-3 w-3 mr-1" /> Rejected
                         </Badge>
                       )}

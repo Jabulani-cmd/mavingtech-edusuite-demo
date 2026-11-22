@@ -1,37 +1,45 @@
-import StoneOpening from "@/components/masonry/StoneOpening";
-import type { Focus } from "@/lib/photoFocus";
+import { motion } from "framer-motion";
 
 interface PageHeroProps {
-  /** Kept for compatibility. Labels above a heading are not part of this design system, so it is not rendered. */
   eyebrow?: string;
   title: string;
   subtitle?: string;
   image: string;
-  /** Where the faces sit in the photo, so the crop never cuts off heads. */
-  focus?: Focus;
-  /** A taller window for square photographs, which a wide window would otherwise crop to a thin strip. */
-  tall?: boolean;
 }
 
-/** Page opener: the page photograph set into the wall like a window, the title on a navy lintel, a chevron band below. */
-export default function PageHero({ title, subtitle, image, focus = { d: "50% 35%" }, tall = false }: PageHeroProps) {
-  const seed = Array.from(title).reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7);
+export default function PageHero({ eyebrow, title, subtitle, image }: PageHeroProps) {
   return (
-    <section>
-      <StoneOpening
+    <section className="relative isolate h-[52vh] min-h-[380px] w-full overflow-hidden bg-foreground">
+      <img
         src={image}
-        focus={focus}
-        seed={seed}
-        photoClassName={tall ? "h-[240px] sm:h-[48vh] sm:min-h-[380px] lg:h-[clamp(420px,58vh,640px)]" : "h-[220px] sm:h-[38vh] sm:min-h-[300px] lg:h-[clamp(300px,40vh,460px)]"}
-        lintel="h-10 sm:h-14"
-        sill="h-3 sm:h-4"
-      >
-        <div className="relative z-10 mx-auto bg-navy px-5 py-6 text-lit shadow-[0_18px_40px_-18px_hsl(220_25%_6%/0.75)] sm:-mt-10 sm:w-[calc(100%-4rem)] sm:max-w-[1336px] sm:px-8 sm:py-7 lg:grid lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-12 lg:py-8">
-          <h1 className={`text-4xl font-extrabold leading-[1.05] md:text-5xl ${subtitle ? "lg:col-span-7" : "lg:col-span-12"} lg:text-6xl`}>{title}</h1>
-          {subtitle && <p className="mt-4 max-w-xl text-base leading-relaxed text-lit/85 md:text-lg lg:col-span-5 lg:mt-0">{subtitle}</p>}
-        </div>
-      </StoneOpening>
-      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: "center 45%" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/20" />
+      <div className="container relative z-10 flex h-full items-end pb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="max-w-2xl text-white"
+        >
+          {eyebrow && (
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">
+              {eyebrow}
+            </span>
+          )}
+          <div className="mb-5 mt-4 h-[2px] w-12 bg-white" />
+          <h1 className="font-heading text-4xl font-bold leading-tight md:text-6xl">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
+              {subtitle}
+            </p>
+          )}
+        </motion.div>
+      </div>
     </section>
   );
 }

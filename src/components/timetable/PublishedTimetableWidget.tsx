@@ -230,7 +230,7 @@ export default function PublishedTimetableWidget({
                   type="button"
                   onClick={() => setMobileDay(d)}
                   className={`rounded-md py-1.5 text-xs font-medium transition-colors ${
- d === shownDay ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                    d === shownDay ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {dayName(d).slice(0, 3)}

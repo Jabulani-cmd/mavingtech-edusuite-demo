@@ -443,7 +443,7 @@ export default function AssessmentsTab({ userId, classes, subjects, students }: 
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2">
           <Button variant="outline" onClick={() => setAiCreating(true)}>
             <Sparkles className="mr-1 h-4 w-4 text-primary" /> Create with AI
           </Button>

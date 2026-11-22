@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,7 +129,7 @@ export default function AdminSupervisorDashboard() {
 
   return (
     <div className="min-h-screen bg-section-warm">
-      <header className="portal-header sticky top-0 z-30">
+      <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
         <div className="container mx-auto flex items-center justify-between px-3 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -145,7 +144,6 @@ export default function AdminSupervisorDashboard() {
             )}
             <NotificationBell />
             <LanguageSelect />
-            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex gap-2">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
@@ -210,9 +208,9 @@ export default function AdminSupervisorDashboard() {
                               </TableCell>
                               <TableCell className="text-sm max-w-[300px] truncate">{req.description}</TableCell>
                               <TableCell>
-                                {req.status === "pending" && <Badge className="bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300"><Clock className="h-3 w-3 mr-1" />Pending</Badge>}
-                                {req.status === "approved" && <Badge className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>}
-                                {req.status === "rejected" && <Badge className="bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>}
+                                {req.status === "pending" && <Badge className="bg-amber-100 text-amber-800 border-amber-300"><Clock className="h-3 w-3 mr-1" />Pending</Badge>}
+                                {req.status === "approved" && <Badge className="bg-green-100 text-green-800 border-green-300"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>}
+                                {req.status === "rejected" && <Badge className="bg-red-100 text-red-800 border-red-300"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>}
                               </TableCell>
                               <TableCell>
                                 {req.status === "pending" && (

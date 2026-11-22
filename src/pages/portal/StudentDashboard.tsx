@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { User, LogOut, BookOpen, ClipboardCheck, Calendar, Lock } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -191,7 +190,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-6">
       {/* Header */}
-      <header className="portal-header sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
         <div className="container flex h-16 items-center justify-between gap-2 px-3 sm:h-20 sm:px-4">
           <div className="flex items-center gap-2">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -200,7 +199,6 @@ export default function StudentDashboard() {
           <div className="flex items-center gap-1 sm:gap-2">
             <NotificationBell />
             <LanguageSelect />
-            <ThemeToggle />
             <span className="text-xs text-muted-foreground hidden sm:inline max-w-[120px] truncate">{displayName}</span>
             <Button variant="ghost" size="sm" onClick={handleLogout} aria-label="Logout" className="px-2 sm:px-3">
               <LogOut className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Logout</span>
@@ -225,8 +223,8 @@ export default function StudentDashboard() {
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
- activeTab === item.id
- ? "bg-secondary text-secondary-foreground"
+                  activeTab === item.id
+                    ? "bg-secondary text-secondary-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
@@ -351,9 +349,9 @@ function TabContent({
             <button
               key={t.id}
               onClick={() => setHomeSubTab(t.id)}
-              className={`rounded-sm px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
- homeSubTab === t.id
- ? "bg-secondary text-secondary-foreground"
+              className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                homeSubTab === t.id
+                  ? "bg-secondary text-secondary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >

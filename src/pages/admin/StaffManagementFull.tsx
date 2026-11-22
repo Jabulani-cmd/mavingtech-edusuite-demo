@@ -592,9 +592,9 @@ export default function StaffManagementFull() {
   };
 
   const statusColor = (s: string) => {
-    if (s === "active") return "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300";
-    if (s === "on-leave") return "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300";
-    return "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300";
+    if (s === "active") return "bg-green-100 text-green-800";
+    if (s === "on-leave") return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800";
   };
 
   return (
@@ -701,7 +701,7 @@ export default function StaffManagementFull() {
                       {classTeacherMap[s.id] ? (
                         <div className="flex flex-wrap gap-1">
                           {classTeacherMap[s.id].map((cn) => (
-                            <Badge key={cn} className="bg-primary/10 text-primary text-xs">
+                            <Badge key={cn} className="bg-blue-100 text-blue-800 text-xs">
                               {cn}
                             </Badge>
                           ))}
@@ -1113,7 +1113,7 @@ export default function StaffManagementFull() {
                     {classTeacherMap[selectedStaff.id] && classTeacherMap[selectedStaff.id].length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {classTeacherMap[selectedStaff.id].map((cn) => (
-                          <Badge key={cn} className="bg-primary/10 text-primary">
+                          <Badge key={cn} className="bg-blue-100 text-blue-800">
                             {cn}
                           </Badge>
                         ))}
@@ -1191,10 +1191,10 @@ export default function StaffManagementFull() {
                               <Badge
                                 className={
                                   l.status === "approved"
-                                    ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"
+                                    ? "bg-green-100 text-green-800"
                                     : l.status === "rejected"
-                                      ? "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300"
-                                      : "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
                                 }
                               >
                                 {l.status}

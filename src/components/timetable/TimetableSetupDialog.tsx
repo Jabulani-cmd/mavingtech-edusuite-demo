@@ -84,7 +84,7 @@ export default function TimetableSetupDialog({ open, aiMode, onOpenChange, onSub
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {aiMode && <Sparkles className="h-5 w-5 text-primary" />}
+            {aiMode && <Sparkles className="h-5 w-5 text-purple-500" />}
             {aiMode ? "AI Timetable Setup" : "Manual Timetable Setup"}
           </DialogTitle>
         </DialogHeader>
@@ -154,10 +154,10 @@ export default function TimetableSetupDialog({ open, aiMode, onOpenChange, onSub
           </div>
 
           {aiMode && v.type === "class" && (
-            <Card className="border-primary/40 bg-primary/10">
+            <Card className="border-purple-200 dark:border-purple-900 bg-purple-50/50 dark:bg-purple-950/20">
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2"><Wand2 className="h-4 w-4 text-primary" />Subject Requirements</Label>
+                  <Label className="flex items-center gap-2"><Wand2 className="h-4 w-4 text-purple-500" />Subject Requirements</Label>
                   <Button size="sm" variant="outline" onClick={addSubject}><Plus className="h-3 w-3 mr-1" />Add subject</Button>
                 </div>
                 {v.subjects.length === 0 && <p className="text-xs text-muted-foreground">Add the subjects this class needs and how many periods per week each requires.</p>}
@@ -202,7 +202,7 @@ export default function TimetableSetupDialog({ open, aiMode, onOpenChange, onSub
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={() => { onSubmit(v); onOpenChange(false); }} className={aiMode ? "bg-primary" : ""}>
+          <Button onClick={() => { onSubmit(v); onOpenChange(false); }} className={aiMode ? "bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700" : ""}>
             {aiMode ? <><Sparkles className="h-4 w-4 mr-1" />Generate Timetable with AI</> : "Proceed to Build"}
           </Button>
         </DialogFooter>

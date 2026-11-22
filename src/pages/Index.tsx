@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
+import type React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import StoneOpening from "@/components/masonry/StoneOpening";
-import { focus, type Focus } from "@/lib/photoFocus";
 import hero1 from "@/assets/hero-students-1.jpg";
+import hero2 from "@/assets/hero-students-2.jpg";
+import hero3 from "@/assets/hero-students-3.jpg";
+import hero4 from "@/assets/hero-students-4.jpg";
 import hero5 from "@/assets/hero-students-5.jpg";
 import currCs from "@/assets/curriculum-cs.jpg";
 import currMath from "@/assets/curriculum-math.jpg";
@@ -21,56 +24,37 @@ import actClubs from "@/assets/activity-clubs.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import principalPhoto from "@/assets/principal-moyo.jpg";
 
-type Announcement = { id: string; title: string; content: string | null; created_at: string };
+// `pos` / `phonePos` are CSS object-position values (desktop / phone) that keep each photo's faces in frame when the
+// hero crops it.
+type HeroSlide = { src: string; pos?: string; phonePos?: string };
 
-/** A block in a masonry course: the picture, and a small slab of stone carrying its name. */
-function StoneBlock({ to, img, title, desc, className, pos }: { to: string; img: string; title: string; desc?: string; className: string; pos: Focus }) {
+const heroSlides: HeroSlide[] = [
+  { src: hero1, pos: "center 25%", phonePos: "40% 50%" },
+  { src: hero2, pos: "center 8%", phonePos: "62% 50%" },
+  { src: hero3, pos: "center 0%", phonePos: "35% 50%" },
+  { src: hero4, pos: "center 35%", phonePos: "55% 50%" },
+  { src: hero5, pos: "center 0%", phonePos: "60% 50%" },
+];
+
+const DirectorPhoto = forwardRef<HTMLDivElement>(function DirectorPhoto(_props, ref) {
   return (
-    <Link to={to} className={`group relative block overflow-hidden bg-shadow ${className}`}>
-      <img
-        src={img}
-        alt=""
-        loading="lazy"
-        style={{ objectPosition: pos.d }}
-        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
-      />
-      <div className="slab absolute bottom-0 left-0 max-w-[88%] px-4 py-3 sm:px-5 sm:py-4">
-        <h3 className="font-heading text-lg font-bold leading-tight text-foreground sm:text-xl">{title}</h3>
-        {desc && <p className="mt-1 line-clamp-2 text-sm leading-snug text-muted-foreground">{desc}</p>}
-      </div>
-    </Link>
+    <div ref={ref} className="relative">
+      <img src={principalPhoto} alt="Mr. F.J. Moyo, Principal" className="aspect-[4/5] w-full rounded-lg object-cover object-top shadow-xl" />
+    </div>
   );
-}
+});
 
-const textLink =
-  "inline-flex items-center gap-2 border-b-2 border-ochre pb-0.5 text-sm font-bold tracking-wide text-foreground transition-colors hover:border-primary hover:text-primary";
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6 } }),
+};
 
 export default function Home() {
   const { t } = useTranslation();
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from("announcements")
-          .select("*")
-          .eq("is_public", true)
-          .order("created_at", { ascending: false })
-          .limit(3);
-        if (data) setAnnouncements(data);
-      } catch {
-        setAnnouncements([]);
-      }
-    })();
-  }, []);
-
-  const gateways = [
-    { to: "/admissions", label: t("home.cta.button"), tone: "bg-primary text-primary-foreground hover:bg-navy" },
-    { to: "/contact", label: t("home.quick.visit", "Visit Us"), tone: "bg-ochre text-shadow hover:bg-ochre-soft" },
-    { to: "/pay-online", label: t("fees.payOnline"), tone: "bg-ochre-soft text-foreground hover:bg-ochre hover:text-shadow" },
-    { to: "/login", label: t("nav.portalLogin"), tone: "bg-navy text-lit hover:bg-primary" },
-  ];
+  const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string | null; created_at: string }[]>([]);
+  const [slide, setSlide] = useState(0);
+  const slides = heroSlides;
+  const [prev, setPrev] = useState(-1);
 
   const stats = [
     { value: "800+", label: t("home.stats.enrollments") },
@@ -80,196 +64,298 @@ export default function Home() {
   ];
 
   const curriculum = [
-    { title: t("home.curriculum.cs.title"), desc: t("home.curriculum.cs.desc"), img: currCs, pos: focus.currCs, span: "lg:col-span-5" },
-    { title: t("home.curriculum.math.title"), desc: t("home.curriculum.math.desc"), img: currMath, pos: focus.currMath, span: "lg:col-span-4" },
-    { title: t("home.curriculum.lit.title"), desc: t("home.curriculum.lit.desc"), img: currLit, pos: focus.currLit, span: "lg:col-span-3" },
-    { title: t("home.curriculum.sci.title"), desc: t("home.curriculum.sci.desc"), img: currSci, pos: focus.currSci, span: "lg:col-span-3" },
-    { title: t("home.curriculum.arts.title"), desc: t("home.curriculum.arts.desc"), img: currArts, pos: focus.currArts, span: "lg:col-span-4" },
-    { title: t("home.curriculum.perf.title"), desc: t("home.curriculum.perf.desc"), img: currPerf, pos: focus.currPerf, span: "lg:col-span-5" },
+    { title: t("home.curriculum.cs.title"), desc: t("home.curriculum.cs.desc"), img: currCs },
+    { title: t("home.curriculum.math.title"), desc: t("home.curriculum.math.desc"), img: currMath },
+    { title: t("home.curriculum.lit.title"), desc: t("home.curriculum.lit.desc"), img: currLit },
+    { title: t("home.curriculum.sci.title"), desc: t("home.curriculum.sci.desc"), img: currSci },
+    { title: t("home.curriculum.arts.title"), desc: t("home.curriculum.arts.desc"), img: currArts },
+    { title: t("home.curriculum.perf.title"), desc: t("home.curriculum.perf.desc"), img: currPerf },
   ];
 
   const activities = [
-    { title: t("home.activities.sports"), img: actSports, pos: focus.actSports, span: "lg:col-span-7" },
-    { title: t("home.activities.music"), img: actMusic, pos: focus.actMusic, span: "lg:col-span-5" },
-    { title: t("home.activities.arts"), img: actArts, pos: focus.actArts, span: "lg:col-span-5" },
-    { title: t("home.activities.clubs"), img: actClubs, pos: focus.actClubs, span: "lg:col-span-7" },
+    { title: t("home.activities.sports"), img: actSports },
+    { title: t("home.activities.music"), img: actMusic },
+    { title: t("home.activities.arts"), img: actArts },
+    { title: t("home.activities.clubs"), img: actClubs },
   ];
+
+  useEffect(() => {
+    supabase
+      .from("announcements")
+      .select("*")
+      .eq("is_public", true)
+      .order("created_at", { ascending: false })
+      .limit(3)
+      .then(({ data }) => { if (data) setAnnouncements(data); });
+  }, []);
+
+  useEffect(() => {
+    const tm = setTimeout(() => {
+      setPrev(slide);
+      setSlide((slide + 1) % slides.length);
+    }, 4500);
+    return () => clearTimeout(tm);
+  }, [slide, slides.length]);
+
+  const quickLinks = [
+    { to: "/admissions", label: t("home.quick.admissions", "Admissions") },
+    { to: "/academics", label: t("home.quick.academics", "Academics") },
+    { to: "/school-life", label: t("home.quick.life", "School Life") },
+    { to: "/news", label: t("home.quick.news", "News & Events") },
+    { to: "/contact", label: t("home.quick.visit", "Visit Us") },
+  ];
+
+  const eyebrow = "text-xs font-semibold uppercase tracking-[0.25em] text-primary";
+  const heading = "font-heading text-3xl font-bold leading-[1.1] text-foreground md:text-5xl";
 
   return (
     <Layout>
-      {/* THE OPENING: the school photograph set into the wall like a window, the name on a lintel, four gateways at the foot */}
-      <section className="granite bg-shadow">
-        <StoneOpening
-          src={hero1}
-          alt={t("home.hero.title")}
-          focus={focus.heroStudents1}
-          seed={7}
-          photoClassName="h-[300px] sm:h-[44vh] sm:min-h-[380px] lg:h-[clamp(380px,46vh,560px)]"
-          sill="h-3 sm:h-4"
-        >
-          <div className="relative z-10 mx-auto bg-navy px-5 py-6 text-lit shadow-[0_18px_40px_-18px_hsl(220_25%_6%/0.75)] sm:-mt-14 sm:w-[calc(100%-4rem)] sm:max-w-[1336px] sm:px-8 sm:py-8 lg:grid lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-12 lg:py-10">
-            <h1 className="text-4xl font-extrabold leading-[1.04] sm:text-5xl lg:col-span-8 xl:text-6xl">{t("home.hero.title")}</h1>
-            <div className="mt-4 lg:col-span-4 lg:mt-0">
-              <p className="max-w-[34rem] text-base leading-relaxed text-lit/85 md:text-lg">{t("home.hero.subtitle")}</p>
-              <p className="mt-3 text-sm font-bold tracking-wide text-ochre">{t("home.hero.location", "Harare, Zimbabwe")}</p>
-            </div>
-          </div>
-        </StoneOpening>
-
-        <nav aria-label={t("nav.menu")} className="grid grid-cols-2 gap-[5px] bg-shadow p-[5px] lg:grid-cols-4">
-          {gateways.map((g) => (
-            <Link
-              key={g.to}
-              to={g.to}
-              className={`group flex min-h-[4.75rem] items-end justify-between gap-3 border-t-[6px] border-ochre px-4 py-4 font-heading text-lg font-bold leading-tight transition-colors duration-150 sm:px-6 sm:py-5 sm:text-xl lg:min-h-[7rem] lg:text-2xl ${g.tone}`}
+      {/* HERO: full-bleed image, headline anchored bottom-left */}
+      <section className="relative isolate h-[88vh] min-h-[600px] w-full overflow-hidden bg-foreground">
+        {/* All slides are mounted and stacked so every image is loaded before it is shown; the incoming slide fades in over the outgoing one. */}
+        {slides.map((sl, i) => {
+          const active = i === slide;
+          const leaving = i === prev;
+          return (
+            <picture
+              key={i}
+              aria-hidden={!active}
+              className={`absolute inset-0 block h-full w-full ${
+                active
+                  ? "z-[2] opacity-100 transition-opacity [transition-duration:1200ms] ease-out"
+                  : leaving
+                    ? "z-[1] opacity-100"
+                    : "z-0 opacity-0"
+              }`}
             >
-              {g.label}
-              <ArrowUpRight className="h-5 w-5 shrink-0 transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 lg:h-6 lg:w-6" />
-            </Link>
+              <img
+                src={sl.src}
+                alt={active ? t("home.hero.title") : ""}
+                loading="eager"
+                decoding="async"
+                fetchPriority={i === 0 ? "high" : "auto"}
+                className="h-full w-full object-cover [object-position:var(--pos-m)] md:[object-position:var(--pos-d)]"
+                style={{ "--pos-d": sl.pos ?? "center 30%", "--pos-m": sl.phonePos ?? sl.pos ?? "center 30%" } as React.CSSProperties}
+              />
+            </picture>
+          );
+        })}
+        <div className="absolute inset-0 z-[3] bg-gradient-to-t from-black/60 via-black/15 to-black/5" />
+        <div className="absolute inset-0 z-[3] bg-gradient-to-r from-black/50 via-black/15 to-transparent md:from-black/45 md:via-black/10" />
+
+        <div className="container relative z-10 flex h-full flex-col justify-end pb-40 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)] md:pb-44">
+          <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl text-white">
+            {/* Slides with baked-in welcome text hide the live copy (still readable by screen readers). */}
+            <span className={`text-xs font-semibold uppercase tracking-[0.3em] text-white/80`}>Harare, Zimbabwe</span>
+            <h1 className={`mt-4 font-heading text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl`}>
+              {t("home.hero.title")}
+            </h1>
+            <p className={`mt-6 max-w-xl text-base leading-relaxed text-white/90 md:text-lg`}>
+              {t("home.hero.subtitle")}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/admissions">
+                <Button size="lg" className="rounded-none bg-primary px-8 text-primary-foreground hover:bg-primary/90">
+                  {t("home.hero.cta")} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button size="lg" variant="outline" className="rounded-none border-white bg-transparent px-8 text-white hover:bg-white hover:text-foreground">
+                  {t("home.quick.visit", "Visit Us")}
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="absolute bottom-28 right-6 z-20 hidden gap-2 md:flex">
+          {slides.map((_, i) => (
+            <button key={i} onClick={() => { setPrev(slide); setSlide(i); }} aria-label={`Slide ${i + 1}`}
+              className={`h-1.5 transition-all ${i === slide ? "w-10 bg-white" : "w-5 bg-white/50 hover:bg-white/80"}`} />
           ))}
-        </nav>
+        </div>
       </section>
 
-      <div className="bg-ochre-soft" aria-hidden="true">
-        <div className="chevron-band chevron-band-lg chevron-band-navy" />
-      </div>
+      {/* QUICK LINKS: bar overlapping the hero */}
+      <section className="relative z-30 -mt-16">
+        <div className="container">
+          <nav aria-label="Quick links" className="grid grid-cols-2 bg-primary text-primary-foreground shadow-2xl md:grid-cols-5">
+            {quickLinks.map((q, i) => (
+              <Link key={q.to} to={q.to}
+                className={`group flex items-center justify-between border-b border-r border-white/15 px-6 py-6 font-heading text-lg font-semibold transition-colors hover:bg-white hover:text-primary md:border-b-0 ${i === quickLinks.length - 1 ? "col-span-2 md:col-span-1" : ""}`}>
+                {q.label}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </section>
 
-      {/* INTRO: a sand field */}
-      <section className="bg-ochre-soft py-20 md:py-28">
-        <div className="container grid gap-12 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-6">
-            <h2 className="text-4xl font-extrabold leading-[1.02] text-foreground sm:text-5xl lg:text-7xl">{t("home.learning.title")}</h2>
-            <dl className="tabular mt-12 max-w-lg border-t-2 border-foreground lg:mt-16">
-              {stats.map((s) => (
-                <div key={s.label} className="flex items-baseline justify-between gap-4 border-b border-foreground/25 py-3.5">
-                  <dt className="text-sm font-medium text-muted-foreground">{s.label}</dt>
-                  <dd className="font-heading text-3xl font-extrabold text-foreground">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="lg:col-span-5 lg:col-start-8 lg:pt-3">
-            <p className="max-w-prose text-lg leading-relaxed text-foreground md:text-xl">{t("home.learning.p1")}</p>
-            <p className="mt-5 max-w-prose leading-relaxed text-muted-foreground">{t("home.learning.p2")}</p>
-            <Link to="/about" className={`mt-8 ${textLink} !border-secondary`}>
+      {/* INTRO */}
+      <section className="py-24 md:py-32">
+        <div className="container grid items-start gap-14 lg:grid-cols-12">
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-7">
+            <span className={eyebrow}>{t("home.quick.about", "Welcome")}</span>
+            <h2 className={`mt-4 ${heading} md:text-6xl`}>{t("home.learning.title")}</h2>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }} className="lg:col-span-5">
+            <p className="text-lg leading-relaxed text-muted-foreground">{t("home.learning.p1")}</p>
+            <p className="mt-4 leading-relaxed text-muted-foreground">{t("home.learning.p2")}</p>
+            <Link to="/about" className="mt-8 inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
               {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ACADEMICS: six blocks in two courses */}
-      <section className="py-20 md:py-28">
-        <div className="container">
-          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-extrabold leading-[1.05] text-foreground sm:text-4xl lg:text-5xl">{t("home.curriculum.title")}</h2>
-              <p className="mt-4 leading-relaxed text-muted-foreground">{t("home.curriculum.intro")}</p>
-            </div>
-            <Link to="/academics" className={textLink}>
-              {t("home.hero.cta")} <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-        <div className="mt-12 grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-2 lg:grid-cols-12">
-          {curriculum.map((c) => (
-            <StoneBlock key={c.title} to="/academics" img={c.img} title={c.title} desc={c.desc} pos={c.pos} className={`h-72 lg:h-[26rem] ${c.span}`} />
+      {/* STATS BAND */}
+      <section className="bg-foreground py-16 text-background md:py-20">
+        <div className="container grid grid-cols-2 gap-10 md:grid-cols-4">
+          {stats.map((s, i) => (
+            <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="border-l border-white/25 pl-6">
+              <div className="font-heading text-5xl font-bold text-[hsl(var(--gold))] md:text-6xl">{s.value}</div>
+              <div className="mt-2 text-sm uppercase tracking-widest text-background/75">{s.label}</div>
+            </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* ACADEMICS: alternating feature blocks */}
+      <section className="py-24 md:py-32">
+        <div className="container">
+          <div className="max-w-3xl">
+            <span className={eyebrow}>{t("home.quick.academics", "Academics")}</span>
+            <h2 className={`mt-4 ${heading}`}>{t("home.curriculum.title")}</h2>
+            <p className="mt-5 leading-relaxed text-muted-foreground">{t("home.curriculum.intro")}</p>
+          </div>
+
+          <div className="mt-16 space-y-20">
+            {curriculum.slice(0, 3).map((c, i) => (
+              <motion.div key={c.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+                className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+                <div className={`aspect-[3/2] overflow-hidden bg-muted ${i % 2 ? "lg:order-2" : ""}`}>
+                  <img src={c.img} alt={c.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+                </div>
+                <div>
+                  <h3 className="font-heading text-3xl font-bold text-foreground md:text-4xl">{c.title}</h3>
+                  <p className="mt-4 max-w-md leading-relaxed text-muted-foreground">{c.desc}</p>
+                  <Link to="/academics" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary">
+                    {t("home.learning.cta")} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-20 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+            {curriculum.slice(3).map((c) => (
+              <Link to="/academics" key={c.title} className="group relative aspect-[4/3] overflow-hidden bg-foreground">
+                <img src={c.img} alt={c.title} loading="lazy" className="h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+                  <h3 className="font-heading text-2xl font-bold">{c.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-white/80">{c.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* PRINCIPAL */}
-      <section className="bg-field py-20 text-lit md:py-28">
-        <div className="container grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-4">
-            <div className="border-x-[10px] border-b-[10px] border-lit bg-lit">
-              <img src={principalPhoto} alt="Mr. F.J. Moyo, Principal" loading="lazy" className="aspect-[4/5] w-full object-cover object-top" />
-            </div>
-            <div className="slab -mt-3 ml-6 inline-block px-4 py-3 text-foreground">
-              <p className="font-heading text-lg font-bold leading-tight">{t("home.director.signature")}</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">{t("home.director.signatureRole")}</p>
-            </div>
-          </div>
-          <div className="lg:col-span-8 lg:pt-2">
-            <h2 className="sr-only">{t("home.director.title")}</h2>
-            <blockquote className="font-heading text-2xl font-semibold leading-[1.25] text-lit sm:text-3xl lg:text-4xl">
-              “{t("home.director.quote")}”
+      <section className="bg-muted/60 py-24 md:py-32">
+        <div className="container grid items-center gap-14 lg:grid-cols-5">
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-2">
+            <DirectorPhoto />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-3">
+            <span className={eyebrow}>{t("home.director.eyebrow")}</span>
+            <h2 className={`mt-4 ${heading}`}>{t("home.director.title")}</h2>
+            <blockquote className="mt-8 border-l-4 border-[hsl(var(--gold))] pl-6 font-heading text-xl italic leading-relaxed text-foreground md:text-2xl">
+              "{t("home.director.quote")}"
             </blockquote>
-            <p className="mt-8 max-w-prose leading-relaxed text-lit/90">{t("home.director.body")}</p>
-          </div>
+            <p className="mt-6 leading-relaxed text-muted-foreground">{t("home.director.body")}</p>
+            <p className="mt-6 font-heading text-base font-semibold text-foreground">
+              {t("home.director.signature")} <span className="font-normal text-muted-foreground">{t("home.director.signatureRole")}</span>
+            </p>
+          </motion.div>
         </div>
       </section>
-      <div className="bg-field" aria-hidden="true">
-        <div className="chevron-band chevron-band-lg" />
-      </div>
 
-      {/* SCHOOL LIFE: an ochre field */}
-      <section className="bg-ochre py-20 text-shadow md:py-28">
+      {/* SCHOOL LIFE */}
+      <section className="py-24 md:py-32">
         <div className="container">
-          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-            <h2 className="max-w-2xl text-3xl font-extrabold leading-[1.05] text-shadow sm:text-4xl lg:text-5xl">{t("home.activities.title")}</h2>
-            <Link to="/school-life" className={`${textLink} !border-shadow !text-shadow hover:!text-secondary`}>
+          <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <span className={eyebrow}>{t("home.activities.eyebrow")}</span>
+              <h2 className={`mt-4 ${heading}`}>{t("home.activities.title")}</h2>
+            </div>
+            <Link to="/school-life" className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
               {t("home.quick.life", "School Life")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        </div>
-        <div className="mt-12 grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-2 lg:grid-cols-12">
-          {activities.map((a) => (
-            <StoneBlock key={a.title} to="/school-life" img={a.img} title={a.title} pos={a.pos} className={`h-80 lg:h-[32rem] ${a.span}`} />
-          ))}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {activities.map((a, i) => (
+              <motion.div key={a.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="group relative aspect-[3/4] overflow-hidden">
+                <img src={a.img} alt={a.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                <h3 className="absolute inset-x-0 bottom-0 p-5 font-heading text-2xl font-semibold text-white">{a.title}</h3>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* NEWS: only when the school has published something */}
+      {/* NEWS */}
       {announcements.length > 0 && (
-        <section className="pb-20 md:pb-28">
+        <section className="bg-muted/60 py-24 md:py-32">
           <div className="container">
-            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-              <h2 className="max-w-2xl text-3xl font-extrabold leading-[1.05] text-foreground sm:text-4xl lg:text-5xl">{t("home.news.title")}</h2>
-              <Link to="/news" className={textLink}>
+            <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <span className={eyebrow}>{t("home.news.eyebrow")}</span>
+                <h2 className={`mt-4 ${heading}`}>{t("home.news.title")}</h2>
+              </div>
+              <Link to="/news" className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 text-sm font-semibold uppercase tracking-widest text-primary">
                 {t("home.quick.news", "News & Events")} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {announcements.map((a) => (
-                <article key={a.id} className="slab flex flex-col p-6 md:p-7">
-                  <time className="tabular text-sm font-bold text-primary" dateTime={a.created_at}>
+            <div className="grid gap-px bg-border md:grid-cols-3">
+              {announcements.map((a, i) => (
+                <motion.article key={a.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                  className="bg-card p-8">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-primary">
                     {new Date(a.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                  </time>
-                  <h3 className="mt-3 text-xl font-bold leading-snug text-foreground">{a.title}</h3>
+                  </span>
+                  <h3 className="mt-4 font-heading text-2xl font-bold leading-snug text-foreground">{a.title}</h3>
                   {a.content && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted-foreground">{a.content}</p>}
-                </article>
+                </motion.article>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* THE DOORWAY: the last gateway, with the answer to "what do I do next" */}
-      <section className="relative bg-navy text-lit">
-        <div className="chevron-band chevron-band-lg" aria-hidden="true" />
-        <div className="container grid items-center gap-12 py-20 md:py-28 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
-            <h2 className="max-w-3xl text-4xl font-extrabold leading-[1.03] sm:text-5xl lg:text-6xl">{t("home.cta.title")}</h2>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-lit/85">{t("home.cta.desc")}</p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/admissions">
-                <Button size="lg" className="bg-lit text-navy shadow-none hover:bg-ochre-soft">
-                  {t("home.cta.button")} <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/contact">
-                <Button size="lg" variant="outline" className="border-lit/70 text-lit hover:border-lit hover:bg-lit hover:text-navy">
-                  {t("home.quick.visit", "Visit Us")}
-                </Button>
-              </Link>
-            </div>
-          </div>
-          <div className="mx-auto w-full max-w-sm lg:col-span-5 lg:max-w-md">
-            <div className="slab -mx-4 h-5 sm:-mx-6" aria-hidden="true" />
-            <div className="border-x-[14px] border-b-[14px] border-lit bg-shadow">
-              <img src={hero5} alt="" loading="lazy" className="aspect-[3/4] w-full object-cover [object-position:17%_50%]" />
-            </div>
+      {/* CTA */}
+      <section className="relative isolate overflow-hidden py-28 text-white md:py-36">
+        <img src={hero3} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+        <div className="absolute inset-0 -z-10 bg-primary/85" />
+        <div className="container text-center">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto max-w-3xl font-heading text-4xl font-bold leading-tight md:text-6xl">
+            {t("home.cta.title")}
+          </motion.h2>
+          <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-white/85">{t("home.cta.desc")}</p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link to="/admissions">
+              <Button size="lg" className="rounded-none bg-white px-8 text-primary hover:bg-white/90">
+                {t("home.cta.button")} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button size="lg" variant="outline" className="rounded-none border-white bg-transparent px-8 text-white hover:bg-white hover:text-primary">
+                {t("home.quick.visit", "Visit Us")}
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

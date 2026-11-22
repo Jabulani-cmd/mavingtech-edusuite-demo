@@ -284,7 +284,7 @@ export default function BulkUserImport({ onImportComplete }: { onImportComplete?
                               {validationErrors[i].join(", ")}
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-300">
+                            <span className="flex items-center gap-1 text-xs text-green-600">
                               <CheckCircle2 className="h-3 w-3" /> Valid
                             </span>
                           )}
@@ -338,7 +338,7 @@ export default function BulkUserImport({ onImportComplete }: { onImportComplete?
                         <TableCell className="text-muted-foreground">{r.email}</TableCell>
                         <TableCell>
                           {r.status === "success" ? (
-                            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-300">
+                            <span className="flex items-center gap-1 text-xs text-green-600">
                               <CheckCircle2 className="h-3 w-3" /> {r.message}
                             </span>
                           ) : (

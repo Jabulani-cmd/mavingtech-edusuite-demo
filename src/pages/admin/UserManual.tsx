@@ -715,7 +715,7 @@ export default function UserManual() {
                       key={s.id}
                       onClick={() => { setActiveSection(s.id); setSearchQuery(""); }}
                       className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors ${
- activeSection === s.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"
+                        activeSection === s.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"
                       }`}
                     >
                       <Icon className="h-4 w-4 shrink-0" />

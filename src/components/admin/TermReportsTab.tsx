@@ -308,8 +308,8 @@ export default function TermReportsTab() {
         {reports.length > 0 && (
           <div className="flex gap-4 text-sm">
             <span>Total: <strong>{reports.length}</strong></span>
-            <span className="text-green-600 dark:text-green-300">Published: <strong>{reports.filter(r => r.is_published).length}</strong></span>
-            <span className="text-amber-600 dark:text-amber-300">Draft: <strong>{reports.filter(r => !r.is_published).length}</strong></span>
+            <span className="text-green-600">Published: <strong>{reports.filter(r => r.is_published).length}</strong></span>
+            <span className="text-amber-600">Draft: <strong>{reports.filter(r => !r.is_published).length}</strong></span>
           </div>
         )}
 
@@ -372,7 +372,7 @@ export default function TermReportsTab() {
                           onClick={() => togglePublish(report.id, report.is_published)}
                           title={report.is_published ? "Unpublish" : "Publish"}
                         >
-                          <CheckCircle className={`h-4 w-4 ${report.is_published ? "text-green-600 dark:text-green-300" : ""}`} />
+                          <CheckCircle className={`h-4 w-4 ${report.is_published ? "text-green-600" : ""}`} />
                         </Button>
                       </div>
                     </TableCell>

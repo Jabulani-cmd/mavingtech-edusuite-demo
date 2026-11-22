@@ -24,16 +24,16 @@ type PortalUser = {
 };
 
 const roleColors: Record<string, string> = {
-  admin: "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300",
-  student: "bg-primary/10 text-primary",
-  teacher: "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300",
-  parent: "bg-primary/10 text-primary",
-  finance: "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300",
-  principal: "bg-primary/10 text-primary",
-  deputy_principal: "bg-primary/10 text-primary",
-  hod: "bg-primary/10 text-primary",
-  admin_supervisor: "bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300",
-  registration: "bg-primary/10 text-primary",
+  admin: "bg-red-100 text-red-800",
+  student: "bg-blue-100 text-blue-800",
+  teacher: "bg-green-100 text-green-800",
+  parent: "bg-purple-100 text-purple-800",
+  finance: "bg-amber-100 text-amber-800",
+  principal: "bg-indigo-100 text-indigo-800",
+  deputy_principal: "bg-teal-100 text-teal-800",
+  hod: "bg-cyan-100 text-cyan-800",
+  admin_supervisor: "bg-orange-100 text-orange-800",
+  registration: "bg-pink-100 text-pink-800",
 };
 
 const PAGE_SIZE = 50;
@@ -240,7 +240,7 @@ export default function PasswordManagement() {
                       ) : (
                         <span className="flex items-center gap-1 text-muted-foreground"><Lock className="h-3.5 w-3.5" /> Private</span>
                       )}
-                      {u.must_change_password && <Badge variant="outline" className="mt-1 border-amber-300 text-amber-700 dark:text-amber-300">Must change at sign-in</Badge>}
+                      {u.must_change_password && <Badge variant="outline" className="mt-1 border-amber-300 text-amber-700">Must change at sign-in</Badge>}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{u.last_sign_in_at ? shortDate(u.last_sign_in_at) : "Never"}</TableCell>
                     <TableCell className="text-right">

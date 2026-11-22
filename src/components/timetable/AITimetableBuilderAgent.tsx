@@ -273,13 +273,13 @@ export default function AITimetableBuilderAgent() {
   const stepIdx = STEPS.indexOf(step);
 
   return (
-    <Card className="border-2 border-primary/40 bg-muted/60">
-      <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row">
-        <div className="min-w-0">
+    <Card className="border-2 border-purple-200 dark:border-purple-900 bg-gradient-to-br from-purple-50/60 via-background to-fuchsia-50/40 dark:from-purple-950/30 dark:to-fuchsia-950/20">
+      <CardHeader className="flex flex-row items-start justify-between gap-3">
+        <div>
           <CardTitle className="font-heading flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
+            <Bot className="h-5 w-5 text-purple-600" />
             Conversational AI Timetable Builder
-            <Badge variant="outline" className="ml-2 border-primary/40 text-primary">Agent</Badge>
+            <Badge variant="outline" className="ml-2 border-purple-300 text-purple-700 dark:text-purple-300">Agent</Badge>
           </CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
             I interview you step-by-step, then assemble the full weekly timetable for every form and class.
@@ -310,11 +310,11 @@ export default function AITimetableBuilderAgent() {
               initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               className={`flex ${m.role === "admin" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed
- ${m.role === "admin"
+                ${m.role === "admin"
                   ? "bg-primary text-primary-foreground rounded-br-sm"
                   : "bg-muted rounded-bl-sm border"}`}>
                 {m.role === "agent" && (
-                  <div className="flex items-center gap-1.5 mb-1 text-xs font-semibold text-primary">
+                  <div className="flex items-center gap-1.5 mb-1 text-xs font-semibold text-purple-600 dark:text-purple-300">
                     <Sparkles className="h-3 w-3" /> AI Agent
                   </div>
                 )}
@@ -363,14 +363,14 @@ export default function AITimetableBuilderAgent() {
 
         {/* Publish button on review */}
         {step === "review" && !approved && (
-          <Button onClick={handlePublish} className="w-full bg-emerald-700 hover:opacity-90">
+          <Button onClick={handlePublish} className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:opacity-90">
             <Upload className="h-4 w-4 mr-2" /> Approve & Publish Timetable
           </Button>
         )}
 
         {step === "published" && (
           <div className="rounded-lg border-2 border-green-500/40 bg-green-50 dark:bg-green-950/30 p-3 flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-300" />
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
             <span><strong>Published</strong> at {new Date(ctx.publishedAt!).toLocaleString()}. Live across student, teacher and admin portals.</span>
           </div>
         )}

@@ -161,8 +161,8 @@ export default function StudentExamTimetableTab({ studentId, formLevel, showAll 
                       <div 
                         key={entry.id} 
                         className={`p-4 rounded-lg border ${
- isExamToday 
- ? "bg-accent/10 border-accent" 
+                          isExamToday 
+                            ? "bg-accent/10 border-accent" 
                             : isUpcoming 
                               ? "bg-muted/50" 
                               : "bg-muted/20 opacity-60"

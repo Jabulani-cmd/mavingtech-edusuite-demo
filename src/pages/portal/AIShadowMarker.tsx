@@ -204,7 +204,7 @@ export default function AIShadowMarker() {
 
   return (
     <Layout>
-      <section className="border-b bg-muted/60 py-10">
+      <section className="border-b bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-10">
         <div className="container">
           <div className="flex items-start justify-between gap-4">
             <div>

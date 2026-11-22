@@ -143,7 +143,7 @@ export default function AccessStatusPanel({ className = "" }: { className?: stri
       animate={{ opacity: 1, y: 0 }}
       className={className}
     >
-      <Card className="overflow-hidden border border-primary/15 bg-muted/60">
+      <Card className="overflow-hidden border border-primary/15 bg-gradient-to-br from-background to-muted/30">
         <div className="space-y-3 p-3 sm:p-4">
           {/* Summary: one line, details on demand */}
           <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ export default function AccessStatusPanel({ className = "" }: { className?: stri
                 <div className="rounded-lg border bg-card/50 p-2.5">
                   <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Days left</p>
                   <p className={`mt-0.5 text-sm font-semibold ${
- !sub.expiresAt ? "" : sub.daysRemaining > 7 ? "text-emerald-600 dark:text-emerald-400" : sub.daysRemaining > 0 ? "text-amber-600 dark:text-amber-400" : "text-destructive"
+                    !sub.expiresAt ? "" : sub.daysRemaining > 7 ? "text-emerald-600 dark:text-emerald-400" : sub.daysRemaining > 0 ? "text-amber-600 dark:text-amber-400" : "text-destructive"
                   }`}>
                     {sub.expiresAt ? sub.daysRemaining : "Unlimited"}
                   </p>
@@ -235,7 +235,7 @@ export default function AccessStatusPanel({ className = "" }: { className?: stri
 
           {/* CTA for parents only */}
           {isParent && !sub.isActive && sub.status !== "pending" && (
-            <Button asChild size="sm" className="w-full bg-primary hover:opacity-90">
+            <Button asChild size="sm" className="w-full bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
               <Link to="/portal/parent/subscribe">
                 <Sparkles className="mr-2 h-4 w-4" />
                 {sub.status === "expired" ? "Renew subscription" : "View plans"}

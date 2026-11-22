@@ -267,9 +267,9 @@ export default function ReceiptSearchTab() {
                     <TableCell>{p.payment_method}</TableCell>
                     <TableCell>
                       {p.verified_at ? (
-                        <Badge variant="outline" className="border-emerald-500 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40">Verified</Badge>
+                        <Badge variant="outline" className="border-emerald-500 text-emerald-700 bg-emerald-50">Verified</Badge>
                       ) : (
-                        <Badge variant="outline" className="border-amber-500 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40">Pending</Badge>
+                        <Badge variant="outline" className="border-amber-500 text-amber-700 bg-amber-50">Pending</Badge>
                       )}
                     </TableCell>
                     <TableCell>

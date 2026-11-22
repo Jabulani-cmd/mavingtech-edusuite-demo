@@ -205,7 +205,7 @@ export default function BulkMarksUpload({ userId, classes, subjects, students, o
                       <td className="px-3 py-1.5">{r.student_name}</td>
                       <td className="px-3 py-1.5 text-center font-medium">{r.error ? "-" : r.mark}</td>
                       <td className="px-3 py-1.5 text-center">{r.error ? "-" : <Badge className="text-[10px]">{gradeFor(r.mark)}</Badge>}</td>
-                      <td className="px-3 py-1.5">{r.error ? <span className="text-xs text-destructive">{r.error}</span> : <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" />}</td>
+                      <td className="px-3 py-1.5">{r.error ? <span className="text-xs text-destructive">{r.error}</span> : <CheckCircle2 className="h-4 w-4 text-green-600" />}</td>
                     </tr>
                   ))}
                 </tbody>

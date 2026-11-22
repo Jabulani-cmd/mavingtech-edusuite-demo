@@ -1166,7 +1166,7 @@ export default function UserManagement() {
                     placeholder="user@example.com"
                   />
                   {editUser && editForm.email && editForm.email !== editUser.email && (
-                    <p className="text-xs text-amber-600 dark:text-amber-300">⚠ Email will be changed from {editUser.email}</p>
+                    <p className="text-xs text-amber-600">⚠ Email will be changed from {editUser.email}</p>
                   )}
                 </div>
               </div>

@@ -18,7 +18,6 @@ import ReportCardCommentGenerator from "@/components/teacher/ReportCardCommentGe
 import ParentMessageComposer from "@/components/teacher/ParentMessageComposer";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -367,7 +366,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   return (
     <div className={embedded ? "" : "min-h-screen bg-background"}>
       {!embedded && (
-        <header className="portal-header sticky top-0 z-50">
+        <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
           <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
             <div className="flex items-center gap-2">
               <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -377,7 +376,6 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
               <span className="hidden text-sm text-muted-foreground sm:inline">{displayName}</span>
               <NotificationBell />
               <LanguageSelect />
-              <ThemeToggle />
               <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex"><LogOut className="mr-1 h-4 w-4" /> Logout</Button>
               <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-8 w-8"><LogOut className="h-4 w-4" /></Button>
             </div>
@@ -391,7 +389,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           {staffInfo?.staff_number && (
             <p className="text-sm text-muted-foreground mb-4">Staff No: <span className="font-medium text-foreground">{staffInfo.staff_number}</span>{staffInfo.department ? ` · ${staffInfo.department}` : ""}</p>
           )}
-          <a href="/portal/teacher/ai-marker" className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-muted/60 p-4 transition hover:from-primary/15">
+          <a href="/portal/teacher/ai-marker" className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 transition hover:from-primary/15">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/15 text-primary">✨</div>
               <div>
@@ -457,7 +455,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
             <TabsTrigger value="parent-log" className="text-xs sm:text-sm"><MessageSquare className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Parents</TabsTrigger>
             <TabsTrigger value="schedule" className="text-xs sm:text-sm"><ClipboardList className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Schedule</TabsTrigger>
             <TabsTrigger value="leave" className="text-xs sm:text-sm"><CalendarOff className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Leave</TabsTrigger>
-            <TabsTrigger value="ai-assist" className="text-xs sm:text-sm bg-muted/60 data-[state=active]:from-primary/30 data-[state=active]:to-accent/30"><Sparkles className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" /> AI Assist</TabsTrigger>
+            <TabsTrigger value="ai-assist" className="text-xs sm:text-sm bg-gradient-to-r from-primary/10 to-accent/10 data-[state=active]:from-primary/30 data-[state=active]:to-accent/30"><Sparkles className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" /> AI Assist</TabsTrigger>
           </TabsList>
           </div>
 
@@ -570,7 +568,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                                 <td className="px-3 py-2 text-center capitalize">{r.type}</td>
                                 <td className="px-3 py-2 text-center">
                                   {r.source === "ai"
-                                    ? <Badge variant="outline" className="bg-primary/10 text-primary border-primary/40"><Sparkles className="h-3 w-3 mr-1" />AI Marked</Badge>
+                                    ? <Badge variant="outline" className="bg-violet-50 text-violet-700 border-violet-300"><Sparkles className="h-3 w-3 mr-1" />AI Marked</Badge>
                                     : <Badge variant="outline">Teacher</Badge>}
                                 </td>
                                 <td className="px-3 py-2 text-center font-bold">{r.scoreLabel}</td>
@@ -745,11 +743,11 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           <TabsContent value="ai-assist" className="space-y-4">
             <AIAssistantHub students={students} />
             <TeacherAIAssistant />
-            <Card className="border-primary/30 bg-muted/60">
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
               <CardHeader>
                 <CardTitle className="font-heading flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" /> AI Assistants
-                  <Badge variant="secondary" className="ml-2 bg-muted/60">Powered by AI</Badge>
+                  <Badge variant="secondary" className="ml-2 bg-gradient-to-r from-primary/20 to-accent/20">Powered by AI</Badge>
                 </CardTitle>
                 <CardDescription>
                   Speed up admin writing tasks. Every output is editable before you save or send.

@@ -15,8 +15,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['"Archivo"', 'system-ui', 'sans-serif'],
-        body: ['"Public Sans"', 'system-ui', 'sans-serif'],
+        heading: ['"Caladea"', 'Georgia', 'serif'],
+        body: ['"Jost"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -75,18 +75,6 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           light: "hsl(var(--gold-light))",
         },
-        ochre: {
-          DEFAULT: "hsl(var(--ochre))",
-          soft: "hsl(var(--ochre-soft))",
-        },
-        navy: "hsl(var(--navy))",
-        shadow: {
-          DEFAULT: "hsl(var(--shadow-stone))",
-          soft: "hsl(var(--shadow-stone-soft))",
-        },
-        lit: "hsl(var(--stone-lit))",
-        raised: "hsl(var(--raised))",
-        field: "hsl(var(--field))",
       },
       borderRadius: {
         lg: "var(--radius)",

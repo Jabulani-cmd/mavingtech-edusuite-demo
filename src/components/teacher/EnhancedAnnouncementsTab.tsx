@@ -105,8 +105,8 @@ export default function EnhancedAnnouncementsTab({ userId, classes, announcement
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
           <Button variant={viewTab === "mine" ? "secondary" : "ghost"} size="sm" onClick={() => setViewTab("mine")}>My Announcements ({myAnnouncements.length})</Button>
           <Button variant={viewTab === "all" ? "secondary" : "ghost"} size="sm" onClick={() => setViewTab("all")}>All Public ({announcements.length})</Button>
         </div>

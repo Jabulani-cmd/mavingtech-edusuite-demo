@@ -214,9 +214,9 @@ export default function AIAssessmentCreator({ open, onOpenChange, userId, classe
                         <button
                           type="button"
                           onClick={() => updateQ(i, { correct_index: oi })}
-                          className={`h-6 w-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${q.correct_index === oi ? "border-green-600 bg-green-50 dark:bg-green-950/40" : "border-muted-foreground/30"}`}
+                          className={`h-6 w-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${q.correct_index === oi ? "border-green-600 bg-green-50" : "border-muted-foreground/30"}`}
                         >
-                          {q.correct_index === oi && <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" />}
+                          {q.correct_index === oi && <CheckCircle2 className="h-4 w-4 text-green-600" />}
                         </button>
                         <Input value={opt} onChange={e => updateOpt(i, oi, e.target.value)} className="text-sm" />
                       </div>

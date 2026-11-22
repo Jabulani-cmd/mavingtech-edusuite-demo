@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type StaffMember = Database["public"]["Functions"]["get_staff_directory"]["Returns"][number];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+};
 
 const categoryOrder = ["leadership", "teaching", "admin", "general"];
 
@@ -34,40 +40,39 @@ export default function Staff() {
 
   return (
     <Layout>
-      <section className="bg-navy py-14 md:py-16">
+      <section className="bg-secondary py-16">
         <div className="container">
-          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
             {t("staff.title")}
-          </h1>
+          </motion.h1>
         </div>
       </section>
-      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       {groupPhoto && (
         <section className="py-12">
           <div className="container max-w-4xl">
-            <div>
-              <img src={groupPhoto} alt={t("staff.groupCaption")} className="w-full shadow-maroon object-cover" style={{ aspectRatio: "16/9" }} />
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
+              <img src={groupPhoto} alt={t("staff.groupCaption")} className="w-full rounded-xl shadow-maroon object-cover" style={{ aspectRatio: "16/9" }} />
               <p className="mt-3 text-center text-sm text-muted-foreground italic">{t("staff.groupCaption")}</p>
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
 
       {staffByCategory.map((group, sectionIdx) => (
-        <section key={group.category} className={sectionIdx % 2 === 0 ? "bg-ochre-soft py-16" : "py-16"}>
+        <section key={group.category} className={sectionIdx % 2 === 0 ? "bg-section-warm py-16" : "py-16"}>
           <div className="container">
-            <h2 className="mb-10 font-heading text-3xl font-bold text-primary">{categoryTitles[group.category]}</h2>
+            <h2 className="mb-10 text-center font-heading text-3xl font-bold text-primary">{categoryTitles[group.category]}</h2>
             <div className={`grid gap-8 ${group.category === "leadership" ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4"}`}>
               {group.members.map((member, i) => (
-                <div key={member.id}>
+                <motion.div key={member.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                   <Card className="h-full border-none shadow-maroon overflow-hidden">
                     {group.category === "leadership" ? (
                       <div className="flex flex-col items-center p-6 text-center">
                         {member.photo_url ? (
-                          <img src={member.photo_url} alt={member.full_name} className="mb-4 h-32 w-32 object-cover object-top shadow-md" />
+                          <img src={member.photo_url} alt={member.full_name} className="mb-4 h-32 w-32 rounded-full object-cover object-top shadow-md" />
                         ) : (
-                          <div className="mb-4 flex h-32 w-32 items-center justify-center bg-maroon-light">
+                          <div className="mb-4 flex h-32 w-32 items-center justify-center rounded-full bg-maroon-light">
                             <span className="font-heading text-4xl font-bold text-primary">{member.full_name[0]}</span>
                           </div>
                         )}
@@ -96,7 +101,7 @@ export default function Staff() {
                       </>
                     )}
                   </Card>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
