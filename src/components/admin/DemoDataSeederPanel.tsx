@@ -231,6 +231,17 @@ export default function DemoDataSeederPanel() {
       if (error) throw error;
       (data ?? []).forEach((r) => idByAdmission.set(String(r.admission_number), r.id));
     }
+    // Classes may have been removed while this load ran (for example by "Clear Demo Data"): check again and re-create any that are gone.
+    const { data: stillThere, error: clsErr } = await supabase.from("classes").select("id, name").in("name", classNames);
+    if (clsErr) throw clsErr;
+    const liveByName = new Map((stillThere ?? []).map((c) => [c.name, c.id]));
+    const gone = seed.classes.filter((c) => !liveByName.has(c.name));
+    if (gone.length) {
+      const { data: re, error } = await supabase.from("classes").insert(gone.map(classRow)).select("id, name");
+      if (error) throw error;
+      (re ?? []).forEach((r) => liveByName.set(r.name, r.id));
+    }
+    for (const c of seed.classes) classIdMap.set(c.id, liveByName.get(c.name)!);
     const roster = seed.students
       .map((st) => ({ student_id: idByAdmission.get(st.admissionNumber), class_id: classIdMap.get(st.classId) }))
       .filter((r): r is { student_id: string; class_id: string } => !!r.student_id && !!r.class_id);
@@ -532,6 +543,7 @@ export default function DemoDataSeederPanel() {
     people.clear();
     try { window.localStorage.removeItem("mt_demo_allocation_v2"); } catch { /* storage unavailable */ }
     setSummary(null);
+    setRunning(true);
     try {
       // Exams, finance records, boarding, inventory and school life first: they point at students, classes and invoices.
       try { await clearDemoSchoolLife(); } catch { /* not installed yet, or nothing to remove */ }
@@ -576,6 +588,8 @@ export default function DemoDataSeederPanel() {
       toast({ title: "Demo data cleared", description: "Demo students, classes, staff, timetables, marks, attendance and fees were removed. Demo logins stay and are reused on the next load." });
     } catch (e) {
       toast({ title: "Some demo data could not be removed", description: errorMessage(e, "Unknown error"), variant: "destructive" });
+    } finally {
+      setRunning(false);
     }
   }
 
@@ -642,7 +656,7 @@ export default function DemoDataSeederPanel() {
                 <Button onClick={downloadCredentials} variant="outline" size="sm">
                   <Download className="h-4 w-4 mr-1" /> Login credentials (Excel)
                 </Button>
-                <Button onClick={handleClear} variant="destructive" size="sm">
+                <Button onClick={handleClear} disabled={running} variant="destructive" size="sm">
                   <Trash2 className="h-4 w-4 mr-1" /> Clear Demo Data
                 </Button>
               </>
