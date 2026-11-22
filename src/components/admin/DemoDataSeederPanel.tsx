@@ -589,23 +589,23 @@ export default function DemoDataSeederPanel() {
   }
 
   const stats = [
-    { icon: GraduationCap, label: "Students",  value: people.students.length, color: "text-blue-600" },
-    { icon: UserCog,       label: "Parents",   value: people.parents.length,  color: "text-purple-600" },
-    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-600" },
-    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-600" },
-    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-600" },
-    { icon: CalendarClock, label: "Periods",   value: seeded ? alloc.slots.filter(s => s.subjectId).length : 0, color: "text-cyan-600" },
+    { icon: GraduationCap, label: "Students",  value: people.students.length, color: "text-primary" },
+    { icon: UserCog,       label: "Parents",   value: people.parents.length,  color: "text-primary" },
+    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-600 dark:text-emerald-300" },
+    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-600 dark:text-amber-300" },
+    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-600 dark:text-rose-300" },
+    { icon: CalendarClock, label: "Periods",   value: seeded ? alloc.slots.filter(s => s.subjectId).length : 0, color: "text-primary" },
   ];
 
   return (
     <>
-      <Card className="border-2 border-cyan-200 dark:border-cyan-900 bg-gradient-to-br from-cyan-50/60 via-background to-teal-50/40 dark:from-cyan-950/30 dark:to-teal-950/20">
-        <CardHeader className="flex flex-row items-start justify-between gap-3">
-          <div>
+      <Card className="border-2 border-primary/40 bg-muted/60">
+        <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+          <div className="min-w-0">
             <CardTitle className="font-heading flex items-center gap-2">
-              <Database className="h-5 w-5 text-cyan-600" />
+              <Database className="h-5 w-5 text-primary" />
               Demo Data Seeder
-              <Badge variant="outline" className="ml-2 border-cyan-300 text-cyan-700 dark:text-cyan-300">Demo</Badge>
+              <Badge variant="outline" className="ml-2 border-primary/40 text-primary">Demo</Badge>
               {seeded && <Badge className="bg-green-600 hover:bg-green-700"><CheckCircle2 className="h-3 w-3 mr-1" />Loaded</Badge>}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
@@ -615,20 +615,20 @@ export default function DemoDataSeederPanel() {
               cards, fees, invoices, payments and expenses, boarding, inventory, announcements, events, awards and more, so every portal has data to show.
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <Button onClick={handleLoad} disabled={running} className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:opacity-90">
+          <div className="flex w-full min-w-0 flex-wrap gap-2 sm:w-auto sm:max-w-[22rem] sm:justify-end">
+            <Button onClick={handleLoad} disabled={running} className="h-auto min-h-10 max-w-full whitespace-normal py-2 text-left">
               {running ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
               {seeded ? "Re-seed Demo Data" : "Load Demo Data"}
             </Button>
-            <Button onClick={handleCreateLogins} disabled={running} variant="outline" size="sm" title="Create or repair the sign-in accounts for the demo teachers, students and parents already loaded">
+            <Button onClick={handleCreateLogins} disabled={running} variant="outline" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left" title="Create or repair the sign-in accounts for the demo teachers, students and parents already loaded">
               <KeyRound className="h-4 w-4 mr-1" /> Create missing logins
             </Button>
             {seeded && (
               <>
-                <Button onClick={downloadCredentials} variant="outline" size="sm">
+                <Button onClick={downloadCredentials} variant="outline" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left">
                   <Download className="h-4 w-4 mr-1" /> Login credentials (Excel)
                 </Button>
-                <Button onClick={handleClear} variant="destructive" size="sm">
+                <Button onClick={handleClear} variant="destructive" size="sm" className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left">
                   <Trash2 className="h-4 w-4 mr-1" /> Clear Demo Data
                 </Button>
               </>
@@ -651,8 +651,8 @@ export default function DemoDataSeederPanel() {
                 {STEPS.map((s, i) => (
                   <motion.div key={s} initial={{ opacity: 0 }} animate={{ opacity: i <= stepIdx ? 1 : 0.4 }}
                     className="flex items-center gap-2 text-sm">
-                    {i < stepIdx ? <CheckCircle2 className="h-4 w-4 text-green-600" /> :
-                      i === stepIdx ? <Loader2 className="h-4 w-4 animate-spin text-cyan-600" /> :
+                    {i < stepIdx ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" /> :
+                      i === stepIdx ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> :
                       <div className="h-4 w-4 rounded-full border-2 border-muted" />}
                     <span>{s}</span>
                   </motion.div>
@@ -695,7 +695,7 @@ export default function DemoDataSeederPanel() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" /> Demo data loaded successfully
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-300" /> Demo data loaded successfully
             </DialogTitle>
             <DialogDescription>
               The entire system has been populated and the timetable is live across every portal.

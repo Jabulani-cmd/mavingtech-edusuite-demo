@@ -84,7 +84,7 @@ export default function ParentMessageComposer({ students, teacherName, triggerLa
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5 hover:from-primary/10">
+        <Button variant="outline" className="border-primary/30 bg-muted/60">
           <Sparkles className="mr-2 h-4 w-4 text-primary" /> {triggerLabel}
         </Button>
       </DialogTrigger>
@@ -141,7 +141,7 @@ export default function ParentMessageComposer({ students, teacherName, triggerLa
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={() => generate(1)} disabled={loading} className="flex-1 bg-gradient-to-r from-primary to-accent">
+            <Button onClick={() => generate(1)} disabled={loading} className="flex-1 bg-muted/60">
               {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Drafting...</> : <><Sparkles className="mr-2 h-4 w-4" /> Generate Draft</>}
             </Button>
             {message && (
@@ -154,7 +154,7 @@ export default function ParentMessageComposer({ students, teacherName, triggerLa
           {message && (
             <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="bg-gradient-to-r from-primary/20 to-accent/20">
+                <Badge variant="secondary" className="bg-muted/60">
                   <Sparkles className="mr-1 h-3 w-3" /> AI Generated{edited ? " · edited" : ""}
                 </Badge>
                 <Button type="button" size="sm" variant="ghost" onClick={copyToClipboard}>

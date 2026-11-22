@@ -58,7 +58,7 @@ export default function TeacherAllocations() {
             Assign teachers to class–subjects. Every timetable slot shows Period, Subject, Teacher and Venue.
           </p>
         </div>
-        <Badge variant="secondary" className="bg-amber-100 text-amber-900 border border-amber-300">
+        <Badge variant="secondary" className="bg-amber-100 dark:bg-amber-950/40 text-amber-900 border border-amber-300">
           DEMO MODE: in-memory data
         </Badge>
       </div>
@@ -236,7 +236,7 @@ export default function TeacherAllocations() {
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
                             <span>{t.periods}/{t.maxPeriodsPerWeek} pds</span>
-                            <span className={t.pct >= 90 ? "text-red-600" : t.pct >= 50 ? "text-amber-600" : "text-muted-foreground"}>{t.pct}%</span>
+                            <span className={t.pct >= 90 ? "text-red-600 dark:text-red-300" : t.pct >= 50 ? "text-amber-600 dark:text-amber-300" : "text-muted-foreground"}>{t.pct}%</span>
                           </div>
                           <Progress value={Math.min(t.pct, 100)} className="h-1.5" />
                         </div>
@@ -283,9 +283,9 @@ export default function TeacherAllocations() {
 
 function StatCard({ label, value, icon: Icon, tone }: { label: string; value: number; icon: LucideIcon; tone?: "success" | "warning" | "danger" }) {
   const toneClass =
-    tone === "success" ? "text-emerald-600 bg-emerald-50 border-emerald-200" :
-    tone === "warning" ? "text-amber-700 bg-amber-50 border-amber-200" :
-    tone === "danger" ? "text-red-700 bg-red-50 border-red-200" :
+    tone === "success" ? "text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200" :
+    tone === "warning" ? "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border-amber-200" :
+    tone === "danger" ? "text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/40 border-red-200" :
     "text-primary bg-primary/5 border-primary/20";
   return (
     <Card className={`p-3 border ${toneClass}`}>

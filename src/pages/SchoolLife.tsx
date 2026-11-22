@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,13 +24,14 @@ export default function SchoolLife() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl font-bold text-secondary-foreground">
+          <h1 className="font-heading text-4xl font-extrabold text-lit md:text-6xl">
             {t("schoolLife.title")}
-          </motion.h1>
+          </h1>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-16">
         <div className="container">
@@ -50,17 +50,17 @@ export default function SchoolLife() {
               {sdcMeetings.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   {sdcMeetings.map((m, i) => (
-                    <motion.div key={m.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                    <div key={m.id}>
                       <Card className="h-full transition-shadow hover:shadow-maroon">
                         <CardContent className="p-5">
-                          <span className="inline-block rounded-full bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary mb-2">{t("schoolLife.sdc.badge")}</span>
+                          <span className="inline-block bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary mb-2">{t("schoolLife.sdc.badge")}</span>
                           <h3 className="font-heading font-semibold">{m.title}</h3>
                           <p className="text-sm text-accent font-medium">{new Date(m.meeting_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>
                           {m.location && <p className="text-xs text-muted-foreground mt-1">📍 {m.location}</p>}
                           {m.description && <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>}
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -76,17 +76,17 @@ export default function SchoolLife() {
               {ptMeetings.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   {ptMeetings.map((m, i) => (
-                    <motion.div key={m.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                    <div key={m.id}>
                       <Card className="h-full transition-shadow hover:shadow-maroon">
                         <CardContent className="p-5">
-                          <span className="inline-block rounded-full bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary mb-2">{t("schoolLife.pt.badge")}</span>
+                          <span className="inline-block bg-maroon-light px-2 py-0.5 text-xs font-semibold text-primary mb-2">{t("schoolLife.pt.badge")}</span>
                           <h3 className="font-heading font-semibold">{m.title}</h3>
                           <p className="text-sm text-accent font-medium">{new Date(m.meeting_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>
                           {m.location && <p className="text-xs text-muted-foreground mt-1">📍 {m.location}</p>}
                           {m.description && <p className="mt-2 text-sm text-muted-foreground">{m.description}</p>}
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -98,10 +98,10 @@ export default function SchoolLife() {
               {galleryImages.length > 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {galleryImages.map((img, i) => (
-                    <motion.div key={img.id} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                      <img src={img.image_url} alt={img.caption || `Gallery ${i + 1}`} className="h-64 w-full rounded-xl object-cover shadow-maroon transition-transform hover:scale-[1.02]" />
+                    <div key={img.id}>
+                      <img src={img.image_url} alt={img.caption || `Gallery ${i + 1}`} className="h-64 w-full object-cover shadow-maroon transition-transform hover:scale-[1.02]" />
                       {img.caption && <p className="mt-2 text-center text-xs text-muted-foreground">{img.caption}</p>}
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               ) : (

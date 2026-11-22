@@ -73,10 +73,10 @@ export default function AdminAttendanceViewer() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case "present": return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+      case "present": return <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" />;
       case "absent": return <XCircle className="h-4 w-4 text-destructive" />;
-      case "late": return <Clock className="h-4 w-4 text-yellow-600" />;
-      case "excused": return <AlertCircle className="h-4 w-4 text-blue-600" />;
+      case "late": return <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-300" />;
+      case "excused": return <AlertCircle className="h-4 w-4 text-primary" />;
       default: return null;
     }
   };
@@ -172,7 +172,7 @@ export default function AdminAttendanceViewer() {
             <p className="text-xs text-muted-foreground">Total Records</p>
           </CardContent></Card>
           <Card><CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{summary.present}</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-300">{summary.present}</p>
             <p className="text-xs text-muted-foreground">Present</p>
           </CardContent></Card>
           <Card><CardContent className="p-4 text-center">
@@ -180,11 +180,11 @@ export default function AdminAttendanceViewer() {
             <p className="text-xs text-muted-foreground">Absent</p>
           </CardContent></Card>
           <Card><CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-yellow-600">{summary.late}</p>
+            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">{summary.late}</p>
             <p className="text-xs text-muted-foreground">Late</p>
           </CardContent></Card>
           <Card><CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{summary.excused}</p>
+            <p className="text-2xl font-bold text-primary">{summary.excused}</p>
             <p className="text-xs text-muted-foreground">Excused</p>
           </CardContent></Card>
         </div>

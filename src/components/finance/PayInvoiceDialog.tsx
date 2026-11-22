@@ -162,7 +162,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
   }
 
   const DemoBadge = () => (
-    <Badge variant="outline" className="border-amber-400/60 text-amber-700 bg-amber-50">
+    <Badge variant="outline" className="border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40">
       Demo Mode. No real money processed
     </Badge>
   );
@@ -235,8 +235,8 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
                 { id: "onemoney", label: "OneMoney", icon: CreditCard, note: "Mobile money" },
               ] satisfies { id: PaymentMethod; label: string; icon: typeof CreditCard; note: string }[]).map((m) => (
                 <button key={m.id} onClick={() => pickMethod(m.id)}
-                  className="p-4 rounded-lg border-2 border-border hover:border-teal-500 hover:bg-teal-50/40 text-left transition">
-                  <m.icon className="w-6 h-6 mb-1 text-teal-600" />
+                  className="p-4 rounded-lg border-2 border-border hover:border-primary/40 hover:bg-primary/15 text-left transition">
+                  <m.icon className="w-6 h-6 mb-1 text-primary" />
                   <div className="font-semibold text-sm">{m.label}</div>
                   <div className="text-xs text-muted-foreground">{m.note}</div>
                 </button>
@@ -251,7 +251,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
         {step === "card" && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Lock className="w-5 h-5 text-teal-600" />
+              <Lock className="w-5 h-5 text-primary" />
               <h3 className="font-semibold">Paynow Zimbabwe: Card</h3>
             </div>
             {!processing ? (
@@ -282,7 +282,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
               </>
             ) : (
               <div className="text-center py-6">
-                <Loader2 className="w-10 h-10 animate-spin mx-auto text-teal-600" />
+                <Loader2 className="w-10 h-10 animate-spin mx-auto text-primary" />
                 <div className="mt-3 text-sm">Contacting your bank…</div>
                 <Progress value={70} className="mt-3" />
               </div>
@@ -292,14 +292,14 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
 
         {step === "gateway" && (
           <div className="text-center space-y-3">
-            <Building2 className="w-12 h-12 mx-auto text-teal-600" />
+            <Building2 className="w-12 h-12 mx-auto text-primary" />
             <h3 className="font-semibold">Paynow Zimbabwe: Internet Banking (ZIPIT)</h3>
             <p className="text-sm text-muted-foreground">
               Authorise a {formatMoney(payAmount)} payment with your bank.
             </p>
             {!processing && <div className="text-left"><OutcomeSelect /></div>}
             {processing ? (
-              <div><Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" /><div className="text-sm mt-2">Redirecting…</div></div>
+              <div><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /><div className="text-sm mt-2">Redirecting…</div></div>
             ) : (
               <Button size="lg" className="w-full" onClick={() => simulate(false)}>Continue to Bank</Button>
             )}
@@ -317,7 +317,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
             </div>
             {!processing && <div className="text-left"><OutcomeSelect /></div>}
             {processing ? (
-              <div><Loader2 className="w-8 h-8 animate-spin mx-auto text-teal-600" /><div className="text-sm mt-2">Waiting for confirmation…</div></div>
+              <div><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /><div className="text-sm mt-2">Waiting for confirmation…</div></div>
             ) : (
               <Button size="lg" className="w-full" onClick={() => simulate(false)}>I have scanned & paid</Button>
             )}

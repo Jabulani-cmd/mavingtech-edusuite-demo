@@ -221,7 +221,7 @@ export default function StudentAssessmentsTab({ studentId, studentClassId }: Pro
                   <Eye className="h-3 w-3 mr-1" /> Result
                 </Button>
               )}
-              {sub && !res && <Badge className="text-[10px] bg-green-100 text-green-700">Submitted</Badge>}
+              {sub && !res && <Badge className="text-[10px] bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300">Submitted</Badge>}
             </div>
           </div>
         </CardContent>
@@ -277,7 +277,7 @@ export default function StudentAssessmentsTab({ studentId, studentClassId }: Pro
                         key={oi}
                         onClick={() => setAnswers(a => ({ ...a, [q.id]: oi }))}
                         className={`w-full text-left p-2.5 rounded-lg border text-sm transition-colors ${
-                          answers[q.id] === oi ? "border-primary bg-primary/5 font-medium" : "border-muted hover:border-primary/30"
+ answers[q.id] === oi ? "border-primary bg-primary/5 font-medium" : "border-muted hover:border-primary/30"
                         }`}
                       >
                         <span className="inline-block w-6 font-medium">{String.fromCharCode(65 + oi)}.</span> {opt}

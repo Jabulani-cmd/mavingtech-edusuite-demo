@@ -38,7 +38,7 @@ interface ResultRow {
 
 function getMarkBarColor(mark: number): string {
   if (mark >= 80) return "bg-emerald-500";
-  if (mark >= 60) return "bg-blue-500";
+  if (mark >= 60) return "bg-primary";
   if (mark >= 50) return "bg-amber-500";
   return "bg-red-500";
 }
@@ -184,7 +184,7 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-3 gap-2">
-            <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+            <Card className="bg-muted/60 border-secondary/20">
               <CardContent className="p-3 text-center">
                 <TrendingUp className="mx-auto mb-1 h-5 w-5 text-secondary" />
                 <p className="text-lg font-bold text-secondary">{avgMark}%</p>
@@ -195,10 +195,10 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200/40">
+            <Card className="bg-muted/60 border-amber-200/40">
               <CardContent className="p-3 text-center">
-                <Trophy className="mx-auto mb-1 h-5 w-5 text-amber-600" />
-                <p className="text-lg font-bold text-amber-700">
+                <Trophy className="mx-auto mb-1 h-5 w-5 text-amber-600 dark:text-amber-300" />
+                <p className="text-lg font-bold text-amber-700 dark:text-amber-300">
                   {overallRank ? `${overallRank.rank}` : "-"}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
@@ -207,13 +207,13 @@ export default function StudentExamResultsTab({ studentId, studentName, admissio
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-emerald-200/40">
+            <Card className="bg-muted/60 border-emerald-200/40">
               <CardContent className="p-3 text-center">
-                <Award className="mx-auto mb-1 h-5 w-5 text-emerald-600" />
-                <p className="text-xs font-bold text-emerald-700 truncate">
+                <Award className="mx-auto mb-1 h-5 w-5 text-emerald-600 dark:text-emerald-300" />
+                <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 truncate">
                   {bestSubject?.subject_name || "-"}
                 </p>
-                <p className="text-lg font-bold text-emerald-700">{bestSubject?.mark || 0}%</p>
+                <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{bestSubject?.mark || 0}%</p>
                 <p className="text-[10px] text-muted-foreground">Best Subject</p>
               </CardContent>
             </Card>

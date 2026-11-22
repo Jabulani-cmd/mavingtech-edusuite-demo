@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, Users, GraduationCap, BookOpen, Briefcase, ClipboardList, Bell, CheckCircle2, UserCheck, Layers, CalendarOff, Bot } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -41,7 +42,7 @@ export default function HODDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
+      <header className="portal-header sticky top-0 z-50">
         <div className="container flex h-14 sm:h-20 items-center justify-between px-3 sm:px-4">
           <div className="flex items-center gap-2">
             <img src={schoolLogo} alt="MavingTech High School" className="h-auto w-24 object-contain sm:w-40" />
@@ -50,6 +51,7 @@ export default function HODDashboard() {
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden sm:inline text-sm text-muted-foreground">Head of Department</span>
             <LanguageSelect />
+            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex"><LogOut className="mr-1 h-4 w-4" /> Logout</Button>
             <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-8 w-8"><LogOut className="h-4 w-4" /></Button>
           </div>

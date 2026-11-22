@@ -373,7 +373,7 @@ export default function TermRegistration() {
         </Card>
         <Card>
           <CardContent className="pt-4 text-center">
-            <p className="text-2xl font-bold text-amber-600">{unregistered.length}</p>
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-300">{unregistered.length}</p>
             <p className="text-xs text-muted-foreground">Not yet registered</p>
           </CardContent>
         </Card>
@@ -417,11 +417,11 @@ export default function TermRegistration() {
                         <TableCell>{s.boarding_status === "boarding" || s.boarding_status === "boarder" ? "Boarding" : "Day"}</TableCell>
                         <TableCell>
                           {isReg ? (
-                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                            <Badge variant="outline" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200">
                               <CheckCircle className="mr-1 h-3 w-3" /> Registered
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                            <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200">
                               <AlertTriangle className="mr-1 h-3 w-3" /> Pending
                             </Badge>
                           )}
@@ -537,8 +537,8 @@ export default function TermRegistration() {
               Register all {unregistered.length} unregistered students for {term} {academicYear}. Each will receive an invoice based on fee structures matching their form and boarding status.
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
-            <p className="text-sm text-amber-800">
+          <div className="rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 p-3">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
               <AlertTriangle className="inline mr-1 h-4 w-4" />
               This will create {unregistered.length} term registrations and up to {unregistered.length} invoices. Existing subjects from each student's profile will be carried forward.
             </p>

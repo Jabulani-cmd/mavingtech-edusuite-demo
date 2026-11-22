@@ -12,10 +12,10 @@ interface Props {
 }
 
 const statusConfig: Record<string, { color: string; bg: string; icon: LucideIcon }> = {
-  present: { color: "text-green-700", bg: "bg-green-100", icon: CheckCircle },
-  absent: { color: "text-red-700", bg: "bg-red-100", icon: CalendarX },
-  late: { color: "text-yellow-700", bg: "bg-yellow-100", icon: Clock },
-  excused: { color: "text-blue-700", bg: "bg-blue-100", icon: CalendarCheck },
+  present: { color: "text-green-700 dark:text-green-300", bg: "bg-green-100 dark:bg-green-950/40", icon: CheckCircle },
+  absent: { color: "text-red-700 dark:text-red-300", bg: "bg-red-100 dark:bg-red-950/40", icon: CalendarX },
+  late: { color: "text-yellow-700 dark:text-yellow-300", bg: "bg-yellow-100 dark:bg-yellow-950/40", icon: Clock },
+  excused: { color: "text-primary", bg: "bg-primary/10", icon: CalendarCheck },
 };
 
 export default function StudentAttendanceTab({ studentId }: Props) {
@@ -62,18 +62,18 @@ export default function StudentAttendanceTab({ studentId }: Props) {
   return (
     <div className="space-y-4">
       {/* Summary */}
-      <Card className="border-none shadow-sm bg-gradient-to-r from-secondary/10 to-secondary/5">
+      <Card className="border-none shadow-sm bg-muted/60">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Term Attendance</p>
-              <p className={`text-4xl font-bold ${percent >= 80 ? "text-green-600" : percent >= 60 ? "text-yellow-600" : "text-destructive"}`}>
+              <p className={`text-4xl font-bold ${percent >= 80 ? "text-green-600 dark:text-green-300" : percent >= 60 ? "text-yellow-600 dark:text-yellow-300" : "text-destructive"}`}>
                 {percent}%
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <p className="text-lg font-bold text-green-600">{presentDays}</p>
+                <p className="text-lg font-bold text-green-600 dark:text-green-300">{presentDays}</p>
                 <p className="text-[10px] text-muted-foreground">Present</p>
               </div>
               <div>
@@ -81,7 +81,7 @@ export default function StudentAttendanceTab({ studentId }: Props) {
                 <p className="text-[10px] text-muted-foreground">Absent</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-yellow-600">{lateDays}</p>
+                <p className="text-lg font-bold text-yellow-600 dark:text-yellow-300">{lateDays}</p>
                 <p className="text-[10px] text-muted-foreground">Late</p>
               </div>
             </div>

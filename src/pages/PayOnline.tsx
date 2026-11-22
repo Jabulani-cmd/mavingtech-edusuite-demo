@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,25 +24,26 @@ export default function PayOnline() {
 
   return (
     <Layout>
-      <section className="bg-secondary py-16">
+      <section className="bg-navy py-14 md:py-16">
         <div className="container">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="font-heading text-4xl font-bold text-secondary-foreground"
+          <h1
+           
+           
+            className="font-heading text-4xl font-extrabold text-lit md:text-6xl"
           >
             Pay Online
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          </h1>
+          <p
+           
+           
+           
             className="mt-2 text-secondary-foreground/80"
           >
             Secure online payments for school fees and donations
-          </motion.p>
+          </p>
         </div>
       </section>
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <section className="py-16">
         <div className="container max-w-2xl">
@@ -128,11 +128,11 @@ function FeePaymentForm() {
 
   if (submitted) {
     return (
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-green-200 bg-green-50 dark:bg-green-950/40">
         <CardContent className="py-12 text-center">
-          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
-          <h3 className="text-xl font-bold text-green-800">Payment Request Recorded</h3>
-          <p className="mt-2 text-green-700">
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600 dark:text-green-300" />
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-300">Payment Request Recorded</h3>
+          <p className="mt-2 text-green-700 dark:text-green-300">
             Your fee payment of <strong>{formatMoney(amount)}</strong> for student{" "}
             <strong>{studentInfo?.admission_number}</strong> has been recorded.
           </p>
@@ -184,12 +184,12 @@ function FeePaymentForm() {
           )}
 
           {studentInfo && (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-950/40 p-4">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Student Found</span>
+                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-300" />
+                <span className="text-sm font-medium text-green-800 dark:text-green-300">Student Found</span>
               </div>
-              <p className="mt-1 text-sm text-green-700">
+              <p className="mt-1 text-sm text-green-700 dark:text-green-300">
                 <strong>{studentInfo.full_name}</strong>
                 <Badge variant="outline" className="ml-2 text-xs">{studentInfo.form || "N/A"}</Badge>
               </p>
@@ -308,11 +308,11 @@ function DonationForm({ initialProjectId }: { initialProjectId: string }) {
 
   if (submitted) {
     return (
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-green-200 bg-green-50 dark:bg-green-950/40">
         <CardContent className="py-12 text-center">
-          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
-          <h3 className="text-xl font-bold text-green-800">Thank You for Your Generosity!</h3>
-          <p className="mt-2 text-green-700">
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600 dark:text-green-300" />
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-300">Thank You for Your Generosity!</h3>
+          <p className="mt-2 text-green-700 dark:text-green-300">
             Your donation of <strong>{formatMoney(amount)}</strong> has been recorded.
           </p>
           <p className="mt-4 text-sm text-muted-foreground">

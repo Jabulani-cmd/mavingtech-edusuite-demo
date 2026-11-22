@@ -16,7 +16,7 @@ interface Props {
 
 export default function AIAssistantHub({ students = [] }: Props) {
   return (
-    <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <Card className="border-primary/30 bg-muted/60">
       <CardHeader>
         <CardTitle className="font-heading flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" /> AI Assistant

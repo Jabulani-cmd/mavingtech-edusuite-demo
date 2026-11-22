@@ -271,12 +271,12 @@ export default function TimetableManagement() {
           <h1 className="text-2xl font-bold tracking-tight">Timetable Management</h1>
           <p className="text-sm text-muted-foreground">Build, generate and distribute class & exam timetables.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-gradient-to-r from-purple-50 to-fuchsia-50 dark:from-purple-950/40 dark:to-fuchsia-950/40">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm border bg-muted/60">
             <Label htmlFor="ai-switch" className="text-xs cursor-pointer">{aiMode ? "✨ AI Mode" : "Manual Mode"}</Label>
             <Switch id="ai-switch" checked={aiMode} onCheckedChange={setAiMode} />
           </div>
-          <Button onClick={() => setSetupOpen(true)} className={aiMode ? "bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700" : ""}>
+          <Button onClick={() => setSetupOpen(true)} className={aiMode ? "bg-primary" : ""}>
             {aiMode ? <Sparkles className="h-4 w-4 mr-1" /> : <Plus className="h-4 w-4 mr-1" />}
             Create New Timetable
           </Button>
@@ -305,7 +305,7 @@ export default function TimetableManagement() {
                 <TabsTrigger value="class">Class Timetables</TabsTrigger>
                 <TabsTrigger value="exam">Exam Timetables</TabsTrigger>
               </TabsList>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 <Button variant="outline" size="sm" onClick={exportCsv}><Download className="h-3 w-3 mr-1" />Export CSV</Button>
                 <Button variant="outline" size="sm" onClick={() => { setView("views"); setViewMode("master"); }}><Eye className="h-3 w-3 mr-1" />Views</Button>
                 <Button variant="outline" size="sm" onClick={() => setView("analytics")}><BarChart3 className="h-3 w-3 mr-1" />Analytics</Button>

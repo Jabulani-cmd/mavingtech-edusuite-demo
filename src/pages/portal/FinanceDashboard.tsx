@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -56,7 +57,7 @@ export default function FinanceDashboard() {
 
   return (
     <div className="min-h-screen bg-section-warm">
-      <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
+      <header className="portal-header sticky top-0 z-30">
         <div className="container mx-auto flex items-center justify-between px-3 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <img
@@ -87,6 +88,7 @@ export default function FinanceDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageSelect />
+            <ThemeToggle />
             <Button
               variant="outline"
               size="sm"

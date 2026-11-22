@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
+import PageHero from "@/components/layout/PageHero";
+import heroImg from "@/assets/sports.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Music, BookOpen, Palette, Users, Volleyball } from "lucide-react";
@@ -33,13 +34,10 @@ export default function SportsCulture() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <section className="bg-gradient-to-b from-primary/5 to-background py-16">
-        <div className="container">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12 text-center">
-            <h1 className="font-heading text-4xl font-bold text-primary md:text-5xl">{t("sportsCulture.title")}</h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">{t("sportsCulture.subtitle")}</p>
-          </motion.div>
+      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} />
 
+      <section className="py-16">
+        <div className="container">
           <Tabs defaultValue="sports" className="w-full">
             <TabsList className="mx-auto mb-8 grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="sports">{t("sportsCulture.tabs.sports")}</TabsTrigger>
@@ -51,14 +49,14 @@ export default function SportsCulture() {
                 {sportsKeys.map((k, i) => {
                   const s = sportsData[k];
                   return (
-                    <motion.div key={k} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                      <Card className="h-full border-primary/10 transition-shadow hover:shadow-lg">
+                    <div key={k}>
+                      <Card className="h-full border-primary/10 transition-colors hover:bg-accent">
                         <CardContent className="p-6">
                           <h3 className="mb-2 text-lg font-semibold text-foreground">{s.name}</h3>
                           <p className="text-sm text-muted-foreground">{s.desc}</p>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -69,17 +67,17 @@ export default function SportsCulture() {
                 {clubDefs.map(({ key, icon: Icon }, i) => {
                   const c = clubsData[key];
                   return (
-                    <motion.div key={key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                      <Card className="h-full border-primary/10 transition-shadow hover:shadow-lg">
+                    <div key={key}>
+                      <Card className="h-full border-primary/10 transition-colors hover:bg-accent">
                         <CardContent className="flex items-start gap-4 p-6">
-                          <div className="rounded-full bg-primary/10 p-2"><Icon className="h-6 w-6 text-primary" /></div>
+                          <div className="bg-primary/10 p-2"><Icon className="h-6 w-6 text-primary" /></div>
                           <div>
                             <h3 className="mb-1 text-lg font-semibold text-foreground">{c.name}</h3>
                             <p className="text-sm text-muted-foreground">{c.desc}</p>
                           </div>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>

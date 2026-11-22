@@ -45,15 +45,15 @@ export default function ParentBilling() {
 
   const statusBadge = () => {
     if (sub.loading) return <Badge variant="outline">Loading…</Badge>;
-    if (sub.status === "active") return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300"><Check className="w-3 h-3 mr-1" /> Active</Badge>;
-    if (sub.status === "pending") return <Badge className="bg-amber-100 text-amber-700 border-amber-300"><Clock className="w-3 h-3 mr-1" /> Pending Verification</Badge>;
-    if (sub.status === "expired") return <Badge className="bg-red-100 text-red-700 border-red-300"><AlertTriangle className="w-3 h-3 mr-1" /> Expired</Badge>;
-    if (sub.status === "complimentary") return <Badge className="bg-sky-100 text-sky-700 border-sky-300"><Sparkles className="w-3 h-3 mr-1" /> Complimentary</Badge>;
+    if (sub.status === "active") return <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300"><Check className="w-3 h-3 mr-1" /> Active</Badge>;
+    if (sub.status === "pending") return <Badge className="bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300"><Clock className="w-3 h-3 mr-1" /> Pending Verification</Badge>;
+    if (sub.status === "expired") return <Badge className="bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-300"><AlertTriangle className="w-3 h-3 mr-1" /> Expired</Badge>;
+    if (sub.status === "complimentary") return <Badge className="bg-primary/10 text-primary border-primary/40"><Sparkles className="w-3 h-3 mr-1" /> Complimentary</Badge>;
     return <Badge variant="outline">No active plan</Badge>;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50/30 dark:from-slate-950 dark:via-teal-950/20 dark:to-blue-950/20">
+    <div className="min-h-screen bg-muted/60">
       <div className="max-w-5xl mx-auto px-4 py-8">
         <Button variant="ghost" onClick={() => nav("/portal/parent-teacher")} className="mb-4">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to dashboard
@@ -67,12 +67,12 @@ export default function ParentBilling() {
         <div className="mb-6"><CurrencyConverter /></div>
 
         {/* Current subscription */}
-        <Card className="mb-6 border-2 border-teal-500/30">
+        <Card className="mb-6 border-2 border-primary/40">
           <CardContent className="p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <ShieldCheck className="w-5 h-5 text-teal-600" />
+                  <ShieldCheck className="w-5 h-5 text-primary" />
                   <h2 className="font-semibold text-lg">Current Subscription</h2>
                   {statusBadge()}
                 </div>
@@ -93,7 +93,7 @@ export default function ParentBilling() {
                 <Button onClick={() => sub.refresh()} variant="outline" size="sm">
                   <RefreshCw className="w-4 h-4 mr-2" /> Refresh
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90">
+                <Button asChild className="bg-primary hover:opacity-90">
                   <Link to="/portal/parent/subscribe">
                     <Sparkles className="w-4 h-4 mr-2" />
                     {sub.status === "active" ? "Change Plan" : sub.status === "expired" ? "Renew Now" : "Subscribe"}
@@ -111,16 +111,16 @@ export default function ParentBilling() {
             const current = sub.isActive && sub.plan === p.name;
             return (
               <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                <Card className={`relative overflow-hidden h-full ${p.is_recommended ? "border-teal-500 border-2 shadow-xl" : ""}`}>
+                <Card className={`relative overflow-hidden h-full ${p.is_recommended ? "border-primary/40 border-2 shadow-xl" : ""}`}>
                   {p.is_recommended && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
+                    <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
                       <Crown className="w-3 h-3" /> BEST VALUE
                     </div>
                   )}
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold font-display">{p.name}</h3>
-                      {current && <Badge className="bg-emerald-100 text-emerald-700">Current</Badge>}
+                      {current && <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Current</Badge>}
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">
                       <span className="text-3xl font-bold">{formatMoney(p.amount_usd, { decimals: false })}</span>
@@ -130,7 +130,7 @@ export default function ParentBilling() {
                     <ul className="mt-4 space-y-1.5">
                       {planFeatures(p).slice(0, 6).map((f) => (
                         <li key={f} className="flex gap-2 text-sm">
-                          <Check className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" />
+                          <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                           <span>{f}</span>
                         </li>
                       ))}
@@ -138,7 +138,7 @@ export default function ParentBilling() {
                     <Button
                       asChild
                       variant={current ? "outline" : "default"}
-                      className={`w-full mt-5 ${!current && p.is_recommended ? "bg-gradient-to-r from-teal-600 to-blue-700 hover:opacity-90" : ""}`}
+                      className={`w-full mt-5 ${!current && p.is_recommended ? "bg-primary hover:opacity-90" : ""}`}
                     >
                       <Link to="/portal/parent/subscribe">
                         {current ? "Manage / Renew" : "Choose Plan"}
@@ -169,8 +169,8 @@ export default function ParentBilling() {
                 {payments.map((p) => (
                   <div key={p.id} className="p-4 flex items-center justify-between gap-3 flex-wrap">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/40 flex items-center justify-center">
-                        <CreditCard className="w-5 h-5 text-teal-600" />
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CreditCard className="w-5 h-5 text-primary" />
                       </div>
                       <div>
                         <div className="font-medium text-sm">
@@ -186,8 +186,8 @@ export default function ParentBilling() {
                         <div className="font-semibold">{formatMoney(p.amount)}</div>
                         <div className="text-xs">
                           <Badge variant={p.payment_status === "paid" ? "default" : "outline"} className={
-                            p.payment_status === "paid" ? "bg-emerald-100 text-emerald-700 border-emerald-300" :
-                            p.payment_status === "awaiting_verification" ? "bg-amber-100 text-amber-700 border-amber-300" :
+                            p.payment_status === "paid" ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300" :
+                            p.payment_status === "awaiting_verification" ? "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300" :
                             ""
                           }>
                             {p.payment_status?.replace("_", " ")}

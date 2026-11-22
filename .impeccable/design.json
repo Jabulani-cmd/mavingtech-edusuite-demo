@@ -1,0 +1,498 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T09:25:49Z",
+  "title": "Design System: MavingTech EduSuite",
+  "extensions": {
+    "colorMeta": {
+      "logo-blue": {
+        "role": "primary",
+        "displayName": "Logo Blue",
+        "canonical": "hsl(214 100% 32%)",
+        "hex": "#0047a3",
+        "tonalRamp": [
+          "#082245",
+          "#003b87",
+          "#0054c1",
+          "#006dfb",
+          "#378eff",
+          "#71afff",
+          "#b2d1f8",
+          "#ebf1fa"
+        ]
+      },
+      "logo-navy": {
+        "role": "secondary",
+        "displayName": "Logo Navy",
+        "canonical": "hsl(222 70% 17%)",
+        "hex": "#0d1f4a",
+        "tonalRamp": [
+          "#111d3c",
+          "#143073",
+          "#1d45a4",
+          "#265ad6",
+          "#557ee1",
+          "#86a4ea",
+          "#bdcbed",
+          "#edf0f8"
+        ]
+      },
+      "lichen-ochre": {
+        "role": "secondary",
+        "displayName": "Lichen Ochre",
+        "canonical": "hsl(40 72% 46%)",
+        "hex": "#ca9121",
+        "tonalRamp": [
+          "#3c2d10",
+          "#745313",
+          "#a6771b",
+          "#d89b23",
+          "#e3b253",
+          "#ebc985",
+          "#eeddbc",
+          "#f8f4ed"
+        ]
+      },
+      "lichen-ochre-soft": {
+        "role": "secondary",
+        "displayName": "Pale Ochre",
+        "canonical": "hsl(40 60% 80%)",
+        "hex": "#ebd6ad",
+        "tonalRamp": [
+          "#392c14",
+          "#6c511a",
+          "#9b7326",
+          "#ca9631",
+          "#d8ae5e",
+          "#e3c68d",
+          "#eadcc0",
+          "#f7f4ee"
+        ]
+      },
+      "sunlit-granite": {
+        "role": "neutral",
+        "displayName": "Sunlit Granite",
+        "canonical": "hsl(40 6% 90%)",
+        "hex": "#e7e6e4",
+        "tonalRamp": [
+          "#282724",
+          "#47453f",
+          "#66625b",
+          "#858076",
+          "#a19d95",
+          "#bcb9b4",
+          "#d7d6d3",
+          "#f3f2f2"
+        ]
+      },
+      "stone-lit": {
+        "role": "neutral",
+        "displayName": "Stone Lit",
+        "canonical": "hsl(40 8% 96%)",
+        "hex": "#f6f5f4",
+        "tonalRamp": [
+          "#292623",
+          "#4a433d",
+          "#6a6157",
+          "#8a7e71",
+          "#a59b91",
+          "#bfb8b1",
+          "#d9d5d2",
+          "#f3f2f1"
+        ]
+      },
+      "stone-card": {
+        "role": "neutral",
+        "displayName": "Stone Card",
+        "canonical": "hsl(40 8% 95%)",
+        "hex": "#f3f3f1",
+        "tonalRamp": [
+          "#292924",
+          "#49493e",
+          "#686859",
+          "#878774",
+          "#a3a393",
+          "#bdbdb3",
+          "#d8d8d2",
+          "#f3f3f2"
+        ]
+      },
+      "stone-muted": {
+        "role": "neutral",
+        "displayName": "Stone Muted",
+        "canonical": "hsl(40 6% 85%)",
+        "hex": "#dbdad6",
+        "tonalRamp": [
+          "#282724",
+          "#48463f",
+          "#67645a",
+          "#868376",
+          "#a19f94",
+          "#bdbbb3",
+          "#d7d6d3",
+          "#f3f3f2"
+        ]
+      },
+      "stone-hover": {
+        "role": "neutral",
+        "displayName": "Stone Hover",
+        "canonical": "hsl(40 6% 82%)",
+        "hex": "#d4d2ce",
+        "tonalRamp": [
+          "#282724",
+          "#48453f",
+          "#67635a",
+          "#868075",
+          "#a19d94",
+          "#bdbab3",
+          "#d7d6d3",
+          "#f3f2f2"
+        ]
+      },
+      "joint-line": {
+        "role": "neutral",
+        "displayName": "Joint Line",
+        "canonical": "hsl(40 5% 72%)",
+        "hex": "#bbb9b4",
+        "tonalRamp": [
+          "#282725",
+          "#474540",
+          "#65635c",
+          "#848078",
+          "#a09d96",
+          "#bbb9b4",
+          "#d7d6d3",
+          "#f3f2f2"
+        ]
+      },
+      "joint-input": {
+        "role": "neutral",
+        "displayName": "Joint Input",
+        "canonical": "hsl(40 5% 66%)",
+        "hex": "#adaaa4",
+        "tonalRamp": [
+          "#282725",
+          "#474540",
+          "#66625c",
+          "#848077",
+          "#a09d96",
+          "#bcb9b4",
+          "#d7d6d3",
+          "#f3f2f2"
+        ]
+      },
+      "shadow-ink": {
+        "role": "neutral",
+        "displayName": "Shadow Ink",
+        "canonical": "hsl(220 18% 11%)",
+        "hex": "#171a21",
+        "tonalRamp": [
+          "#21242c",
+          "#373f4f",
+          "#4f5a72",
+          "#677594",
+          "#8994ad",
+          "#abb3c5",
+          "#cfd3db",
+          "#f1f2f4"
+        ]
+      },
+      "stone-text-soft": {
+        "role": "neutral",
+        "displayName": "Stone Text Soft",
+        "canonical": "hsl(220 9% 30%)",
+        "hex": "#464a53",
+        "tonalRamp": [
+          "#242529",
+          "#3e4149",
+          "#585d69",
+          "#737a88",
+          "#9298a3",
+          "#b2b6be",
+          "#d2d4d8",
+          "#f2f2f3"
+        ]
+      },
+      "shadow-stone": {
+        "role": "neutral",
+        "displayName": "Shadow Stone",
+        "canonical": "hsl(220 18% 10%)",
+        "hex": "#15181e",
+        "tonalRamp": [
+          "#21242c",
+          "#383f4f",
+          "#4f5b72",
+          "#687694",
+          "#8995ac",
+          "#abb4c4",
+          "#cfd3db",
+          "#f1f2f4"
+        ]
+      },
+      "shadow-stone-soft": {
+        "role": "neutral",
+        "displayName": "Shadow Stone Soft",
+        "canonical": "hsl(220 14% 16%)",
+        "hex": "#23272f",
+        "tonalRamp": [
+          "#22252b",
+          "#3a404d",
+          "#525c6f",
+          "#6b7890",
+          "#8c96a9",
+          "#aeb4c2",
+          "#d0d3da",
+          "#f1f2f3"
+        ]
+      },
+      "kiln-red": {
+        "role": "error",
+        "displayName": "Kiln Red",
+        "canonical": "hsl(6 72% 40%)",
+        "hex": "#af2b1d",
+        "tonalRamp": [
+          "#3c1510",
+          "#741c13",
+          "#a6291b",
+          "#d83524",
+          "#e36153",
+          "#eb8f85",
+          "#eec1bc",
+          "#f8eeed"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The school name on the lintel and the intro heading. Archivo 800, 2.1rem on phones to 4.5rem."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings. Archivo 800, 1.875rem to 3rem."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Gateway labels, block names on slabs, the principal quote. Archivo 700, 1.125rem to 2rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Intro and running copy in Public Sans, capped at max-w-prose."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, nav links, text links. Public Sans 600 to 700, 14px, 0.025em tracking, sentence case."
+      }
+    },
+    "shadows": [
+      {
+        "name": "slab",
+        "value": "inset 0 1px 0 hsl(0 0% 100% / 0.7), 0 2px 3px hsl(220 25% 8% / 0.2), 0 18px 32px -18px hsl(220 25% 8% / 0.5)",
+        "purpose": "Raised stone: dropdowns, captions, login panel, news slabs."
+      },
+      {
+        "name": "button",
+        "value": "0 1px 2px hsl(220 25% 8% / 0.3), 0 8px 16px -8px hsl(220 25% 8% / 0.45)",
+        "purpose": "Default button only."
+      },
+      {
+        "name": "nav-sill",
+        "value": "0 1px 0 hsl(var(--border)), 0 10px 24px -18px hsl(220 25% 8% / 0.5)",
+        "purpose": "Sticky nav bar."
+      },
+      {
+        "name": "lintel-cast",
+        "value": "0 -18px 40px -20px hsl(220 25% 6% / 0.7)",
+        "purpose": "The navy lintel against the wall."
+      }
+    ],
+    "motion": [
+      {
+        "name": "course-lay",
+        "value": "760ms cubic-bezier(0.16, 1, 0.3, 1) backwards; delay calc(var(--lay-i) * 110ms); opacity, translateY(18px), clip-path inset from the top",
+        "purpose": "The one authored motion: the hero wall laid course by course, ground up. Removed under prefers-reduced-motion."
+      },
+      {
+        "name": "state-transition",
+        "value": "150ms ease-out",
+        "purpose": "Colour, shadow and 1px press-down on buttons and gateways."
+      },
+      {
+        "name": "picture-zoom",
+        "value": "700ms ease-out, scale 1.04",
+        "purpose": "Hover zoom on picture blocks; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1400px"
+      }
+    ],
+    "joint": {
+      "value": "5px",
+      "purpose": "Gap and padding of every block grid, drawn in shadow stone."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Logo blue, square, the default action; hover turns navy.",
+      "html": "<button class=\"ds-btn-primary\">Apply now</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:8px 16px;border:0;border-radius:0;font:600 14px/1 'Public Sans',system-ui,sans-serif;letter-spacing:.025em;cursor:pointer;transition:background-color .15s ease-out,color .15s ease-out,box-shadow .15s ease-out,transform .15s ease-out;background:#0047a3;color:#fff;box-shadow:0 1px 2px rgba(12,16,24,.3),0 8px 16px -8px rgba(12,16,24,.45);}.ds-btn-primary:hover{background:#0d1f4a;}.ds-btn-primary:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}.ds-btn-primary:active{transform:translateY(1px);}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Navy fill for secondary actions; hover turns logo blue.",
+      "html": "<button class=\"ds-btn-secondary\">Portal login</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:8px 16px;border:0;border-radius:0;font:600 14px/1 'Public Sans',system-ui,sans-serif;letter-spacing:.025em;cursor:pointer;transition:background-color .15s ease-out,color .15s ease-out,box-shadow .15s ease-out,transform .15s ease-out;background:#0d1f4a;color:#f6f5f4;}.ds-btn-secondary:hover{background:#0047a3;}.ds-btn-secondary:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}.ds-btn-secondary:active{transform:translateY(1px);}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "2px charcoal border; hover inverts to a solid charcoal fill.",
+      "html": "<button class=\"ds-btn-outline\">Visit us</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:8px 16px;border:0;border-radius:0;font:600 14px/1 'Public Sans',system-ui,sans-serif;letter-spacing:.025em;cursor:pointer;transition:background-color .15s ease-out,color .15s ease-out,box-shadow .15s ease-out,transform .15s ease-out;background:transparent;color:#171a21;border:2px solid rgba(23,26,33,.7);}.ds-btn-outline:hover{background:#171a21;color:#e7e6e4;border-color:#171a21;}.ds-btn-outline:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}"
+    },
+    {
+      "name": "Gateway",
+      "kind": "custom",
+      "refersTo": "gateway-primary",
+      "description": "An entrance slab with a 6px ochre top edge; one per audience, set in a 5px-joint grid.",
+      "html": "<div class=\"ds-gate-row\"><a class=\"ds-gate ds-gate-blue\" href=\"#\">Apply<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 17L17 7M8 7h9v9\"/></svg></a><a class=\"ds-gate ds-gate-stone\" href=\"#\">Visit Us<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 17L17 7M8 7h9v9\"/></svg></a><a class=\"ds-gate ds-gate-navy\" href=\"#\">Portal<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 17L17 7M8 7h9v9\"/></svg></a></div>",
+      "css": ".ds-gate-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;background:#15181e;}.ds-gate{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-height:112px;padding:20px 24px;border-top:6px solid #ca9121;font:700 24px/1.1 Archivo,system-ui,sans-serif;text-decoration:none;transition:background-color .15s ease-out;}.ds-gate svg{transition:transform .2s ease-out;}.ds-gate:hover svg{transform:translate(2px,-2px);}.ds-gate-blue{background:#0047a3;color:#fff;}.ds-gate-blue:hover{background:#0d1f4a;}.ds-gate-stone{background:#f6f5f4;color:#171a21;}.ds-gate-stone:hover{background:#ebd6ad;}.ds-gate-navy{background:#0d1f4a;color:#f6f5f4;}.ds-gate-navy:hover{background:#0047a3;}.ds-gate:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}"
+    },
+    {
+      "name": "Lintel",
+      "kind": "custom",
+      "refersTo": "lintel",
+      "description": "Navy panel carrying the school name over the wall.",
+      "html": "<div class=\"ds-lintel\"><h1>MavingTech High School</h1><p>Learning that builds on solid ground.</p><span>Harare, Zimbabwe</span></div>",
+      "css": ".ds-lintel{background:#0d1f4a;color:#f6f5f4;padding:40px 48px;max-width:36rem;box-shadow:0 -18px 40px -20px rgba(8,10,16,.7);}.ds-lintel h1{margin:0;font:800 48px/1.04 Archivo,system-ui,sans-serif;letter-spacing:-.015em;}.ds-lintel p{margin:16px 0 0;font:400 18px/1.6 'Public Sans',system-ui,sans-serif;color:rgba(246,245,244,.85);}.ds-lintel span{display:block;margin-top:16px;font:700 14px/1 'Public Sans',system-ui,sans-serif;letter-spacing:.025em;color:#ca9121;}"
+    },
+    {
+      "name": "Slab",
+      "kind": "card",
+      "refersTo": "slab",
+      "description": "A stone-lit block set on the wall with a real offset shadow; carries captions, dropdowns and the login panel.",
+      "html": "<div class=\"ds-slab\"><h3>Mathematics</h3><p>Numeracy from Form 1 to A-Level.</p></div>",
+      "css": ".ds-slab{background:#f6f5f4;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 3px rgba(12,16,24,.2),0 18px 32px -18px rgba(12,16,24,.5);display:inline-block;max-width:280px;padding:16px 20px;color:#171a21;}.ds-slab h3{margin:0;font:700 20px/1.1 Archivo,system-ui,sans-serif;}.ds-slab p{margin:4px 0 0;font:400 14px/1.4 'Public Sans',system-ui,sans-serif;color:#464a53;}"
+    },
+    {
+      "name": "Chevron Band",
+      "kind": "custom",
+      "refersTo": "chevron-band",
+      "description": "The signature ornament: two courses of slanted blocks, painted with a mask. Sizes 8, 16 and 24px.",
+      "html": "<div class=\"ds-chev ds-chev-lg\"></div><div class=\"ds-chev\" style=\"margin-top:8px\"></div><div class=\"ds-chev ds-chev-dark\" style=\"margin-top:8px\"></div>",
+      "css": ".ds-chev{height:16px;background:#ca9121;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M0 7 L4 0 L8 0 L4 7 Z M0 9 L4 9 L8 16 L4 16 Z'/%3E%3C/svg%3E\") repeat-x left center / 10px 16px;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M0 7 L4 0 L8 0 L4 7 Z M0 9 L4 9 L8 16 L4 16 Z'/%3E%3C/svg%3E\") repeat-x left center / 10px 16px;}.ds-chev-lg{height:24px;-webkit-mask-size:15px 24px;mask-size:15px 24px;}.ds-chev-dark{background:#23272f;}"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Stone-lit bar links; the active page takes a 3px ochre underline.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-active\" href=\"#\">Home</a><a class=\"ds-nav-link\" href=\"#\">About</a><a class=\"ds-nav-link\" href=\"#\">Academics</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;background:#f6f5f4;padding:12px 16px;box-shadow:0 1px 0 #bbb9b4,0 10px 24px -18px rgba(12,16,24,.5);}.ds-nav-link{padding:10px 12px;border-bottom:3px solid transparent;font:600 14px/1 'Public Sans',system-ui,sans-serif;color:rgba(23,26,33,.8);text-decoration:none;transition:color .15s;}.ds-nav-link:hover{color:#0047a3;}.ds-nav-link.ds-active{border-bottom-color:#ca9121;color:#171a21;}.ds-nav-link:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Square field with a joint-input stroke and a logo-blue focus ring, as inherited from the base Input.",
+      "html": "<label class=\"ds-label\" for=\"ds-f\">Email</label><input id=\"ds-f\" class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\">",
+      "css": ".ds-label{display:block;margin-bottom:8px;font:600 14px/1 'Public Sans',system-ui,sans-serif;color:#171a21;}.ds-input{box-sizing:border-box;width:100%;height:40px;padding:8px 12px;border:1px solid #adaaa4;border-radius:0;background:#e7e6e4;font:400 14px 'Public Sans',system-ui,sans-serif;color:#171a21;}.ds-input:focus-visible{outline:2px solid #0047a3;outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Dry-Stone Wall",
+    "overview": "The school is built the way Great Zimbabwe is built: coursed granite laid without mortar, a band of slanted blocks crowning the wall, and openings you walk through. Everything in the system is either stone, a joint between stones, or a gateway cut into the wall. Sunlit granite is the ground, shadow granite is the ink and the dark courses, and the only saturated colours are the logo blue and navy, which carry action, and one lichen ochre, which is the only marker.\n\nStructure comes from masonry, not from boxes. Sections are separated by chevron bands and by courses of blocks set 5px apart. Corners are square. Slabs sit on the wall with a hairline top light and a real offset drop shadow, and nothing glows, blurs or fades into a gradient.\n\nThe system is built and verified on the public home page and the login screen. The rest of the app inherits its tokens only.",
+    "keyCharacteristics": [
+      "Two granite states: sunlit ground for reading, shadow stone for the hero wall, principal section and footer.",
+      "Square corners everywhere; 5px dry joints between blocks; hairline borders in joint-line grey.",
+      "One signature ornament: the chevron band, a mask-painted course of slanted blocks that can take any fill.",
+      "Logo blue and navy for every action; ochre for markers only.",
+      "Archivo 800 for headings at large sizes, Public Sans for text.",
+      "One motion: the hero wall laid course by course."
+    ],
+    "rules": [
+      {
+        "name": "The One Marker Rule",
+        "body": "Ochre is the only marker colour. It marks a place (where you are, where a gateway opens, which link is a link); it never fills a surface, never carries body text on light ground, and never appears with a second accent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Logo Carries Action Rule",
+        "body": "Every control that does something is logo blue or navy. Stone, ochre and charcoal never stand in for a primary action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Floor Rule",
+        "body": "Ochre text appears only on shadow stone or navy. On sunlit ground ochre is a line, not letters.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cut Letter Rule",
+        "body": "Archivo is set at 700 or 800 only. A light or regular heading looks like paper, not stone.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Kicker Rule",
+        "body": "There is no small uppercase line above a heading, no numbered section tags, no tracked-out caps label. A heading stands alone.",
+        "section": "typography"
+      },
+      {
+        "name": "The Real Shadow Rule",
+        "body": "Shadows are offset downward with a tight core and a long soft tail. No centered glows, no coloured shadows, no blur used as decoration.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No Gradient Rule",
+        "body": "Surfaces are flat fills. Legacy gradient utilities render as solid fills.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do build structure from courses: full-width bands of blocks with a 5px shadow-stone joint, varying spans row to row so joints never stack.",
+      "Do end a section with a chevron band (8px under the nav, 16px or 24px between courses) and tone it for its ground.",
+      "Do keep every corner square and every border a hairline, except the 6px ochre gateway top edge and the 3px active-nav underline.",
+      "Do give raised things a real offset shadow (the slab recipe) and keep everything else flat.",
+      "Do use logo blue or navy for every action and ochre only as a marker.",
+      "Do set headings in Archivo at 700 or 800 and text in Public Sans, and keep lines to max-w-prose.",
+      "Do give each audience its own gateway on the home page and keep touch targets at 44px or larger.",
+      "Do keep the school crest, MavingTech mark, Ministry, ZIMSEC and Cambridge logos and the real photography unaltered; photographs go through StoneWall or sit in a thick stone frame.",
+      "Do keep layouts tolerant of longer Shona and Ndebele strings."
+    ],
+    "donts": [
+      "Don't put a kicker, eyebrow or small tracked-caps label above a heading.",
+      "Don't use a coloured side stripe on any block, callout or row. The ochre edge belongs only on the top of a gateway or slab and under the active nav item.",
+      "Don't use gradients on surfaces or text, gradient text, or glassy blur.",
+      "Don't use cards as the structure of a page; use masonry blocks, rows, rules and gateways instead.",
+      "Don't round corners, add pill shapes, or use soft glow shadows.",
+      "Don't fill a surface with ochre or set ochre body text on light ground.",
+      "Don't add a second accent colour, or revive maroon and gold.",
+      "Don't add a hero carousel, a quick-link icon bar, or a floating stat-card strip.",
+      "Don't add motion beyond course-lay; no scroll reveals, parallax or looping animation.",
+      "Don't invent figures. The home stats exist in code with undocumented sources and are not to be extended."
+    ]
+  }
+}

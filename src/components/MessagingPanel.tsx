@@ -601,9 +601,9 @@ export default function MessagingPanel() {
   const roleBadgeColor = (r: string) => {
     switch (r) {
       case "admin": return "bg-destructive/10 text-destructive border-destructive/20";
-      case "teacher": return "bg-blue-500/10 text-blue-700 border-blue-500/20";
-      case "parent": return "bg-green-500/10 text-green-700 border-green-500/20";
-      case "student": return "bg-amber-500/10 text-amber-700 border-amber-500/20";
+      case "teacher": return "bg-primary text-primary border-primary/40";
+      case "parent": return "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20";
+      case "student": return "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -835,8 +835,8 @@ export default function MessagingPanel() {
                             key={opt.value}
                             onClick={() => setContactRoleFilter(opt.value)}
                             className={`px-2 py-0.5 rounded-full text-[10px] font-medium border transition-colors ${
-                              contactRoleFilter === opt.value
-                                ? "bg-primary text-primary-foreground border-primary"
+ contactRoleFilter === opt.value
+ ? "bg-primary text-primary-foreground border-primary"
                                 : "bg-muted text-muted-foreground border-transparent hover:border-border"
                             }`}
                           >
@@ -897,7 +897,7 @@ export default function MessagingPanel() {
                       if (isSystem) {
                         return (
                           <div key={msg.id} className="flex justify-center">
-                            <div className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5">
+                            <div className="flex items-center gap-1.5 rounded-sm bg-muted px-3 py-1.5">
                               <AlertCircle className="h-3 w-3 text-muted-foreground" />
                               <span className="text-xs text-muted-foreground">{msg.content}</span>
                             </div>

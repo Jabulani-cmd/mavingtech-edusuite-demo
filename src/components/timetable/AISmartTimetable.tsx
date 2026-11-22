@@ -85,7 +85,7 @@ export default function AISmartTimetable() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <Card className="border-primary/30 bg-muted/60">
         <CardHeader className="flex flex-row items-start justify-between gap-3 flex-wrap">
           <div>
             <CardTitle className="font-heading text-2xl flex items-center gap-2">
@@ -112,7 +112,7 @@ export default function AISmartTimetable() {
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-4">
         {/* Grid */}
-        <Card>
+        <Card className="min-w-0">
           <CardHeader className="flex flex-row items-center justify-between gap-2 flex-wrap">
             <div>
               <CardTitle className="text-lg">Master Timetable</CardTitle>
@@ -127,7 +127,7 @@ export default function AISmartTimetable() {
               </SelectContent>
             </Select>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 overflow-x-auto">
             <EditableGrid
               slots={slotsForClass}
               periods={periodSchedule}
