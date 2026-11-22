@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
 import heroImg from "@/assets/hero-school.png";
+import { focus } from "@/lib/photoFocus";
 import { Card, CardContent } from "@/components/ui/card";
 import { Home, Shield, Utensils, Clock, Users, Heart } from "lucide-react";
 
@@ -12,7 +13,7 @@ export default function Boarding() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <PageHero title={t("boarding.title")} subtitle={t("boarding.subtitle")} image={heroImg} />
+      <PageHero title={t("boarding.title")} subtitle={t("boarding.subtitle")} image={heroImg} focus={focus.heroSchool} />
 
       <section className="py-16">
         <div className="container">

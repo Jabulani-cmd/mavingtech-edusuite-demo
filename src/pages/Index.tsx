@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import StoneWall from "@/components/masonry/StoneWall";
-import hero2 from "@/assets/hero-students-2.jpg";
-import hero3 from "@/assets/hero-students-3.jpg";
+import StoneOpening from "@/components/masonry/StoneOpening";
+import { focus, type Focus } from "@/lib/photoFocus";
+import hero1 from "@/assets/hero-students-1.jpg";
+import hero5 from "@/assets/hero-students-5.jpg";
 import currCs from "@/assets/curriculum-cs.jpg";
 import currMath from "@/assets/curriculum-math.jpg";
 import currLit from "@/assets/curriculum-literature.jpg";
@@ -23,13 +24,14 @@ import principalPhoto from "@/assets/principal-moyo.jpg";
 type Announcement = { id: string; title: string; content: string | null; created_at: string };
 
 /** A block in a masonry course: the picture, and a small slab of stone carrying its name. */
-function StoneBlock({ to, img, title, desc, className }: { to: string; img: string; title: string; desc?: string; className: string }) {
+function StoneBlock({ to, img, title, desc, className, pos }: { to: string; img: string; title: string; desc?: string; className: string; pos: Focus }) {
   return (
     <Link to={to} className={`group relative block overflow-hidden bg-shadow ${className}`}>
       <img
         src={img}
         alt=""
         loading="lazy"
+        style={{ objectPosition: pos.d }}
         className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
       />
       <div className="slab absolute bottom-0 left-0 max-w-[88%] px-4 py-3 sm:px-5 sm:py-4">
@@ -78,39 +80,41 @@ export default function Home() {
   ];
 
   const curriculum = [
-    { title: t("home.curriculum.cs.title"), desc: t("home.curriculum.cs.desc"), img: currCs, span: "lg:col-span-5" },
-    { title: t("home.curriculum.math.title"), desc: t("home.curriculum.math.desc"), img: currMath, span: "lg:col-span-4" },
-    { title: t("home.curriculum.lit.title"), desc: t("home.curriculum.lit.desc"), img: currLit, span: "lg:col-span-3" },
-    { title: t("home.curriculum.sci.title"), desc: t("home.curriculum.sci.desc"), img: currSci, span: "lg:col-span-3" },
-    { title: t("home.curriculum.arts.title"), desc: t("home.curriculum.arts.desc"), img: currArts, span: "lg:col-span-4" },
-    { title: t("home.curriculum.perf.title"), desc: t("home.curriculum.perf.desc"), img: currPerf, span: "lg:col-span-5" },
+    { title: t("home.curriculum.cs.title"), desc: t("home.curriculum.cs.desc"), img: currCs, pos: focus.currCs, span: "lg:col-span-5" },
+    { title: t("home.curriculum.math.title"), desc: t("home.curriculum.math.desc"), img: currMath, pos: focus.currMath, span: "lg:col-span-4" },
+    { title: t("home.curriculum.lit.title"), desc: t("home.curriculum.lit.desc"), img: currLit, pos: focus.currLit, span: "lg:col-span-3" },
+    { title: t("home.curriculum.sci.title"), desc: t("home.curriculum.sci.desc"), img: currSci, pos: focus.currSci, span: "lg:col-span-3" },
+    { title: t("home.curriculum.arts.title"), desc: t("home.curriculum.arts.desc"), img: currArts, pos: focus.currArts, span: "lg:col-span-4" },
+    { title: t("home.curriculum.perf.title"), desc: t("home.curriculum.perf.desc"), img: currPerf, pos: focus.currPerf, span: "lg:col-span-5" },
   ];
 
   const activities = [
-    { title: t("home.activities.sports"), img: actSports, span: "lg:col-span-7" },
-    { title: t("home.activities.music"), img: actMusic, span: "lg:col-span-5" },
-    { title: t("home.activities.arts"), img: actArts, span: "lg:col-span-5" },
-    { title: t("home.activities.clubs"), img: actClubs, span: "lg:col-span-7" },
+    { title: t("home.activities.sports"), img: actSports, pos: focus.actSports, span: "lg:col-span-7" },
+    { title: t("home.activities.music"), img: actMusic, pos: focus.actMusic, span: "lg:col-span-5" },
+    { title: t("home.activities.arts"), img: actArts, pos: focus.actArts, span: "lg:col-span-5" },
+    { title: t("home.activities.clubs"), img: actClubs, pos: focus.actClubs, span: "lg:col-span-7" },
   ];
 
   return (
     <Layout>
-      {/* THE WALL: the classroom laid through coursed granite, the school named on a lintel, four gateways at the foot */}
+      {/* THE OPENING: the school photograph set into the wall like a window, the name on a lintel, four gateways at the foot */}
       <section className="granite bg-shadow">
-        <div className="relative">
-          <StoneWall
-            src={hero2}
-            alt={t("home.hero.title")}
-            position="center 32%"
-            phonePosition="56% 40%"
-            className="h-[300px] w-full sm:h-[74svh] sm:min-h-[540px] lg:h-[72vh]"
-          />
-          <div className="relative z-10 bg-navy px-5 pb-7 pt-6 text-lit shadow-[0_-18px_40px_-20px_hsl(220_25%_6%/0.7)] sm:absolute sm:inset-x-auto sm:bottom-0 sm:left-0 sm:max-w-[36rem] sm:px-8 sm:pb-9 sm:pt-8 lg:max-w-[46rem] lg:px-12 lg:pb-12 lg:pt-10">
-            <h1 className="text-[2.1rem] font-extrabold leading-[1.04] sm:text-5xl lg:text-6xl xl:text-7xl">{t("home.hero.title")}</h1>
-            <p className="mt-4 max-w-[34rem] text-base leading-relaxed text-lit/85 md:text-lg">{t("home.hero.subtitle")}</p>
-            <p className="mt-4 text-sm font-bold tracking-wide text-ochre">{t("home.hero.location", "Harare, Zimbabwe")}</p>
+        <StoneOpening
+          src={hero1}
+          alt={t("home.hero.title")}
+          focus={focus.heroStudents1}
+          seed={7}
+          photoClassName="h-[300px] sm:h-[44vh] sm:min-h-[380px] lg:h-[clamp(380px,46vh,560px)]"
+          sill="h-3 sm:h-4"
+        >
+          <div className="relative z-10 mx-auto bg-navy px-5 py-6 text-lit shadow-[0_18px_40px_-18px_hsl(220_25%_6%/0.75)] sm:-mt-14 sm:w-[calc(100%-4rem)] sm:max-w-[1336px] sm:px-8 sm:py-8 lg:grid lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-12 lg:py-10">
+            <h1 className="text-4xl font-extrabold leading-[1.04] sm:text-5xl lg:col-span-8 xl:text-6xl">{t("home.hero.title")}</h1>
+            <div className="mt-4 lg:col-span-4 lg:mt-0">
+              <p className="max-w-[34rem] text-base leading-relaxed text-lit/85 md:text-lg">{t("home.hero.subtitle")}</p>
+              <p className="mt-3 text-sm font-bold tracking-wide text-ochre">{t("home.hero.location", "Harare, Zimbabwe")}</p>
+            </div>
           </div>
-        </div>
+        </StoneOpening>
 
         <nav aria-label={t("nav.menu")} className="grid grid-cols-2 gap-[5px] bg-shadow p-[5px] lg:grid-cols-4">
           {gateways.map((g) => (
@@ -167,7 +171,7 @@ export default function Home() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-2 lg:grid-cols-12">
           {curriculum.map((c) => (
-            <StoneBlock key={c.title} to="/academics" img={c.img} title={c.title} desc={c.desc} className={`h-64 lg:h-[24rem] ${c.span}`} />
+            <StoneBlock key={c.title} to="/academics" img={c.img} title={c.title} desc={c.desc} pos={c.pos} className={`h-72 lg:h-[26rem] ${c.span}`} />
           ))}
         </div>
       </section>
@@ -207,7 +211,7 @@ export default function Home() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-2 lg:grid-cols-12">
           {activities.map((a) => (
-            <StoneBlock key={a.title} to="/school-life" img={a.img} title={a.title} className={`h-60 lg:h-[19rem] ${a.span}`} />
+            <StoneBlock key={a.title} to="/school-life" img={a.img} title={a.title} pos={a.pos} className={`h-80 lg:h-[32rem] ${a.span}`} />
           ))}
         </div>
       </section>
@@ -260,7 +264,7 @@ export default function Home() {
           <div className="mx-auto w-full max-w-sm lg:col-span-5 lg:max-w-md">
             <div className="slab -mx-4 h-5 sm:-mx-6" aria-hidden="true" />
             <div className="border-x-[14px] border-b-[14px] border-lit bg-shadow">
-              <img src={hero3} alt="" loading="lazy" className="aspect-[3/4] w-full object-cover [object-position:35%_20%]" />
+              <img src={hero5} alt="" loading="lazy" className="aspect-[3/4] w-full object-cover [object-position:17%_50%]" />
             </div>
           </div>
         </div>

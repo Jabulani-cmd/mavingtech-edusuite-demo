@@ -96,7 +96,7 @@ function FacilityGrid({ images }: { images: FacilityImage[] }) {
       {images.map((img, i) => (
         <div key={img.id}>
           <div className="overflow-hidden shadow-maroon">
-            <img src={img.image_url} alt={img.caption || "Facility"} className="h-56 w-full object-cover transition-transform hover:scale-105" />
+            <img src={img.image_url} alt={img.caption || "Facility"} className="h-56 w-full object-cover object-[50%_25%] transition-transform hover:scale-105" />
           </div>
           {img.caption && <p className="mt-2 text-center text-xs text-muted-foreground">{img.caption}</p>}
         </div>

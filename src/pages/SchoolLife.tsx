@@ -99,7 +99,7 @@ export default function SchoolLife() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {galleryImages.map((img, i) => (
                     <div key={img.id}>
-                      <img src={img.image_url} alt={img.caption || `Gallery ${i + 1}`} className="h-64 w-full object-cover shadow-maroon transition-transform hover:scale-[1.02]" />
+                      <img src={img.image_url} alt={img.caption || `Gallery ${i + 1}`} className="h-64 w-full object-cover object-[50%_25%] shadow-maroon transition-transform hover:scale-[1.02]" />
                       {img.caption && <p className="mt-2 text-center text-xs text-muted-foreground">{img.caption}</p>}
                     </div>
                   ))}

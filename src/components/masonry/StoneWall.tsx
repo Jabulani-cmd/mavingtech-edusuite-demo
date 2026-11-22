@@ -21,7 +21,7 @@ function mulberry32(seed: number) {
   };
 }
 
-function buildWall(seed: number, heights: number[]): Course[] {
+export function buildWall(seed: number, heights: number[]): Course[] {
   const rand = mulberry32(seed);
   const total = heights.reduce((s, h) => s + h, 0);
   let top = 0;
@@ -135,6 +135,70 @@ export default function StoneWall({
               </g>
             );
           }),
+        )}
+      </svg>
+    </div>
+  );
+}
+
+/**
+ * A course of dry-stone blocks with no photograph under it: the lintel above and the sill below
+ * a photo window. Same blocks, joints and lit edges as the photo wall.
+ */
+export function StoneCourse({
+  heights = [55, 45],
+  seed = 3,
+  lay = 0,
+  className = "",
+}: {
+  heights?: number[];
+  seed?: number;
+  /** Order in the laying sequence (0 first). Under reduced motion the course simply appears. */
+  lay?: number;
+  className?: string;
+}) {
+  const courses = buildWall(seed, heights);
+  return (
+    <div
+      aria-hidden="true"
+      className={`course-lay relative isolate overflow-hidden bg-shadow ${className}`}
+      style={{ ["--lay-i" as string]: lay }}
+    >
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {courses.map((c, ci) =>
+          c.blocks.map((b, bi) => (
+            <g key={`${ci}-${bi}`}>
+              <rect
+                x={b.x}
+                y={c.top}
+                width={b.w}
+                height={c.h}
+                rx={0.35}
+                fill={b.light ? "hsl(40 18% 74%)" : b.warm ? "hsl(28 16% 30%)" : "hsl(215 14% 28%)"}
+                fillOpacity={b.light ? 0.16 + b.tone * 0.35 : 0.55 + b.tone * 0.6}
+              />
+              <path
+                d={`M ${b.x} ${c.top + c.h} L ${b.x} ${c.top} L ${b.x + b.w} ${c.top}`}
+                fill="none"
+                stroke="hsl(40 40% 96%)"
+                strokeOpacity={0.22}
+                strokeWidth={1.4}
+                vectorEffect="non-scaling-stroke"
+              />
+              <rect
+                x={b.x}
+                y={c.top}
+                width={b.w}
+                height={c.h}
+                rx={0.35}
+                fill="none"
+                stroke={JOINT}
+                strokeOpacity={0.95}
+                strokeWidth={c.sw}
+                vectorEffect="non-scaling-stroke"
+              />
+            </g>
+          )),
         )}
       </svg>
     </div>

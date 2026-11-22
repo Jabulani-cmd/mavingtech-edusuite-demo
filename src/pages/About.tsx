@@ -3,6 +3,7 @@ import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
 import { Users, Award, Globe } from "lucide-react";
 import hero from "@/assets/hero-students-2.jpg";
+import { focus } from "@/lib/photoFocus";
 
 const alumni = [
   { name: "Dr. Tinashe Mutasa", role: "Surgeon, Parirenyatwa Group of Hospitals", year: "Class of 1998" },
@@ -25,7 +26,7 @@ export default function About() {
 
   return (
     <Layout>
-      <PageHero eyebrow={t("about.eyebrow")} title={t("about.title")} subtitle={t("about.subtitle")} image={hero} />
+      <PageHero eyebrow={t("about.eyebrow")} title={t("about.title")} subtitle={t("about.subtitle")} image={hero} focus={focus.heroStudents2} />
 
       <section className="py-20 md:py-28">
         <div className="container grid items-start gap-14 lg:grid-cols-5">

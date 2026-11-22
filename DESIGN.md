@@ -200,7 +200,7 @@ Crowning bands separate courses: a 24px chevron band under the gateways, a 16px 
 
 Depth is physical, not atmospheric. A surface is either flat on the wall, or a slab set on it. Slabs carry three layers: a 1px inner top light (white at 70%), a tight drop shadow (`0 2px 3px` at 20% shadow stone) and a long offset shadow (`0 18px 32px -18px` at 50%). Buttons carry a lighter version. The nav carries a hairline and a soft downward shadow so it reads as a sill under the sticky bar.
 
-Photography is shown through stone: the `StoneWall` overlay darkens or lightens each block and draws recessed joints with a sun-catch highlight on the top and left edges. Shadow-stone grounds carry a fine fixed noise grain (`.granite`) so flat charcoal has a surface.
+Photography is framed by stone (see StoneOpening). In the older StoneWall treatment the overlay darkened or lightens each block and draws recessed joints with a sun-catch highlight on the top and left edges. Shadow-stone grounds carry a fine fixed noise grain (`.granite`) so flat charcoal has a surface.
 
 ### Shadow Vocabulary
 - **Slab** (`box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.7), 0 2px 3px hsl(220 25% 8% / 0.2), 0 18px 32px -18px hsl(220 25% 8% / 0.5)`): dropdown panel, block captions, news slabs, login panel, principal signature.
@@ -238,8 +238,13 @@ The navy panel that carries the school name over the hero wall: display-size Arc
 ### Slab
 A stone-lit block with the slab shadow. Used for dropdown panels (with a 3px ochre top edge), the caption on each picture block, the login panel (with a 6px ochre top edge), the principal's signature, and the news announcements.
 
-### StoneWall
-The signature component (`src/components/masonry/StoneWall.tsx`). One photograph is sliced into horizontal courses, each course divided into blocks of 16 to 36% width. Courses start mid-block so vertical joints never align. An SVG overlay gives each block a warm, cool or light tone, a sun-catch edge on top and left, and a recessed joint in near-black. The coursing is seeded (`mulberry32`), so it is identical on every render. Each page passes its own seed and course heights (home: seed 7, five courses; login: seed 19). It exposes desktop and phone focal points for the photograph.
+### StoneOpening and StoneCourse
+The hero and every page opener set the photograph into the wall like a window (`src/components/masonry/StoneOpening.tsx`): a lintel course of dry-stone blocks above, the photograph uncut by joints, and a thin sill course below. `StoneCourse` (in `StoneWall.tsx`) draws those courses with the same blocks, lit top and left edges and recessed joints as before. The title sits on a wide navy lintel slab that overlaps only the bottom 40 to 56px of the photograph, so no face is ever covered; on phones the slab sits below the photograph. Motion is still the single course-lay: the lintel is laid, then the window fades in (opacity only, 700ms, removed under reduced motion).
+
+`StoneWall` (the photograph sliced into courses with joints over it) is no longer used on a page; it cut across faces. Keep it only if a surface has no people in the photograph.
+
+### Photo focus
+Every photograph has a measured focal point in `src/lib/photoFocus.ts` (CSS `object-position`, desktop and phone), so a wide or short crop never cuts off heads. Faces were found with face detection and checked by eye. Add an entry when a photograph is added or replaced and pass it to `PageHero` (`focus`), `StoneOpening` or the block's `pos`. Photographs people upload through the admin tools have no measured focus and use `UPLOAD_POSITION` (50% 25%), biased towards the top where heads are.
 
 ### Picture block
 A photograph filling a grid cell on shadow stone, captioned by a slab at its lower left, with a slow 700ms zoom to 1.04 on hover (disabled under reduced motion). Heights are 240 to 256px on phones, 304 to 384px at lg.
@@ -263,7 +268,7 @@ Every portal (student, parent, teacher, finance, principal, deputy principal, HO
 - **Printed documents:** report cards, receipts, invoices and the finance print window keep their own print palette and fonts on purpose and are outside this system.
 
 ### Public pages
-Every public page shares the home page's opener. `PageHero` lays the page photograph through the stone wall with the title on a navy lintel and a 24px chevron band below. Pages that had no photograph use a flat navy lintel band and the same chevron. Section labels above headings, the short accent bars, centred section heads, soft ringed cards, circular photo and icon chips, scroll-triggered entrances and gradient panels were removed. Cards are flat bordered tiles with no lift on hover. The About stats are a left-aligned ledger with a top rule, not centred icon tiles.
+Every public page shares the home page's opener. `PageHero` sets the page photograph into the wall with `StoneOpening` and puts the title on a wide navy lintel slab and a 24px chevron band below. Pages that had no photograph use a flat navy lintel band and the same chevron. Section labels above headings, the short accent bars, centred section heads, soft ringed cards, circular photo and icon chips, scroll-triggered entrances and gradient panels were removed. Cards are flat bordered tiles with no lift on hover. The About stats are a left-aligned ledger with a top rule, not centred icon tiles.
 
 ### Dark mode
 Dark mode is defined in `src/index.css` under `.dark` and was reviewed on the home page, About, login and the admin, finance and parent portals at desktop and phone width. Users reach it through `ThemeToggle` (Light, Dark, System), which sits beside the language select in the public nav and in every portal header. It uses `next-themes` with `attribute="class"`, defaults to the device setting, remembers the choice in `localStorage` under `mavingtech.theme`, and sets the class before first paint. On phones the toggle and the language select are 44px tall. Rules that make dark mode work:
@@ -290,7 +295,7 @@ There is one authored motion: **course-lay**. On load, each hero course rises 18
 - **Do** use logo blue or navy for every action and ochre only as a marker.
 - **Do** set headings in Archivo at 700 or 800 and text in Public Sans, and keep lines to `max-w-prose`.
 - **Do** give each audience its own gateway on the home page and keep touch targets at 44px or larger.
-- **Do** keep the school crest, MavingTech mark, Ministry, ZIMSEC and Cambridge logos and the real photography unaltered; photographs go through `StoneWall` or sit in a thick stone frame.
+- **Do** keep the school crest, MavingTech mark, Ministry, ZIMSEC and Cambridge logos and the real photography unaltered; photographs sit in a `StoneOpening` or in a thick stone frame.
 - **Do** keep layouts tolerant of longer Shona and Ndebele strings (line-clamped captions, wrapping buttons).
 
 ### Don't:

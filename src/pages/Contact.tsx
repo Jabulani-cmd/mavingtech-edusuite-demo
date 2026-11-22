@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import hero from "@/assets/hero-students-5.jpg";
+import { focus } from "@/lib/photoFocus";
 import { SCHOOL_ADDRESS, SCHOOL_EMAIL, SCHOOL_PHONE } from "@/lib/school";
 
 const contactSchema = z.object({
@@ -107,7 +108,7 @@ export default function Contact() {
 
   return (
     <Layout>
-      <PageHero eyebrow={t("contact.eyebrow")} title={t("contact.title")} subtitle={t("contact.subtitle")} image={hero} />
+      <PageHero eyebrow={t("contact.eyebrow")} title={t("contact.title")} subtitle={t("contact.subtitle")} image={hero} focus={focus.heroStudents5} />
 
       <section className="py-20 md:py-24">
         <div className="container">

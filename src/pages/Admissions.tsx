@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, FileText, Users, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import hero from "@/assets/hero-students-4.jpg";
+import { focus } from "@/lib/photoFocus";
 import { FORM_LEVELS } from "@/lib/forms";
 
 export default function Admissions() {
@@ -32,7 +33,7 @@ export default function Admissions() {
 
   return (
     <Layout>
-      <PageHero eyebrow={t("admissions.eyebrow")} title={t("admissions.title")} subtitle={t("admissions.subtitle")} image={hero} />
+      <PageHero eyebrow={t("admissions.eyebrow")} title={t("admissions.title")} subtitle={t("admissions.subtitle")} image={hero} focus={focus.heroStudents4} />
 
       <section className="py-20 md:py-28">
         <div className="container">

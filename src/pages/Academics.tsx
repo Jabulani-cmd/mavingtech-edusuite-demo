@@ -5,6 +5,7 @@ import { BookOpen, FlaskConical, Languages, Calculator, Palette, Laptop } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import achievementsImg from "@/assets/achievements.png";
 import hero from "@/assets/academics-computers.jpg";
+import { focus } from "@/lib/photoFocus";
 
 export default function Academics() {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export default function Academics() {
 
   return (
     <Layout>
-      <PageHero eyebrow={t("academics.eyebrow")} title={t("academics.title")} subtitle={t("academics.subtitle")} image={hero} />
+      <PageHero eyebrow={t("academics.eyebrow")} title={t("academics.title")} subtitle={t("academics.subtitle")} image={hero} focus={focus.academicsComputers} />
 
       <section className="py-20 md:py-28">
         <div className="container">
