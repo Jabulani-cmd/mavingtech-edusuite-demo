@@ -55,7 +55,7 @@ interface TeacherDashboardProps {
 const materialsQuery = (teacherId: string) =>
   supabase.from("study_materials").select("*, classes(name), subjects(name)").eq("teacher_id", teacherId).order("created_at", { ascending: false });
 const marksQuery = (teacherId: string) =>
-  supabase.from("marks").select("*, subjects(name)").eq("teacher_id", teacherId).order("created_at", { ascending: false }).limit(50);
+  supabase.from("marks").select("*, subjects(name), students(full_name)").eq("teacher_id", teacherId).order("created_at", { ascending: false }).limit(50);
 const homeworkQuery = (teacherId: string) =>
   supabase.from("homework").select("*, subjects(name), classes:class_id(name)").eq("teacher_id", teacherId).order("due_date", { ascending: false }).limit(50);
 const aiResultsQuery = (assessmentIds: string[]) =>
@@ -532,7 +532,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
               <div className="space-y-6">
                 {(() => {
                   const manualRows = marks.map((m) => ({
-                    id: `m-${m.id}`, source: "manual", studentName: null,
+                    id: `m-${m.id}`, source: "manual", studentName: m.students?.full_name || null,
                     subject: m.subjects?.name || "-", description: m.comment || "-",
                     type: m.assessment_type, scoreLabel: `${m.mark}%`, percent: Number(m.mark) || 0,
                     created_at: m.created_at,
