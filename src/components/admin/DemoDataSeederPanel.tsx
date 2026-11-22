@@ -722,7 +722,7 @@ export default function DemoDataSeederPanel() {
       </Card>
 
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[85dvh] flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" /> Demo data loaded successfully
@@ -732,7 +732,7 @@ export default function DemoDataSeederPanel() {
             </DialogDescription>
           </DialogHeader>
           {summary && (
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm flex-1 min-h-0 overflow-y-auto pr-2">
               <Row label="Students enrolled"   value={summary.students}  hint="Forms 1–4: 3 classes of 35 · Forms 5–6: Sciences and Commercials, 20 each" />
               <Row label="Parents & guardians" value={summary.parents}   hint="Mother and father logins per family (or one guardian); siblings share them" />
               <Row label="Teachers"            value={summary.teachers}  hint="All subjects covered" />
@@ -744,7 +744,7 @@ export default function DemoDataSeederPanel() {
               <Row label="Demo records"        value={summary.records}   hint="Marks, attendance, homework, exams and report cards, fees, invoices and payments, expenses, boarding, inventory, announcements, events and more" />
             </div>
           )}
-          <div className="flex gap-2 pt-2">
+          <div className="flex shrink-0 gap-2 pt-2 border-t">
             <Button onClick={downloadCredentials} variant="outline" className="flex-1">
               <Download className="h-4 w-4 mr-1" /> Download login credentials (Excel)
             </Button>
