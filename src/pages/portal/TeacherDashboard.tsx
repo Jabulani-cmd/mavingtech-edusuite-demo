@@ -126,10 +126,21 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
       supabase.from("profiles").select("*").eq("id", user!.id).single(),
       supabase.from("subjects").select("*").order("name"),
       supabase.from("classes").select("*").order("name"),
-      supabase.from("staff").select("id, full_name, staff_number, department, role").eq("user_id", user!.id).single(),
+      supabase.from("staff").select("id, full_name, staff_number, department, role").eq("user_id", user!.id).maybeSingle(),
     ]);
+    // The login may not be linked to its staff record yet (e.g. demo data loaded before the accounts were created).
+    // Fall back to the record with the same email and link it, so the teacher still sees their classes.
+    let staffRow = staffRes.data;
+    const loginEmail = (user!.email ?? profRes.data?.email ?? "").toLowerCase();
+    if (!staffRow && loginEmail) {
+      const { data: byEmail } = await supabase.from("staff").select("id, full_name, staff_number, department, role, user_id").ilike("email", loginEmail).limit(1).maybeSingle();
+      if (byEmail) {
+        staffRow = byEmail;
+        if (!byEmail.user_id) await supabase.from("staff").update({ user_id: user!.id }).eq("id", byEmail.id);
+      }
+    }
     if (profRes.data) setProfile(profRes.data);
-    if (staffRes.data) setStaffInfo(staffRes.data);
+    if (staffRow) setStaffInfo(staffRow);
     if (subRes.data) setSubjects(subRes.data);
 
     // Filter classes to only those assigned to this teacher
@@ -137,8 +148,8 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
     let teacherClasses = allClasses;
     let assignedIds: string[] = [];
 
-    if (staffRes.data) {
-      const staffId = staffRes.data.id;
+    if (staffRow) {
+      const staffId = staffRow.id;
       // Get classes assigned via class_subjects
       const { data: csData } = await supabase
         .from("class_subjects")
