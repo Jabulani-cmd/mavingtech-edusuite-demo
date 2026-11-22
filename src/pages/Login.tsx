@@ -104,10 +104,10 @@ export default function Login() {
     <Layout>
       <section className="grid min-h-[72vh] lg:grid-cols-12">
         <div className="relative lg:col-span-5">
-          <StoneWall src={hero4} alt="" seed={19} heights={[22, 18, 26, 17, 17]} position="center 30%" phonePosition="55% 40%" className="h-44 w-full sm:h-56 lg:h-full lg:min-h-[640px]" />
-          <div className="absolute inset-x-0 bottom-0 z-10 bg-navy px-6 py-5 text-lit lg:px-8 lg:py-7">
+          <StoneWall src={hero4} alt="" seed={19} heights={[22, 18, 26, 17, 17]} position="center 30%" phonePosition="55% 40%" className="h-48 w-full sm:h-64 lg:h-full lg:min-h-[640px]" />
+          <div className="relative z-10 bg-navy px-6 py-5 text-lit lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-8 lg:py-7">
             <p className="font-heading text-2xl font-extrabold leading-tight lg:text-3xl">{t("login.title")}</p>
-            <p className="mt-1.5 text-sm leading-snug text-lit/80">{t("login.tagline")}</p>
+            <p className="mt-1.5 text-sm leading-snug text-lit/80">{t("brand.tagline")}</p>
           </div>
         </div>
 
@@ -149,7 +149,7 @@ export default function Login() {
               </Button>
 
               <div className="border border-border bg-muted p-3 text-center">
-                <p className="mb-2 text-xs text-muted-foreground">{t("login.demoNote")}</p>
+                <p className="mb-2 text-sm text-foreground/80">{t("login.demoNote")}</p>
                 <Button type="button" variant="outline" size="sm" onClick={handleSeedDemoAdmin} disabled={seedingDemo} className="h-auto w-full whitespace-normal py-2 leading-snug">
                   {seedingDemo ? t("login.provisioning") : t("login.provisionAdmin")}
                 </Button>

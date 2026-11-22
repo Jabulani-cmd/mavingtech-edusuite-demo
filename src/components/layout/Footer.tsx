@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Mail, Phone, MapPin, Twitter, Facebook, Instagram, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import ministryLogo from "@/assets/ministry-of-education-logo.png";
 import zimsecLogo from "@/assets/zimsec-logo.png";
@@ -21,7 +21,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
+    <footer className="granite bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-fg))]">
       {/* Affiliations: three slabs set in one course */}
       <div className="bg-shadow">
         <div className="grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-3">
@@ -33,7 +33,7 @@ export default function Footer() {
           ))}
         </div>
       </div>
-      <div className="chevron-band chevron-band-sm" aria-hidden="true" />
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       <div className="container py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
@@ -44,9 +44,6 @@ export default function Footer() {
             <p className="font-heading text-xl font-bold">{t("brand.schoolName")}</p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/75">{t("footer.description")}</p>
             <div className="mt-6 flex items-center gap-2">
-              <a href="#" aria-label="Twitter" className={social}><Twitter className="h-4 w-4" /></a>
-              <a href="#" aria-label="Facebook" className={social}><Facebook className="h-4 w-4" /></a>
-              <a href="#" aria-label="Instagram" className={social}><Instagram className="h-4 w-4" /></a>
               <a href="https://wa.me/263242550123" aria-label="WhatsApp" className={social}><MessageCircle className="h-4 w-4" /></a>
             </div>
           </div>

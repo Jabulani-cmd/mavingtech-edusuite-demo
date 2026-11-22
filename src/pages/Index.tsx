@@ -96,21 +96,19 @@ export default function Home() {
   return (
     <Layout>
       {/* THE WALL: the classroom laid through coursed granite, the school named on a lintel, four gateways at the foot */}
-      <section className="bg-shadow">
+      <section className="granite bg-shadow">
         <div className="relative">
           <StoneWall
             src={hero2}
             alt={t("home.hero.title")}
             position="center 32%"
             phonePosition="56% 40%"
-            className="h-[74svh] min-h-[540px] w-full lg:h-[72vh]"
+            className="h-[300px] w-full sm:h-[74svh] sm:min-h-[540px] lg:h-[72vh]"
           />
-          <div className="slab absolute right-4 top-4 z-10 hidden px-3 py-1.5 text-xs font-bold tracking-wide text-foreground sm:block">
-            {t("home.hero.location", "Harare, Zimbabwe")}
-          </div>
-          <div className="absolute inset-x-0 bottom-0 z-10 bg-navy px-5 pb-7 pt-6 text-lit shadow-[0_-18px_40px_-20px_hsl(220_25%_6%/0.7)] sm:right-auto sm:max-w-[36rem] sm:px-8 sm:pb-9 sm:pt-8 lg:max-w-[46rem] lg:px-12 lg:pb-12 lg:pt-10">
+          <div className="relative z-10 bg-navy px-5 pb-7 pt-6 text-lit shadow-[0_-18px_40px_-20px_hsl(220_25%_6%/0.7)] sm:absolute sm:inset-x-auto sm:bottom-0 sm:left-0 sm:max-w-[36rem] sm:px-8 sm:pb-9 sm:pt-8 lg:max-w-[46rem] lg:px-12 lg:pb-12 lg:pt-10">
             <h1 className="text-[2.1rem] font-extrabold leading-[1.04] sm:text-5xl lg:text-6xl xl:text-7xl">{t("home.hero.title")}</h1>
             <p className="mt-4 max-w-[34rem] text-base leading-relaxed text-lit/85 md:text-lg">{t("home.hero.subtitle")}</p>
+            <p className="mt-4 text-sm font-bold tracking-wide text-ochre">{t("home.hero.location", "Harare, Zimbabwe")}</p>
           </div>
         </div>
 
@@ -119,7 +117,7 @@ export default function Home() {
             <Link
               key={g.to}
               to={g.to}
-              className={`group flex min-h-[5.5rem] items-end justify-between gap-3 border-t-[6px] border-ochre px-4 py-4 font-heading text-lg font-bold leading-tight transition-colors duration-150 sm:px-6 sm:py-5 sm:text-xl lg:min-h-[7rem] lg:text-2xl ${g.tone}`}
+              className={`group flex min-h-[4.75rem] items-end justify-between gap-3 border-t-[6px] border-ochre px-4 py-4 font-heading text-lg font-bold leading-tight transition-colors duration-150 sm:px-6 sm:py-5 sm:text-xl lg:min-h-[7rem] lg:text-2xl ${g.tone}`}
             >
               {g.label}
               <ArrowUpRight className="h-5 w-5 shrink-0 transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 lg:h-6 lg:w-6" />
@@ -128,7 +126,7 @@ export default function Home() {
         </nav>
       </section>
 
-      <div className="chevron-band" aria-hidden="true" />
+      <div className="chevron-band chevron-band-lg" aria-hidden="true" />
 
       {/* INTRO */}
       <section className="py-20 md:py-28">
@@ -175,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* PRINCIPAL */}
-      <section className="bg-shadow py-20 text-lit md:py-28">
+      <section className="granite bg-shadow py-20 text-lit md:py-28">
         <div className="container grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
             <div className="border-x-[10px] border-b-[10px] border-lit bg-lit">
@@ -186,16 +184,16 @@ export default function Home() {
               <p className="mt-0.5 text-sm text-muted-foreground">{t("home.director.signatureRole")}</p>
             </div>
           </div>
-          <div className="lg:col-span-8 lg:pt-4">
-            <h2 className="text-2xl font-bold leading-tight text-ochre sm:text-3xl">{t("home.director.title")}</h2>
-            <blockquote className="mt-8 font-heading text-2xl font-semibold leading-[1.25] text-lit sm:text-3xl lg:text-4xl">
+          <div className="lg:col-span-8 lg:pt-2">
+            <h2 className="sr-only">{t("home.director.title")}</h2>
+            <blockquote className="font-heading text-2xl font-semibold leading-[1.25] text-lit sm:text-3xl lg:text-4xl">
               “{t("home.director.quote")}”
             </blockquote>
             <p className="mt-8 max-w-prose leading-relaxed text-lit/80">{t("home.director.body")}</p>
           </div>
         </div>
       </section>
-      <div className="chevron-band chevron-band-shadow bg-shadow" aria-hidden="true" />
+      <div className="chevron-band chevron-band-lg chevron-band-shadow bg-shadow" aria-hidden="true" />
 
       {/* SCHOOL LIFE */}
       <section className="py-20 md:py-28">
@@ -241,7 +239,7 @@ export default function Home() {
 
       {/* THE DOORWAY: the last gateway, with the answer to "what do I do next" */}
       <section className="relative bg-navy text-lit">
-        <div className="chevron-band" aria-hidden="true" />
+        <div className="chevron-band chevron-band-lg" aria-hidden="true" />
         <div className="container grid items-center gap-12 py-20 md:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
             <h2 className="max-w-3xl text-4xl font-extrabold leading-[1.03] sm:text-5xl lg:text-6xl">{t("home.cta.title")}</h2>
