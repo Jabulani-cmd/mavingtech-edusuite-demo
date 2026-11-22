@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import PageHero from "@/components/layout/PageHero";
+import heroImg from "@/assets/classroom.png";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -21,17 +23,7 @@ export default function SchoolProjects() {
 
   return (
     <Layout>
-      <section className="bg-section-warm py-16">
-        <div className="container text-center">
-          <h1 className="font-heading text-4xl font-bold text-foreground md:text-5xl">
-            {t("projectsPage.title")}
-          </h1>
-          <p
-            className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            {t("projectsPage.subtitle")}
-          </p>
-        </div>
-      </section>
+      <PageHero title={t("projectsPage.title")} subtitle={t("projectsPage.subtitle")} image={heroImg} />
 
       <section className="py-16">
         <div className="container">

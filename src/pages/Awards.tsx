@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
+import PageHero from "@/components/layout/PageHero";
+import heroImg from "@/assets/achievements.png";
 import { Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import schoolLogo from "@/assets/mavingtech-logo.png";
 import type { Tables } from "@/integrations/supabase/types";
 
 export default function Awards() {
@@ -25,13 +26,7 @@ export default function Awards() {
 
   return (
     <Layout>
-      <section className="bg-muted/60 from-primary to-secondary py-16 text-primary-foreground">
-        <div className="container text-center">
-          <img src={schoolLogo} alt="MavingTech" className="mx-auto mb-4 h-auto w-36 object-contain" />
-          <h1 className="font-heading text-4xl font-bold">{t("awards.title")}</h1>
-          <p className="mt-2 text-lg opacity-90">{t("awards.subtitle")}</p>
-        </div>
-      </section>
+      <PageHero title={t("awards.title")} subtitle={t("awards.subtitle")} image={heroImg} />
 
       {photos.length > 0 && (
         <section className="container py-12">

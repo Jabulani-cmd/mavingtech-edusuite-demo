@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
+import PageHero from "@/components/layout/PageHero";
+import heroImg from "@/assets/hero-school.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Home, Shield, Utensils, Clock, Users, Heart } from "lucide-react";
 
@@ -10,13 +12,10 @@ export default function Boarding() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <section className="bg-background py-16">
-        <div className="container">
-          <div className="mb-12">
-            <h1 className="font-heading text-4xl font-bold text-primary md:text-5xl">{t("boarding.title")}</h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">{t("boarding.subtitle")}</p>
-          </div>
+      <PageHero title={t("boarding.title")} subtitle={t("boarding.subtitle")} image={heroImg} />
 
+      <section className="py-16">
+        <div className="container">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {keys.map((k, i) => {
               const Icon = iconMap[k];

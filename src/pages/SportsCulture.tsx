@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
+import PageHero from "@/components/layout/PageHero";
+import heroImg from "@/assets/sports.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Music, BookOpen, Palette, Users, Volleyball } from "lucide-react";
@@ -32,13 +34,10 @@ export default function SportsCulture() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <section className="bg-background py-16">
-        <div className="container">
-          <div className="mb-12">
-            <h1 className="font-heading text-4xl font-bold text-primary md:text-5xl">{t("sportsCulture.title")}</h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">{t("sportsCulture.subtitle")}</p>
-          </div>
+      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} />
 
+      <section className="py-16">
+        <div className="container">
           <Tabs defaultValue="sports" className="w-full">
             <TabsList className="mx-auto mb-8 grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="sports">{t("sportsCulture.tabs.sports")}</TabsTrigger>

@@ -266,7 +266,7 @@ Every portal (student, parent, teacher, finance, principal, deputy principal, HO
 Every public page shares the home page's opener. `PageHero` lays the page photograph through the stone wall with the title on a navy lintel and a 24px chevron band below. Pages that had no photograph use a flat navy lintel band and the same chevron. Section labels above headings, the short accent bars, centred section heads, soft ringed cards, circular photo and icon chips, scroll-triggered entrances and gradient panels were removed. Cards are flat bordered tiles with no lift on hover. The About stats are a left-aligned ledger with a top rule, not centred icon tiles.
 
 ### Not yet carried
-Boarding, Awards, Sports & Culture and School Projects open with a plain title block instead of the lintel band. Page bodies keep their earlier layouts (tile grids, tab strips, forms) and were re-skinned, not recomposed into courses. Dark mode tokens are defined in `src/index.css` but were not reviewed visually. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
+Page bodies keep their earlier layouts (tile grids, tab strips, forms) and were re-skinned, not recomposed into courses. Dark mode tokens are defined in `src/index.css` but were not reviewed visually. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
 
 ## Motion
 
