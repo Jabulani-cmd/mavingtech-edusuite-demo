@@ -274,8 +274,8 @@ export default function AITimetableBuilderAgent() {
 
   return (
     <Card className="border-2 border-primary/40 bg-muted/60">
-      <CardHeader className="flex flex-row items-start justify-between gap-3">
-        <div>
+      <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+        <div className="min-w-0">
           <CardTitle className="font-heading flex items-center gap-2">
             <Bot className="h-5 w-5 text-primary" />
             Conversational AI Timetable Builder
