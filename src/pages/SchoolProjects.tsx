@@ -7,6 +7,7 @@ import { Heart } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
 import heroImg from "@/assets/classroom.png";
+import { focus } from "@/lib/photoFocus";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -23,7 +24,7 @@ export default function SchoolProjects() {
 
   return (
     <Layout>
-      <PageHero title={t("projectsPage.title")} subtitle={t("projectsPage.subtitle")} image={heroImg} />
+      <PageHero title={t("projectsPage.title")} subtitle={t("projectsPage.subtitle")} image={heroImg} focus={focus.classroom} tall />
 
       <section className="py-16">
         <div className="container">
@@ -34,7 +35,7 @@ export default function SchoolProjects() {
                   <Card className="h-full overflow-hidden border-none shadow-maroon transition-transform hover:-translate-y-1">
                     {p.image_url && (
                       <div className="aspect-video w-full overflow-hidden">
-                        <img src={p.image_url} alt={p.name} className="h-full w-full object-cover" />
+                        <img src={p.image_url} alt={p.name} className="h-full w-full object-cover object-[50%_25%]" />
                       </div>
                     )}
                     <CardContent className="p-6">

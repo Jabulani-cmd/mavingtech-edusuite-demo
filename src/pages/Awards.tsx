@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
 import heroImg from "@/assets/achievements.png";
+import { focus } from "@/lib/photoFocus";
 import { Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -26,7 +27,7 @@ export default function Awards() {
 
   return (
     <Layout>
-      <PageHero title={t("awards.title")} subtitle={t("awards.subtitle")} image={heroImg} />
+      <PageHero title={t("awards.title")} subtitle={t("awards.subtitle")} image={heroImg} focus={focus.achievements} />
 
       {photos.length > 0 && (
         <section className="container py-12">
@@ -35,7 +36,7 @@ export default function Awards() {
             {photos.map((photo) => (
               <div key={photo.id} className="group overflow-hidden border shadow-sm">
                 <div className="aspect-video overflow-hidden">
-                  <img src={photo.image_url} alt={photo.caption || "Awards photo"} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                  <img src={photo.image_url} alt={photo.caption || "Awards photo"} className="h-full w-full object-cover object-[50%_25%] transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                 </div>
                 {photo.caption && (<p className="p-3 text-sm text-muted-foreground">{photo.caption}</p>)}
               </div>

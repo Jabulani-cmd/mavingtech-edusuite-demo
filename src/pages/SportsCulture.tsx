@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import PageHero from "@/components/layout/PageHero";
 import heroImg from "@/assets/sports.png";
+import { focus } from "@/lib/photoFocus";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Music, BookOpen, Palette, Users, Volleyball } from "lucide-react";
@@ -34,7 +35,7 @@ export default function SportsCulture() {
   const { t } = useTranslation();
   return (
     <Layout>
-      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} />
+      <PageHero title={t("sportsCulture.title")} subtitle={t("sportsCulture.subtitle")} image={heroImg} focus={focus.sports} tall />
 
       <section className="py-16">
         <div className="container">

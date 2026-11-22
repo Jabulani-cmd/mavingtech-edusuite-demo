@@ -276,7 +276,15 @@
     animation: course-lay 760ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
     animation-delay: calc(var(--lay-i, 0) * 110ms);
   }
+  /* The window itself comes up once the lintel is laid. Opacity only, so faces never move. */
+  @keyframes photo-rise {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .photo-rise {
+    animation: photo-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) 260ms backwards;
+  }
   @media (prefers-reduced-motion: reduce) {
-    .course-lay { animation: none; }
+    .course-lay, .photo-rise { animation: none; }
   }
 }

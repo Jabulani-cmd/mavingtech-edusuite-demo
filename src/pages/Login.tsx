@@ -5,8 +5,8 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import StoneWall from "@/components/masonry/StoneWall";
-import hero4 from "@/assets/hero-students-4.jpg";
+import StoneOpening from "@/components/masonry/StoneOpening";
+import hero1 from "@/assets/hero-students-1.jpg";
 import { Home, Eye, EyeOff } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PORTALS, isPortalKey, type PortalKey } from "@/lib/portals";
@@ -103,12 +103,19 @@ export default function Login() {
   return (
     <Layout>
       <section className="grid min-h-[72vh] lg:grid-cols-12">
-        <div className="relative lg:col-span-5">
-          <StoneWall src={hero4} alt="" seed={19} heights={[22, 18, 26, 17, 17]} position="center 30%" phonePosition="55% 40%" className="h-48 w-full sm:h-64 lg:h-full lg:min-h-[640px]" />
-          <div className="relative z-10 bg-navy px-6 py-5 text-lit lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-8 lg:py-7">
-            <p className="font-heading text-2xl font-extrabold leading-tight lg:text-3xl">{t("login.title")}</p>
-            <p className="mt-1.5 text-sm leading-snug text-lit/80">{t("brand.tagline")}</p>
-          </div>
+        <div className="lg:col-span-5">
+          <StoneOpening
+            src={hero1}
+            focus={{ d: "74% 20%", m: "55% 20%" }}
+            seed={19}
+            className="h-full"
+            photoClassName="h-48 sm:h-64 lg:h-full lg:min-h-[560px]"
+          >
+            <div className="relative z-10 bg-navy px-6 py-5 text-lit lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-8 lg:py-7">
+              <p className="font-heading text-2xl font-extrabold leading-tight lg:text-3xl">{t("login.title")}</p>
+              <p className="mt-1.5 text-sm leading-snug text-lit/80">{t("brand.tagline")}</p>
+            </div>
+          </StoneOpening>
         </div>
 
         <div className="flex items-start justify-center px-4 py-10 sm:px-8 lg:col-span-7 lg:items-center lg:py-16">
