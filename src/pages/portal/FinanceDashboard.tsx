@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import FinanceManagement from "@/pages/admin/FinanceManagement";
@@ -87,6 +88,7 @@ export default function FinanceDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <LanguageSelect />
+            <ThemeToggle />
             <Button
               variant="outline"
               size="sm"

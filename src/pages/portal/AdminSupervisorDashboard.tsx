@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -144,6 +145,7 @@ export default function AdminSupervisorDashboard() {
             )}
             <NotificationBell />
             <LanguageSelect />
+            <ThemeToggle />
             <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex gap-2">
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>

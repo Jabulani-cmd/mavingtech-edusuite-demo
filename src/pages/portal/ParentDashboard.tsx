@@ -32,6 +32,7 @@ import {
 import { Link } from "react-router-dom";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -316,6 +317,7 @@ export default function ParentDashboard() {
           <div className="flex items-center gap-1 sm:gap-2">
             <NotificationBell />
             <LanguageSelect />
+            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={handleLogout} aria-label="Logout" className="px-2 sm:px-3">
               <LogOut className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Logout</span>
             </Button>

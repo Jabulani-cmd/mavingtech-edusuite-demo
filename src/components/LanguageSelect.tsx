@@ -40,7 +40,7 @@ export default function LanguageSelect({ className }: Props) {
         data-no-translate="true"
         aria-label={`${t("common.language")}: ${current.label}`}
         className={cn(
-          "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-md border sm:h-9 border-border bg-background px-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           className,
         )}
       >

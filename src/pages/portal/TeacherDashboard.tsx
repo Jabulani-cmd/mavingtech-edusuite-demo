@@ -18,6 +18,7 @@ import ReportCardCommentGenerator from "@/components/teacher/ReportCardCommentGe
 import ParentMessageComposer from "@/components/teacher/ParentMessageComposer";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -376,6 +377,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
               <span className="hidden text-sm text-muted-foreground sm:inline">{displayName}</span>
               <NotificationBell />
               <LanguageSelect />
+              <ThemeToggle />
               <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:flex"><LogOut className="mr-1 h-4 w-4" /> Logout</Button>
               <Button variant="ghost" size="icon" onClick={handleLogout} className="sm:hidden h-8 w-8"><LogOut className="h-4 w-4" /></Button>
             </div>

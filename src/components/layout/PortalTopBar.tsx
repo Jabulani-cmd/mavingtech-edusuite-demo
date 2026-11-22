@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { portalHomeFor } from "@/lib/portalHome";
 import schoolLogo from "@/assets/mavingtech-logo.png";
 
@@ -16,6 +17,7 @@ export default function PortalTopBar() {
           <span className="truncate font-heading text-sm font-bold text-primary sm:text-base">MavingTech High School</span>
         </Link>
         <LanguageSelect />
+        <ThemeToggle />
       </div>
     </header>
   );

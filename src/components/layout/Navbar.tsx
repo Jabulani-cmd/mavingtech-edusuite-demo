@@ -6,6 +6,7 @@ import schoolLogo from "@/assets/mavingtech-logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageSelect from "@/components/LanguageSelect";
+import ThemeToggle from "@/components/ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { PORTALS } from "@/lib/portals";
 
@@ -216,6 +217,7 @@ export default function Navbar() {
         {/* Right side: portal + language */}
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSelect />
+          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="default" className="hidden gap-1 whitespace-nowrap sm:inline-flex">
