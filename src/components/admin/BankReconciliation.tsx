@@ -136,9 +136,9 @@ export default function BankReconciliation() {
 
   const statusBadge = (status: string) => {
     const map: Record<string, string> = {
-      reconciled: "bg-green-100 text-green-800 border-green-300",
-      unreconciled: "bg-amber-100 text-amber-800 border-amber-300",
-      disputed: "bg-red-100 text-red-800 border-red-300",
+      reconciled: "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300",
+      unreconciled: "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300",
+      disputed: "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300",
     };
     return <Badge variant="outline" className={map[status] || ""}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>;
   };
@@ -158,7 +158,7 @@ export default function BankReconciliation() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Credits</p>
-            <p className="text-base font-bold font-mono text-green-700">{formatMoney(totalCreditsUsd)}</p>
+            <p className="text-base font-bold font-mono text-green-700 dark:text-green-300">{formatMoney(totalCreditsUsd)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -170,7 +170,7 @@ export default function BankReconciliation() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Net Balance</p>
-            <p className={`text-xl font-bold font-mono ${totalCreditsUsd - totalDebitsUsd >= 0 ? "text-green-700" : "text-destructive"}`}>
+            <p className={`text-xl font-bold font-mono ${totalCreditsUsd - totalDebitsUsd >= 0 ? "text-green-700 dark:text-green-300" : "text-destructive"}`}>
               {formatMoney(totalCreditsUsd - totalDebitsUsd)}
             </p>
           </CardContent>
@@ -179,8 +179,8 @@ export default function BankReconciliation() {
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Reconciliation</p>
             <div className="flex gap-2 mt-1">
-              <span className="text-xs text-green-700">✓ {reconciledCount}</span>
-              <span className="text-xs text-amber-700">○ {unreconciledCount}</span>
+              <span className="text-xs text-green-700 dark:text-green-300">✓ {reconciledCount}</span>
+              <span className="text-xs text-amber-700 dark:text-amber-300">○ {unreconciledCount}</span>
               <span className="text-xs text-destructive">⚠ {disputedCount}</span>
             </div>
           </CardContent>
@@ -252,22 +252,22 @@ export default function BankReconciliation() {
                       <TableCell className="font-mono text-xs">{tx.reference_number || "-"}</TableCell>
                       <TableCell className="text-xs">{tx.bank_name || "-"}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={tx.transaction_type === "credit" ? "bg-green-100 text-green-800 border-green-300" : "bg-red-100 text-red-800 border-red-300"}>
+                        <Badge variant="outline" className={tx.transaction_type === "credit" ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300" : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"}>
                           {tx.transaction_type === "credit" ? "Credit" : "Debit"}
                         </Badge>
                       </TableCell>
-                      <TableCell className={`text-right font-mono ${tx.transaction_type === "credit" ? "text-green-700" : "text-destructive"}`}>
+                      <TableCell className={`text-right font-mono ${tx.transaction_type === "credit" ? "text-green-700 dark:text-green-300" : "text-destructive"}`}>
                         {tx.transaction_type === "credit" ? "+" : "-"}{formatMoney(tx.amount_usd)}
                       </TableCell>
                       <TableCell>{statusBadge(tx.reconciliation_status)}</TableCell>
                       <TableCell>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="icon" title={tx.reconciliation_status === "reconciled" ? "Unreconcile" : "Reconcile"} onClick={() => toggleReconciled(tx)}>
-                            <CheckCircle className={`h-4 w-4 ${tx.reconciliation_status === "reconciled" ? "text-green-600" : "text-muted-foreground"}`} />
+                            <CheckCircle className={`h-4 w-4 ${tx.reconciliation_status === "reconciled" ? "text-green-600 dark:text-green-300" : "text-muted-foreground"}`} />
                           </Button>
                           {tx.reconciliation_status !== "disputed" && (
                             <Button variant="ghost" size="icon" title="Mark disputed" onClick={() => markDisputed(tx)}>
-                              <AlertTriangle className="h-4 w-4 text-amber-600" />
+                              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-300" />
                             </Button>
                           )}
                           <Button variant="ghost" size="icon" onClick={() => deleteTransaction(tx.id)}>

@@ -265,8 +265,16 @@ Every portal (student, parent, teacher, finance, principal, deputy principal, HO
 ### Public pages
 Every public page shares the home page's opener. `PageHero` lays the page photograph through the stone wall with the title on a navy lintel and a 24px chevron band below. Pages that had no photograph use a flat navy lintel band and the same chevron. Section labels above headings, the short accent bars, centred section heads, soft ringed cards, circular photo and icon chips, scroll-triggered entrances and gradient panels were removed. Cards are flat bordered tiles with no lift on hover. The About stats are a left-aligned ledger with a top rule, not centred icon tiles.
 
+### Dark mode
+Dark mode is defined in `src/index.css` under `.dark` and was reviewed on the home page, About, login and the admin, finance and parent portals at desktop and phone width. The app has no switch that sets the `dark` class, so users cannot reach it today; it is ready for one. Rules that make it work:
+- `--raised` is the surface that flips with the theme (nav, mobile menu, slabs, portal headers, gateway tiles): stone-lit in light mode, a raised dark stone in dark mode. `--stone-lit` and `text-lit` never flip; use them for fixed light things such as text on navy or shadow bands, the logo plaque and the affiliation tiles.
+- The supplied logos are dark on transparent, so in dark mode every `mavingtech-logo` image sits on a light plaque.
+- Status colours carry a dark variant: text 600 to 800 gets `dark:text-*-300`, tinted fills 50 or 100 get `dark:bg-*-950/40`.
+- Legacy tint tokens (`maroon-light`, `silver-light`, `gold-light`, `ochre-soft`) have dark values.
+- A contrast probe over visible text found no failures on the reviewed pages after these fixes. Printed documents and the QR code stay light on purpose.
+
 ### Not yet carried
-Page bodies keep their earlier layouts (tile grids, tab strips, forms) and were re-skinned, not recomposed into courses. Dark mode tokens are defined in `src/index.css` but were not reviewed visually. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
+Page bodies keep their earlier layouts (tile grids, tab strips, forms) and were re-skinned, not recomposed into courses. Legacy token names (`maroon`, `gold`, `silver`) still exist and are remapped to blue, ochre and stone; new work should use the stone, shadow, navy and ochre names.
 
 ## Motion
 

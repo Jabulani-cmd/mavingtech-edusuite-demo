@@ -221,7 +221,7 @@ export default function StudentAssessmentsTab({ studentId, studentClassId }: Pro
                   <Eye className="h-3 w-3 mr-1" /> Result
                 </Button>
               )}
-              {sub && !res && <Badge className="text-[10px] bg-green-100 text-green-700">Submitted</Badge>}
+              {sub && !res && <Badge className="text-[10px] bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300">Submitted</Badge>}
             </div>
           </div>
         </CardContent>

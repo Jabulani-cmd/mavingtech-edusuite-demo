@@ -45,9 +45,9 @@ export default function ParentBilling() {
 
   const statusBadge = () => {
     if (sub.loading) return <Badge variant="outline">Loading…</Badge>;
-    if (sub.status === "active") return <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300"><Check className="w-3 h-3 mr-1" /> Active</Badge>;
-    if (sub.status === "pending") return <Badge className="bg-amber-100 text-amber-700 border-amber-300"><Clock className="w-3 h-3 mr-1" /> Pending Verification</Badge>;
-    if (sub.status === "expired") return <Badge className="bg-red-100 text-red-700 border-red-300"><AlertTriangle className="w-3 h-3 mr-1" /> Expired</Badge>;
+    if (sub.status === "active") return <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300"><Check className="w-3 h-3 mr-1" /> Active</Badge>;
+    if (sub.status === "pending") return <Badge className="bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300"><Clock className="w-3 h-3 mr-1" /> Pending Verification</Badge>;
+    if (sub.status === "expired") return <Badge className="bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-300"><AlertTriangle className="w-3 h-3 mr-1" /> Expired</Badge>;
     if (sub.status === "complimentary") return <Badge className="bg-primary/10 text-primary border-primary/40"><Sparkles className="w-3 h-3 mr-1" /> Complimentary</Badge>;
     return <Badge variant="outline">No active plan</Badge>;
   };
@@ -120,7 +120,7 @@ export default function ParentBilling() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-bold font-display">{p.name}</h3>
-                      {current && <Badge className="bg-emerald-100 text-emerald-700">Current</Badge>}
+                      {current && <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Current</Badge>}
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">
                       <span className="text-3xl font-bold">{formatMoney(p.amount_usd, { decimals: false })}</span>
@@ -186,8 +186,8 @@ export default function ParentBilling() {
                         <div className="font-semibold">{formatMoney(p.amount)}</div>
                         <div className="text-xs">
                           <Badge variant={p.payment_status === "paid" ? "default" : "outline"} className={
-                            p.payment_status === "paid" ? "bg-emerald-100 text-emerald-700 border-emerald-300" :
-                            p.payment_status === "awaiting_verification" ? "bg-amber-100 text-amber-700 border-amber-300" :
+                            p.payment_status === "paid" ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300" :
+                            p.payment_status === "awaiting_verification" ? "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300" :
                             ""
                           }>
                             {p.payment_status?.replace("_", " ")}

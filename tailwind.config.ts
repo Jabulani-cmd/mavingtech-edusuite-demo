@@ -85,6 +85,7 @@ export default {
           soft: "hsl(var(--shadow-stone-soft))",
         },
         lit: "hsl(var(--stone-lit))",
+        raised: "hsl(var(--raised))",
       },
       borderRadius: {
         lg: "var(--radius)",

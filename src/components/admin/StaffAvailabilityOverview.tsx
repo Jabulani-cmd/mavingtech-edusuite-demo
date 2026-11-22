@@ -23,9 +23,9 @@ type LeaveRequest = {
 };
 
 const statusConfig: Record<string, { color: string; label: string }> = {
-  pending: { color: "bg-amber-100 text-amber-800", label: "Pending" },
-  approved: { color: "bg-green-100 text-green-800", label: "Approved" },
-  rejected: { color: "bg-red-100 text-red-800", label: "Rejected" },
+  pending: { color: "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300", label: "Pending" },
+  approved: { color: "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300", label: "Approved" },
+  rejected: { color: "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300", label: "Rejected" },
   discuss: { color: "bg-primary/10 text-primary", label: "Discuss" },
 };
 
@@ -102,22 +102,22 @@ export default function StaffAvailabilityOverview() {
       <div className="grid gap-4 sm:grid-cols-4">
         <Card className="border-none shadow-maroon">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
-              <UserX className="h-5 w-5 text-red-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 dark:bg-red-950/40">
+              <UserX className="h-5 w-5 text-red-600 dark:text-red-300" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-red-600">{activeLeaveCount}</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-300">{activeLeaveCount}</p>
               <p className="text-xs text-muted-foreground">Currently on Leave</p>
             </div>
           </CardContent>
         </Card>
         <Card className="border-none shadow-maroon">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-              <Clock className="h-5 w-5 text-amber-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-950/40">
+              <Clock className="h-5 w-5 text-amber-600 dark:text-amber-300" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-300">{pendingCount}</p>
               <p className="text-xs text-muted-foreground">Pending Approval</p>
             </div>
           </CardContent>
@@ -135,11 +135,11 @@ export default function StaffAvailabilityOverview() {
         </Card>
         <Card className="border-none shadow-maroon">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-              <UserCheck className="h-5 w-5 text-green-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-950/40">
+              <UserCheck className="h-5 w-5 text-green-600 dark:text-green-300" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-600">{requests.filter(r => r.status === "approved").length}</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-300">{requests.filter(r => r.status === "approved").length}</p>
               <p className="text-xs text-muted-foreground">Total Approved</p>
             </div>
           </CardContent>
@@ -213,7 +213,7 @@ export default function StaffAvailabilityOverview() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-green-600 border-green-300 hover:bg-green-50"
+                              className="text-green-600 dark:text-green-300 border-green-300 hover:bg-green-50"
                               disabled={updating === r.id}
                               onClick={() => handleAction(r.id, "approved")}
                             >
@@ -222,7 +222,7 @@ export default function StaffAvailabilityOverview() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-red-600 border-red-300 hover:bg-red-50"
+                              className="text-red-600 dark:text-red-300 border-red-300 hover:bg-red-50"
                               disabled={updating === r.id}
                               onClick={() => handleAction(r.id, "rejected")}
                             >

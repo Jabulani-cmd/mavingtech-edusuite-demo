@@ -89,10 +89,10 @@ export default function StudentFeeTab({ studentId }: Props) {
       variant="outline"
       className={
         status === "paid"
-          ? "bg-green-100 text-green-800"
+          ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"
           : status === "partial"
-            ? "bg-amber-100 text-amber-800"
-            : "bg-red-100 text-red-800"
+            ? "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300"
+            : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300"
       }
     >
       {status}
@@ -161,7 +161,7 @@ export default function StudentFeeTab({ studentId }: Props) {
       <Card
         className={
           balanceUsd < 0
-            ? "bg-green-50 border-green-200"
+            ? "bg-green-50 dark:bg-green-950/40 border-green-200"
             : balanceUsd > 0
               ? "bg-destructive/5 border-destructive/30"
               : ""
@@ -169,13 +169,13 @@ export default function StudentFeeTab({ studentId }: Props) {
       >
         <CardContent className="p-4 flex items-center gap-4">
           <span
-            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-xl font-bold ${balanceUsd < 0 ? "bg-green-100 text-green-600" : balanceUsd > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}
+            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-xl font-bold ${balanceUsd < 0 ? "bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-300" : balanceUsd > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}
           >
              $
           </span>
           <div className="min-w-0">
             <p
-              className={`text-2xl font-bold ${balanceUsd < 0 ? "text-green-600" : balanceUsd > 0 ? "text-destructive" : "text-foreground"}`}
+              className={`text-2xl font-bold ${balanceUsd < 0 ? "text-green-600 dark:text-green-300" : balanceUsd > 0 ? "text-destructive" : "text-foreground"}`}
             >
               {balanceUsd < 0 ? `${formatMoney(Math.abs(balanceUsd))} credit` : formatMoney(balanceUsd)}
             </p>
@@ -219,7 +219,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <span className="text-muted-foreground">Paid:</span>
                         <span className="text-right font-mono">{formatMoney(actualPaid)}</span>
                         <span className="text-muted-foreground">Balance:</span>
-                        <span className={`text-right font-mono ${balance < 0 ? "text-green-600" : ""}`}>
+                        <span className={`text-right font-mono ${balance < 0 ? "text-green-600 dark:text-green-300" : ""}`}>
                           {balance < 0 ? `+${formatMoney(Math.abs(balance))} credit` : formatMoney(balance)}
                         </span>
                       </div>
@@ -254,7 +254,7 @@ export default function StudentFeeTab({ studentId }: Props) {
                         <TableCell className="text-right">{formatMoney(actualPaid)}</TableCell>
                         <TableCell className="text-right">
                           {balance < 0 ? (
-                            <span className="text-green-600">+{formatMoney(Math.abs(balance))} credit</span>
+                            <span className="text-green-600 dark:text-green-300">+{formatMoney(Math.abs(balance))} credit</span>
                           ) : (
                             formatMoney(balance)
                           )}

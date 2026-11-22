@@ -27,8 +27,8 @@ const KIND_ICON: Record<string, typeof AlertTriangle> = {
   fee_arrears: Wallet,
 };
 const SEVERITY_STYLE: Record<string, string> = {
-  high: "bg-red-100 text-red-800 border-red-200",
-  medium: "bg-amber-100 text-amber-800 border-amber-200",
+  high: "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-200",
+  medium: "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200",
   low: "bg-muted text-foreground border-border",
 };
 const SEVERITY_LABEL: Record<string, string> = { high: "High priority", medium: "Medium", low: "Low" };

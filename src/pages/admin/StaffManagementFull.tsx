@@ -592,9 +592,9 @@ export default function StaffManagementFull() {
   };
 
   const statusColor = (s: string) => {
-    if (s === "active") return "bg-green-100 text-green-800";
-    if (s === "on-leave") return "bg-yellow-100 text-yellow-800";
-    return "bg-red-100 text-red-800";
+    if (s === "active") return "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300";
+    if (s === "on-leave") return "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300";
+    return "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300";
   };
 
   return (
@@ -1191,10 +1191,10 @@ export default function StaffManagementFull() {
                               <Badge
                                 className={
                                   l.status === "approved"
-                                    ? "bg-green-100 text-green-800"
+                                    ? "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300"
                                     : l.status === "rejected"
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-yellow-100 text-yellow-800"
+                                      ? "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300"
+                                      : "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300"
                                 }
                               >
                                 {l.status}

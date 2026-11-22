@@ -21,7 +21,7 @@ export default function Boarding() {
               const Icon = iconMap[k];
               return (
                 <div key={k}>
-                  <Card className="h-full border-primary/10 transition-colors hover:bg-lit">
+                  <Card className="h-full border-primary/10 transition-colors hover:bg-accent">
                     <CardContent className="flex flex-col items-center p-6 text-center">
                       <div className="mb-4 bg-primary/10 p-3"><Icon className="h-8 w-8 text-primary" /></div>
                       <h3 className="mb-2 text-lg font-semibold text-foreground">{t(`boarding.features.${k}.title`)}</h3>

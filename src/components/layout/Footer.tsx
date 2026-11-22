@@ -26,7 +26,7 @@ export default function Footer() {
       <div className="bg-shadow">
         <div className="grid grid-cols-1 gap-[5px] bg-shadow p-[5px] sm:grid-cols-3">
           {affiliations.map((a) => (
-            <div key={a.name} className="flex items-center gap-5 bg-lit px-6 py-6 text-foreground sm:flex-col sm:items-start sm:gap-4 lg:flex-row lg:items-center">
+            <div key={a.name} className="flex items-center gap-5 bg-lit px-6 py-6 text-shadow sm:flex-col sm:items-start sm:gap-4 lg:flex-row lg:items-center">
               <img src={a.logo} alt={a.alt} className="h-20 w-20 shrink-0 object-contain" />
               <span className="text-sm font-semibold leading-snug">{a.name}</span>
             </div>

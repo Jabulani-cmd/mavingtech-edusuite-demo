@@ -13,11 +13,11 @@ import { formatMoney } from "@/lib/currency";
 import type { Tables } from "@/integrations/supabase/types";
 
 const STATUS_STYLES: Record<string, { label: string; cls: string; icon: LucideIcon }> = {
-  paid: { label: "Paid", cls: "bg-emerald-100 text-emerald-700", icon: CheckCircle2 },
-  pending: { label: "Pending", cls: "bg-amber-100 text-amber-700", icon: Clock },
-  awaiting_verification: { label: "Awaiting verification", cls: "bg-amber-100 text-amber-700", icon: Clock },
-  failed: { label: "Failed", cls: "bg-red-100 text-red-700", icon: XCircle },
-  rejected: { label: "Rejected", cls: "bg-red-100 text-red-700", icon: XCircle },
+  paid: { label: "Paid", cls: "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300", icon: CheckCircle2 },
+  pending: { label: "Pending", cls: "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300", icon: Clock },
+  awaiting_verification: { label: "Awaiting verification", cls: "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300", icon: Clock },
+  failed: { label: "Failed", cls: "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300", icon: XCircle },
+  rejected: { label: "Rejected", cls: "bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300", icon: XCircle },
   cancelled: { label: "Cancelled", cls: "bg-muted text-foreground", icon: XCircle },
   refunded: { label: "Refunded", cls: "bg-muted text-foreground", icon: AlertCircle },
 };
@@ -76,7 +76,7 @@ export default function ParentPaymentHistory() {
                   </div>
                 )}
               </div>
-              <Badge className="bg-emerald-100 text-emerald-700 capitalize">{sub.status}</Badge>
+              <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 capitalize">{sub.status}</Badge>
             </CardContent>
           </Card>
         )}

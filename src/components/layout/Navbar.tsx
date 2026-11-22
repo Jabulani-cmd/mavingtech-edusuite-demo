@@ -175,7 +175,7 @@ export default function Navbar() {
 
 
   return (
-    <nav className="sticky top-0 z-50 bg-lit shadow-[0_1px_0_hsl(var(--border)),0_10px_24px_-18px_hsl(220_25%_8%/0.5)]">
+    <nav className="sticky top-0 z-50 bg-raised shadow-[0_1px_0_hsl(var(--border)),0_10px_24px_-18px_hsl(220_25%_8%/0.5)]">
       <div className="container flex items-center justify-between gap-4 py-3">
         {/* Logo left */}
         <Link to="/" className="flex min-w-0 flex-shrink-0 items-center gap-4 outline-none transition-opacity focus-visible:opacity-70 2xl:gap-5">
@@ -249,7 +249,7 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border bg-lit xl:hidden"
+            className="overflow-hidden border-t border-border bg-raised xl:hidden"
           >
             <div className="container flex flex-col py-2">
               {navLinks.map((item) =>

@@ -440,9 +440,9 @@ export default function StudentManagement() {
   };
 
   const statusColor = (s: string) => {
-    if (s === "active") return "bg-green-100 text-green-800";
+    if (s === "active") return "bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300";
     if (s === "graduated") return "bg-primary/10 text-primary";
-    return "bg-orange-100 text-orange-800";
+    return "bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300";
   };
 
   return (
@@ -531,9 +531,9 @@ export default function StudentManagement() {
                   <TableCell>{s.guardian_phone || "-"}</TableCell>
                   <TableCell>
                     {s.user_id ? (
-                      <Badge className="bg-green-100 text-green-800">Portal Active</Badge>
+                      <Badge className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300">Portal Active</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-amber-600 border-amber-300">No Account</Badge>
+                      <Badge variant="outline" className="text-amber-600 dark:text-amber-300 border-amber-300">No Account</Badge>
                     )}
                   </TableCell>
                   <TableCell><Badge className={statusColor(s.status)}>{s.status}</Badge></TableCell>
@@ -546,7 +546,7 @@ export default function StudentManagement() {
                           title="Provision portal account"
                           onClick={() => provisionExistingStudent(s)}
                         >
-                          <KeyRound className="h-4 w-4 text-amber-600" />
+                          <KeyRound className="h-4 w-4 text-amber-600 dark:text-amber-300" />
                         </Button>
                       )}
                       <Button variant="ghost" size="icon" onClick={() => { setSelectedStudent(s); setProfileOpen(true); }}><Eye className="h-4 w-4" /></Button>

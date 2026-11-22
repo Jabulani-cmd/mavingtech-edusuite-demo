@@ -591,9 +591,9 @@ export default function DemoDataSeederPanel() {
   const stats = [
     { icon: GraduationCap, label: "Students",  value: people.students.length, color: "text-primary" },
     { icon: UserCog,       label: "Parents",   value: people.parents.length,  color: "text-primary" },
-    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-600" },
-    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-600" },
-    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-600" },
+    { icon: Users,         label: "Teachers",  value: seeded ? alloc.teachers.length : 0, color: "text-emerald-600 dark:text-emerald-300" },
+    { icon: BookOpen,      label: "Subjects",  value: seeded ? alloc.subjects.length : 0, color: "text-amber-600 dark:text-amber-300" },
+    { icon: Building2,     label: "Classes",   value: seeded ? alloc.classes.length  : 0, color: "text-rose-600 dark:text-rose-300" },
     { icon: CalendarClock, label: "Periods",   value: seeded ? alloc.slots.filter(s => s.subjectId).length : 0, color: "text-primary" },
   ];
 
@@ -651,7 +651,7 @@ export default function DemoDataSeederPanel() {
                 {STEPS.map((s, i) => (
                   <motion.div key={s} initial={{ opacity: 0 }} animate={{ opacity: i <= stepIdx ? 1 : 0.4 }}
                     className="flex items-center gap-2 text-sm">
-                    {i < stepIdx ? <CheckCircle2 className="h-4 w-4 text-green-600" /> :
+                    {i < stepIdx ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" /> :
                       i === stepIdx ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> :
                       <div className="h-4 w-4 rounded-full border-2 border-muted" />}
                     <span>{s}</span>
@@ -695,7 +695,7 @@ export default function DemoDataSeederPanel() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" /> Demo data loaded successfully
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-300" /> Demo data loaded successfully
             </DialogTitle>
             <DialogDescription>
               The entire system has been populated and the timetable is live across every portal.

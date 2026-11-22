@@ -48,7 +48,7 @@ export default function Academics() {
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {subjects.map((s, i) => (
                   <div key={s.name}
-                    className="group bg-card p-6 border border-border transition-colors hover:bg-lit">
+                    className="group bg-card p-6 border border-border transition-colors hover:bg-accent">
                     <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
                       <s.icon className="h-5 w-5 text-primary" />
                     </div>

@@ -602,8 +602,8 @@ export default function MessagingPanel() {
     switch (r) {
       case "admin": return "bg-destructive/10 text-destructive border-destructive/20";
       case "teacher": return "bg-primary text-primary border-primary/40";
-      case "parent": return "bg-green-500/10 text-green-700 border-green-500/20";
-      case "student": return "bg-amber-500/10 text-amber-700 border-amber-500/20";
+      case "parent": return "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20";
+      case "student": return "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
       default: return "bg-muted text-muted-foreground";
     }
   };

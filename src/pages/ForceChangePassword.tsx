@@ -56,8 +56,8 @@ export default function ForceChangePassword() {
           <Card className="shadow-maroon">
             <CardHeader className="text-center">
               <img src={schoolLogo} alt="MavingTech High School" className="mx-auto mb-2 h-auto w-44 object-contain sm:w-48" />
-              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
-                <ShieldAlert className="h-6 w-6 text-amber-600" />
+              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950/40">
+                <ShieldAlert className="h-6 w-6 text-amber-600 dark:text-amber-300" />
               </div>
               <CardTitle className="font-heading text-2xl text-primary">Change Your Password</CardTitle>
               <p className="text-sm text-muted-foreground">

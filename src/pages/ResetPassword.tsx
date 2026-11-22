@@ -83,7 +83,7 @@ export default function ResetPassword() {
         <section className="flex min-h-[70vh] items-center justify-center bg-section-warm py-16">
           <Card className="w-full max-w-md mx-4 shadow-maroon">
             <CardContent className="pt-6 text-center space-y-4">
-              <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
+              <CheckCircle className="mx-auto h-12 w-12 text-green-600 dark:text-green-300" />
               <h2 className="font-heading text-xl text-primary">Password Updated!</h2>
               <p className="text-sm text-muted-foreground">Redirecting you to login…</p>
             </CardContent>

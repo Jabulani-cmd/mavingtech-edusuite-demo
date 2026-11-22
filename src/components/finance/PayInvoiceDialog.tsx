@@ -162,7 +162,7 @@ export default function PayInvoiceDialog({ open, onOpenChange, invoice, student,
   }
 
   const DemoBadge = () => (
-    <Badge variant="outline" className="border-amber-400/60 text-amber-700 bg-amber-50">
+    <Badge variant="outline" className="border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40">
       Demo Mode. No real money processed
     </Badge>
   );

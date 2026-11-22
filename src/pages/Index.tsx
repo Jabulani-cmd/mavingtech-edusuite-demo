@@ -65,8 +65,8 @@ export default function Home() {
 
   const gateways = [
     { to: "/admissions", label: t("home.cta.button"), tone: "bg-primary text-primary-foreground hover:bg-navy" },
-    { to: "/contact", label: t("home.quick.visit", "Visit Us"), tone: "bg-lit text-foreground hover:bg-ochre-soft" },
-    { to: "/pay-online", label: t("fees.payOnline"), tone: "bg-lit text-foreground hover:bg-ochre-soft" },
+    { to: "/contact", label: t("home.quick.visit", "Visit Us"), tone: "bg-raised text-foreground hover:bg-accent" },
+    { to: "/pay-online", label: t("fees.payOnline"), tone: "bg-raised text-foreground hover:bg-accent" },
     { to: "/login", label: t("nav.portalLogin"), tone: "bg-navy text-lit hover:bg-primary" },
   ];
 

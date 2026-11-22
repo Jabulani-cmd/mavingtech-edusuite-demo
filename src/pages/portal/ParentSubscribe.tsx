@@ -322,7 +322,7 @@ export default function ParentSubscribe() {
 
         {children.length === 0 && step === "plans" && (
           <Card className="max-w-xl mx-auto mb-8 p-6 text-center border-amber-200 bg-amber-50/40 dark:bg-amber-950/20">
-            <AlertCircle className="w-10 h-10 mx-auto text-amber-600 mb-3" />
+            <AlertCircle className="w-10 h-10 mx-auto text-amber-600 dark:text-amber-300 mb-3" />
             <h3 className="text-lg font-semibold mb-2">Link a student first</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Before you can subscribe, link a student to your parent account using their admission number.

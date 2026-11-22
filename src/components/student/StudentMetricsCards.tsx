@@ -15,8 +15,8 @@ export default function StudentMetricsCards({ attendancePercent, upcomingAssessm
       label: "Attendance",
       value: `${attendancePercent}%`,
       icon: CalendarCheck,
-      color: attendancePercent >= 80 ? "text-green-600" : attendancePercent >= 60 ? "text-yellow-600" : "text-destructive",
-      bgColor: attendancePercent >= 80 ? "bg-green-50" : attendancePercent >= 60 ? "bg-yellow-50" : "bg-red-50",
+      color: attendancePercent >= 80 ? "text-green-600 dark:text-green-300" : attendancePercent >= 60 ? "text-yellow-600 dark:text-yellow-300" : "text-destructive",
+      bgColor: attendancePercent >= 80 ? "bg-green-50 dark:bg-green-950/40" : attendancePercent >= 60 ? "bg-yellow-50 dark:bg-yellow-950/40" : "bg-red-50 dark:bg-red-950/40",
     },
     {
       label: "Assessments Due",
@@ -36,8 +36,8 @@ export default function StudentMetricsCards({ attendancePercent, upcomingAssessm
       label: feeBalance < 0 ? "Credit Balance" : "Fee Balance",
       value: feeBalance < 0 ? `${formatUSD(Math.abs(feeBalance), { decimals: false })} CR` : formatUSD(feeBalance, { decimals: false }),
       icon: DollarSign,
-      color: feeBalance > 0 ? "text-destructive" : "text-green-600",
-      bgColor: feeBalance > 0 ? "bg-red-50" : "bg-green-50",
+      color: feeBalance > 0 ? "text-destructive" : "text-green-600 dark:text-green-300",
+      bgColor: feeBalance > 0 ? "bg-red-50 dark:bg-red-950/40" : "bg-green-50 dark:bg-green-950/40",
     }] : []),
   ];
 

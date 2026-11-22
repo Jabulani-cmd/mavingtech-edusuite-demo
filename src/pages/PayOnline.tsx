@@ -128,11 +128,11 @@ function FeePaymentForm() {
 
   if (submitted) {
     return (
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-green-200 bg-green-50 dark:bg-green-950/40">
         <CardContent className="py-12 text-center">
-          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
-          <h3 className="text-xl font-bold text-green-800">Payment Request Recorded</h3>
-          <p className="mt-2 text-green-700">
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600 dark:text-green-300" />
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-300">Payment Request Recorded</h3>
+          <p className="mt-2 text-green-700 dark:text-green-300">
             Your fee payment of <strong>{formatMoney(amount)}</strong> for student{" "}
             <strong>{studentInfo?.admission_number}</strong> has been recorded.
           </p>
@@ -184,12 +184,12 @@ function FeePaymentForm() {
           )}
 
           {studentInfo && (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-950/40 p-4">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Student Found</span>
+                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-300" />
+                <span className="text-sm font-medium text-green-800 dark:text-green-300">Student Found</span>
               </div>
-              <p className="mt-1 text-sm text-green-700">
+              <p className="mt-1 text-sm text-green-700 dark:text-green-300">
                 <strong>{studentInfo.full_name}</strong>
                 <Badge variant="outline" className="ml-2 text-xs">{studentInfo.form || "N/A"}</Badge>
               </p>
@@ -308,11 +308,11 @@ function DonationForm({ initialProjectId }: { initialProjectId: string }) {
 
   if (submitted) {
     return (
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-green-200 bg-green-50 dark:bg-green-950/40">
         <CardContent className="py-12 text-center">
-          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600" />
-          <h3 className="text-xl font-bold text-green-800">Thank You for Your Generosity!</h3>
-          <p className="mt-2 text-green-700">
+          <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-600 dark:text-green-300" />
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-300">Thank You for Your Generosity!</h3>
+          <p className="mt-2 text-green-700 dark:text-green-300">
             Your donation of <strong>{formatMoney(amount)}</strong> has been recorded.
           </p>
           <p className="mt-4 text-sm text-muted-foreground">

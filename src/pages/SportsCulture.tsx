@@ -50,7 +50,7 @@ export default function SportsCulture() {
                   const s = sportsData[k];
                   return (
                     <div key={k}>
-                      <Card className="h-full border-primary/10 transition-colors hover:bg-lit">
+                      <Card className="h-full border-primary/10 transition-colors hover:bg-accent">
                         <CardContent className="p-6">
                           <h3 className="mb-2 text-lg font-semibold text-foreground">{s.name}</h3>
                           <p className="text-sm text-muted-foreground">{s.desc}</p>
@@ -68,7 +68,7 @@ export default function SportsCulture() {
                   const c = clubsData[key];
                   return (
                     <div key={key}>
-                      <Card className="h-full border-primary/10 transition-colors hover:bg-lit">
+                      <Card className="h-full border-primary/10 transition-colors hover:bg-accent">
                         <CardContent className="flex items-start gap-4 p-6">
                           <div className="bg-primary/10 p-2"><Icon className="h-6 w-6 text-primary" /></div>
                           <div>

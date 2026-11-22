@@ -316,7 +316,7 @@ export default function CommunicationModule() {
 
   const statusBadge = (status: string) => {
     switch (status) {
-      case "sent": return <Badge className="bg-green-600/10 text-green-700 border-green-200">Sent</Badge>;
+      case "sent": return <Badge className="bg-green-600/10 text-green-700 dark:text-green-300 border-green-200">Sent</Badge>;
       case "pending": return <Badge variant="secondary">Pending</Badge>;
       case "failed": return <Badge variant="destructive">Failed</Badge>;
       case "scheduled": return <Badge className="bg-primary text-primary border-primary/40">Scheduled</Badge>;
@@ -339,7 +339,7 @@ export default function CommunicationModule() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Templates", value: templates.length, icon: FileText, color: "text-primary" },
-          { label: "Messages Sent", value: logs.filter(l => l.status === "sent").length, icon: Send, color: "text-green-600" },
+          { label: "Messages Sent", value: logs.filter(l => l.status === "sent").length, icon: Send, color: "text-green-600 dark:text-green-300" },
           { label: "Pending", value: logs.filter(l => l.status === "pending").length, icon: Clock, color: "text-orange-500" },
           { label: "Total Notifications", value: notifications.length, icon: Bell, color: "text-primary" },
         ].map((s, i) => (
@@ -456,7 +456,7 @@ export default function CommunicationModule() {
                   </div>
 
                   {(channel === "sms" || channel === "email") && (
-                    <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-800">
+                    <div className="rounded-lg border border-orange-200 bg-orange-50 dark:bg-orange-950/40 p-3 text-sm text-orange-800 dark:text-orange-300">
                       <AlertCircle className="inline mr-1 h-4 w-4" />
                       <strong>Note:</strong> SMS/Email provider not yet configured. Messages will be logged for sending once a provider (e.g., Africa's Talking, Twilio) is connected.
                     </div>
@@ -655,7 +655,7 @@ export default function CommunicationModule() {
                 </Card>
                 <Card className="border">
                   <CardContent className="p-3 text-center">
-                    <p className="text-xl font-bold text-green-600">{notifications.filter(n => n.is_read).length}</p>
+                    <p className="text-xl font-bold text-green-600 dark:text-green-300">{notifications.filter(n => n.is_read).length}</p>
                     <p className="text-xs text-muted-foreground">Read</p>
                   </CardContent>
                 </Card>

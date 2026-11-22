@@ -632,7 +632,7 @@ export default function AcademicManagement() {
                           <TableCell className="font-medium">{s.name}</TableCell>
                           <TableCell>{s.code || "-"}</TableCell>
                           <TableCell>{s.department || "-"}</TableCell>
-                          <TableCell>{s.is_examinable ? <Badge className="bg-green-100 text-green-800 border-green-300" variant="outline">Yes</Badge> : <Badge variant="outline">No</Badge>}</TableCell>
+                          <TableCell>{s.is_examinable ? <Badge className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300" variant="outline">Yes</Badge> : <Badge variant="outline">No</Badge>}</TableCell>
                           <TableCell>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => openEditSubject(s)}><Pencil className="h-4 w-4" /></Button>
@@ -779,8 +779,8 @@ export default function AcademicManagement() {
                 <Input type="date" className="w-48" value={attDate} onChange={e => setAttDate(e.target.value)} />
                 {attClass && (
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => markAll("present")} className="text-green-700"><CheckCircle className="mr-1 h-4 w-4" /> All Present</Button>
-                    <Button variant="outline" size="sm" onClick={() => markAll("absent")} className="text-red-700"><XCircle className="mr-1 h-4 w-4" /> All Absent</Button>
+                    <Button variant="outline" size="sm" onClick={() => markAll("present")} className="text-green-700 dark:text-green-300"><CheckCircle className="mr-1 h-4 w-4" /> All Present</Button>
+                    <Button variant="outline" size="sm" onClick={() => markAll("absent")} className="text-red-700 dark:text-red-300"><XCircle className="mr-1 h-4 w-4" /> All Absent</Button>
                   </div>
                 )}
               </div>
@@ -798,7 +798,7 @@ export default function AcademicManagement() {
                       </TableRow></TableHeader>
                       <TableBody>
                         {attStudents.map((s, i) => (
-                          <TableRow key={s.id} className={attRecords[s.id] === "absent" ? "bg-red-50" : attRecords[s.id] === "late" ? "bg-amber-50" : ""}>
+                          <TableRow key={s.id} className={attRecords[s.id] === "absent" ? "bg-red-50 dark:bg-red-950/40" : attRecords[s.id] === "late" ? "bg-amber-50 dark:bg-amber-950/40" : ""}>
                             <TableCell className="text-muted-foreground">{i + 1}</TableCell>
                             <TableCell className="font-medium">{s.full_name}</TableCell>
                             <TableCell className="text-xs">{s.admission_number}</TableCell>
@@ -820,9 +820,9 @@ export default function AcademicManagement() {
 
                   {/* Quick stats */}
                   <div className="flex gap-4 text-sm">
-                    <span className="text-green-700">✓ Present: {Object.values(attRecords).filter(v => v === "present").length}</span>
-                    <span className="text-red-700">✗ Absent: {Object.values(attRecords).filter(v => v === "absent").length}</span>
-                    <span className="text-amber-700">⏱ Late: {Object.values(attRecords).filter(v => v === "late").length}</span>
+                    <span className="text-green-700 dark:text-green-300">✓ Present: {Object.values(attRecords).filter(v => v === "present").length}</span>
+                    <span className="text-red-700 dark:text-red-300">✗ Absent: {Object.values(attRecords).filter(v => v === "absent").length}</span>
+                    <span className="text-amber-700 dark:text-amber-300">⏱ Late: {Object.values(attRecords).filter(v => v === "late").length}</span>
                     <span className="text-primary">📋 Excused: {Object.values(attRecords).filter(v => v === "excused").length}</span>
                   </div>
                 </>
@@ -868,13 +868,13 @@ export default function AcademicManagement() {
                           <TableCell className="text-xs">{e.start_date || "-"} → {e.end_date || "-"}</TableCell>
                           <TableCell>
                             {e.is_published
-                              ? <Badge className="bg-green-100 text-green-800 border-green-300" variant="outline">Published</Badge>
+                              ? <Badge className="bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300" variant="outline">Published</Badge>
                               : <Badge variant="outline">Draft</Badge>}
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-1">
                               <Button variant="ghost" size="icon" onClick={() => togglePublish(e)} title={e.is_published ? "Unpublish" : "Publish"}>
-                                {e.is_published ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4 text-green-600" />}
+                                {e.is_published ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-300" />}
                               </Button>
                               <Button variant="ghost" size="icon" onClick={() => openEditExam(e)}><Pencil className="h-4 w-4" /></Button>
                               <Button variant="ghost" size="icon" onClick={() => deleteExam(e.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>

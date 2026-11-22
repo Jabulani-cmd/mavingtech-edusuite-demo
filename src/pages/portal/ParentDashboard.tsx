@@ -688,11 +688,11 @@ function TabContentInner(props: TabContentProps) {
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setActiveTab("grades")}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-                <Trophy className="h-5 w-5 text-amber-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-950/40">
+                <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-300" />
               </div>
               <div>
-                <p className="text-lg font-bold text-amber-700">
+                <p className="text-lg font-bold text-amber-700 dark:text-amber-300">
                   {rankings?.overall_rank ? `#${rankings.overall_rank}` : "-"}
                 </p>
                 <p className="text-[11px] text-muted-foreground">Class Rank</p>
@@ -702,11 +702,11 @@ function TabContentInner(props: TabContentProps) {
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setActiveTab("fees")}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100">
-                <span className="text-lg font-bold text-red-600">$</span>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 dark:bg-red-950/40">
+                <span className="text-lg font-bold text-red-600 dark:text-red-300">$</span>
               </div>
               <div className="min-w-0">
-                <p className={`text-lg font-bold leading-tight ${feeBalance > 0 ? "text-red-700" : "text-emerald-700"}`}>
+                <p className={`text-lg font-bold leading-tight ${feeBalance > 0 ? "text-red-700 dark:text-red-300" : "text-emerald-700 dark:text-emerald-300"}`}>
                   <Money usd={Math.abs(feeBalance)} suffix={feeBalance < 0 ? "credit" : undefined} />
                 </p>
                 <p className="text-[11px] text-muted-foreground">
@@ -813,8 +813,8 @@ function TabContentInner(props: TabContentProps) {
                   </Card>
                   <Card className="bg-muted/60 border-amber-200/40">
                     <CardContent className="p-3 text-center">
-                      <Trophy className="mx-auto mb-1 h-5 w-5 text-amber-600" />
-                      <p className="text-lg font-bold text-amber-700">{overallRank ? overallRank.rank : "-"}</p>
+                      <Trophy className="mx-auto mb-1 h-5 w-5 text-amber-600 dark:text-amber-300" />
+                      <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{overallRank ? overallRank.rank : "-"}</p>
                       <p className="text-[10px] text-muted-foreground">
                         {overallRank ? `of ${overallRank.total}` : "Rank"}
                       </p>
@@ -822,11 +822,11 @@ function TabContentInner(props: TabContentProps) {
                   </Card>
                   <Card className="bg-muted/60 border-emerald-200/40">
                     <CardContent className="p-3 text-center">
-                      <Award className="mx-auto mb-1 h-5 w-5 text-emerald-600" />
-                      <p className="text-xs font-bold text-emerald-700 truncate">
+                      <Award className="mx-auto mb-1 h-5 w-5 text-emerald-600 dark:text-emerald-300" />
+                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 truncate">
                         {examResults[0]?.subjects?.name || "-"}
                       </p>
-                      <p className="text-lg font-bold text-emerald-700">{examResults[0]?.mark || 0}%</p>
+                      <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{examResults[0]?.mark || 0}%</p>
                       <p className="text-[10px] text-muted-foreground">Best</p>
                     </CardContent>
                   </Card>
@@ -945,19 +945,19 @@ function TabContentInner(props: TabContentProps) {
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-emerald-600">{present}</p>
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-300">{present}</p>
               <p className="text-[10px] text-muted-foreground">Present</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-amber-600">{late}</p>
+              <p className="text-lg font-bold text-amber-600 dark:text-amber-300">{late}</p>
               <p className="text-[10px] text-muted-foreground">Late</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
-              <p className="text-lg font-bold text-red-600">{absent}</p>
+              <p className="text-lg font-bold text-red-600 dark:text-red-300">{absent}</p>
               <p className="text-[10px] text-muted-foreground">Absent</p>
             </CardContent>
           </Card>
@@ -994,10 +994,10 @@ function TabContentInner(props: TabContentProps) {
                             variant="outline"
                             className={
                               a.status === "present"
-                                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300"
                                 : a.status === "late"
-                                  ? "bg-amber-100 text-amber-800 border-amber-300"
-                                  : "bg-red-100 text-red-800 border-red-300"
+                                  ? "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300"
+                                  : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"
                             }
                           >
                             {a.status}
@@ -1038,7 +1038,7 @@ function TabContentInner(props: TabContentProps) {
         {/* Balance summary */}
         <Card className={feeBalance > 0 ? "border-red-200 bg-red-50/50" : "border-emerald-200 bg-emerald-50/50"}>
           <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-            <span className={`flex h-10 w-10 items-center justify-center rounded-full text-xl font-bold ${feeBalance > 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>$</span>
+            <span className={`flex h-10 w-10 items-center justify-center rounded-full text-xl font-bold ${feeBalance > 0 ? "bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-300" : "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-300"}`}>$</span>
             <div className="flex-1 min-w-0">
               <p className="text-2xl font-bold leading-tight">
                 <Money usd={Math.abs(feeBalance)} suffix={feeBalance > 0 ? "owing" : feeBalance < 0 ? "credit" : undefined} />
@@ -1130,10 +1130,10 @@ function TabContentInner(props: TabContentProps) {
                               variant="outline"
                               className={
                                 inv.status === "paid"
-                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                  ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300"
                                   : inv.status === "partial"
-                                    ? "bg-amber-100 text-amber-800 border-amber-300"
-                                    : "bg-red-100 text-red-800 border-red-300"
+                                    ? "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300"
+                                    : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"
                               }
                             >
                               {inv.status}
@@ -1163,13 +1163,13 @@ function TabContentInner(props: TabContentProps) {
                           <Money usd={inv.total_usd} className="items-end text-right font-mono" />
 
                           <span className="text-muted-foreground">Paid:</span>
-                          <Money usd={paid} className="items-end text-right font-mono text-emerald-600" />
+                          <Money usd={paid} className="items-end text-right font-mono text-emerald-600 dark:text-emerald-300" />
 
                           <span className="text-muted-foreground">Balance:</span>
                           <Money
                             usd={Math.abs(bal)}
                             suffix={bal < 0 ? "credit" : undefined}
-                            className={`items-end text-right font-mono font-semibold ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-destructive" : ""}`}
+                            className={`items-end text-right font-mono font-semibold ${bal < 0 ? "text-emerald-600 dark:text-emerald-300" : bal > 0 ? "text-destructive" : ""}`}
                           />
                         </div>
                         {bal > 0.001 && (
@@ -1212,9 +1212,9 @@ function TabContentInner(props: TabContentProps) {
                             {inv.term} {inv.academic_year}
                           </td>
                           <td className="px-3 py-2 text-center font-mono">{formatMoney(inv.total_usd)}</td>
-                          <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatMoney(paid)}</td>
+                          <td className="px-3 py-2 text-center text-emerald-600 dark:text-emerald-300 font-mono">{formatMoney(paid)}</td>
                           <td
-                            className={`px-3 py-2 text-center font-bold font-mono ${bal < 0 ? "text-emerald-600" : bal > 0 ? "text-red-600" : ""}`}
+                            className={`px-3 py-2 text-center font-bold font-mono ${bal < 0 ? "text-emerald-600 dark:text-emerald-300" : bal > 0 ? "text-red-600 dark:text-red-300" : ""}`}
                           >
                             {bal < 0 ? `+${formatMoney(Math.abs(bal))}` : formatMoney(bal)}
                           </td>
@@ -1223,10 +1223,10 @@ function TabContentInner(props: TabContentProps) {
                               variant="outline"
                               className={
                                 inv.status === "paid"
-                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                  ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300"
                                   : inv.status === "partial"
-                                    ? "bg-amber-100 text-amber-800 border-amber-300"
-                                    : "bg-red-100 text-red-800 border-red-300"
+                                    ? "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300"
+                                    : "bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300"
                               }
                             >
                               {inv.status}
@@ -1433,7 +1433,7 @@ function ParentPaymentHistory({
 
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-1">
                     <span className="text-muted-foreground">Amount:</span>
-                    <span className="text-right font-mono text-emerald-600">{formatMoney(p.amount_usd || p.amount || 0)}</span>
+                    <span className="text-right font-mono text-emerald-600 dark:text-emerald-300">{formatMoney(p.amount_usd || p.amount || 0)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -1456,7 +1456,7 @@ function ParentPaymentHistory({
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="px-3 py-2 font-mono text-xs">{p.receipt_number}</td>
                     <td className="px-3 py-2">{format(new Date(p.payment_date), "dd MMM yyyy")}</td>
-                    <td className="px-3 py-2 text-center text-emerald-600 font-mono">{formatMoney(p.amount_usd || p.amount || 0)}</td>
+                    <td className="px-3 py-2 text-center text-emerald-600 dark:text-emerald-300 font-mono">{formatMoney(p.amount_usd || p.amount || 0)}</td>
                     <td className="px-3 py-2">{p.payment_method}</td>
                     <td className="px-3 py-2 text-center">
                       <DocActionButtons labels actions={actionsFor(p)} email={emailFor(p)} />

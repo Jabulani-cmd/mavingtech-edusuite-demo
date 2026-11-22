@@ -354,9 +354,9 @@ export default function InventoryManagement() {
   const stockBadge = (level: string) => {
     switch (level) {
       case "empty": return <Badge variant="destructive">Out of Stock</Badge>;
-      case "low": return <Badge variant="secondary" className="border-orange-500 text-orange-600">Low Stock</Badge>;
+      case "low": return <Badge variant="secondary" className="border-orange-500 text-orange-600 dark:text-orange-300">Low Stock</Badge>;
       case "medium": return <Badge variant="secondary">Medium</Badge>;
-      default: return <Badge variant="outline" className="border-green-600 text-green-700">In Stock</Badge>;
+      default: return <Badge variant="outline" className="border-green-600 text-green-700 dark:text-green-300">In Stock</Badge>;
     }
   };
 

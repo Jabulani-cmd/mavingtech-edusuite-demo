@@ -278,9 +278,9 @@ export default function DataMigration() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold">{stats.total}</p><p className="text-xs text-muted-foreground">Total Rows</p></CardContent></Card>
-                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-green-600">{stats.valid}</p><p className="text-xs text-muted-foreground">Valid</p></CardContent></Card>
-                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-yellow-600">{stats.warnings}</p><p className="text-xs text-muted-foreground">Warnings</p></CardContent></Card>
-                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-red-600">{stats.errors}</p><p className="text-xs text-muted-foreground">Errors</p></CardContent></Card>
+                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-green-600 dark:text-green-300">{stats.valid}</p><p className="text-xs text-muted-foreground">Valid</p></CardContent></Card>
+                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">{stats.warnings}</p><p className="text-xs text-muted-foreground">Warnings</p></CardContent></Card>
+                <Card><CardContent className="pt-4 text-center"><p className="text-2xl font-bold text-red-600 dark:text-red-300">{stats.errors}</p><p className="text-xs text-muted-foreground">Errors</p></CardContent></Card>
               </div>
 
               {validationResults.length > 0 && (
@@ -359,8 +359,8 @@ export default function DataMigration() {
 
           {step === "done" && (
             <div className="space-y-4 py-8 text-center">
-              <CheckCircle className="mx-auto h-16 w-16 text-green-600" />
-              <p className="text-lg font-medium text-green-600">Import Complete!</p>
+              <CheckCircle className="mx-auto h-16 w-16 text-green-600 dark:text-green-300" />
+              <p className="text-lg font-medium text-green-600 dark:text-green-300">Import Complete!</p>
               <p className="text-sm text-muted-foreground">Successfully imported {stats?.imported} {TARGET_CONFIGS[target].label.toLowerCase()} records.</p>
               <Button onClick={reset}>Import More Data</Button>
             </div>

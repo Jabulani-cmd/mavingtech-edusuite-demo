@@ -37,7 +37,7 @@ export default function PortalAccessGate({
               {pending ? <Clock className="w-10 h-10 text-white" /> : expired ? <AlertTriangle className="w-10 h-10 text-white" /> : <Lock className="w-10 h-10 text-white" />}
             </div>
 
-            <Badge className="bg-amber-100 text-amber-700 mb-3">Demo Subscription Gate</Badge>
+            <Badge className="bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 mb-3">Demo Subscription Gate</Badge>
             <h1 className="font-display text-3xl font-bold mb-2">
               {pending ? "Payment verification in progress" : expired ? "Your access has expired" : `Unlock the ${portalName} portal`}
             </h1>

@@ -35,7 +35,7 @@ export default function AIGenerationOverlay({ active }: { active: boolean }) {
               animate={{ opacity: i <= idx ? 1 : 0.4, x: 0 }}
               className="flex items-center gap-3 text-sm"
             >
-              {i < idx ? <CheckCircle2 className="h-4 w-4 text-green-600" /> :
+              {i < idx ? <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-300" /> :
                 i === idx ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> :
                 <div className="h-4 w-4 rounded-full border-2 border-muted" />}
               <span>{s}</span>

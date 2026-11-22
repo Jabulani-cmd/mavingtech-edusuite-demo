@@ -370,7 +370,7 @@ export default function AITimetableBuilderAgent() {
 
         {step === "published" && (
           <div className="rounded-lg border-2 border-green-500/40 bg-green-50 dark:bg-green-950/30 p-3 flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-300" />
             <span><strong>Published</strong> at {new Date(ctx.publishedAt!).toLocaleString()}. Live across student, teacher and admin portals.</span>
           </div>
         )}

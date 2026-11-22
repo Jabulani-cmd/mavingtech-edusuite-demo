@@ -69,7 +69,7 @@ export default function SubstitutionFinder({ allSlots }: { allSlots: SlotRow[] }
         </div>
         {absent && affectedSlots.length > 0 && (
           <div className="text-xs text-muted-foreground">
-            <span className="text-orange-600 font-semibold">{affectedSlots.length} periods affected this week.</span> Highlighted in views as orange.
+            <span className="text-orange-600 dark:text-orange-300 font-semibold">{affectedSlots.length} periods affected this week.</span> Highlighted in views as orange.
           </div>
         )}
         <Button size="sm" onClick={find} disabled={!absent || loading} className="bg-primary">
