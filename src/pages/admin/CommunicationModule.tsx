@@ -403,7 +403,7 @@ export default function CommunicationModule() {
                   {/* Channel */}
                   <div>
                     <Label>Channel</Label>
-                    <div className="flex gap-2 mt-1">
+                    <div className="mt-1 flex flex-wrap gap-2">
                       {channelOptions.map(ch => (
                         <Button
                           key={ch.value}
