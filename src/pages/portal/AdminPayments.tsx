@@ -301,10 +301,10 @@ export default function AdminPayments() {
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <CardTitle>Parent payment status</CardTitle>
-                  <div className="flex gap-2">
-                    <div className="relative">
+                  <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+                    <div className="relative w-full sm:w-auto">
                       <Search className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <Input placeholder="Search…" className="pl-8 w-56" value={search} onChange={(e) => setSearch(e.target.value)} />
+                      <Input placeholder="Search…" className="w-full pl-8 sm:w-56" value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                       <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>

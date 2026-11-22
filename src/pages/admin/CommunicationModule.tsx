@@ -368,7 +368,7 @@ export default function CommunicationModule() {
         {/* Compose Tab */}
         <TabsContent value="compose">
           <div className="grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-4">
+            <div className="min-w-0 space-y-4 lg:col-span-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Compose Message</CardTitle>

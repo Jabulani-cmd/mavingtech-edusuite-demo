@@ -228,7 +228,7 @@ export default function DataMigration() {
       </div>
 
       {/* Step indicator */}
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
         {["upload", "validate", "review", "import", "done"].map((s, i) => (
           <div key={s} className="flex items-center gap-1">
             <Badge variant={step === s ? "default" : s === "done" && step === "done" ? "default" : "outline"} className={step === s ? "bg-primary" : ""}>
