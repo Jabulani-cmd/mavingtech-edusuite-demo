@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { saveClassAttendance } from "@/lib/attendance";
+import ClassRecordsExport from "@/components/shared/ClassRecordsExport";
 import { errorMessage } from "@/lib/errors";
 import type { Tables } from "@/integrations/supabase/types";
 import type { QueryData } from "@supabase/supabase-js";
@@ -695,6 +696,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                 {attClass && attStudents.length === 0 && <p className="text-sm text-muted-foreground">No students found for this class.</p>}
               </CardContent>
             </Card>
+            <ClassRecordsExport classes={attendanceClasses} />
           </TabsContent>
 
           {/* ANNOUNCEMENTS - Enhanced */}

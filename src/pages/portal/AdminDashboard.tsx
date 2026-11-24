@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import AcademicManagement from "@/pages/admin/AcademicManagement";
 import AdminAttendanceViewer from "@/components/admin/AdminAttendanceViewer";
+import ClassRecordsExport from "@/components/shared/ClassRecordsExport";
 import ImageCropper from "@/components/ImageCropper";
 import StaffManagement from "@/components/admin/StaffManagement";
 import ProjectsManagement from "@/components/admin/ProjectsManagement";
@@ -977,7 +978,7 @@ export default function AdminDashboard({ portalTitle, portalRole }: AdminDashboa
 
           {/* Attendance Tab */}
           <TabsContent value="attendance">
-            <AdminAttendanceViewer />
+            <div className="space-y-4"><ClassRecordsExport /><AdminAttendanceViewer /></div>
           </TabsContent>
 
           {/* Data Migration Tab */}
