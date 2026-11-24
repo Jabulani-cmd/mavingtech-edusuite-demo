@@ -218,6 +218,13 @@
       "when": 1795500685092,
       "tag": "0030_demo_subject_combinations",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795500838330,
+      "tag": "0031_validate_student_subject_load",
+      "breakpoints": true
     }
   ]
 }

@@ -104,12 +104,12 @@ describe("Demo data seeder panel", () => {
     expect(students.every((s) => /^Form [1-6]$/.test(String(s.form)) && s.class === `${s.form}${s.stream}`)).toBe(true);
     expect(students.every((s) => s.guardian_name && s.guardian_phone && s.province)).toBe(true);
 
-    // Logins: 1 admin + 8 leadership and office staff + 30 teachers + 500 students + every parent, in small batches.
+    // Logins include the teachers needed for the corrected curriculum.
     const accounts = invokes.flatMap((b) => b.accounts);
     expect(invokes.every((b) => b.accounts.length <= 20)).toBe(true);
     expect(new Set(accounts.map((a) => a.email)).size).toBe(accounts.length);
     const count = (role: string) => accounts.filter((a) => a.role === role).length;
-    expect([count("admin"), count("teacher"), count("student")]).toEqual([1, 30, 500]);
+    expect([count("admin"), count("teacher"), count("student")]).toEqual([1, 28, 500]);
     // Every staff portal has a login, so principal, deputy, HOD, finance, bursar, clerk, registration and supervisor can all be shown.
     expect(accounts.filter((a) => DEMO_STAFF_ACCOUNTS.some((d) => d.role === a.role)).map((a) => a.role).sort())
       .toEqual(DEMO_STAFF_ACCOUNTS.map((d) => d.role).sort());
@@ -229,7 +229,7 @@ describe("Demo data seeder panel", () => {
     expect(writes).toHaveLength(0);
     const accounts = invokes.flatMap((b) => b.accounts);
     expect(accounts.filter((a) => a.role === "student")).toHaveLength(500);
-    expect(accounts.filter((a) => a.role === "teacher")).toHaveLength(30);
+    expect(accounts.filter((a) => a.role === "teacher")).toHaveLength(28);
     expect(accounts.filter((a) => a.role === "parent").length).toBeGreaterThan(800);
     expect(accounts.filter((a) => DEMO_STAFF_ACCOUNTS.some((d) => d.role === a.role))).toHaveLength(DEMO_STAFF_ACCOUNTS.length);
     // Repairing logins does not reload any records.

@@ -62,6 +62,15 @@ export const studentFormSchema = z.object({
   status: z.string().default("active"),
   sports_activities: z.array(z.string()).optional().default([]),
   boarding_status: z.string().default("day"),
+}).superRefine((student, ctx) => {
+  if (!student.subject_combination?.trim()) return;
+  const count = new Set(student.subject_combination.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)).size;
+  const sixthForm = /^Form [56]$/.test(student.form);
+  const min = sixthForm ? 1 : 7;
+  const max = sixthForm ? 4 : 10;
+  if (count < min || count > max) {
+    ctx.addIssue({ code: "custom", path: ["subject_combination"], message: `${student.form} requires ${min} to ${max} ${sixthForm ? "A-Level " : ""}subjects.` });
+  }
 });
 
 export const staffFormSchema = z.object({

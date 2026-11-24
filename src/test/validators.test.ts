@@ -61,6 +61,22 @@ describe("Student Form Schema", () => {
     expect(studentFormSchema.safeParse(validStudent).success).toBe(true);
   });
 
+  it("accepts 7–10 selected subjects in Forms 1–4 and rejects 6 or 11", () => {
+    const combination = (n: number) => Array.from({ length: n }, (_, i) => `Subject ${i + 1}`).join(", ");
+    for (const form of ["Form 1", "Form 2", "Form 3", "Form 4"]) {
+      for (const count of [7, 8, 9, 10]) expect(studentFormSchema.safeParse({ ...validStudent, form, subject_combination: combination(count) }).success).toBe(true);
+      for (const count of [6, 11]) expect(studentFormSchema.safeParse({ ...validStudent, form, subject_combination: combination(count) }).success).toBe(false);
+    }
+  });
+
+  it("accepts 1–4 selected subjects in Forms 5–6 and rejects 5", () => {
+    const subjects = ["Pure Mathematics", "Physics", "Chemistry", "Biology", "Economics"];
+    for (const form of ["Form 5", "Form 6"]) {
+      for (const count of [1, 2, 3, 4]) expect(studentFormSchema.safeParse({ ...validStudent, form, subject_combination: subjects.slice(0, count).join(", ") }).success).toBe(true);
+      expect(studentFormSchema.safeParse({ ...validStudent, form, subject_combination: subjects.join(", ") }).success).toBe(false);
+    }
+  });
+
   it("rejects missing full_name", () => {
     expect(studentFormSchema.safeParse({ ...validStudent, full_name: "" }).success).toBe(false);
   });
