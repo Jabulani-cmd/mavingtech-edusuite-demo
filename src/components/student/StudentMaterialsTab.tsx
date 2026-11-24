@@ -98,22 +98,85 @@ export default function StudentMaterialsTab({ studentClassId, studentId }: Props
     bumpCount(m);
   };
 
-  const handleDownload = async (m: Material) => {
-    const url = m.file_url || m.link_url;
-    if (!url) return;
+  const safeName = (t: string) => t.replace(/[\\/:*?"<>|]+/g, "").trim() || "study-material";
+
+  const saveBlob = (blob: Blob, name: string) => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    const href = a.href;
+    setTimeout(() => URL.revokeObjectURL(href), 30_000);
+  };
+
+  const buildMaterialPdf = async (m: Material) => {
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const W = doc.internal.pageSize.getWidth();
     try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const ext = (url.split(".").pop() || "").split("?")[0];
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `${m.title}${ext ? "." + ext : ""}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(a.href);
+      const logo = (await import("@/assets/mavingtech-logo.png")).default;
+      const img = new Image();
+      img.src = logo;
+      await img.decode();
+      const h = 18, w = (img.naturalWidth / img.naturalHeight) * h;
+      doc.addImage(img, "PNG", 15, 12, w, h);
+    } catch { /* logo optional */ }
+    doc.setFont("helvetica", "bold").setFontSize(10).text("MavingTech Business Solutions", W - 15, 18, { align: "right" });
+    doc.setFont("helvetica", "normal").setFontSize(9).text("Study Material", W - 15, 23, { align: "right" });
+    doc.setDrawColor(20, 120, 130).line(15, 34, W - 15, 34);
+    let y = 46;
+    doc.setFont("helvetica", "bold").setFontSize(16);
+    const title = doc.splitTextToSize(m.title, W - 30);
+    doc.text(title, 15, y); y += title.length * 7 + 4;
+    doc.setFont("helvetica", "normal").setFontSize(10);
+    const rows: [string, string][] = [
+      ["Subject", m.subjects?.name || "General"],
+      ["Class", m.classes?.name || "-"],
+      ["Type", m.material_type],
+      ["Published", format(new Date(m.created_at), "d MMMM yyyy")],
+    ];
+    if (m.tags?.length) rows.push(["Tags", m.tags.join(", ")]);
+    rows.forEach(([k, v]) => { doc.setFont("helvetica", "bold").text(`${k}:`, 15, y); doc.setFont("helvetica", "normal").text(String(v), 45, y); y += 6; });
+    y += 4;
+    if (m.description) {
+      doc.setFont("helvetica", "bold").setFontSize(12).text("Notes", 15, y); y += 7;
+      doc.setFont("helvetica", "normal").setFontSize(10);
+      for (const line of doc.splitTextToSize(m.description, W - 30)) {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.text(line, 15, y); y += 5.5;
+      }
+      y += 4;
+    }
+    const url = m.file_url || m.link_url;
+    if (url) {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFont("helvetica", "bold").text("Online resource:", 15, y); y += 6;
+      doc.setFont("helvetica", "normal").setTextColor(20, 100, 160);
+      for (const line of doc.splitTextToSize(url, W - 30)) { doc.textWithLink(line, 15, y, { url }); y += 5; }
+      doc.setTextColor(0, 0, 0);
+    }
+    return doc.output("blob");
+  };
+
+  const handleDownload = async (m: Material) => {
+    const url = m.file_url;
+    const name = safeName(m.title);
+    try {
+      if (url) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("fetch failed");
+        const blob = await res.blob();
+        if (blob.type === "application/pdf" || /\.pdf(\?|$)/i.test(url)) {
+          saveBlob(new Blob([blob], { type: "application/pdf" }), `${name}.pdf`);
+          bumpCount(m);
+          return;
+        }
+      }
+      saveBlob(await buildMaterialPdf(m), `${name}.pdf`);
     } catch {
-      window.open(url, "_blank", "noopener,noreferrer");
+      saveBlob(await buildMaterialPdf(m), `${name}.pdf`);
     }
     bumpCount(m);
   };
@@ -199,11 +262,9 @@ export default function StudentMaterialsTab({ studentClassId, studentId }: Props
                         <Printer className="h-4 w-4" />
                       </Button>
                     )}
-                    {m.material_type !== "link" && m.file_url && (
-                      <Button variant="ghost" size="icon" className="h-9 w-9" title="Download" onClick={() => handleDownload(m)}>
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button variant="ghost" size="icon" className="h-9 w-9" title="Download PDF" aria-label="Download PDF" onClick={() => handleDownload(m)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
