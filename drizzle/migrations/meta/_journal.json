@@ -239,6 +239,13 @@
       "when": 1795501314132,
       "tag": "0033_keep_curriculum_sync_and_signals_scoped",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795504801935,
+      "tag": "0034_teacher_term_report_drafts",
+      "breakpoints": true
     }
   ]
 }

@@ -46,6 +46,7 @@ import FullWeekTimetable from "@/components/shared/FullWeekTimetable";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import { gradeFor } from "@/lib/grading";
 import { takesSubject } from "@/lib/studentSubjects";
+import TermReportsTab from "@/components/admin/TermReportsTab";
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 const assessmentTypes = ["test", "exam", "assignment", "project"];
 
@@ -465,6 +466,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
             <TabsTrigger value="timetable" className="text-xs sm:text-sm"><Calendar className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Timetable</TabsTrigger>
             <TabsTrigger value="exam-timetable" className="text-xs sm:text-sm"><CalendarDays className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Exam TT</TabsTrigger>
             <TabsTrigger value="lesson-plans" className="text-xs sm:text-sm"><BookOpen className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Lessons</TabsTrigger>
+            <TabsTrigger value="term-reports" className="text-xs sm:text-sm"><FileText className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Reports</TabsTrigger>
             <TabsTrigger value="progress" className="text-xs sm:text-sm"><TrendingUp className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Progress</TabsTrigger>
             <TabsTrigger value="resources" className="text-xs sm:text-sm"><FolderOpen className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Resources</TabsTrigger>
             <TabsTrigger value="parent-log" className="text-xs sm:text-sm"><MessageSquare className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Parents</TabsTrigger>
@@ -652,6 +654,10 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
           </TabsContent>
 
           {/* ATTENDANCE */}
+          <TabsContent value="term-reports" className="space-y-4">
+            <TermReportsTab isAdmin={false} />
+          </TabsContent>
+
           <TabsContent value="attendance" className="space-y-4">
             <Card>
               <CardHeader><CardTitle className="font-heading">Take Attendance</CardTitle><CardDescription>Select a class and date, then mark each student.</CardDescription></CardHeader>

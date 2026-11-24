@@ -10,7 +10,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { FileText, Loader2, RefreshCw, CheckCircle, Send } from "lucide-react";
+import { FileText, Loader2, RefreshCw, CheckCircle, Send, Sparkles, PencilLine } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { errorMessage } from "@/lib/errors";
 import { gradeFor, gradeBadgeClass } from "@/lib/grading";
@@ -31,6 +33,10 @@ interface TermReport {
   class_size: number | null;
   is_published: boolean;
   generated_at: string;
+  class_teacher_comment?: string | null;
+  head_comment?: string | null;
+  exam_data?: unknown;
+  assessment_data?: unknown;
   students?: { full_name: string; admission_number: string };
 }
 
@@ -42,7 +48,24 @@ interface Student {
   subject_combination: string | null;
 }
 
-export default function TermReportsTab() {
+type SubjectRow = { subject: string; mark: number | null; grade: string | null };
+
+/** Per-subject marks summary stored on a report, used for AI comments. */
+function subjectsOf(report: TermReport): SubjectRow[] {
+  const map = new Map<string, number[]>();
+  const add = (name: string | undefined, mark: number | null | undefined) => {
+    if (!name || mark == null) return;
+    map.set(name, [...(map.get(name) ?? []), Number(mark)]);
+  };
+  for (const r of (report.exam_data as Array<{ mark: number; subjects?: { name: string } }>) ?? []) add(r.subjects?.name, r.mark);
+  for (const r of (report.assessment_data as Array<{ percentage: number; assessments?: { subjects?: { name: string } } }>) ?? []) add(r.assessments?.subjects?.name, r.percentage);
+  return [...map.entries()].map(([subject, marks]) => {
+    const mark = Math.round(marks.reduce((a, b) => a + b, 0) / marks.length);
+    return { subject, mark, grade: gradeFor(mark) };
+  });
+}
+
+export default function TermReportsTab({ isAdmin = true }: { isAdmin?: boolean }) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -57,6 +80,67 @@ export default function TermReportsTab() {
   
   // Selection for bulk actions
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [editing, setEditing] = useState<TermReport | null>(null);
+  const [teacherComment, setTeacherComment] = useState("");
+  const [headComment, setHeadComment] = useState("");
+  const [tone, setTone] = useState<"encouraging" | "neutral" | "needs_improvement">("neutral");
+  const [aiBusy, setAiBusy] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<string | null>(null);
+
+  async function aiComment(report: TermReport, t = tone): Promise<string> {
+    const { data, error } = await supabase.functions.invoke("ai-report-comment", {
+      body: { studentName: report.students?.full_name ?? "Learner", formLevel: report.form_level, term: `${report.term} ${report.academic_year}`, grades: subjectsOf(report), tone: t },
+    });
+    if (error) throw new Error((data as { error?: string })?.error || error.message);
+    if ((data as { error?: string })?.error) throw new Error((data as { error: string }).error);
+    return (data as { comment: string }).comment;
+  }
+
+  function openEditor(report: TermReport) {
+    setEditing(report);
+    setTeacherComment(report.class_teacher_comment ?? "");
+    setHeadComment(report.head_comment ?? "");
+  }
+
+  async function draftWithAi() {
+    if (!editing) return;
+    setAiBusy(true);
+    try { setTeacherComment(await aiComment(editing)); }
+    catch (err) { toast({ title: "AI could not write the comment", description: errorMessage(err), variant: "destructive" }); }
+    setAiBusy(false);
+  }
+
+  async function saveComments() {
+    if (!editing) return;
+    const patch: { class_teacher_comment: string; head_comment?: string } = { class_teacher_comment: teacherComment.trim() };
+    if (isAdmin) patch.head_comment = headComment.trim();
+    const { error } = await supabase.from("term_reports").update(patch).eq("id", editing.id);
+    if (error) { toast({ title: "Could not save", description: errorMessage(error), variant: "destructive" }); return; }
+    toast({ title: "Report saved" });
+    setEditing(null);
+    fetchReports();
+  }
+
+  /** AI agent: writes class teacher comments for every draft report that has none yet. */
+  async function aiWriteAll() {
+    const todo = reports.filter((r) => !r.is_published && !r.class_teacher_comment);
+    if (todo.length === 0) { toast({ title: "Nothing to write", description: "All draft reports already have comments." }); return; }
+    let done = 0;
+    for (const r of todo) {
+      setBulkProgress(`${done}/${todo.length}`);
+      try {
+        const comment = await aiComment(r, r.average_mark >= 70 ? "encouraging" : r.average_mark < 50 ? "needs_improvement" : "neutral");
+        await supabase.from("term_reports").update({ class_teacher_comment: comment }).eq("id", r.id);
+        done++;
+      } catch (err) {
+        toast({ title: `Stopped after ${done} reports`, description: errorMessage(err), variant: "destructive" });
+        break;
+      }
+    }
+    setBulkProgress(null);
+    if (done) toast({ title: "AI comments written", description: `${done} reports updated. Review them before publishing.` });
+    fetchReports();
+  }
 
   useEffect(() => {
     fetchData();
@@ -299,6 +383,12 @@ export default function TermReportsTab() {
             Generate Reports
           </Button>
           {reports.length > 0 && (
+            <Button onClick={aiWriteAll} disabled={!!bulkProgress} variant="outline">
+              {bulkProgress ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Sparkles className="mr-1 h-4 w-4" />}
+              {bulkProgress ? `AI writing ${bulkProgress}` : "AI Agent: Write All Comments"}
+            </Button>
+          )}
+          {isAdmin && reports.length > 0 && (
             <>
               <Button onClick={publishSelected} disabled={selectedIds.length === 0} variant="outline">
                 <CheckCircle className="mr-1 h-4 w-4" /> Publish Selected ({selectedIds.length})
@@ -336,6 +426,7 @@ export default function TermReportsTab() {
                   <TableHead>Adm #</TableHead>
                   <TableHead>Average</TableHead>
                   <TableHead>Grade</TableHead>
+                  <TableHead>Comment</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Generated</TableHead>
                   <TableHead>Actions</TableHead>
@@ -362,6 +453,9 @@ export default function TermReportsTab() {
                         {report.overall_grade}
                       </Badge>
                     </TableCell>
+                    <TableCell className="max-w-[220px] text-xs text-muted-foreground truncate" title={report.class_teacher_comment ?? ""}>
+                      {report.class_teacher_comment || "Not written"}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={report.is_published ? "default" : "outline"}>
                         {report.is_published ? "Published" : "Draft"}
@@ -372,14 +466,17 @@ export default function TermReportsTab() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button 
+                        <Button variant="ghost" size="icon" onClick={() => openEditor(report)} disabled={report.is_published && !isAdmin} title="Write or edit comments">
+                          <PencilLine className="h-4 w-4" />
+                        </Button>
+                        {isAdmin && <Button 
                           variant="ghost" 
                           size="icon" 
                           onClick={() => togglePublish(report.id, report.is_published)}
                           title={report.is_published ? "Unpublish" : "Publish"}
                         >
                           <CheckCircle className={`h-4 w-4 ${report.is_published ? "text-green-600" : ""}`} />
-                        </Button>
+                        </Button>}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -395,6 +492,50 @@ export default function TermReportsTab() {
           </div>
         )}
       </CardContent>
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editing?.students?.full_name}: {editing?.term} {editing?.academic_year}</DialogTitle>
+            <DialogDescription>Average {editing?.average_mark}% ({editing?.overall_grade}), position {editing?.class_rank}/{editing?.class_size}. Write the comment yourself or let AI draft it, then edit.</DialogDescription>
+          </DialogHeader>
+          {editing && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2 text-xs">
+                {subjectsOf(editing).map((s) => <Badge key={s.subject} variant="outline">{s.subject}: {s.mark}% {s.grade}</Badge>)}
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Label>Class teacher's comment</Label>
+                  <div className="flex gap-2">
+                    <Select value={tone} onValueChange={(v) => setTone(v as typeof tone)}>
+                      <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="encouraging">Encouraging</SelectItem>
+                        <SelectItem value="neutral">Balanced</SelectItem>
+                        <SelectItem value="needs_improvement">Needs improvement</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button size="sm" variant="outline" onClick={draftWithAi} disabled={aiBusy}>
+                      {aiBusy ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Sparkles className="mr-1 h-4 w-4" />} Write with AI
+                    </Button>
+                  </div>
+                </div>
+                <Textarea rows={5} value={teacherComment} onChange={(e) => setTeacherComment(e.target.value)} placeholder="Type the comment for this learner's report" />
+              </div>
+              {isAdmin && (
+                <div className="space-y-2">
+                  <Label>Head's comment</Label>
+                  <Textarea rows={3} value={headComment} onChange={(e) => setHeadComment(e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button onClick={saveComments}>Save report</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
