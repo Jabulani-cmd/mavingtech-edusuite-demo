@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import FullWeekTimetable from "@/components/shared/FullWeekTimetable";
 import type { Tables } from "@/integrations/supabase/types";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { useStudentSubjects } from "@/hooks/useStudentSubjects";
 
 interface Props {
   studentClassId: string | null;
@@ -16,6 +17,7 @@ type TimetableEntry = Tables<"timetable_entries"> & {
 };
 
 export default function StudentTimetableTab({ studentClassId, studentId }: Props) {
+  const subjectSelection = useStudentSubjects(studentId);
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
   const [sportsSchedule, setSportsSchedule] = useState<Tables<"sports_schedule">[]>([]);
   const [sportsActivities, setSportsActivities] = useState<string[]>([]);
@@ -154,10 +156,10 @@ export default function StudentTimetableTab({ studentClassId, studentId }: Props
 
   return (
     <FullWeekTimetable
-      entries={entries}
+      entries={entries.filter((e) => subjectSelection.includes(e.subjects?.name, true))}
       sportsSchedule={sportsSchedule}
       sportsActivities={sportsActivities}
-      loading={loading}
+      loading={loading || subjectSelection.loading}
       hasClass={resolvedClassId !== null}
       noClassMessage="No class assignment found for this student yet."
     />

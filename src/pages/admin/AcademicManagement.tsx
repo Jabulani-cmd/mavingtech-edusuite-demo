@@ -40,6 +40,7 @@ import TeacherClassAssignment from "@/components/admin/TeacherClassAssignment";
 import { errorMessage } from "@/lib/errors";
 import { gradeFor, gradeBadgeClass } from "@/lib/grading";
 import { DEFAULT_FORM, FORM_LEVELS } from "@/lib/forms";
+import { takesSubject, isTimetableActivity } from "@/lib/studentSubjects";
 
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 const streamOptions = ["A", "B", "C", "D"];
@@ -85,7 +86,7 @@ const subjectsQuery = () => supabase.from("subjects").select("*").order("name");
 type SubjectsRow = QueryData<ReturnType<typeof subjectsQuery>>[number];
 const staffQuery = () => supabase.from("staff").select("id, full_name, role, subjects_taught").order("full_name");
 type StaffRow = QueryData<ReturnType<typeof staffQuery>>[number];
-const studentsQuery = () => supabase.from("students").select("id, full_name, admission_number, form, stream").eq("status", "active").order("full_name");
+const studentsQuery = () => supabase.from("students").select("id, full_name, admission_number, form, stream, subject_combination").eq("status", "active").order("full_name");
 type StudentsRow = QueryData<ReturnType<typeof studentsQuery>>[number];
 const timetableQuery = () => supabase.from("timetable_entries").select("*, subjects(name), staff(full_name), classes(name)").order("day_of_week");
 type TimetableRow = QueryData<ReturnType<typeof timetableQuery>>[number];
@@ -298,6 +299,9 @@ export default function AcademicManagement() {
 
   async function saveTTEntry() {
     if (!ttEditCell || !ttViewClass) return;
+    if (ttSubject && !isTimetableActivity(subjects.find((s) => s.id === ttSubject)?.name) && !classSubjects.some((s) => s.class_id === ttViewClass && s.subject_id === ttSubject)) {
+      toast({ title: "Choose a subject assigned to this class", variant: "destructive" }); return;
+    }
     const existing = getTTEntry(ttEditCell.day, ttEditCell.slot.start, ttEditCell.slot.end);
 
     // Clash detection
@@ -457,7 +461,7 @@ export default function AcademicManagement() {
 
   // ═══ MARKS ENTRY ═══
   const selectedExam = exams.find(e => e.id === marksExam);
-  const marksStudents = selectedExam ? students.filter(s => s.form === selectedExam.form_level) : [];
+  const marksStudents = selectedExam ? students.filter(s => s.form === selectedExam.form_level && takesSubject(s.subject_combination, subjects.find((sub) => sub.id === marksSubject)?.name)) : [];
   const currentExamResults = useMemo(
     () => examResults.filter(r => r.exam_id === marksExam && r.subject_id === marksSubject),
     [examResults, marksExam, marksSubject],
@@ -476,14 +480,17 @@ export default function AcademicManagement() {
     setMarksSaving(true);
     try {
       for (const [studentId, markStr] of Object.entries(marksEntries)) {
+        if (!marksStudents.some((s) => s.id === studentId)) continue;
         const mark = parseFloat(markStr) || 0;
         if (mark < 0 || mark > 100) continue;
         const grade = gradeFor(mark);
         const existing = currentExamResults.find(r => r.student_id === studentId);
         if (existing) {
-          await supabase.from("exam_results").update({ mark, grade }).eq("id", existing.id);
+          const { error } = await supabase.from("exam_results").update({ mark, grade }).eq("id", existing.id);
+          if (error) throw error;
         } else {
-          await supabase.from("exam_results").insert({ exam_id: marksExam, student_id: studentId, subject_id: marksSubject, mark, grade });
+          const { error } = await supabase.from("exam_results").insert({ exam_id: marksExam, student_id: studentId, subject_id: marksSubject, mark, grade });
+          if (error) throw error;
         }
       }
       toast({ title: "Marks saved" });

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { colorForSubject, dayName } from "@/lib/timetableUtils";
 import type { Tables } from "@/integrations/supabase/types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useStudentSubjects } from "@/hooks/useStudentSubjects";
 
 // "Form 1 A" and "Form 1A" name the same class.
 const norm = (v: string | null | undefined) => (v ?? "").replace(/\s+/g, "").toLowerCase();
@@ -23,6 +24,7 @@ interface Props {
   /** Optional pre-filter value (e.g. class label or teacher name) */
   filterValue?: string;
   compact?: boolean;
+  studentId?: string | null;
 }
 
 export default function PublishedTimetableWidget({
@@ -30,7 +32,9 @@ export default function PublishedTimetableWidget({
   mode = "class",
   filterValue,
   compact = false,
+  studentId,
 }: Props) {
+  const subjectSelection = useStudentSubjects(studentId, !!studentId);
   const [defs, setDefs] = useState<Tables<"tt_definitions">[]>([]);
   const [slots, setSlots] = useState<Tables<"tt_slots">[]>([]);
   const [selectedDefId, setSelectedDefId] = useState<string>("");
@@ -72,9 +76,9 @@ export default function PublishedTimetableWidget({
           }
         }
       }
-      setSelectedDefId((current) => current || pick);
+      setSelectedDefId((current) => studentId ? pick : current || pick);
     }
-  }, [filterValue, mode]);
+  }, [filterValue, mode, studentId]);
 
   useEffect(() => {
     load();
@@ -118,8 +122,9 @@ export default function PublishedTimetableWidget({
 
   const filteredSlots = useMemo(() => {
     if (teacherFilter) return defSlots.filter((s) => s.teacher_name === teacherFilter);
-    return defSlots;
-  }, [defSlots, teacherFilter]);
+    if (studentId && activeDef?.class_label && filterValue && norm(activeDef.class_label) !== norm(filterValue)) return [];
+    return studentId ? defSlots.filter((s) => s.is_break || subjectSelection.includes(s.subject_name, true)) : defSlots;
+  }, [defSlots, activeDef, teacherFilter, studentId, filterValue, subjectSelection.includes]);
 
   const days = activeDef?.school_days ?? [1, 2, 3, 4, 5];
   const today = new Date().getDay();
@@ -193,7 +198,7 @@ export default function PublishedTimetableWidget({
                 <SelectValue placeholder="Pick timetable" />
               </SelectTrigger>
               <SelectContent>
-                {defs.map((d) => (
+                {defs.filter((d) => !studentId || !d.class_label || norm(d.class_label) === norm(filterValue)).map((d) => (
                   <SelectItem key={d.id} value={d.id} className="text-xs">
                     {d.name} {d.class_label ? `· ${d.class_label}` : ""}
                   </SelectItem>

@@ -1,3 +1,4 @@
 # Academic synchronization
 - Keep demo class subject combinations consistent between the loader and database synchronization; supervised study is a timetable activity, not an enrolled or marked subject.
 - Validate selected subject counts in both the registration form and database trigger; leave empty combinations available for students awaiting allocation and preserve existing results during demo repairs.
+- Use the learner's current subject combination and actual class roster for live materials, homework, timetables and new marking; database triggers enforce the same selections while completed results and published reports remain historical records.

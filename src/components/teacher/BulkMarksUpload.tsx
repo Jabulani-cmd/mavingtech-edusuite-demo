@@ -1,5 +1,5 @@
 import { csvBlob } from "@/lib/spreadsheet";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { ClassOption, SubjectOption, StudentOption } from "@/types/school";
 import { gradeFor } from "@/lib/grading";
+import { takesSubject } from "@/lib/studentSubjects";
 
 interface Props {
   userId: string;
@@ -37,16 +38,26 @@ export default function BulkMarksUpload({ userId, classes, subjects, students, o
   const [uploading, setUploading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [rosterIds, setRosterIds] = useState<string[]>([]);
+  useEffect(() => {
+    let active = true;
+    setParsedRows([]); setShowPreview(false); setRosterIds([]);
+    if (!classId || !subjectId) return;
+    void (async () => {
+      const { data: placements } = await supabase.from("student_classes").select("student_id").eq("class_id", classId);
+      const ids = (placements ?? []).map((r) => r.student_id);
+      if (!ids.length) return;
+      const { data: learners } = await supabase.from("students").select("id, subject_combination").in("id", ids);
+      const name = subjects.find((s) => s.id === subjectId)?.name;
+      if (active) setRosterIds((learners ?? []).filter((s) => takesSubject(s.subject_combination, name)).map((s) => s.id));
+    })();
+    return () => { active = false; };
+  }, [classId, subjectId, subjects]);
 
-  const classStudents = classId
-    ? students.filter(s => {
-        const cls = classes.find(c => c.id === classId);
-        return cls ? s.form === cls.level : false;
-      })
-    : [];
+  const classStudents = students.filter((s) => rosterIds.includes(s.id));
 
   const downloadTemplate = () => {
-    const studs = classStudents.length > 0 ? classStudents : students.slice(0, 20);
+    const studs = classStudents;
     const header = "Admission Number,Student Name,Mark (%)";
     const rows = studs.map(s => `${s.admission_number},${s.full_name},`);
     const csv = [header, ...rows].join("\n");
@@ -77,7 +88,7 @@ export default function BulkMarksUpload({ userId, classes, subjects, students, o
         const markStr = parts[2];
         const mark = parseFloat(markStr);
 
-        const student = students.find(s => s.admission_number === admission);
+        const student = classStudents.find(s => s.admission_number === admission);
 
         if (!admission) return { admission_number: admission, student_name: name, mark: 0, error: "Missing admission number" };
         if (isNaN(mark) || mark < 0 || mark > 100) return { admission_number: admission, student_name: name, mark: 0, error: "Invalid mark (0-100)" };
@@ -95,18 +106,18 @@ export default function BulkMarksUpload({ userId, classes, subjects, students, o
   const submitBulkMarks = async () => {
     if (!subjectId) { toast({ title: "Select a subject", variant: "destructive" }); return; }
 
-    const validRows = parsedRows.filter(r => r.student_id && !r.error);
+    const validRows = parsedRows.filter(r => r.student_id && rosterIds.includes(r.student_id) && !r.error);
     if (validRows.length === 0) { toast({ title: "No valid rows to upload", variant: "destructive" }); return; }
 
     setUploading(true);
-    const records = validRows.map(r => ({
-      student_id: r.student_id!,
+    const records = validRows.flatMap(r => r.student_id ? [{
+      student_id: r.student_id,
       subject_id: subjectId,
       mark: r.mark,
       term,
       assessment_type: assessmentType,
       teacher_id: userId,
-    }));
+    }] : []);
 
     const { error } = await supabase.from("marks").insert(records);
     if (error) {

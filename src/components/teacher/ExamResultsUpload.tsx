@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
 import { gradeFor, gradeBadgeClass } from "@/lib/grading";
+import { takesSubject } from "@/lib/studentSubjects";
 
 interface Props {
   userId: string;
@@ -55,28 +56,28 @@ export default function ExamResultsUpload({ userId, classes, subjects }: Props) 
       const ids = sc.map((s) => s.student_id);
       const { data: studs } = await supabase
         .from("students")
-        .select("id, full_name, admission_number")
+        .select("id, full_name, admission_number, subject_combination")
         .in("id", ids)
         .eq("status", "active")
         .order("full_name");
-      setStudents(studs || []);
+      setStudents((studs || []).filter((s) => takesSubject(s.subject_combination, subjects.find((sub) => sub.id === selectedSubjectId)?.name)));
     } else {
       // Fallback: get students by form level
       const cls = classes.find((c) => c.id === selectedClassId);
       if (cls?.level) {
         const { data: studs } = await supabase
           .from("students")
-          .select("id, full_name, admission_number")
+          .select("id, full_name, admission_number, subject_combination")
           .eq("form", cls.level)
           .eq("status", "active")
           .order("full_name");
-        setStudents(studs || []);
+        setStudents((studs || []).filter((s) => takesSubject(s.subject_combination, subjects.find((sub) => sub.id === selectedSubjectId)?.name)));
       } else {
         setStudents([]);
       }
     }
     setLoadingStudents(false);
-  }, [classes, selectedClassId]);
+  }, [classes, selectedClassId, selectedSubjectId, subjects]);
 
   const fetchExistingResults = useCallback(async () => {
     const studentIds = students.map((s) => s.id);

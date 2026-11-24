@@ -37,6 +37,7 @@ import AIAssessmentCreator from "./AIAssessmentCreator";
 import { gradeFor } from "@/lib/grading";
 import { errorMessage } from "@/lib/errors";
 import { openStoredFile } from "@/lib/privateFiles";
+import { useClassRoster } from "@/hooks/useClassRoster";
 
 const assessmentTypes = ["test", "exam", "assignment", "quiz", "project"];
 
@@ -149,12 +150,8 @@ export default function AssessmentsTab({ userId, classes, subjects, students }: 
   };
 
   // Get students for the selected assessment's class
-  const classStudents = selectedAssessment
-    ? students.filter(s => {
-        const cls = classes.find(c => c.id === selectedAssessment.class_id);
-        return cls ? s.form === cls.level : false;
-      })
-    : [];
+  const rosterIds = useClassRoster(selectedAssessment?.class_id, subjects.find((s) => s.id === selectedAssessment?.subject_id)?.name);
+  const classStudents = students.filter((s) => rosterIds.includes(s.id));
 
 
   const currentStudent = classStudents[gradingStudentIdx];

@@ -22,6 +22,7 @@ import { format, differenceInCalendarDays, endOfDay, isBefore } from "date-fns";
 import { gradeTextClass } from "@/lib/grading";
 import { errorMessage } from "@/lib/errors";
 import { uploadPrivateFile } from "@/lib/privateFiles";
+import { useStudentSubjects } from "@/hooks/useStudentSubjects";
 
 interface Props {
   studentId: string | null;
@@ -37,6 +38,7 @@ function isOverdueDate(dueDateStr: string): boolean {
 }
 
 export default function StudentAssessmentsTab({ studentId, studentClassId }: Props) {
+  const subjectSelection = useStudentSubjects(studentId);
   const { toast } = useToast();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [submissions, setSubmissions] = useState<Tables<"assessment_submissions">[]>([]);
@@ -73,8 +75,8 @@ export default function StudentAssessmentsTab({ studentId, studentClassId }: Pro
   const getResult = (id: string) => results.find(r => r.assessment_id === id);
   const hasQuestions = (a: Assessment) => parseQuestions(a.questions).length > 0;
 
-  const upcoming = assessments.filter(a => a.due_date && !isOverdueDate(a.due_date) && !getResult(a.id) && !getSubmission(a.id));
-  const pastDue = assessments.filter(a => a.due_date && isOverdueDate(a.due_date) && !getSubmission(a.id) && !getResult(a.id));
+  const upcoming = assessments.filter(a => subjectSelection.includes(a.subjects?.name) && a.due_date && !isOverdueDate(a.due_date) && !getResult(a.id) && !getSubmission(a.id));
+  const pastDue = assessments.filter(a => subjectSelection.includes(a.subjects?.name) && a.due_date && isOverdueDate(a.due_date) && !getSubmission(a.id) && !getResult(a.id));
   const completed = assessments.filter(a => getResult(a.id) || getSubmission(a.id));
 
   const openQuiz = (a: Assessment) => {
@@ -168,7 +170,7 @@ export default function StudentAssessmentsTab({ studentId, studentClassId }: Pro
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-  if (loading) return <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />)}</div>;
+  if (loading || subjectSelection.loading) return <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />)}</div>;
 
   const renderCard = (a: Assessment, showDue = true) => {
     const sub = getSubmission(a.id);

@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Search, UserCheck, Loader2, CheckCircle, AlertTriangle, Users } from "lucide-react";
 import { errorMessage } from "@/lib/errors";
 import { FORM_LEVELS } from "@/lib/forms";
+import { splitSubjects, subjectLoadError } from "@/lib/studentSubjects";
 
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 
@@ -82,7 +83,7 @@ export default function TermRegistration() {
 
   function openRegister(student: Tables<"students">) {
     setSelectedStudent(student);
-    const currentSubjects = (student.subject_combination || "").split(", ").filter(Boolean);
+    const currentSubjects = splitSubjects(student.subject_combination);
     setSelectedSubjects(currentSubjects);
     setBoardingStatus(student.boarding_status || "day");
     setRegDialogOpen(true);
@@ -90,6 +91,8 @@ export default function TermRegistration() {
 
   async function registerStudent() {
     if (!selectedStudent) return;
+    const selectionError = subjectLoadError(selectedStudent.form, selectedSubjects);
+    if (selectionError) { toast({ title: "Check subject selection", description: selectionError, variant: "destructive" }); return; }
     setSaving(true);
     try {
       // Check if already registered
@@ -174,7 +177,8 @@ export default function TermRegistration() {
       if (regErr) throw regErr;
 
       // Update student's subject_combination
-      await supabase.from("students").update({ subject_combination: selectedSubjects.join(", "), boarding_status: boardingStatus }).eq("id", selectedStudent.id);
+      const { error: studentError } = await supabase.from("students").update({ subject_combination: selectedSubjects.join(", "), boarding_status: boardingStatus }).eq("id", selectedStudent.id);
+      if (studentError) throw studentError;
 
       // Allocate student to class based on form + stream (classes.level holds the form, classes.stream the stream)
       const matchClass = dbClasses.find(c => c.level === selectedStudent.form && (!selectedStudent.stream || c.stream === selectedStudent.stream))
@@ -217,7 +221,9 @@ export default function TermRegistration() {
         if (existing) continue;
 
         const bStatus = student.boarding_status || "day";
-        const subjects = (student.subject_combination || "").split(", ").filter(Boolean);
+        const subjects = splitSubjects(student.subject_combination);
+        const selectionError = subjectLoadError(student.form, subjects);
+        if (selectionError) throw new Error(selectionError);
 
         // Check for existing invoice
         const { data: existingInv } = await supabase
@@ -269,7 +275,7 @@ export default function TermRegistration() {
           }
         }
 
-        await supabase.from("term_registrations").insert({
+        const { error: registrationError } = await supabase.from("term_registrations").insert({
           student_id: student.id,
           academic_year: academicYear,
           term: term,
@@ -281,6 +287,7 @@ export default function TermRegistration() {
           amount_due: 0,
           amount_paid: 0,
         });
+        if (registrationError) throw registrationError;
 
         // Allocate student to class
         const matchClass = dbClasses.find(c => c.level === student.form && (!student.stream || c.stream === student.stream))

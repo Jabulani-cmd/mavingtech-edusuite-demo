@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, FileText, Video, Link as LinkIcon, Presentation, Download, Search, Eye, Printer, type LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { useStudentSubjects } from "@/hooks/useStudentSubjects";
 import type { QueryData } from "@supabase/supabase-js";
 
 const materialsQuery = () =>
@@ -27,9 +28,11 @@ const typeIcons: Record<string, LucideIcon> = {
 
 interface Props {
   studentClassId: string | null;
+  studentId?: string | null;
 }
 
-export default function StudentMaterialsTab({ studentClassId }: Props) {
+export default function StudentMaterialsTab({ studentClassId, studentId }: Props) {
+  const subjectSelection = useStudentSubjects(studentId);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [subjects, setSubjects] = useState<Pick<Tables<"subjects">, "id" | "name">[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +63,7 @@ export default function StudentMaterialsTab({ studentClassId }: Props) {
   };
 
   const filtered = materials.filter((m) => {
+    if (!subjectSelection.includes(m.subjects?.name)) return false;
     const matchSearch = !search || m.title.toLowerCase().includes(search.toLowerCase());
     const matchSubject = subjectFilter === "all" || m.subject_id === subjectFilter;
     return matchSearch && matchSubject;
@@ -114,7 +118,7 @@ export default function StudentMaterialsTab({ studentClassId }: Props) {
     bumpCount(m);
   };
 
-  if (loading) {
+  if (loading || subjectSelection.loading) {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
@@ -143,7 +147,7 @@ export default function StudentMaterialsTab({ studentClassId }: Props) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Subjects</SelectItem>
-            {subjects.map((s) => (
+            {subjects.filter((s) => subjectSelection.includes(s.name)).map((s) => (
               <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
             ))}
           </SelectContent>

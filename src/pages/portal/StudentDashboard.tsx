@@ -382,7 +382,7 @@ function TabContent({
           </div>
         )}
 
-        {homeSubTab === "timetable" && renderLocked("the timetable", <PrintableSection title="My Class Timetable" subtitle={`${student?.form || ""} ${student?.stream || ""}`.trim()} fileName={`timetable-${student?.admission_number || "student"}`} bare><PublishedTimetableWidget title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></PrintableSection>)}
+        {homeSubTab === "timetable" && renderLocked("the timetable", <PrintableSection title="My Class Timetable" subtitle={`${student?.form || ""} ${student?.stream || ""}`.trim()} fileName={`timetable-${student?.admission_number || "student"}`} bare><PublishedTimetableWidget studentId={student?.id} title="My Class Timetable" mode="class" filterValue={`${student?.form || ""} ${student?.stream || ""}`.trim()} /></PrintableSection>)}
         {homeSubTab === "planner" && renderLocked("the planner", <PrintableSection title="My Personal Planner" fileName={`planner-${student?.admission_number || "student"}`} bare><PersonalTimetableEditor title="My Personal Planner" /></PrintableSection>)}
         {homeSubTab === "announcements" && renderLocked("announcements", <PrintableSection title="Announcements" fileName="announcements" bare><StudentAnnouncementsSection announcements={announcements} /></PrintableSection>)}
         {homeSubTab === "marks" && renderLocked("marks", <PrintableSection title="My Marks" subtitle={student?.full_name || displayName} fileName={`marks-${student?.admission_number || "student"}`} bare><StudentMarksTab studentId={student?.id} /></PrintableSection>)}
@@ -411,7 +411,7 @@ function TabContent({
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         {renderLocked("study materials",
           <PrintableSection title="Study Materials" fileName="study-materials" bare hideActions>
-            <StudentMaterialsTab studentClassId={studentClassId} />
+            <StudentMaterialsTab studentClassId={studentClassId} studentId={student?.id} />
           </PrintableSection>
         )}
       </motion.div>

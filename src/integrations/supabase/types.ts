@@ -4324,6 +4324,10 @@ export type Database = {
         Args: { _class_name: string }
         Returns: string[]
       }
+      demo_class_takes_subject: {
+        Args: { _class_id: string; _subject_id: string }
+        Returns: boolean
+      }
       demo_forget: { Args: { _tables: string[] }; Returns: undefined }
       get_contact_directory: {
         Args: { _limit?: number; _search?: string }
@@ -4405,6 +4409,10 @@ export type Database = {
       is_school_staff: { Args: { _uid: string }; Returns: boolean }
       is_student_or_parent: {
         Args: { _student_id: string; _uid: string }
+        Returns: boolean
+      }
+      learner_takes_subject: {
+        Args: { _student_id: string; _subject_id: string }
         Returns: boolean
       }
       lookup_student_for_payment: {

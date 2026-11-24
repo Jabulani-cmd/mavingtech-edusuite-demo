@@ -34,7 +34,7 @@ const termOptions = ["Term 1", "Term 2", "Term 3"];
 type ReportExamRow = { mark?: number | null; grade?: string | null; subjects?: { name?: string } | null };
 const examDataRows = (value: unknown): ReportExamRow[] => (Array.isArray(value) ? (value as ReportExamRow[]) : []);
 
-export default function StudentTermReportsTab() {
+export default function StudentTermReportsTab({ studentId }: { studentId?: string | null } = {}) {
   const { user } = useAuth();
   const [reports, setReports] = useState<TermReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,12 +43,12 @@ export default function StudentTermReportsTab() {
   const [studentInfo, setStudentInfo] = useState<{ id: string; full_name: string; admission_number: string; form: string; stream: string | null } | null>(null);
 
   const fetchStudentInfo = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id && !studentId) return;
     
     const { data: student } = await supabase
       .from("students")
       .select("id, full_name, admission_number, form, stream")
-      .eq("user_id", user.id)
+      .eq(studentId ? "id" : "user_id", studentId ?? user?.id ?? "")
       .single();
 
     if (student) {
@@ -57,7 +57,7 @@ export default function StudentTermReportsTab() {
     } else {
       setLoading(false);
     }
-  }, [user.id]);
+  }, [user?.id, studentId]);
 
   useEffect(() => {
     fetchStudentInfo();

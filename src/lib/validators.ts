@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { splitSubjects, subjectLoadError } from "@/lib/studentSubjects";
 
 // Zimbabwean phone: +263XXXXXXXXX or 0XXXXXXXXX. Mobiles (07X) are always 10 digits;
 // landlines (02X) and 08X numbers vary in length.
@@ -63,14 +64,8 @@ export const studentFormSchema = z.object({
   sports_activities: z.array(z.string()).optional().default([]),
   boarding_status: z.string().default("day"),
 }).superRefine((student, ctx) => {
-  if (!student.subject_combination?.trim()) return;
-  const count = new Set(student.subject_combination.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)).size;
-  const sixthForm = /^Form [56]$/.test(student.form);
-  const min = sixthForm ? 1 : 7;
-  const max = sixthForm ? 4 : 10;
-  if (count < min || count > max) {
-    ctx.addIssue({ code: "custom", path: ["subject_combination"], message: `${student.form} requires ${min} to ${max} ${sixthForm ? "A-Level " : ""}subjects.` });
-  }
+  const message = subjectLoadError(student.form, splitSubjects(student.subject_combination), true);
+  if (message) ctx.addIssue({ code: "custom", path: ["subject_combination"], message });
 });
 
 export const staffFormSchema = z.object({

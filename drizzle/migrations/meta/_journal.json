@@ -225,6 +225,20 @@
       "when": 1795500838330,
       "tag": "0031_validate_student_subject_load",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795501101161,
+      "tag": "0032_enforce_academic_subject_selection",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795501314132,
+      "tag": "0033_keep_curriculum_sync_and_signals_scoped",
+      "breakpoints": true
     }
   ]
 }

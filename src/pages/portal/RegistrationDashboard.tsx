@@ -29,6 +29,7 @@ import LanguageSelect from "@/components/LanguageSelect";
 import { errorMessage } from "@/lib/errors";
 import type { TablesInsert } from "@/integrations/supabase/types";
 import { DEFAULT_FORM, FORM_LEVELS } from "@/lib/forms";
+import { splitSubjects, subjectLoadError } from "@/lib/studentSubjects";
 
 const streamOptions = ["A", "B", "C", "D", "Arts", "Sciences", "Commercials"];
 const genderOptions = ["Male", "Female"];
@@ -118,6 +119,8 @@ export default function RegistrationDashboard() {
   };
 
   const handleRegister = async () => {
+    const selectionError = subjectLoadError(form.form, splitSubjects(form.subject_combination), true);
+    if (selectionError) { toast({ title: "Check subject selection", description: selectionError, variant: "destructive" }); return; }
     if (!form.full_name.trim()) {
       toast({ title: "Full name is required", variant: "destructive" });
       return;

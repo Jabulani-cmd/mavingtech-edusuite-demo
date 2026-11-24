@@ -44,6 +44,7 @@ import ParentCommunicationLog from "@/components/teacher/ParentCommunicationLog"
 import FullWeekTimetable from "@/components/shared/FullWeekTimetable";
 import PublishedTimetableWidget from "@/components/timetable/PublishedTimetableWidget";
 import { gradeFor } from "@/lib/grading";
+import { takesSubject } from "@/lib/studentSubjects";
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 const assessmentTypes = ["test", "exam", "assignment", "project"];
 
@@ -74,7 +75,7 @@ type Homework = QueryData<ReturnType<typeof homeworkQuery>>[number];
 type AiResult = QueryData<ReturnType<typeof aiResultsQuery>>[number];
 type TimetableRow = QueryData<ReturnType<typeof timetableQuery>>[number];
 type ClassRow = Tables<"classes">;
-type StudentRow = Pick<Tables<"students">, "id" | "full_name" | "form" | "stream" | "admission_number">;
+type StudentRow = Pick<Tables<"students">, "id" | "full_name" | "form" | "stream" | "admission_number" | "subject_combination">;
 type AttendanceStudent = Pick<Tables<"students">, "id" | "full_name" | "admission_number">;
 
 export default function TeacherDashboard({ embedded = false }: TeacherDashboardProps) {
@@ -182,7 +183,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
     setAttendanceClasses(teacherClasses);
     if (teacherClasses.length > 0) setSelectedTTClass(teacherClasses[0].id);
 
-    const { data: allStudents } = await supabase.from("students").select("id, full_name, form, stream, admission_number").eq("status", "active").order("full_name");
+    const { data: allStudents } = await supabase.from("students").select("id, full_name, form, stream, admission_number, subject_combination").eq("status", "active").order("full_name");
     if (allStudents) setStudents(allStudents);
 
     // Only offer students from classes this teacher is assigned to when entering marks.
@@ -272,6 +273,10 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
   const submitMark = async () => {
     const { student_id, subject_id, mark, term, assessment_type, description, comment } = markForm;
     if (!student_id || !subject_id || !mark) { toast({ title: "Fill all required fields", variant: "destructive" }); return; }
+    const learner = markStudents.find((s) => s.id === student_id);
+    if (!learner || !takesSubject(learner.subject_combination, subjects.find((s) => s.id === subject_id)?.name)) {
+      toast({ title: "Choose one of this learner's subjects", variant: "destructive" }); return;
+    }
     setMarkLoading(true);
     const { error } = await supabase.from("marks").insert({ student_id, subject_id, mark: parseInt(mark), term, assessment_type, comment: [description, comment].filter(Boolean).join(": ") || null, teacher_id: user!.id });
     if (error) {
@@ -491,7 +496,7 @@ export default function TeacherDashboard({ embedded = false }: TeacherDashboardP
                   <div className="space-y-2"><Label>Student *</Label>
                     <Select value={markForm.student_id} onValueChange={v => setMarkForm(p => ({ ...p, student_id: v }))}>
                       <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                      <SelectContent>{markStudents.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name} ({s.admission_number})</SelectItem>)}</SelectContent>
+                      <SelectContent>{markStudents.filter((s) => !markForm.subject_id || takesSubject(s.subject_combination, subjects.find((sub) => sub.id === markForm.subject_id)?.name)).map(s => <SelectItem key={s.id} value={s.id}>{s.full_name} ({s.admission_number})</SelectItem>)}</SelectContent>
                     </Select>
                     {markStudents.length === 0 && (
                       <p className="text-xs text-destructive">

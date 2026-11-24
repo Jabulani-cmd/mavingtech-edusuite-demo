@@ -718,6 +718,7 @@ function TabContentInner(props: TabContentProps) {
         </div>
 
         <PublishedTimetableWidget
+          studentId={child.id}
           title={`${child.full_name?.split(" ")[0]}'s Timetable`}
           mode="class"
           filterValue={`${child.form || ""} ${child.stream || ""}`.trim()}
@@ -1334,7 +1335,7 @@ function TabContentInner(props: TabContentProps) {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <PrintableSection title={`Term Reports: ${child.full_name}`} subtitle={`Admission ${child.admission_number || ""}`} fileName={`term-reports-${child.admission_number || child.full_name}`} bare>
-          <StudentTermReportsTab />
+          <StudentTermReportsTab studentId={child.id} />
         </PrintableSection>
       </motion.div>
     );

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, Clock, MapPin, Loader2, AlertCircle } from "lucide-react";
 import { format, isAfter, isToday } from "date-fns";
+import { useStudentSubjects } from "@/hooks/useStudentSubjects";
 
 interface ExamTimetableEntry {
   id: string;
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export default function StudentExamTimetableTab({ studentId, formLevel, showAll }: Props = {}) {
+  const subjectSelection = useStudentSubjects(studentId);
   const { user } = useAuth();
   const [entries, setEntries] = useState<ExamTimetableEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,7 +118,7 @@ export default function StudentExamTimetableTab({ studentId, formLevel, showAll 
   }
 
   // Group by exam
-  const groupedByExam = entries.reduce((acc, entry) => {
+  const groupedByExam = entries.filter((e) => showAll || subjectSelection.includes(e.subjects?.name)).reduce((acc, entry) => {
     const examKey = entry.exams?.name || "Unknown";
     if (!acc[examKey]) acc[examKey] = { exam: entry.exams, entries: [] };
     acc[examKey].entries.push(entry);

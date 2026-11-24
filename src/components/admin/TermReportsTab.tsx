@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { errorMessage } from "@/lib/errors";
 import { gradeFor, gradeBadgeClass } from "@/lib/grading";
 import { DEFAULT_FORM, FORM_LEVELS } from "@/lib/forms";
+import { takesSubject } from "@/lib/studentSubjects";
 
 const termOptions = ["Term 1", "Term 2", "Term 3"];
 
@@ -38,6 +39,7 @@ interface Student {
   full_name: string;
   admission_number: string;
   form: string;
+  subject_combination: string | null;
 }
 
 export default function TermReportsTab() {
@@ -63,7 +65,7 @@ export default function TermReportsTab() {
   async function fetchData() {
     const { data } = await supabase
       .from("students")
-      .select("id, full_name, admission_number, form")
+      .select("id, full_name, admission_number, form, subject_combination")
       .eq("status", "active")
       
       .order("full_name");
@@ -89,7 +91,11 @@ export default function TermReportsTab() {
   async function generateReports() {
     setGenerating(true);
     try {
-      const formStudents = students.filter(s => s.form === filterForm);
+      // Published reports are historical records: never replace them when rebuilding current drafts.
+      const { data: published } = await supabase.from("term_reports").select("student_id")
+        .eq("form_level", filterForm).eq("term", filterTerm).eq("academic_year", filterYear).eq("is_published", true);
+      const publishedIds = new Set((published ?? []).map((r) => r.student_id));
+      const formStudents = students.filter(s => s.form === filterForm && !publishedIds.has(s.id));
       if (formStudents.length === 0) {
         toast({ title: "No students", description: "No active students in this form level", variant: "destructive" });
         setGenerating(false);
@@ -103,13 +109,12 @@ export default function TermReportsTab() {
         .eq("form_level", filterForm)
         .eq("term", filterTerm)
         .eq("academic_year", filterYear);
-
       const examIds = exams?.map(e => e.id) || [];
 
       // Get assessment results for students in this form
       const { data: assessmentResults } = await supabase
         .from("assessment_results")
-        .select("student_id, mark, percentage, grade")
+        .select("student_id, mark, percentage, grade, assessments(subjects(name))")
         .in("student_id", formStudents.map(s => s.id))
         .eq("is_published", true);
 
@@ -123,8 +128,8 @@ export default function TermReportsTab() {
       const studentAverages: { id: string; total: number; count: number; avg: number }[] = [];
 
       for (const student of formStudents) {
-        const studentExamResults = examResults?.filter(r => r.student_id === student.id) || [];
-        const studentAssessResults = assessmentResults?.filter(r => r.student_id === student.id) || [];
+        const studentExamResults = examResults?.filter(r => r.student_id === student.id && takesSubject(student.subject_combination, r.subjects?.name)) || [];
+        const studentAssessResults = assessmentResults?.filter(r => r.student_id === student.id && takesSubject(student.subject_combination, r.assessments?.subjects?.name)) || [];
 
         // Calculate weighted average (exams 70%, assessments 30%)
         let examTotal = 0, examCount = 0;
@@ -161,7 +166,8 @@ export default function TermReportsTab() {
         .delete()
         .eq("form_level", filterForm)
         .eq("term", filterTerm)
-        .eq("academic_year", filterYear);
+        .eq("academic_year", filterYear)
+        .eq("is_published", false);
 
       // Create new reports
       const reportsToInsert = studentAverages
@@ -176,8 +182,8 @@ export default function TermReportsTab() {
           overall_grade: gradeFor(s.avg),
           class_rank: idx + 1,
           class_size: classSize,
-          assessment_data: assessmentResults?.filter(r => r.student_id === s.id) || [],
-          exam_data: examResults?.filter(r => r.student_id === s.id) || [],
+          assessment_data: assessmentResults?.filter(r => r.student_id === s.id && takesSubject(formStudents.find((st) => st.id === s.id)?.subject_combination, r.assessments?.subjects?.name)) || [],
+          exam_data: examResults?.filter(r => r.student_id === s.id && takesSubject(formStudents.find((st) => st.id === s.id)?.subject_combination, r.subjects?.name)) || [],
           generated_by: user?.id,
           is_published: false
         }));
