@@ -4320,6 +4320,10 @@ export type Database = {
         Args: { _student_id: string }
         Returns: undefined
       }
+      demo_class_subject_names: {
+        Args: { _class_name: string }
+        Returns: string[]
+      }
       demo_forget: { Args: { _tables: string[] }; Returns: undefined }
       get_contact_directory: {
         Args: { _limit?: number; _search?: string }

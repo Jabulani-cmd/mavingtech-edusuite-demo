@@ -205,6 +205,9 @@ export default function DemoDataSeederPanel() {
         form: `Form ${s.form}`,
         stream: s.stream,
         class: `Form ${s.form}${s.stream}`,
+        subject_combination: seed.classes.find((c) => c.id === s.classId)?.subjects
+          .map((cs) => seed.subjects.find((sub) => sub.id === cs.subjectId)?.name)
+          .filter(Boolean).join(", ") ?? null,
         boarding_status: s.boarding ? "boarding" : "day",
         province: s.province,
         address: s.address,
@@ -272,6 +275,11 @@ export default function DemoDataSeederPanel() {
     const warnings: string[] = [];
 
     // Class subjects (who teaches what, per class).
+    // Replace, rather than merge, the demo curriculum so earlier loads cannot accumulate subjects.
+    for (const classId of classIdMap.values()) {
+      const { error } = await supabase.from("class_subjects").delete().eq("class_id", classId);
+      if (error) throw error;
+    }
     const csRows = seed.allocations.map((a) => ({
       class_id: classIdMap.get(a.classId)!,
       subject_id: subIdMap.get(a.subjectId)!,
@@ -284,7 +292,7 @@ export default function DemoDataSeederPanel() {
 
     // timetable_entries - the weekly grid used by the student, teacher and parent portals.
     await supabase.from("timetable_entries").delete().eq("term", "DEMO");
-    const ttRows = seed.slots.filter((s) => s.subjectId).map((s) => ({
+    const ttRows = seed.slots.filter((s) => s.subjectId && s.subjectId !== "sub-study").map((s) => ({
       class_id: classIdMap.get(s.classId)!,
       subject_id: subIdMap.get(s.subjectId!)!,
       teacher_id: staffIdMap.get(s.teacherId!) ?? null,
