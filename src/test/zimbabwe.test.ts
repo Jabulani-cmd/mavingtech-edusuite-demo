@@ -71,6 +71,28 @@ describe("Demo seed", () => {
     expect(names("Form 1A")).toContain("Combined Science");
   });
 
+  it("assigns every Form 1–4 learner between 7 and 10 subjects", () => {
+    for (const student of seed.students.filter((s) => s.form <= 4)) {
+      const cls = seed.classes.find((c) => c.id === student.classId);
+      expect(cls).toBeDefined();
+      const count = new Set(cls?.subjects.map((s) => s.subjectId)).size;
+      expect(count).toBeGreaterThanOrEqual(7);
+      expect(count).toBeLessThanOrEqual(10);
+    }
+  });
+
+  it("assigns every Form 5–6 learner between 1 and 4 A-Level subjects", () => {
+    const allowed = new Set(["Pure Mathematics", "Physics", "Chemistry", "Biology", "Accounting", "Business Studies", "Economics", "Geography"]);
+    for (const student of seed.students.filter((s) => s.form >= 5)) {
+      const cls = seed.classes.find((c) => c.id === student.classId);
+      expect(cls).toBeDefined();
+      const names = cls?.subjects.map((s) => seed.subjects.find((sub) => sub.id === s.subjectId)?.name) ?? [];
+      expect(names.length).toBeGreaterThanOrEqual(1);
+      expect(names.length).toBeLessThanOrEqual(4);
+      expect(names.every((name) => name !== undefined && allowed.has(name))).toBe(true);
+    }
+  });
+
   it("builds a clash-free timetable with every lesson placed", () => {
     const seen = new Set<string>();
     for (const s of seed.slots) {

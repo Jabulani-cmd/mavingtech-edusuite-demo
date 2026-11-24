@@ -1,0 +1,2 @@
+# Academic synchronization
+- Keep demo class subject combinations consistent between the loader and database synchronization; supervised study is a timetable activity, not an enrolled or marked subject.
